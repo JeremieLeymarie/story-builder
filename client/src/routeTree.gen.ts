@@ -11,9 +11,27 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as StoriesImport } from './routes/stories'
+import { Route as GameImport } from './routes/game'
+import { Route as BuilderImport } from './routes/builder'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
+
+const StoriesRoute = StoriesImport.update({
+  path: '/stories',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const GameRoute = GameImport.update({
+  path: '/game',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const BuilderRoute = BuilderImport.update({
+  path: '/builder',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexRoute = IndexImport.update({
   path: '/',
@@ -31,12 +49,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/builder': {
+      id: '/builder'
+      path: '/builder'
+      fullPath: '/builder'
+      preLoaderRoute: typeof BuilderImport
+      parentRoute: typeof rootRoute
+    }
+    '/game': {
+      id: '/game'
+      path: '/game'
+      fullPath: '/game'
+      preLoaderRoute: typeof GameImport
+      parentRoute: typeof rootRoute
+    }
+    '/stories': {
+      id: '/stories'
+      path: '/stories'
+      fullPath: '/stories'
+      preLoaderRoute: typeof StoriesImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({ IndexRoute })
+export const routeTree = rootRoute.addChildren({
+  IndexRoute,
+  BuilderRoute,
+  GameRoute,
+  StoriesRoute,
+})
 
 /* prettier-ignore-end */
 
@@ -46,11 +90,23 @@ export const routeTree = rootRoute.addChildren({ IndexRoute })
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/builder",
+        "/game",
+        "/stories"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/builder": {
+      "filePath": "builder.tsx"
+    },
+    "/game": {
+      "filePath": "game.tsx"
+    },
+    "/stories": {
+      "filePath": "stories.tsx"
     }
   }
 }

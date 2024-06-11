@@ -1,18 +1,11 @@
+import { Home } from "@/components/home";
 import { createFileRoute } from "@tanstack/react-router";
 
 const Index = () => {
   return (
-    <p>
-      Yo-yo-yo-yo-yo-yo-yo
-      <br />
-      Je suis le rat qui fait du rap
-      <br />
-      Yo-yo-yo-yo-yo-yo-yo
-      <br />
-      Wahou ! À fond les bananes !
-      <br />
-      Yo-yo-yo-yo-yo-yo-yo
-    </p>
+    <div className="w-full flex items-center justify-center mt-8">
+      <Home />
+    </div>
   );
 };
 
