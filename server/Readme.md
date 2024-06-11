@@ -1,18 +1,20 @@
 ## How to use Server
 
-# Path to do builder
+# Path to do All
 
 - login
 
 ```
-/api/builder/login
+/api/login
 ```
 
 - register
 
 ```
-/api/builder/register
+/api/register
 ```
+
+# Path to do builder
 
 - Save your game data
 
@@ -27,18 +29,6 @@
 ```
 
 # Path to do player
-
-- login
-
-```
-/api/player/login
-```
-
-- register
-
-```
-/api/player/register
-```
 
 - Save your game data
 
