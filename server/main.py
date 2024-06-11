@@ -13,7 +13,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 @app.post('/user/login')
 async def post_login(data: str):
     try:
@@ -23,10 +22,17 @@ async def post_login(data: str):
     finally:
         return result
 
-
-
 @app.post('/user/register')
 async def post_register(data : str):
+    try:
+        result = "result"
+    except Exception as err:
+        result = err
+    finally:
+        return result
+
+@app.post('/api/builder/save/game')
+async def post_builder_save(data : str):
     try:
         result = "result"
     except Exception as err:
