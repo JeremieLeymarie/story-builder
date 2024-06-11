@@ -7,12 +7,16 @@ export const Route = createRootRoute({
   component: () => (
     <>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <div className="p-4">
-          <ModeToggle />
-          <Outlet />
+        <div className="h-screen w-screen flex flex-col">
+          <div className="h-[50px] flex items-center">
+            <ModeToggle />
+          </div>
+          <div className="w-full flex-1">
+            <Outlet />
+          </div>
         </div>
       </ThemeProvider>
-      <TanStackRouterDevtools />
+      <TanStackRouterDevtools position="top-right" />
     </>
   ),
 });
