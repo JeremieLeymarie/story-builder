@@ -13,8 +13,9 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as StoriesImport } from './routes/stories'
 import { Route as GameImport } from './routes/game'
-import { Route as BuilderImport } from './routes/builder'
 import { Route as IndexImport } from './routes/index'
+import { Route as BuilderStoriesImport } from './routes/builder/stories'
+import { Route as BuilderStoryIdImport } from './routes/builder/$storyId'
 
 // Create/Update Routes
 
@@ -28,13 +29,18 @@ const GameRoute = GameImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const BuilderRoute = BuilderImport.update({
-  path: '/builder',
+const IndexRoute = IndexImport.update({
+  path: '/',
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexRoute = IndexImport.update({
-  path: '/',
+const BuilderStoriesRoute = BuilderStoriesImport.update({
+  path: '/builder/stories',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const BuilderStoryIdRoute = BuilderStoryIdImport.update({
+  path: '/builder/$storyId',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -47,13 +53,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/builder': {
-      id: '/builder'
-      path: '/builder'
-      fullPath: '/builder'
-      preLoaderRoute: typeof BuilderImport
       parentRoute: typeof rootRoute
     }
     '/game': {
@@ -70,6 +69,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoriesImport
       parentRoute: typeof rootRoute
     }
+    '/builder/$storyId': {
+      id: '/builder/$storyId'
+      path: '/builder/$storyId'
+      fullPath: '/builder/$storyId'
+      preLoaderRoute: typeof BuilderStoryIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/builder/stories': {
+      id: '/builder/stories'
+      path: '/builder/stories'
+      fullPath: '/builder/stories'
+      preLoaderRoute: typeof BuilderStoriesImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -77,9 +90,10 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
-  BuilderRoute,
   GameRoute,
   StoriesRoute,
+  BuilderStoryIdRoute,
+  BuilderStoriesRoute,
 })
 
 /* prettier-ignore-end */
@@ -91,22 +105,26 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/builder",
         "/game",
-        "/stories"
+        "/stories",
+        "/builder/$storyId",
+        "/builder/stories"
       ]
     },
     "/": {
       "filePath": "index.tsx"
-    },
-    "/builder": {
-      "filePath": "builder.tsx"
     },
     "/game": {
       "filePath": "game.tsx"
     },
     "/stories": {
       "filePath": "stories.tsx"
+    },
+    "/builder/$storyId": {
+      "filePath": "builder/$storyId.tsx"
+    },
+    "/builder/stories": {
+      "filePath": "builder/stories.tsx"
     }
   }
 }
