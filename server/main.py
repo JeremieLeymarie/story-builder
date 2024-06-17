@@ -31,11 +31,10 @@ async def post_session(data: LoginUserInput):
 async def post_user(data: CreateUserInput):
     try:
         result = User().create(data)
-    except Exception as err:
-        print(err)
-        result = err
-    finally:
         return result
+    except Exception as err:
+        return {"error" : str(err)}
+
 
 @app.post('/api/builder/save/game')
 async def post_builder_save(data : str):

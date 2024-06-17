@@ -2,7 +2,7 @@ from utils.connect import get_db
 from crypt import crypt
 import datetime
 from hmac import compare_digest as compare_hash
-from data_types.user import CreateUserInput, LoginUserInput , User
+from data_types.user import CreateUserInput, LoginUserInput , User,UserWithId
 
 
 class User:
@@ -10,11 +10,11 @@ class User:
     def __init__(self) -> None:
         self.db = get_db()
 
-    def create(self , user : CreateUserInput) -> bool:
+    def create(self , user : CreateUserInput) -> UserWithId:
         is_username_or_email_taken = self.db['users'].find(
             {"$or": [{"username": user.username}, {"email": user.email}]})
         if len(list(is_username_or_email_taken)) > 0:
-            raise {"error":"emai taken or username is taken"}
+            raise Exception("email taken or username is taken")
 
         user.password = crypt(user.password)
         date = datetime.datetime.now().isoformat()
@@ -22,11 +22,12 @@ class User:
         userDocument['createdAt'] = date
         userDocument['lastUpdatedAt'] = date
         result = self.db["users"].insert_one(dict(userDocument))
-
+        userDocument['_id'] = str(result.inserted_id)
+        del userDocument['password']
         if not result.inserted_id:
-            raise {"error":"insert failed"}
+            raise Exception("insert failed")
 
-        return True
+        return userDocument
 
     
     def authentify(self, input: LoginUserInput) -> User:
@@ -41,4 +42,6 @@ class User:
         if not password_match:
             raise {"error":"invalid password"}
 
+        user["id"] = str(user["_id"])
+        del user["_id"]
         return user

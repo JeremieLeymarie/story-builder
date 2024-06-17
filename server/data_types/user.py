@@ -15,3 +15,8 @@ class LoginUserInput(BaseModel):
 class User(BaseModel):
     email: str
     username: str
+
+class UserWithId(BaseModel):
+    id: str
+    email: str
+    username: str
