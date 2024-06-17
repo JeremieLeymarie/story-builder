@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from models.user import User
+from domains.user import User
 from data_types.user import CreateUserInput, LoginUserInput
 
 app = FastAPI()
