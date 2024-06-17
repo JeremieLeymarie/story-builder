@@ -8,9 +8,10 @@ import ReactFlow, {
   useEdgesState,
   useNodesState,
 } from "reactflow";
-import { SceneNode } from "./nodes/scene";
+import { BuilderNode } from "./types";
+import { SceneNode } from "./nodes/scene/scene";
 
-const initialNodes = [
+const initialNodes: BuilderNode[] = [
   {
     id: "1",
     position: { x: 0, y: 0 },
@@ -18,17 +19,25 @@ const initialNodes = [
     data: {
       title: "Scene #1",
       content:
-        "You're at a crossroads. On the left, the forest, on the right, the village.",
+        "You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.",
       actions: [
         { text: "Go into the forest" },
         { text: "Walk towards the village" },
       ],
     },
   },
+  {
+    id: "2",
+    position: { x: 300, y: 0 },
+    type: "scene",
+    data: {
+      title: "Forest",
+      content: "You're in a forest",
+      actions: [{ text: "Go back to the crossroads" }],
+    },
+  },
 ];
-const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
-
-type NodeType = "scene";
+const initialEdges = [];
 
 const nodeTypes = { scene: SceneNode };
 
@@ -50,6 +59,7 @@ export const Builder = () => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        minZoom={0.05}
       >
         <Controls />
         <MiniMap />

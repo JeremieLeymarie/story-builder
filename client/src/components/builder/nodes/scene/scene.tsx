@@ -6,30 +6,34 @@ import {
   CardTitle,
 } from "@/design-system/primitives/card";
 import { Handle, NodeProps, Position } from "reactflow";
-
-// const handleStyle = { left: 10 };
+import { SceneEditor } from "./scene-editor";
 
 export type SceneNodeProps = NodeProps<{
   title: string;
   content: string;
-  actions: { text: string; onClick: () => void }[];
+  actions: { text: string }[];
 }>;
 
 export const SceneNode = ({
+  id,
   data: { title, actions, content },
 }: SceneNodeProps) => {
   return (
     <Card className="max-w-[400px]">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <div className="flex justify-between">
+          <CardTitle>{title}</CardTitle>
+          <SceneEditor title={title} content={content} />
+        </div>
         <CardDescription>{content}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
-        {actions.map(({ text }) => (
+        {actions.map(({ text }, i) => (
           <div className="border p-2 relative border-primary">
             {text}
             <Handle
               type="source"
+              id={`${id}-${i}`}
               position={Position.Right}
               className="absolute h-3 w-3"
               style={{ right: -7 }}
