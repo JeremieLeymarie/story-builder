@@ -8,7 +8,7 @@ export const Route = createRootRoute({
     <>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <div className="h-screen w-screen flex flex-col">
-          <div className="h-[50px] flex items-center">
+          <div className="h-[50px] flex items-center p-4">
             <ModeToggle />
           </div>
           <div className="w-full flex-1">

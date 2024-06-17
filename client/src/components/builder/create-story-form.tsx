@@ -1,7 +1,10 @@
 import {
   Button,
   Dialog,
+  DialogContent,
+  DialogDescription,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
   Form,
   FormControl,
@@ -13,14 +16,11 @@ import {
   Input,
   Textarea,
 } from "@/design-system/primitives";
+import { Story } from "@/lib/storage/dexie-db";
+import { WithoutId } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-} from "@radix-ui/react-dialog";
 import { PlusIcon } from "lucide-react";
-import { title } from "process";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -36,7 +36,11 @@ const schema = z.object({
 
 type Schema = z.infer<typeof schema>;
 
-export const CreateStoryForm = () => {
+type CreateStoryFormProps = {
+  onCreate: (props: WithoutId<Story>) => void;
+};
+
+export const CreateStoryForm = ({ onCreate }: CreateStoryFormProps) => {
   const form = useForm<Schema>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -45,13 +49,16 @@ export const CreateStoryForm = () => {
       image: "",
     },
   });
+  const [open, setOpen] = useState(false);
 
   const submit = (data: Schema) => {
-    // TODO:
+    // TODO: use actual authorId when auth is implemented
+    onCreate({ ...data, authorId: 1, status: "draft" });
+    setOpen(false);
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
           <PlusIcon /> &nbsp;Build your own story
@@ -59,7 +66,7 @@ export const CreateStoryForm = () => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit scene [{title}]</DialogTitle>
+          <DialogTitle>Start building your own adventure! </DialogTitle>
           <DialogDescription>{}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -109,10 +116,7 @@ export const CreateStoryForm = () => {
                 <FormItem>
                   <FormLabel>Image</FormLabel>
                   <FormControl>
-                    <Textarea
-                      placeholder="http://your-image-url.com"
-                      {...field}
-                    />
+                    <Input placeholder="http://your-image-url.com" {...field} />
                   </FormControl>
                   <FormDescription>
                     The cover image for your story

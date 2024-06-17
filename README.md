@@ -65,7 +65,7 @@ fastapi run main.py
 The remote database is mongodb. It is dockerized so you don't have to install locally.
 
 ```bash
-docker compose up
+docker compose up -d
 ```
 
 ## Project architecture

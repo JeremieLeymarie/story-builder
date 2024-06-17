@@ -39,7 +39,7 @@ export type StoryProgress = {
 
 // TODO: Chapters?
 
-const db = new Dexie("story-builder") as Dexie & {
+export const db = new Dexie("story-builder") as Dexie & {
   users: EntityTable<User, "id">;
   stories: EntityTable<Story, "id">;
   scenes: EntityTable<Scene, "id">;
@@ -53,5 +53,3 @@ db.version(1).stores({
   storyProgresses:
     "++id, storyId, currentSceneId, character, inventory, history",
 });
-
-export { db };

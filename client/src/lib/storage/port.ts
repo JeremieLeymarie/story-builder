@@ -1,29 +1,28 @@
+import { WithoutId } from "@/types";
 import { Scene, Story, StoryProgress } from "./dexie-db";
 
 // TODO: define format & better naming
 export type ReactFlowData = {};
 export type IndexedDBData = {};
 
-type WithoutId<T> = Omit<T, "id">;
-
 export type IndexedDBRepositoryPort = {
-  createStory: (story: WithoutId<Story>) => Awaited<Story>;
-  updateStory: (story: Story) => Awaited<Story>;
-  deleteStory: (id: number) => Awaited<Story>;
-  getStory: (id: number) => Awaited<Story>;
-  getStories: () => Awaited<Story[]>;
+  createStory: (story: WithoutId<Story>) => Promise<Story>;
+  updateStory: (story: Story) => Promise<Story>;
+  deleteStory: (id: number) => Promise<Story>;
+  getStory: (id: number) => Promise<Story>;
+  getStories: () => Promise<Story[]>;
 
-  createScene: (scene: WithoutId<Scene>) => Awaited<Scene>;
-  updateScene: (scene: Scene) => Awaited<Scene>;
-  deleteScene: (id: number) => Awaited<void>;
-  getScene: (id: number) => Awaited<Scene>;
-  getScenes: () => Awaited<Scene[]>;
+  createScene: (scene: WithoutId<Scene>) => Promise<Scene>;
+  updateScene: (scene: Scene) => Promise<Scene>;
+  deleteScene: (id: number) => Promise<void>;
+  getScene: (id: number) => Promise<Scene>;
+  getScenes: () => Promise<Scene[]>;
 
   createStoryProgress: (
     progress: WithoutId<StoryProgress>
-  ) => Awaited<StoryProgress>;
-  updateStoryProgress: (progress: StoryProgress) => Awaited<StoryProgress>;
-  deleteStoryProgress: (id: number) => Awaited<void>;
-  getStoryProgress: (id: number) => Awaited<StoryProgress>;
-  getStoryProgresses: () => Awaited<StoryProgress[]>;
+  ) => Promise<StoryProgress>;
+  updateStoryProgress: (progress: StoryProgress) => Promise<StoryProgress>;
+  deleteStoryProgress: (id: number) => Promise<void>;
+  getStoryProgress: (id: number) => Promise<StoryProgress>;
+  getStoryProgresses: () => Promise<StoryProgress[]>;
 };
