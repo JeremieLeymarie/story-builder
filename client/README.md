@@ -1,30 +1,73 @@
-# React + TypeScript + Vite
+# Dev guide
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Git workflow
 
-Currently, two official plugins are available:
+The usual workflow should look like this:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. Choosing an issue in the `ready` column in Github Project.
+2. Creating a branch for this issue. You can do this either by checking out locally or by using the built-in *create a branch* button in Github Project.
+3. Resolving the issue locally.
+4. Creating a Pull Request (PR) via the Github interface and assigning your peers to review your work.
+5. Once the PR is validated by at least one other dev, merging the branch into the main branch.
 
-## Expanding the ESLint configuration
+## Local development
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### Requirements
 
-- Configure the top-level `parserOptions` property like this:
+You need on your system:
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+* Bun
+* Docker
+* Python 3
+  
+### Client
+
+Typescript execution & package management is handled by **bun**.
+
+In the `client` folder
+
+#### Install the dependencies
+
+```bash
+bun install
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+#### Run the client
+
+```bash
+bun run dev
+```
+
+### Server
+
+In the `server` folder
+
+#### Activate virtual env
+
+```bash
+source venv/bin/activate
+```
+
+#### Install the modules
+
+```bash
+pip3 install -r requirements.txt
+```
+
+#### Run the API
+
+```bash
+fastapi run main.py
+```
+
+### Database
+
+The remote database is mongodb. It is dockerized so you don't have to install locally.
+
+```bash
+docker compose up
+```
+
+## Project architecture
+
+![alt text](archi.png)
