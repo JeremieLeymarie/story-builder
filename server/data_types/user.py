@@ -16,7 +16,5 @@ class User(BaseModel):
     email: str
     username: str
 
-class UserWithId(BaseModel):
+class UserWithId(User):
     id: str
-    email: str
-    username: str
