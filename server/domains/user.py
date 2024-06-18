@@ -1,33 +1,34 @@
 from utils.connect import get_db
+from utils.format import format
 from crypt import crypt
 import datetime
 from hmac import compare_digest as compare_hash
 from data_types.user import CreateUserInput, LoginUserInput , User,UserWithId
 
 
-class User:
+class UserDomain:
 
     def __init__(self) -> None:
         self.db = get_db()
 
     def create(self , user : CreateUserInput) -> UserWithId:
-        is_username_or_email_taken = self.db['users'].find(
+        user_count = self.db['users'].count_documents(
             {"$or": [{"username": user.username}, {"email": user.email}]})
-        if len(list(is_username_or_email_taken)) > 0:
-            raise Exception("email taken or username is taken")
+        if user_count > 0:
+            raise Exception(403,"email taken or username is taken")
 
         user.password = crypt(user.password)
         date = datetime.datetime.now().isoformat()
-        userDocument: dict = dict(user)
-        userDocument['createdAt'] = date
-        userDocument['lastUpdatedAt'] = date
-        result = self.db["users"].insert_one(dict(userDocument))
-        userDocument['_id'] = str(result.inserted_id)
-        del userDocument['password']
+        user_document: dict = dict(user)
+        user_document['createdAt'] = date
+        user_document['lastUpdatedAt'] = date
+        result = self.db["users"].insert_one(dict(user_document))
+        user_document['_id'] = str(result.inserted_id)
+        del user_document['password']
         if not result.inserted_id:
-            raise Exception("insert failed")
+            raise Exception(500,"user creation failed")
 
-        return userDocument
+        return user_document
 
     
     def authentify(self, input: LoginUserInput) -> User:
@@ -35,13 +36,11 @@ class User:
             {'$or': [{'username': input.usernameOrEmail}, {'email': input.usernameOrEmail}]})
 
         if not user:
-            raise {"error":"user not found"}
+            raise Exception(401,"user not found")
 
         password_match = compare_hash(
             crypt(input.password, user["password"]), user["password"])
         if not password_match:
-            raise {"error":"invalid password"}
-
-        user["id"] = str(user["_id"])
-        del user["_id"]
+            raise Exception(401,"invalid password")
+        user = format(user)
         return user

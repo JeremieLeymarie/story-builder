@@ -1,0 +1,4 @@
+fastapi==0.111.0
+pydantic==2.7.4
+pymongo==4.7.3
+python-dotenv==1.0.1
