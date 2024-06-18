@@ -32,6 +32,11 @@ export const Home = () => {
             Build-your-own
           </Button>
         </Link>
+        <Link to="/whiteboard">
+          <Button variant="default" className="w-[200px]">
+            Whiteboard
+          </Button>
+        </Link>
       </CardContent>
       <CardFooter>
         <p>Any questions? Too bad.</p>

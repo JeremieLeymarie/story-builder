@@ -11,12 +11,18 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as WhiteboardImport } from './routes/whiteboard'
 import { Route as GameImport } from './routes/game'
 import { Route as IndexImport } from './routes/index'
 import { Route as BuilderStoriesImport } from './routes/builder/stories'
 import { Route as BuilderStoryIdImport } from './routes/builder/$storyId'
 
 // Create/Update Routes
+
+const WhiteboardRoute = WhiteboardImport.update({
+  path: '/whiteboard',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const GameRoute = GameImport.update({
   path: '/game',
@@ -56,6 +62,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GameImport
       parentRoute: typeof rootRoute
     }
+    '/whiteboard': {
+      id: '/whiteboard'
+      path: '/whiteboard'
+      fullPath: '/whiteboard'
+      preLoaderRoute: typeof WhiteboardImport
+      parentRoute: typeof rootRoute
+    }
     '/builder/$storyId': {
       id: '/builder/$storyId'
       path: '/builder/$storyId'
@@ -78,6 +91,7 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
   GameRoute,
+  WhiteboardRoute,
   BuilderStoryIdRoute,
   BuilderStoriesRoute,
 })
@@ -92,6 +106,7 @@ export const routeTree = rootRoute.addChildren({
       "children": [
         "/",
         "/game",
+        "/whiteboard",
         "/builder/$storyId",
         "/builder/stories"
       ]
@@ -101,6 +116,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/game": {
       "filePath": "game.tsx"
+    },
+    "/whiteboard": {
+      "filePath": "whiteboard.tsx"
     },
     "/builder/$storyId": {
       "filePath": "builder/$storyId.tsx"
