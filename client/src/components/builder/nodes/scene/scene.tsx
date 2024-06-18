@@ -6,7 +6,8 @@ import {
   CardTitle,
 } from "@/design-system/primitives/card";
 import { Handle, NodeProps, Position } from "reactflow";
-import { SceneEditor } from "./scene-editor";
+import { SceneEditor } from "../../scene-editor";
+import { EditIcon } from "lucide-react";
 
 export type SceneNodeProps = NodeProps<{
   title: string;
@@ -23,7 +24,11 @@ export const SceneNode = ({
       <CardHeader>
         <div className="flex justify-between">
           <CardTitle>{title}</CardTitle>
-          <SceneEditor title={title} content={content} />
+          <SceneEditor
+            defaultValues={{ title, content }}
+            trigger={<EditIcon />}
+            onSave={() => {}}
+          />
         </div>
         <CardDescription>{content}</CardDescription>
       </CardHeader>

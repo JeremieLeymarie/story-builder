@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/design-system/primitives/card";
 import { Link } from "@tanstack/react-router";
+import { LayoutTemplateIcon } from "lucide-react";
 
 export const Home = () => {
   return (
@@ -17,19 +18,19 @@ export const Home = () => {
         <CardDescription>Welcome to story-builder!</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
-        <Link to="/stories">
+        {/* <Link to="/stories">
           <Button variant="default" className="w-[200px]">
             Store
           </Button>
-        </Link>
+        </Link> */}
         <Link to="/game">
           <Button variant="default" className="w-[200px]">
             Play
           </Button>
         </Link>
-        <Link to="/builder">
+        <Link to="/builder/stories">
           <Button variant="default" className="w-[200px]">
-            Build-your-own
+            <LayoutTemplateIcon /> &nbsp; Build-your-own
           </Button>
         </Link>
       </CardContent>

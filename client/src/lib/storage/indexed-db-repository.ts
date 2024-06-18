@@ -1,5 +1,5 @@
 import { WithoutId } from "@/types";
-import { Story, db } from "./dexie-db";
+import { Scene, Story, db } from "./dexie-db";
 import { IndexedDBRepositoryPort } from "./port";
 
 class IndexedDBRepository implements IndexedDBRepositoryPort {
@@ -11,6 +11,17 @@ class IndexedDBRepository implements IndexedDBRepositoryPort {
   async getStories() {
     return await db.stories.toArray();
   }
+
+  async createScene(scene: WithoutId<Scene>) {
+    const id = await db.scenes.add(scene);
+    return { ...scene, id };
+  }
+
+  async updateScene(scene: Scene) {
+    await db.scenes.update(scene.id, scene);
+    return scene;
+  }
+
   // TODO: actually implement other methods
 }
 

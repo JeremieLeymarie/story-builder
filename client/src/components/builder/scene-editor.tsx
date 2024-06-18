@@ -1,4 +1,3 @@
-import { EditIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -21,6 +20,7 @@ import {
   DialogTrigger,
   Textarea,
 } from "@/design-system/primitives";
+import { ReactNode } from "@tanstack/react-router";
 
 const schema = z.object({
   title: z
@@ -34,31 +34,35 @@ const schema = z.object({
 });
 type Schema = z.infer<typeof schema>;
 
-type Props = { title: string; content: string };
+type Props = {
+  defaultValues?: { title?: string; content?: string };
+  trigger: ReactNode;
+  onSave: (input: Schema) => void;
+};
 
-export const SceneEditor = ({ title, content }: Props) => {
+export const SceneEditor = ({ defaultValues, trigger, onSave }: Props) => {
   const form = useForm<Schema>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      title,
-      content,
-    },
+    defaultValues,
   });
 
-  const submit = useCallback((values: Schema) => {
-    // TODO: actual do something
-    console.log(values);
-  }, []);
+  const submit = useCallback(
+    (values: Schema) => {
+      onSave(values);
+    },
+    [onSave]
+  );
 
   return (
     <Dialog>
-      <DialogTrigger>
-        {/* TODO: show only on hover */}
-        <EditIcon />
-      </DialogTrigger>
+      <DialogTrigger>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit scene [{title}]</DialogTitle>
+          {defaultValues ? (
+            <DialogTitle>Edit scene [{defaultValues.title}]</DialogTitle>
+          ) : (
+            <DialogTitle>New scene</DialogTitle>
+          )}
           <DialogDescription>{}</DialogDescription>
         </DialogHeader>
         <Form {...form}>

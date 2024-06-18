@@ -1,4 +1,4 @@
-import { BuilderHome } from "@/components/builder/builder-home";
+import { BuilderStories } from "@/components/builder/builder-stories";
 import { ErrorMessage } from "@/design-system/components/error-message";
 import { getRepository } from "@/lib/storage/indexed-db-repository";
 import { createFileRoute } from "@tanstack/react-router";
@@ -8,7 +8,7 @@ const Component = () => {
   const stories = useLiveQuery(() => getRepository().getStories());
 
   return stories ? (
-    <BuilderHome stories={stories} />
+    <BuilderStories stories={stories} />
   ) : (
     <ErrorMessage text="Could not get stories" />
   );

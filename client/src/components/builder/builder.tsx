@@ -10,6 +10,8 @@ import ReactFlow, {
 } from "reactflow";
 import { BuilderNode } from "./types";
 import { SceneNode } from "./nodes/scene/scene";
+import { useBuilderKeyboard } from "./use-builder-keyboard";
+import { Toolbar } from "./toolbar";
 
 const initialNodes: BuilderNode[] = [
   {
@@ -41,9 +43,13 @@ const initialEdges = [];
 
 const nodeTypes = { scene: SceneNode };
 
-export const Builder = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+type BuilderProps = { storyId: number };
+
+export const Builder = ({ storyId }: BuilderProps) => {
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
+  useBuilderKeyboard({});
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
@@ -51,7 +57,8 @@ export const Builder = () => {
   );
 
   return (
-    <div className="w-full h-full border">
+    <div className="w-full h-full border flex">
+      <Toolbar storyId={storyId} />
       <ReactFlow
         nodeTypes={nodeTypes}
         nodes={nodes}

@@ -3,7 +3,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/design-system/primitives";
@@ -18,7 +17,7 @@ type BuilderHomeProps = {
   stories: Story[];
 };
 
-export const BuilderHome = ({ stories }: BuilderHomeProps) => {
+export const BuilderStories = ({ stories }: BuilderHomeProps) => {
   const navigate = useNavigate();
   // TODO: fetch stories
 
