@@ -1,5 +1,5 @@
 from utils.connect import get_db
-from server.utils.format_id import format_id
+from utils.format_id import format_id
 from crypt import crypt
 import datetime
 from hmac import compare_digest as compare_hash
