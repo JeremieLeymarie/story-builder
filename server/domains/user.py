@@ -1,5 +1,5 @@
 from utils.connect import get_db
-from utils.format import format
+from server.utils.format_id import format_id
 from crypt import crypt
 import datetime
 from hmac import compare_digest as compare_hash
@@ -42,5 +42,5 @@ class UserDomain:
             crypt(input.password, user["password"]), user["password"])
         if not password_match:
             raise Exception(401,"invalid password")
-        user = format(user)
+        user = format_id(user)
         return user
