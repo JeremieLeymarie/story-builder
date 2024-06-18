@@ -1,41 +1,53 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from domains.user import UserDomain
+from data_types.user import CreateUserInput, LoginUserInput
 
 app = FastAPI()
 
 origins = [
-    "http://localhost:3000",
+    "http://localhost:5173",
 ]
 
 app.add_middleware(
+    CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-@app.post('/user/login')
-async def post_login(data: str):
+@app.post('/user/login',status_code=200)
+async def post_session(data: LoginUserInput):
     try:
-        result = "result"
-    except Exception as err:
-        result = err
-    finally:
+        result = UserDomain().authentify(data)
         return result
+    except Exception as err:
+        raise HTTPException(
+            status_code=err.args[0],
+            detail=str(err.args[1]),
+        )
 
-@app.post('/user/register')
-async def post_register(data : str):
+
+@app.post('/user/register',status_code=201)
+async def post_user(data: CreateUserInput):
     try:
-        result = "result"
-    except Exception as err:
-        result = err
-    finally:
+        result = UserDomain().create(data)
         return result
+    except Exception as err:
+        raise HTTPException(
+            status_code=err.args[0],
+            detail=str(err.args[1]),
+        )
 
-@app.post('/api/builder/save/game')
+
+@app.post('/api/builder/save/game',status_code=200)
 async def post_builder_save(data : str):
     try:
         result = "result"
-    except Exception as err:
-        result = err
-    finally:
         return result
+    except Exception as err:
+        raise HTTPException(
+            status_code=err.args[0],
+            detail=str(err.args[1]),
+        )
