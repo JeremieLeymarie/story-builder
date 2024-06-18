@@ -31,7 +31,7 @@ const schema = z.object({
   description: z
     .string()
     .min(10, { message: "Description must be at least 10 characters long" }),
-  image: z.string(),
+  image: z.string().url({ message: "Image has to be a valid URL" }),
 });
 
 type Schema = z.infer<typeof schema>;

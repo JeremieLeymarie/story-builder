@@ -1,7 +1,9 @@
 import {
+  Button,
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/design-system/primitives";
@@ -9,9 +11,14 @@ import { CreateStoryForm } from "./create-story-form";
 import { WithoutId } from "@/types";
 import { Story } from "@/lib/storage/dexie-db";
 import { getRepository } from "@/lib/storage/indexed-db-repository";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { MoveRightIcon } from "lucide-react";
 
-export const BuilderHome = () => {
+type BuilderHomeProps = {
+  stories: Story[];
+};
+
+export const BuilderHome = ({ stories }: BuilderHomeProps) => {
   const navigate = useNavigate();
   // TODO: fetch stories
 
@@ -24,8 +31,9 @@ export const BuilderHome = () => {
   };
 
   return (
-    <div className="flex p-4">
-      <Card className="border-dashed max-w-[450px] max-h-[400px]">
+    // TODO: justify-center might not be the best
+    <div className="flex p-4 gap-4 flex-wrap justify-center">
+      <Card className="border-dashed w-[275px] h-[225px]">
         <CardHeader>
           <CardTitle>New story</CardTitle>
           <CardDescription>A new adventure awaits</CardDescription>
@@ -34,7 +42,38 @@ export const BuilderHome = () => {
           <CreateStoryForm onCreate={handleCreateStory} />
         </CardContent>
       </Card>
-      {/* TODO: display stories  */}
+      {stories.map(({ title, description, image, id }) => {
+        return (
+          <Link to="/builder/$storyId" params={{ storyId: id.toString() }}>
+            <Card
+              style={{
+                background: `url('${image}')`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+              className={`w-[275px] h-[225px] group relative`}
+            >
+              <CardHeader>
+                <CardTitle className="bg-gray-50 bg-opacity-75 p-2 rounded-sm">
+                  {title}
+                </CardTitle>
+                <CardDescription className="text-gray-50 overflow-ellipsis overflow-hidden ...">
+                  {description}
+                </CardDescription>
+              </CardHeader>
+              <Link to="/builder/$storyId" params={{ storyId: id.toString() }}>
+                <Button
+                  className={`absolute opacity-0 transition ease-in-out duration-300 group-hover:opacity-100 bottom-4 right-4`}
+                >
+                  Edit &nbsp;{" "}
+                  <MoveRightIcon size="15px" className="animate-bounce" />
+                </Button>
+              </Link>
+            </Card>
+          </Link>
+        );
+      })}
     </div>
   );
 };
