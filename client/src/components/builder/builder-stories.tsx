@@ -25,7 +25,7 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
     const story = await getRepository().createStory(storyData);
     navigate({
       to: "/builder/$storyId",
-      params: { storyId: story.id.toString() },
+      params: { storyId: story.id },
     });
   };
 
@@ -43,7 +43,7 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
       </Card>
       {stories.map(({ title, description, image, id }) => {
         return (
-          <Link to="/builder/$storyId" params={{ storyId: id.toString() }}>
+          <Link to="/builder/$storyId" params={{ storyId: id }}>
             <Card
               style={{
                 background: `url('${image}')`,
@@ -61,7 +61,7 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
                   {description}
                 </CardDescription>
               </CardHeader>
-              <Link to="/builder/$storyId" params={{ storyId: id.toString() }}>
+              <Link to="/builder/$storyId" params={{ storyId: id }}>
                 <Button
                   className={`absolute opacity-0 transition ease-in-out duration-300 group-hover:opacity-100 bottom-4 right-4`}
                 >

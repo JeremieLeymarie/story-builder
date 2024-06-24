@@ -9,10 +9,10 @@ export const Toolbar = ({ storyId }: Props) => {
     <div className="w-[275px] border-r p-2">
       <p className="text-2xl font-semibold text-primary">Tools</p>
       <hr />
-      <div className="mt-2">
+      <div className="mt-2 w-full">
         <SceneEditor
           trigger={
-            <Button variant="outline">
+            <Button variant="outline" className="w-full">
               <BookOpenTextIcon />
               &nbsp; Add a scene
             </Button>

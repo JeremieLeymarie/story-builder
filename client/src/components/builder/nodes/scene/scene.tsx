@@ -8,32 +8,33 @@ import {
 import { Handle, NodeProps, Position } from "reactflow";
 import { SceneEditor } from "../../scene-editor";
 import { EditIcon } from "lucide-react";
+import { getRepository } from "@/lib/storage/indexed-db-repository";
+import { SceneProps } from "../../types";
 
-export type SceneNodeProps = NodeProps<{
-  title: string;
-  content: string;
-  actions: { text: string }[];
-}>;
+export type SceneNodeProps = NodeProps<SceneProps>;
 
-export const SceneNode = ({
-  id,
-  data: { title, actions, content },
-}: SceneNodeProps) => {
+export const SceneNode = ({ id, data }: SceneNodeProps) => {
   return (
     <Card className="max-w-[400px]">
       <CardHeader>
         <div className="flex justify-between">
-          <CardTitle>{title}</CardTitle>
+          <CardTitle>{data.title}</CardTitle>
           <SceneEditor
-            defaultValues={{ title, content }}
+            defaultValues={data}
             trigger={<EditIcon />}
-            onSave={() => {}}
+            onSave={(values) =>
+              getRepository().updateScene({
+                ...data,
+                ...values,
+                actions: [],
+              })
+            }
           />
         </div>
-        <CardDescription>{content}</CardDescription>
+        <CardDescription>{data.content}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
-        {actions.map(({ text }, i) => (
+        {data.actions.map(({ text }, i) => (
           <div className="border p-2 relative border-primary">
             {text}
             <Handle

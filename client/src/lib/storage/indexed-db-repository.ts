@@ -22,6 +22,12 @@ class IndexedDBRepository implements IndexedDBRepositoryPort {
     return scene;
   }
 
+  async getScenes(storyId: number) {
+    return await db.scenes
+      .filter((scene) => scene.storyId === storyId)
+      .toArray();
+  }
+
   // TODO: actually implement other methods
 }
 

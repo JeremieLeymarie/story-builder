@@ -2,7 +2,9 @@ import { useCallback } from "react";
 import ReactFlow, {
   Background,
   BackgroundVariant,
+  Connection,
   Controls,
+  Edge,
   MiniMap,
   addEdge,
   useEdgesState,
@@ -10,49 +12,29 @@ import ReactFlow, {
 } from "reactflow";
 import { BuilderNode } from "./types";
 import { SceneNode } from "./nodes/scene/scene";
-import { useBuilderKeyboard } from "./use-builder-keyboard";
 import { Toolbar } from "./toolbar";
-
-const initialNodes: BuilderNode[] = [
-  {
-    id: "1",
-    position: { x: 0, y: 0 },
-    type: "scene",
-    data: {
-      title: "Scene #1",
-      content:
-        "You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.You're at a crossroads. On the left, the forest, on the right, the village.",
-      actions: [
-        { text: "Go into the forest" },
-        { text: "Walk towards the village" },
-      ],
-    },
-  },
-  {
-    id: "2",
-    position: { x: 300, y: 0 },
-    type: "scene",
-    data: {
-      title: "Forest",
-      content: "You're in a forest",
-      actions: [{ text: "Go back to the crossroads" }],
-    },
-  },
-];
-const initialEdges = [];
+import { Scene } from "@/lib/storage/dexie-db";
 
 const nodeTypes = { scene: SceneNode };
 
-type BuilderProps = { storyId: number };
+type BuilderProps = { storyId: number; scenes: Scene[] };
 
-export const Builder = ({ storyId }: BuilderProps) => {
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+export const Builder = ({ storyId, scenes }: BuilderProps) => {
+  // TODO: add position to db
+  // TODO: use adapter
+  const sceneNodes: BuilderNode[] = scenes.map((scene) => ({
+    id: scene.id.toString(),
+    position: { x: 0, y: 0 },
+    type: "scene",
+    data: scene,
+  }));
+
+  console.log(sceneNodes);
+  const [nodes, , onNodesChange] = useNodesState(sceneNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  useBuilderKeyboard({});
-
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
+    (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
   );
 

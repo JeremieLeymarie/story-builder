@@ -16,7 +16,7 @@ export type IndexedDBRepositoryPort = {
   updateScene: (scene: Scene) => Promise<Scene>;
   deleteScene: (id: number) => Promise<void>;
   getScene: (id: number) => Promise<Scene>;
-  getScenes: () => Promise<Scene[]>;
+  getScenes: (storyId: number) => Promise<Scene[]>;
 
   createStoryProgress: (
     progress: WithoutId<StoryProgress>
