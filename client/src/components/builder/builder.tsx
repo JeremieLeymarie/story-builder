@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import ReactFlow, {
   Background,
   BackgroundVariant,
@@ -22,16 +22,23 @@ type BuilderProps = { storyId: number; scenes: Scene[] };
 export const Builder = ({ storyId, scenes }: BuilderProps) => {
   // TODO: add position to db
   // TODO: use adapter
-  const sceneNodes: BuilderNode[] = scenes.map((scene) => ({
-    id: scene.id.toString(),
-    position: { x: 0, y: 0 },
-    type: "scene",
-    data: scene,
-  }));
+  const sceneNodes: BuilderNode[] = useMemo(
+    () =>
+      scenes.map((scene) => ({
+        id: scene.id.toString(),
+        position: { x: 0, y: 0 },
+        type: "scene",
+        data: scene,
+      })),
+    [scenes]
+  );
 
-  console.log(sceneNodes);
-  const [nodes, , onNodesChange] = useNodesState(sceneNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState(sceneNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
+  useEffect(() => {
+    setNodes(sceneNodes);
+  }, [sceneNodes, setNodes]);
 
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
