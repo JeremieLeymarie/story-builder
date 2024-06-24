@@ -26,6 +26,7 @@ export type Scene = {
   title: string;
   content: string;
   actions: Action[];
+  builderParams: { position: { x: number; y: number } };
 };
 
 export type StoryProgress = {
@@ -49,7 +50,7 @@ export const db = new Dexie("story-builder") as Dexie & {
 db.version(1).stores({
   users: "++id, username, password",
   stories: "++id, authorId, title, description, image, status",
-  scenes: "++id, storyId, title, content, actions",
+  scenes: "++id, storyId, title, content, actions, builderParams",
   storyProgresses:
     "++id, storyId, currentSceneId, character, inventory, history",
 });

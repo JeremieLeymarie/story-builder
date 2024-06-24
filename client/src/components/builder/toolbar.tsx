@@ -18,7 +18,12 @@ export const Toolbar = ({ storyId }: Props) => {
             </Button>
           }
           onSave={(values) =>
-            getRepository().createScene({ ...values, actions: [], storyId })
+            getRepository().createScene({
+              ...values,
+              actions: [],
+              storyId,
+              builderParams: { position: { x: 0, y: 0 } },
+            })
           }
         />
       </div>

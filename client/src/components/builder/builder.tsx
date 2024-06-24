@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, MouseEvent } from "react";
 import ReactFlow, {
   Background,
   BackgroundVariant,
@@ -6,6 +6,7 @@ import ReactFlow, {
   Controls,
   Edge,
   MiniMap,
+  Node,
   addEdge,
   useEdgesState,
   useNodesState,
@@ -14,6 +15,7 @@ import { BuilderNode } from "./types";
 import { SceneNode } from "./nodes/scene/scene";
 import { Toolbar } from "./toolbar";
 import { Scene } from "@/lib/storage/dexie-db";
+import { getRepository } from "@/lib/storage/indexed-db-repository";
 
 const nodeTypes = { scene: SceneNode };
 
@@ -26,7 +28,7 @@ export const Builder = ({ storyId, scenes }: BuilderProps) => {
     () =>
       scenes.map((scene) => ({
         id: scene.id.toString(),
-        position: { x: 0, y: 0 },
+        position: scene.builderParams.position,
         type: "scene",
         data: scene,
       })),
@@ -45,6 +47,14 @@ export const Builder = ({ storyId, scenes }: BuilderProps) => {
     [setEdges]
   );
 
+  // TODO: use better typing
+  const onNodeMove = useCallback((_: MouseEvent, node: Node) => {
+    getRepository().updateScene({
+      ...node.data,
+      builderParams: { position: node.position },
+    });
+  }, []);
+
   return (
     <div className="w-full h-full border flex">
       <Toolbar storyId={storyId} />
@@ -55,6 +65,7 @@ export const Builder = ({ storyId, scenes }: BuilderProps) => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onNodeDragStop={onNodeMove}
         minZoom={0.05}
       >
         <Controls />

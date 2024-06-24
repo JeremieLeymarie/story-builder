@@ -13,11 +13,11 @@ import { SceneProps } from "../../types";
 
 export type SceneNodeProps = NodeProps<SceneProps>;
 
-export const SceneNode = ({ id, data }: SceneNodeProps) => {
+export const SceneNode = ({ id, data, yPos, xPos }: SceneNodeProps) => {
   return (
-    <Card className="max-w-[400px]">
+    <Card className="w-[375px]">
       <CardHeader>
-        <div className="flex justify-between">
+        <div className="flex justify-between gap-1">
           <CardTitle>{data.title}</CardTitle>
           <SceneEditor
             defaultValues={data}
@@ -27,6 +27,7 @@ export const SceneNode = ({ id, data }: SceneNodeProps) => {
                 ...data,
                 ...values,
                 actions: [],
+                builderParams: { position: { x: xPos, y: yPos } },
               })
             }
           />
