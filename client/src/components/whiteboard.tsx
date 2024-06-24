@@ -1,11 +1,9 @@
 import { Excalidraw } from "@excalidraw/excalidraw";
 
-export function Draw() {
+export function DrawingBoard() {
   return (
-    <>
-      <div style={{ height: "90vh" }}>
-        <Excalidraw />
-      </div>
-    </>
+    <div className="h-[90vh]">
+      <Excalidraw />
+    </div>
   );
 }
