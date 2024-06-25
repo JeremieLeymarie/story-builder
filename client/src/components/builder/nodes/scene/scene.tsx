@@ -26,7 +26,6 @@ export const SceneNode = ({ id, data, yPos, xPos }: SceneNodeProps) => {
               getRepository().updateScene({
                 ...data,
                 ...values,
-                actions: [],
                 builderParams: { position: { x: xPos, y: yPos } },
               })
             }
