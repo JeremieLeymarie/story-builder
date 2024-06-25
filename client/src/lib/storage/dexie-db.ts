@@ -17,7 +17,7 @@ export type Story = {
 
 export type Action = {
   text: string;
-  sceneId: number;
+  sceneId?: number;
 };
 
 export type Scene = {
