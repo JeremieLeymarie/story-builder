@@ -140,7 +140,7 @@ export const SceneEditor = ({ defaultValues, trigger, onSave }: Props) => {
                 Buttons that allow the player to move in your story
               </FormDescription>
               {fields.map((field, index) => (
-                <FormItem className="my-4">
+                <FormItem className="my-4" key={field.id}>
                   <div className="flex items-center gap-2">
                     <Input
                       placeholder="Go to the village"
