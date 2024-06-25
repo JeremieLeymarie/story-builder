@@ -48,9 +48,15 @@ type Props = {
   defaultValues?: { title?: string; content?: string; actions: Action[] };
   trigger: ReactNode;
   onSave: (input: Schema) => void;
+  triggerClassName?: string;
 };
 
-export const SceneEditor = ({ defaultValues, trigger, onSave }: Props) => {
+export const SceneEditor = ({
+  defaultValues,
+  trigger,
+  onSave,
+  triggerClassName,
+}: Props) => {
   const form = useForm<Schema>({
     resolver: zodResolver(schema),
     defaultValues,
@@ -72,7 +78,7 @@ export const SceneEditor = ({ defaultValues, trigger, onSave }: Props) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>{trigger}</DialogTrigger>
+      <DialogTrigger className={triggerClassName}>{trigger}</DialogTrigger>
       {/* TODO: improve scrollbar, maybe by using the ScrollArea ShadCN UI component */}
       <DialogContent className="max-h-[calc(100vh-100px)] overflow-y-scroll">
         <DialogHeader>

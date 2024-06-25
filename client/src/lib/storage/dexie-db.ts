@@ -8,7 +8,7 @@ export type User = {
 
 export type Story = {
   id: number;
-  authorId: number;
+  authorId?: number;
   title: string;
   description: string;
   image: string;
