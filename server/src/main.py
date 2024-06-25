@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from domains.user import UserDomain
 from data_types.user import CreateUserInput, LoginUserInput
+from domains.user import UserDomain
 
 app = FastAPI()
 
@@ -17,7 +17,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post('/user/login',status_code=200)
+
+@app.post("/user/login", status_code=200)
 async def post_session(data: LoginUserInput):
     try:
         result = UserDomain().authentify(data)
@@ -29,7 +30,7 @@ async def post_session(data: LoginUserInput):
         )
 
 
-@app.post('/user/register',status_code=201)
+@app.post("/user/register", status_code=201)
 async def post_user(data: CreateUserInput):
     try:
         result = UserDomain().create(data)
@@ -41,8 +42,8 @@ async def post_user(data: CreateUserInput):
         )
 
 
-@app.post('/api/builder/save/game',status_code=200)
-async def post_builder_save(data : str):
+@app.post("/api/builder/save/game", status_code=200)
+async def post_builder_save(data: str):
     try:
         result = "result"
         return result
