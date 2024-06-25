@@ -3,6 +3,8 @@ import { FormDescription } from "../primitives";
 
 export const FormError = ({ children }: PropsWithChildren) => {
   return (
-    <FormDescription className="text-destructive">{children}</FormDescription>
+    <FormDescription className="text-sm font-medium text-destructive">
+      {children}
+    </FormDescription>
   );
 };
