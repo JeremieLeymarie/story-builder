@@ -14,8 +14,15 @@ const nodeTypes = { scene: SceneNode };
 type BuilderProps = { storyId: number; scenes: Scene[] };
 
 export const Builder = ({ storyId, scenes }: BuilderProps) => {
-  const { edges, nodes, onConnect, onEdgesChange, onNodeMove, onNodesChange } =
-    useBuilder({ scenes });
+  const {
+    edges,
+    nodes,
+    onConnect,
+    onEdgesChange,
+    onNodeMove,
+    onNodesChange,
+    onEdgesDelete,
+  } = useBuilder({ scenes });
 
   return (
     <div className="w-full h-full border flex">
@@ -28,6 +35,7 @@ export const Builder = ({ storyId, scenes }: BuilderProps) => {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeDragStop={onNodeMove}
+        onEdgesDelete={onEdgesDelete}
         minZoom={0.05}
       >
         <Controls />

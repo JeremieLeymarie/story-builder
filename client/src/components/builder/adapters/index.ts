@@ -1,5 +1,5 @@
 import { Scene } from "@/lib/storage/dexie-db";
-import { SceneProps } from "./types";
+import { SceneProps } from "../types";
 import { Edge, Node } from "reactflow";
 
 export const sceneToNodeAdapter = (scene: Scene): Node<SceneProps, "scene"> => {
@@ -14,18 +14,17 @@ export const sceneToNodeAdapter = (scene: Scene): Node<SceneProps, "scene"> => {
 };
 
 export const sceneToEdgesAdapter = (scene: Scene): Edge[] => {
-  const edges = (
-    scene.actions.filter((action) => !!action.sceneId) as {
-      text: string;
-      sceneId: number;
-    }[]
-  ).map((action, i) => ({
-    sourceHandle: `${scene.id}-${i}`,
-    source: scene.id.toString(),
-    target: action.sceneId?.toString() ?? null,
-    targetHandle: null,
-    id: `${scene.id}-${i}`,
-  }));
+  const edges = scene.actions
+    .map((action, i) => {
+      return {
+        sourceHandle: `${scene.id}-${i}`,
+        source: scene.id.toString(),
+        target: action.sceneId?.toString() ?? null,
+        targetHandle: null,
+        id: `${scene.id}-${i}`,
+      };
+    })
+    .filter((action) => !!action.target) as Edge[];
   return edges;
 };
 
