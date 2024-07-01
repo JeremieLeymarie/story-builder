@@ -12,7 +12,7 @@ export const useToolbar = ({ storyId }: ToolbarProps) => {
     const data = await getRepository().getStory(storyId);
 
     const res = await fetch(`${API_URL}/api/builder/save/game`, {
-      body: JSON.stringify({ story: data }),
+      body: JSON.stringify(data),
       method: "POST",
       headers: { "Content-Type": "application/json" },
     });
