@@ -52,7 +52,6 @@ export const useBuilderEdges = ({
   const onEdgesDelete = useCallback(
     (edges: Edge[]) => {
       edges.forEach((edge) => {
-        console.log(edge);
         const sceneData = getSceneToUpdate(edge);
         if (!sceneData) {
           // TODO: Add toast

@@ -8,6 +8,10 @@ class IndexedDBRepository implements IndexedDBRepositoryPort {
     return { ...story, id };
   }
 
+  async getStory(id: number) {
+    return (await db.stories.get(id)) ?? null;
+  }
+
   async getStories() {
     return await db.stories.toArray();
   }
