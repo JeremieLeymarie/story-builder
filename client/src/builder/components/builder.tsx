@@ -4,16 +4,16 @@ import ReactFlow, {
   Controls,
   MiniMap,
 } from "reactflow";
-import { SceneNode } from "./nodes/scene/scene";
+import { SceneNode } from "../nodes/scene/scene";
 import { Toolbar } from "./toolbar";
-import { Scene } from "@/lib/storage/dexie-db";
-import { useBuilder } from "./hooks/use-builder";
+import { Scene, Story } from "@/lib/storage/dexie-db";
+import { useBuilder } from "../hooks/use-builder";
 
 const nodeTypes = { scene: SceneNode };
 
-type BuilderProps = { storyId: number; scenes: Scene[] };
+type BuilderProps = { story: Story; scenes: Scene[] };
 
-export const Builder = ({ storyId, scenes }: BuilderProps) => {
+export const Builder = ({ story, scenes }: BuilderProps) => {
   const {
     edges,
     nodes,
@@ -22,11 +22,11 @@ export const Builder = ({ storyId, scenes }: BuilderProps) => {
     onNodeMove,
     onNodesChange,
     onEdgesDelete,
-  } = useBuilder({ scenes });
+  } = useBuilder({ scenes, story });
 
   return (
     <div className="w-full h-full border flex">
-      <Toolbar storyId={storyId} />
+      <Toolbar storyId={story.id} />
       <ReactFlow
         nodeTypes={nodeTypes}
         nodes={nodes}
@@ -37,6 +37,7 @@ export const Builder = ({ storyId, scenes }: BuilderProps) => {
         onNodeDragStop={onNodeMove}
         onEdgesDelete={onEdgesDelete}
         minZoom={0.05}
+        onInit={(instance) => instance.fitView()}
       >
         <Controls />
         <MiniMap />

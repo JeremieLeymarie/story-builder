@@ -11,7 +11,7 @@ export const useToolbar = ({ storyId }: ToolbarProps) => {
     // TODO: handle case where user doesn't have an account
     const data = await getRepository().getStory(storyId);
 
-    const res = await fetch(`${API_URL}/api/builder/save/game`, {
+    await fetch(`${API_URL}/api/builder/save/game`, {
       body: JSON.stringify(data),
       method: "POST",
       headers: { "Content-Type": "application/json" },

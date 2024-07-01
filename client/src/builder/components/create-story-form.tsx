@@ -37,7 +37,7 @@ const schema = z.object({
 type Schema = z.infer<typeof schema>;
 
 type CreateStoryFormProps = {
-  onCreate: (props: WithoutId<Story>) => void;
+  onCreate: (props: Omit<WithoutId<Story>, "firstSceneId">) => void;
 };
 
 export const CreateStoryForm = ({ onCreate }: CreateStoryFormProps) => {

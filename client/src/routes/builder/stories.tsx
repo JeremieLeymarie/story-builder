@@ -1,4 +1,4 @@
-import { BuilderStories } from "@/components/builder/builder-stories";
+import { BuilderStories } from "@/builder/components/builder-stories";
 import { ErrorMessage } from "@/design-system/components/error-message";
 import { getRepository } from "@/lib/storage/indexed-db-repository";
 import { createFileRoute } from "@tanstack/react-router";

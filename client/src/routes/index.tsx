@@ -1,4 +1,4 @@
-import { Home } from "@/components/home";
+import { Home } from "@/home";
 import { createFileRoute } from "@tanstack/react-router";
 
 const Index = () => {
