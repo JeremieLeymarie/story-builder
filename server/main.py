@@ -51,3 +51,14 @@ async def post_builder_save(data : str):
             status_code=err.args[0],
             detail=str(err.args[1]),
         )
+
+@app.post('/api/store',status_code=200)
+async def post_builder_save(data : str):
+    try:
+        result = "result"
+        return result
+    except Exception as err:
+        raise HTTPException(
+            status_code=err.args[0],
+            detail=str(err.args[1]),
+        )
