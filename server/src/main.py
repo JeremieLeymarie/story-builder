@@ -1,9 +1,12 @@
 from http import HTTPStatus
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
-from data_types.user import CreateUserInput, LoginUserInput
 from domains.user import UserDomain
-from data_types.builder import Story
+from data_types.requests import (
+    CreateUserInput,
+    LoginUserInput,
+    SynchronizeBuilderRequestBody,
+)
 from domains.builder import BuilderDomain
 from domains.store import StoreDomain
 
@@ -49,13 +52,13 @@ async def post_user(data: CreateUserInput, response: Response):
 
 
 @app.post("/api/builder/save/game", status_code=HTTPStatus.OK)
-async def post_builder_save(story: Story, response: Response):
+async def post_builder_save(body: SynchronizeBuilderRequestBody, response: Response):
     try:
-        BuilderDomain().save(story)
+        BuilderDomain().save(body.story, body.scenes)
     except Exception as err:
         raise HTTPException(
-            status_code=err.args[0],
-            detail=str(err.args[1]),
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
+            detail=str(err),
         )
 
 @app.get('/api/store/load',status_code=200)

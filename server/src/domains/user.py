@@ -4,7 +4,8 @@ import datetime
 from hmac import compare_digest as compare_hash
 from http import HTTPStatus
 
-from data_types.user import CreateUserInput, LoginUserInput, User, UserWithId
+from data_types.user import User, UserWithId
+from data_types.requests import CreateUserInput, LoginUserInput
 from utils.format_id import format_id
 from utils.db import Database
 

@@ -8,14 +8,16 @@ type ToolbarProps = {
 
 export const useToolbar = ({ storyId }: ToolbarProps) => {
   const synchronize = useCallback(async () => {
-    // TODO: handle case where user doesn't have an account
-    const data = await getRepository().getStory(storyId);
+    const repo = getRepository();
+    const story = await repo.getStory(storyId);
+    const scenes = await repo.getScenes(storyId);
 
     await fetch(`${API_URL}/api/builder/save/game`, {
-      body: JSON.stringify(data),
+      body: JSON.stringify({ story, scenes }),
       method: "POST",
       headers: { "Content-Type": "application/json" },
     });
   }, [storyId]);
+
   return { synchronize };
 };
