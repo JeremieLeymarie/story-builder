@@ -57,7 +57,7 @@ pip3 install -r requirements.txt
 #### Run the API
 
 ```bash
-fastapi run main.py
+fastapi dev src/main.py
 ```
 
 ### Database

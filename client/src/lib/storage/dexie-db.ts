@@ -2,13 +2,15 @@ import Dexie, { type EntityTable } from "dexie";
 
 export type User = {
   id: number;
+  mongoId?: string;
   username?: string;
   password?: string;
 };
 
 export type Story = {
   id: number;
-  authorId: number;
+  mongoId?: string;
+  authorId?: number;
   title: string;
   description: string;
   image: string;
@@ -22,6 +24,7 @@ export type Action = {
 
 export type Scene = {
   id: number;
+  mongoId?: string;
   storyId: number;
   title: string;
   content: string;
@@ -31,6 +34,7 @@ export type Scene = {
 
 export type StoryProgress = {
   id: number;
+  mongoId?: string;
   storyId: number;
   history: number[];
   currentSceneId: number;
@@ -48,9 +52,9 @@ export const db = new Dexie("story-builder") as Dexie & {
 };
 
 db.version(1).stores({
-  users: "++id, username, password",
-  stories: "++id, authorId, title, description, image, status",
-  scenes: "++id, storyId, title, content, actions, builderParams",
+  users: "++id, mongoId, username, password",
+  stories: "++id, mongoId, authorId, title, description, image, status",
+  scenes: "++id, mongoId, storyId, title, content, actions, builderParams",
   storyProgresses:
-    "++id, storyId, currentSceneId, character, inventory, history",
+    "++id, mongoId, storyId, currentSceneId, character, inventory, history",
 });
