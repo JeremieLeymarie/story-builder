@@ -6,16 +6,17 @@ import {
   CardTitle,
 } from "@/design-system/primitives/card";
 import { Handle, NodeProps, Position } from "reactflow";
-import { SceneEditor } from "../../scene-editor";
+import { SceneEditor } from "../../components/editors/scene-editor";
 import { EditIcon } from "lucide-react";
 import { getRepository } from "@/lib/storage/indexed-db-repository";
 import { SceneProps } from "../../types";
+import { cn } from "@/lib/style";
 
 export type SceneNodeProps = NodeProps<SceneProps>;
 
 export const SceneNode = ({ id, data, yPos, xPos }: SceneNodeProps) => {
   return (
-    <Card className="w-[375px]">
+    <Card className={cn("w-[375px]", data.isFirstScene && "bg-primary/60")}>
       <CardHeader>
         <div className="flex justify-between gap-1">
           <CardTitle>{data.title}</CardTitle>
@@ -28,6 +29,16 @@ export const SceneNode = ({ id, data, yPos, xPos }: SceneNodeProps) => {
                 ...values,
                 builderParams: { position: { x: xPos, y: yPos } },
               })
+            }
+            setFirstScene={() =>
+              getRepository()
+                .updateFirstScene(data.storyId, data.id)
+                .then(() => {
+                  // TODO: add success toast
+                })
+                .catch(() => {
+                  // TODO: add error toast
+                })
             }
           />
         </div>

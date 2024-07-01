@@ -24,6 +24,7 @@ import { ReactNode } from "@tanstack/react-router";
 import { Action } from "@/lib/storage/dexie-db";
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { FormError } from "@/design-system/components";
+import { SetFirstSceneSwitch } from "./set-first-scene-switch";
 
 const schema = z.object({
   title: z
@@ -45,9 +46,16 @@ const schema = z.object({
 type Schema = z.infer<typeof schema>;
 
 type Props = {
-  defaultValues?: { title?: string; content?: string; actions: Action[] };
+  defaultValues?: {
+    title?: string;
+    content?: string;
+    actions: Action[];
+    isFirstScene: boolean;
+    id: number;
+  };
   trigger: ReactNode;
   onSave: (input: Schema) => void;
+  setFirstScene?: () => void;
   triggerClassName?: string;
 };
 
@@ -56,6 +64,7 @@ export const SceneEditor = ({
   trigger,
   onSave,
   triggerClassName,
+  setFirstScene,
 }: Props) => {
   const form = useForm<Schema>({
     resolver: zodResolver(schema),
@@ -65,6 +74,8 @@ export const SceneEditor = ({
     name: "actions",
     control: form.control,
   });
+
+  const isEditing = !!defaultValues;
 
   const [open, setOpen] = useState(false);
 
@@ -82,13 +93,19 @@ export const SceneEditor = ({
       {/* TODO: improve scrollbar, maybe by using the ScrollArea ShadCN UI component */}
       <DialogContent className="max-h-[calc(100vh-100px)] overflow-y-scroll">
         <DialogHeader>
-          {defaultValues ? (
-            <DialogTitle>Edit scene [{defaultValues.title}]</DialogTitle>
+          {isEditing ? (
+            <DialogTitle>Edit scene '{defaultValues.title}'</DialogTitle>
           ) : (
             <DialogTitle>New scene</DialogTitle>
           )}
           <DialogDescription>{}</DialogDescription>
         </DialogHeader>
+        {isEditing && setFirstScene && (
+          <SetFirstSceneSwitch
+            isFirstScene={!!defaultValues?.isFirstScene}
+            setFirstScene={setFirstScene}
+          />
+        )}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(submit)} className="space-y-8">
             <FormField

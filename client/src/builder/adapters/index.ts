@@ -1,13 +1,19 @@
-import { Scene } from "@/lib/storage/dexie-db";
+import { Scene, Story } from "@/lib/storage/dexie-db";
 import { SceneProps } from "../types";
 import { Edge, Node } from "reactflow";
 
-export const sceneToNodeAdapter = (scene: Scene): Node<SceneProps, "scene"> => {
+export const sceneToNodeAdapter = ({
+  scene,
+  story,
+}: {
+  scene: Scene;
+  story: Story;
+}): Node<SceneProps, "scene"> => {
   const node = {
     id: scene.id.toString(),
     position: scene.builderParams.position,
     type: "scene" as const,
-    data: scene,
+    data: { ...scene, isFirstScene: scene.id === story.firstSceneId },
   };
 
   return node;
@@ -28,12 +34,16 @@ export const sceneToEdgesAdapter = (scene: Scene): Edge[] => {
   return edges;
 };
 
-export const scenesToNodesAndEdgesAdapter = (
-  scenes: Scene[]
-): [Node<SceneProps, "scene">[], Edge[]] => {
+export const scenesToNodesAndEdgesAdapter = ({
+  scenes,
+  story,
+}: {
+  scenes: Scene[];
+  story: Story;
+}): [Node<SceneProps, "scene">[], Edge[]] => {
   return scenes.reduce(
     (acc, scene) => {
-      const node = sceneToNodeAdapter(scene);
+      const node = sceneToNodeAdapter({ scene, story });
       const edges = sceneToEdgesAdapter(scene);
 
       const nodes = [...acc[0], node];

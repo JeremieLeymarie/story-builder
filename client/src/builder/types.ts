@@ -6,6 +6,7 @@ export type SceneProps = {
   actions: { text: string; sceneId?: number }[];
   id: number;
   storyId: number;
+  isFirstScene: boolean;
 };
 
 export type BuilderNode = Node<SceneProps, "scene">;

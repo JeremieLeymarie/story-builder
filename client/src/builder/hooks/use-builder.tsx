@@ -1,16 +1,21 @@
-import { Scene } from "@/lib/storage/dexie-db";
+import { Scene, Story } from "@/lib/storage/dexie-db";
 import { getRepository } from "@/lib/storage/indexed-db-repository";
 import { useMemo, useEffect, useCallback, MouseEvent } from "react";
 import { useNodesState, useEdgesState, Node } from "reactflow";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
 import { useBuilderEdges } from "./use-builder-edges";
 
-export const useBuilder = ({ scenes }: { scenes: Scene[] }) => {
+export const useBuilder = ({
+  scenes,
+  story,
+}: {
+  scenes: Scene[];
+  story: Story;
+}) => {
   const [sceneNodes, sceneEdges] = useMemo(
-    () => scenesToNodesAndEdgesAdapter(scenes),
-    [scenes]
+    () => scenesToNodesAndEdgesAdapter({ scenes, story }),
+    [scenes, story]
   );
-
   const [nodes, setNodes, onNodesChange] = useNodesState(sceneNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(sceneEdges);
 

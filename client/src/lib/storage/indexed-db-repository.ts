@@ -2,6 +2,7 @@ import { WithoutId } from "@/types";
 import { Scene, Story, db } from "./dexie-db";
 import { IndexedDBRepositoryPort } from "./port";
 
+// TODO: implement missing methods
 class IndexedDBRepository implements IndexedDBRepositoryPort {
   async createStory(story: WithoutId<Story>) {
     const id = await db.stories.add(story);
@@ -14,6 +15,15 @@ class IndexedDBRepository implements IndexedDBRepositoryPort {
 
   async getStories() {
     return await db.stories.toArray();
+  }
+
+  async updateStory(story: Story) {
+    await db.stories.update(story.id, story);
+    return story;
+  }
+
+  async updateFirstScene(storyId: number, sceneId: number) {
+    await db.stories.update(storyId, { firstSceneId: sceneId });
   }
 
   async createScene(scene: WithoutId<Scene>) {
