@@ -1,8 +1,8 @@
 import { Button } from "@/design-system/primitives";
 import { BookOpenTextIcon, RefreshCcwIcon } from "lucide-react";
-import { SceneEditor } from "./scene-editor";
+import { SceneEditor } from "./editors/scene-editor";
 import { getRepository } from "@/lib/storage/indexed-db-repository";
-import { useToolbar } from "./hooks/use-toolbar";
+import { useToolbar } from "../hooks/use-toolbar";
 
 type Props = { storyId: number };
 export const Toolbar = ({ storyId }: Props) => {

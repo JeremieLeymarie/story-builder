@@ -7,27 +7,17 @@ import {
   CardTitle,
 } from "@/design-system/primitives";
 import { CreateStoryForm } from "./create-story-form";
-import { WithoutId } from "@/types";
 import { Story } from "@/lib/storage/dexie-db";
-import { getRepository } from "@/lib/storage/indexed-db-repository";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { MoveRightIcon } from "lucide-react";
+import { useBuilderStories } from "../hooks/use-builder-stories";
 
 type BuilderHomeProps = {
   stories: Story[];
 };
 
 export const BuilderStories = ({ stories }: BuilderHomeProps) => {
-  const navigate = useNavigate();
-  // TODO: fetch stories
-
-  const handleCreateStory = async (storyData: WithoutId<Story>) => {
-    const story = await getRepository().createStory(storyData);
-    navigate({
-      to: "/builder/$storyId",
-      params: { storyId: story.id },
-    });
-  };
+  const { handleCreateStory } = useBuilderStories();
 
   return (
     // TODO: justify-center might not be the best
