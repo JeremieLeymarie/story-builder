@@ -1,11 +1,24 @@
 import { Store } from "@/components/store";
+import { Offline } from "@/components/Offline";
 import { ErrorMessage } from "@/design-system/components/error-message";
-import { getRepository } from "@/lib/storage/indexed-db-repository";
 import { createFileRoute } from "@tanstack/react-router";
-import { useLiveQuery } from "dexie-react-hooks";
+import { Story } from "@/lib/storage/dexie-db";
+import { useEffect, useState } from "react";
+import { API_URL } from "@/constants";
+import { useIsOnline } from "@/components/builder/hooks/use-isOnline";
 
-const Component = () => {
-  const stories = useLiveQuery(() => getRepository().getStories());
+const StoreComponent = () => {
+  const [stories, setStories] = useState<Story[]>();
+
+  useEffect(() => {
+    async function getStories() {
+      const stories = await fetch(`${API_URL}/api/store/load`, {
+        method: "GET",
+      });
+      setStories(await stories.json());
+    }
+    getStories();
+  }, []);
 
   return stories ? (
     <Store stories={stories} />
@@ -14,6 +27,17 @@ const Component = () => {
   );
 };
 
+const OfflineComponent = () => {
+  return <Offline />;
+};
+
 export const Route = createFileRoute("/store")({
-  component: () => <Component />,
+  component: () => {
+    const isOnline = useIsOnline();
+    if (isOnline) {
+      return <StoreComponent />;
+    } else {
+      return <OfflineComponent />;
+    }
+  },
 });

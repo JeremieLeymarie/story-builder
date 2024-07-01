@@ -5,6 +5,7 @@ from data_types.user import CreateUserInput, LoginUserInput
 from domains.user import UserDomain
 from data_types.builder import Story
 from domains.builder import BuilderDomain
+from domains.store import StoreDomain
 
 app = FastAPI()
 
@@ -23,7 +24,7 @@ app.add_middleware(
 # TODO: use API wrapper
 
 
-@app.post("/user/login", status_code=HTTPStatus.OK)
+@app.post("/api/user/login", status_code=HTTPStatus.OK)
 async def post_session(data: LoginUserInput, response: Response):
     try:
         result = UserDomain().authentify(data)
@@ -35,7 +36,7 @@ async def post_session(data: LoginUserInput, response: Response):
         )
 
 
-@app.post("/user/register", status_code=HTTPStatus.CREATED)
+@app.post("/api/user/register", status_code=HTTPStatus.CREATED)
 async def post_user(data: CreateUserInput, response: Response):
     try:
         result = UserDomain().create(data)
@@ -57,10 +58,10 @@ async def post_builder_save(story: Story, response: Response):
             detail=str(err.args[1]),
         )
 
-@app.post('/api/store',status_code=200)
-async def post_builder_save(data : str):
+@app.get('/api/store/load',status_code=200)
+async def get_store_load():
     try:
-        result = "result"
+        result = StoreDomain().load()
         return result
     except Exception as err:
         raise HTTPException(

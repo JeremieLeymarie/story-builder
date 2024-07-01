@@ -9,6 +9,6 @@
 
 # def format_id[T](arg: T) -> dict:
 def format_id(arg: dict) -> dict:
-    arg["id"] = str(arg["_id"])
+    arg["mongoId"] = str(arg["_id"])
     del arg["_id"]
     return arg

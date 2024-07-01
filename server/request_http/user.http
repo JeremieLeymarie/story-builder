@@ -1,5 +1,5 @@
 ### create user
-POST http://localhost:8000/user/register HTTP/1.1
+POST http://localhost:8000/api/user/register HTTP/1.1
 content-type: application/json
 
 {
@@ -9,10 +9,13 @@ content-type: application/json
 }
 
 ### get user
-POST http://localhost:8000/user/login HTTP/1.1
+POST http://localhost:8000/api/user/login HTTP/1.1
 content-type: application/json
 
 {
   "usernameOrEmail": "stri",
   "password": "string"
 } 
+
+### get storie
+GET http://localhost:8000/api/store/load HTTP/1.1

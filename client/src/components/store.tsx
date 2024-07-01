@@ -23,7 +23,7 @@ export const Store = ({ stories }: StoreHomeProps) => {
               backgroundRepeat: "no-repeat",
               backgroundSize: "cover",
               backgroundPosition: "center",
-            }} 
+            }}
             className={`w-[275px] h-[225px] group relative`}
           >
             <CardHeader>
