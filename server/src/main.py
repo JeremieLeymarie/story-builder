@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from data_types.user import CreateUserInput, LoginUserInput
@@ -22,7 +23,7 @@ app.add_middleware(
 # TODO: use API wrapper
 
 
-@app.post("/user/login", status_code=200)
+@app.post("/user/login", status_code=HTTPStatus.OK)
 async def post_session(data: LoginUserInput, response: Response):
     try:
         result = UserDomain().authentify(data)
@@ -34,7 +35,7 @@ async def post_session(data: LoginUserInput, response: Response):
         )
 
 
-@app.post("/user/register", status_code=201)
+@app.post("/user/register", status_code=HTTPStatus.CREATED)
 async def post_user(data: CreateUserInput, response: Response):
     try:
         result = UserDomain().create(data)
@@ -46,7 +47,7 @@ async def post_user(data: CreateUserInput, response: Response):
         )
 
 
-@app.post("/api/builder/save/game", status_code=200)
+@app.post("/api/builder/save/game", status_code=HTTPStatus.OK)
 async def post_builder_save(story: Story, response: Response):
     try:
         BuilderDomain().save(story)

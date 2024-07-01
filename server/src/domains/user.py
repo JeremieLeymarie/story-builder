@@ -2,12 +2,14 @@ from crypt import crypt
 import datetime
 
 from hmac import compare_digest as compare_hash
+from http import HTTPStatus
 
 from data_types.user import CreateUserInput, LoginUserInput, User, UserWithId
 from utils.format_id import format_id
 from utils.db import Database
 
 
+# TODO: Move HTTP Status code outside of domain!
 class UserDomain:
 
     def __init__(self) -> None:
@@ -18,7 +20,7 @@ class UserDomain:
             {"$or": [{"username": user.username}, {"email": user.email}]}
         )
         if user_count > 0:
-            raise Exception(403, "email taken or username is taken")
+            raise Exception(HTTPStatus.FORBIDDEN, "email taken or username is taken")
 
         user.password = crypt(user.password)
         date = datetime.datetime.now().isoformat()
@@ -29,7 +31,7 @@ class UserDomain:
         user_document["_id"] = str(result.inserted_id)
         del user_document["password"]
         if not result.inserted_id:
-            raise Exception(500, "user creation failed")
+            raise Exception(HTTPStatus.INTERNAL_SERVER_ERROR, "user creation failed")
 
         return user_document
 
@@ -44,12 +46,12 @@ class UserDomain:
         )
 
         if not user:
-            raise Exception(401, "user not found")
+            raise Exception(HTTPStatus.UNAUTHORIZED, "user not found")
 
         password_match = compare_hash(
             crypt(input.password, user["password"]), user["password"]
         )
         if not password_match:
-            raise Exception(401, "invalid password")
+            raise Exception(HTTPStatus.UNAUTHORIZED, "invalid password")
         user = format_id(user)
         return user
