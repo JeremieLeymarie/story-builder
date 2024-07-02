@@ -12,8 +12,8 @@ export const useIsOnline = () => {
     addEventListener("offline", offlineHandler);
 
     return () => {
-      window.removeEventListener("online", onlineHandler);
-      window.removeEventListener("offline", offlineHandler);
+      removeEventListener("online", onlineHandler);
+      removeEventListener("offline", offlineHandler);
     };
   }, []);
   return network;

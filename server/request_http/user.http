@@ -15,7 +15,4 @@ content-type: application/json
 {
   "usernameOrEmail": "stri",
   "password": "string"
-} 
-
-### get storie
-GET http://localhost:8000/api/store/load HTTP/1.1
+}

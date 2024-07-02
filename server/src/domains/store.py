@@ -10,7 +10,6 @@ class StoreDomain:
     def load(self):
         try:
             data = list(self.db.stories.find())
-            print(data)
             data = [format_id(x) for x in data]
             return data
         except Exception as err:

@@ -1,11 +1,11 @@
 import { Store } from "@/store";
-import { Offline } from "@/Offline";
+import { Offline } from "@/offline";
 import { ErrorMessage } from "@/design-system/components/error-message";
 import { createFileRoute } from "@tanstack/react-router";
 import { Story } from "@/lib/storage/dexie-db";
 import { useEffect, useState } from "react";
 import { API_URL } from "@/constants";
-import { useIsOnline } from "@/hooks/use-isOnline";
+import { useIsOnline } from "@/hooks/use-is-online";
 
 const StoreComponent = () => {
   const [stories, setStories] = useState<Story[]>();
