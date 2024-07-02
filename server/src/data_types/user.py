@@ -7,4 +7,4 @@ class User(BaseModel):
 
 
 class UserWithId(User):
-    id: str
+    mongoId: str
