@@ -54,4 +54,4 @@ jobs:
           pip install -r requirements.txt
 
       - name: Check types
-        run: type-check.sh
+        run: ./type-check.sh

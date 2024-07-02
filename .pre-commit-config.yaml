@@ -11,8 +11,32 @@ repos:
   - repo: local
     hooks:
       - id: check-mypy
-        name: Run Mypy
+        name: Run Mypy in server
         entry: server/type-check.sh
         language: script
         files: ^server/.*\.pyi?$
+        stages: [pre-push]
+
+      - id: check-typescript
+        name: Run Typescript in client
+        entry: bash -c 'cd client && pnpm run lint
+        language: system
+        pass_filenames: false
+        files: ^client/
+        stages: [pre-push]
+
+      - id: check-lint
+        name: Run eslint in client
+        entry: bash -c 'cd client && pnpm run lint
+        language: system
+        pass_filenames: false
+        files: ^client/
+        stages: [pre-push]
+
+      - id: check-format
+        name: Run prettier in client
+        entry: bash -c 'cd client && pnpm run prettier
+        language: system
+        pass_filenames: false
+        files: ^client/
         stages: [pre-push]
