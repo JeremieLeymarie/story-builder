@@ -18,11 +18,11 @@ export const Home = () => {
         <CardDescription>Welcome to story-builder!</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
-        {/* <Link to="/stories">
+        <Link to="/store">
           <Button variant="default" className="w-[200px]">
             Store
           </Button>
-        </Link> */}
+        </Link>
         <Link to="/game">
           <Button variant="default" className="w-[200px]">
             Play
