@@ -8,7 +8,7 @@ import {
 import { Handle, NodeProps, Position } from "reactflow";
 import { SceneEditor } from "../../components/editors/scene-editor";
 import { EditIcon } from "lucide-react";
-import { getRepository } from "@/lib/storage/dexie/indexed-db-repository";
+import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { SceneProps } from "../../types";
 import { cn } from "@/lib/style";
 
@@ -24,14 +24,14 @@ export const SceneNode = ({ id, data, yPos, xPos }: SceneNodeProps) => {
             defaultValues={data}
             trigger={<EditIcon />}
             onSave={(values) =>
-              getRepository().updateScene({
+              getLocalRepository().updateScene({
                 ...data,
                 ...values,
                 builderParams: { position: { x: xPos, y: yPos } },
               })
             }
             setFirstScene={() =>
-              getRepository()
+              getLocalRepository()
                 .updateFirstScene(data.storyId, data.id)
                 .then(() => {
                   // TODO: add success toast

@@ -1,13 +1,13 @@
 import { Builder } from "@/builder/components/builder";
 import { Loader } from "@/design-system/components/loader";
-import { getRepository } from "@/lib/storage/dexie/indexed-db-repository";
+import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 
 const Page = () => {
   const { storyId } = Route.useParams();
-  const scenes = useLiveQuery(() => getRepository().getScenes(storyId));
-  const story = useLiveQuery(() => getRepository().getStory(storyId));
+  const scenes = useLiveQuery(() => getLocalRepository().getScenes(storyId));
+  const story = useLiveQuery(() => getLocalRepository().getStory(storyId));
 
   if (!scenes || !story) {
     return <Loader />;

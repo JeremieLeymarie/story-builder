@@ -1,5 +1,5 @@
 import { Story } from "@/lib/storage/dexie/dexie-db";
-import { getRepository } from "@/lib/storage/dexie/indexed-db-repository";
+import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { WithoutId } from "@/types";
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
@@ -9,7 +9,7 @@ export const useBuilderStories = () => {
 
   const handleCreateStory = useCallback(
     async (storyData: Omit<WithoutId<Story>, "firstSceneId">) => {
-      const repo = getRepository();
+      const repo = getLocalRepository();
       const story = await repo.createStory(storyData);
       const firstScene = await repo.createScene({
         storyId: story.id,

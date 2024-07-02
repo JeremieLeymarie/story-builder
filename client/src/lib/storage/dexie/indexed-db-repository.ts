@@ -35,6 +35,10 @@ class IndexedDBRepository implements LocalRepositoryPort {
     return scene;
   }
 
+  async getScene(id: number) {
+    return (await db.scenes.get(id)) ?? null;
+  }
+
   async getScenes(storyId: number) {
     return await db.scenes
       .filter((scene) => scene.storyId === storyId)
@@ -59,6 +63,6 @@ class IndexedDBRepository implements LocalRepositoryPort {
 }
 
 const repository = new IndexedDBRepository();
-export const getRepository = () => {
+export const getLocalRepository = () => {
   return repository;
 };

@@ -1,6 +1,6 @@
 import { API_URL } from "@/constants";
 import { useToast } from "@/design-system/primitives/use-toast";
-import { getRepository } from "@/lib/storage/dexie/indexed-db-repository";
+import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { useCallback, useState } from "react";
 
 export const useSynchronizeBuilder = ({ storyId }: { storyId: number }) => {
@@ -8,7 +8,7 @@ export const useSynchronizeBuilder = ({ storyId }: { storyId: number }) => {
   const { toast } = useToast();
 
   const synchronize = useCallback(async () => {
-    const repo = getRepository();
+    const repo = getLocalRepository();
 
     const user = await repo.getUser();
 
