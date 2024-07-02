@@ -9,7 +9,7 @@ export const Component = () => {
   const { sceneId, gameId } = Route.useParams();
   const scene = useLiveQuery(
     () => getLocalRepository().getScene(sceneId),
-    [sceneId, gameId]
+    [sceneId, gameId],
   );
 
   if (scene === undefined || scene === undefined) {

@@ -11,13 +11,13 @@ export const useUser = () => {
 
       if (userCount > 0) {
         throw new Error(
-          "There should not be more than one user in local database"
+          "There should not be more than one user in local database",
         );
       }
 
       repo.createUser(user);
     },
-    [repo]
+    [repo],
   );
 
   return { persistUser };

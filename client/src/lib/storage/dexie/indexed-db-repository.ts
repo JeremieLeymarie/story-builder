@@ -2,6 +2,8 @@ import { WithoutId } from "@/types";
 import { Scene, Story, User, db } from "./dexie-db";
 import { LocalRepositoryPort } from "../port";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 class IndexedDBRepository implements LocalRepositoryPort {
   async createStory(story: WithoutId<Story>) {
     const id = await db.stories.add(story);

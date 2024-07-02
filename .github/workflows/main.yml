@@ -26,9 +26,6 @@ jobs:
       - name: Lint
         run: bun run lint
 
-      # - name: Test
-      #   run: bun run test
-
       - name: Typescript
         run: bun run typescript
 
@@ -41,17 +38,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python
         # This is the version of the action for setting up Python, not the Python version.
         uses: actions/setup-python@v5
         with:
           # Semantic version range syntax or exact version of a Python version (latest minor Python 3 version)
           python-version: "3.x"
+          cache: pip
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install mypy
 
       - name: Check types
         run: ./type-check.sh

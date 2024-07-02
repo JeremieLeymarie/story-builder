@@ -8,6 +8,7 @@ repos:
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-added-large-files
+
   - repo: local
     hooks:
       - id: check-mypy
@@ -19,7 +20,7 @@ repos:
 
       - id: check-typescript
         name: Run Typescript in client
-        entry: bash -c 'cd client && pnpm run lint
+        entry: bash -c 'cd client && pnpm run typescript'
         language: system
         pass_filenames: false
         files: ^client/
@@ -27,7 +28,7 @@ repos:
 
       - id: check-lint
         name: Run eslint in client
-        entry: bash -c 'cd client && pnpm run lint
+        entry: bash -c 'cd client && pnpm run lint'
         language: system
         pass_filenames: false
         files: ^client/
@@ -35,7 +36,7 @@ repos:
 
       - id: check-format
         name: Run prettier in client
-        entry: bash -c 'cd client && pnpm run prettier
+        entry: bash -c 'cd client && pnpm run format:write'
         language: system
         pass_filenames: false
         files: ^client/

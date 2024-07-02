@@ -19,7 +19,7 @@ You need on your system:
 * Bun
 * Docker
 * Python 3
-  
+
 ### Client
 
 Typescript execution & package management is handled by **bun**.
