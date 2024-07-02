@@ -1,7 +1,7 @@
 import { WithoutId } from "@/types";
-import { Scene, Story, StoryProgress } from "./dexie-db";
+import { Scene, Story, StoryProgress, User } from "./dexie/dexie-db";
 
-export type IndexedDBRepositoryPort = {
+export type LocalRepositoryPort = {
   createStory: (story: WithoutId<Story>) => Promise<Story>;
   updateStory: (story: Story) => Promise<Story>;
   deleteStory: (id: number) => Promise<Story>;
@@ -22,4 +22,8 @@ export type IndexedDBRepositoryPort = {
   deleteStoryProgress: (id: number) => Promise<void>;
   getStoryProgress: (id: number) => Promise<StoryProgress | null>;
   getStoryProgresses: () => Promise<StoryProgress[]>;
+
+  getUser: () => Promise<User | null>;
+  getUserCOunt: () => Promise<number>;
+  createUser: (user: User) => Promise<User>;
 };

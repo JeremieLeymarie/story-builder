@@ -1,4 +1,5 @@
 import { Navbar } from "@/navbar";
+import { Toaster } from "@/design-system/primitives/toaster";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 
@@ -12,6 +13,7 @@ export const Route = createRootRoute({
             <Outlet />
           </div>
         </div>
+        <Toaster />
       </ThemeProvider>
     </>
   ),

@@ -14,7 +14,7 @@ class BuilderDomain:
             **{"scenes": [scene.model_dump() for scene in scenes]},
         }
 
-        print(payload)
+        # TODO: Add saved status
 
         self.db.stories.update_one(
             {"authorId": story.authorId, "id": story.id},

@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useCallback } from "react";
 import { Connection, Edge, Node, addEdge } from "reactflow";
 import { SceneProps } from "../types";
 import { nodeToSceneAdapter } from "../adapters";
-import { getRepository } from "@/lib/storage/indexed-db-repository";
+import { getRepository } from "@/lib/storage/dexie/indexed-db-repository";
 
 export const useBuilderEdges = ({
   sceneNodes,

@@ -8,7 +8,7 @@ import {
 import { Handle, NodeProps, Position } from "reactflow";
 import { SceneEditor } from "../../components/editors/scene-editor";
 import { EditIcon } from "lucide-react";
-import { getRepository } from "@/lib/storage/indexed-db-repository";
+import { getRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { SceneProps } from "../../types";
 import { cn } from "@/lib/style";
 
