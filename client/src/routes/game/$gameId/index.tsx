@@ -1,5 +1,5 @@
 import { ErrorMessage, Loader } from "@/design-system/components";
-import { GameScene } from "@/game/scene";
+import { GameScene } from "@/game/components/scene";
 import { Scene } from "@/lib/storage/dexie/dexie-db";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { createFileRoute } from "@tanstack/react-router";

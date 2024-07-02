@@ -36,7 +36,7 @@ class IndexedDBRepository implements LocalRepositoryPort {
   }
 
   async getScene(id: number) {
-    return await db.scenes.get(id);
+    return (await db.scenes.get(id)) ?? null;
   }
 
   async getScenes(storyId: number) {

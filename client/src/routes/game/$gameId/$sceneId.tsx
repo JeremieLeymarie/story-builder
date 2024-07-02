@@ -1,13 +1,16 @@
 import { ErrorMessage } from "@/design-system/components";
-import { GameScene } from "@/game/scene";
+import { GameScene } from "@/game/components/scene";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Loader } from "lucide-react";
 
 export const Component = () => {
-  const { sceneId } = Route.useParams();
-  const scene = useLiveQuery(() => getLocalRepository().getScene(sceneId));
+  const { sceneId, gameId } = Route.useParams();
+  const scene = useLiveQuery(
+    () => getLocalRepository().getScene(sceneId),
+    [sceneId, gameId]
+  );
 
   if (scene === undefined || scene === undefined) {
     return <Loader />;
