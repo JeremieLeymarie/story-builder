@@ -16,7 +16,7 @@ import {
   Input,
   Textarea,
 } from "@/design-system/primitives";
-import { Story } from "@/lib/storage/dexie-db";
+import { Story } from "@/lib/storage/dexie/dexie-db";
 import { WithoutId } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusIcon } from "lucide-react";

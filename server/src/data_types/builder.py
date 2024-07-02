@@ -20,3 +20,27 @@ class Story(BaseModel):
 
     class Config:
         use_enum_values = True
+
+
+class Action(BaseModel):
+    text: str
+    sceneId: Optional[int] = None
+
+
+class BuilderPosition(BaseModel):
+    x: float
+    y: float
+
+
+class BuilderParams(BaseModel):
+    position: BuilderPosition
+
+
+class Scene(BaseModel):
+    id: int
+    mongoId: Optional[str] = None
+    storyId: int
+    title: str
+    content: str
+    actions: list[Action]
+    builderParams: BuilderParams

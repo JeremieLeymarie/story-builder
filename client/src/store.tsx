@@ -5,8 +5,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/design-system/primitives";
-import { Story } from "@/lib/storage/dexie-db";
 import { DownloadIcon } from "lucide-react";
+import { Story } from "./lib/storage/dexie/dexie-db";
 
 type StoreHomeProps = {
   stories: Story[];

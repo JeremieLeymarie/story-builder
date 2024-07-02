@@ -1,9 +1,9 @@
-import { Scene, Story } from "@/lib/storage/dexie-db";
-import { getRepository } from "@/lib/storage/indexed-db-repository";
+import { getRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { useMemo, useEffect, useCallback, MouseEvent } from "react";
 import { useNodesState, useEdgesState, Node } from "reactflow";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
 import { useBuilderEdges } from "./use-builder-edges";
+import { Scene, Story } from "@/lib/storage/dexie/dexie-db";
 
 export const useBuilder = ({
   scenes,

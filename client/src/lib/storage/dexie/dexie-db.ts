@@ -3,7 +3,8 @@ import Dexie, { type EntityTable } from "dexie";
 export type User = {
   id: number;
   mongoId?: string;
-  username?: string;
+  username: string;
+  email: string;
   password?: string;
 };
 
@@ -46,14 +47,14 @@ export type StoryProgress = {
 // TODO: Chapters?
 
 export const db = new Dexie("story-builder") as Dexie & {
-  users: EntityTable<User, "id">;
+  user: EntityTable<User, "id">;
   stories: EntityTable<Story, "id">;
   scenes: EntityTable<Scene, "id">;
   storyProgresses: EntityTable<StoryProgress, "id">;
 };
 
 db.version(1).stores({
-  users: "++id, mongoId, username, password",
+  user: "++id, mongoId, username, password, email",
   stories:
     "++id, mongoId, firstSceneId, authorId, title, description, image, status",
   scenes: "++id, mongoId, storyId, title, content, actions, builderParams",

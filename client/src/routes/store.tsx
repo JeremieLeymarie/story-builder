@@ -2,7 +2,7 @@ import { Store } from "@/store";
 import { Offline } from "@/offline";
 import { ErrorMessage } from "@/design-system/components/error-message";
 import { createFileRoute } from "@tanstack/react-router";
-import { Story } from "@/lib/storage/dexie-db";
+import { Story } from "@/lib/storage/dexie/dexie-db";
 import { useEffect, useState } from "react";
 import { API_URL } from "@/constants";
 import { useIsOnline } from "@/hooks/use-is-online";
@@ -31,13 +31,15 @@ const OfflineComponent = () => {
   return <Offline />;
 };
 
+const Component = () => {
+  const isOnline = useIsOnline();
+  if (isOnline) {
+    return <StoreComponent />;
+  } else {
+    return <OfflineComponent />;
+  }
+};
+
 export const Route = createFileRoute("/store")({
-  component: () => {
-    const isOnline = useIsOnline();
-    if (isOnline) {
-      return <StoreComponent />;
-    } else {
-      return <OfflineComponent />;
-    }
-  },
+  component: Component,
 });
