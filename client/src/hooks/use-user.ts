@@ -1,9 +1,9 @@
 import { User } from "@/lib/storage/dexie/dexie-db";
-import { getRepository } from "@/lib/storage/dexie/indexed-db-repository";
+import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { useCallback } from "react";
 
 export const useUser = () => {
-  const repo = getRepository();
+  const repo = getLocalRepository();
 
   const persistUser = useCallback(
     async (user: User) => {

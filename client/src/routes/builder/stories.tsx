@@ -1,11 +1,11 @@
 import { BuilderStories } from "@/builder/components/builder-stories";
 import { ErrorMessage } from "@/design-system/components/error-message";
-import { getRepository } from "@/lib/storage/dexie/indexed-db-repository";
+import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 
 const Component = () => {
-  const stories = useLiveQuery(() => getRepository().getStories());
+  const stories = useLiveQuery(() => getLocalRepository().getStories());
 
   return stories ? (
     <BuilderStories stories={stories} />
