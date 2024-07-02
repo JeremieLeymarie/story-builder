@@ -5,8 +5,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/design-system/primitives";
-import { Story } from "@/lib/storage/dexie-db";
 import { DownloadIcon } from "lucide-react";
+import { Story } from "./lib/storage/dexie/dexie-db";
 
 type StoreHomeProps = {
   stories: Story[];
@@ -15,7 +15,7 @@ type StoreHomeProps = {
 export const Store = ({ stories }: StoreHomeProps) => {
   return (
     <div className="flex p-4 gap-4 flex-wrap justify-center">
-      {stories.map(({ title, description, image, id }) => {
+      {stories.map(({ title, description, image }) => {
         return (
           <Card
             style={{

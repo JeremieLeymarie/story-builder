@@ -7,10 +7,10 @@ import {
   CardTitle,
 } from "@/design-system/primitives";
 import { CreateStoryForm } from "./create-story-form";
-import { Story } from "@/lib/storage/dexie-db";
 import { Link } from "@tanstack/react-router";
 import { MoveRightIcon } from "lucide-react";
 import { useBuilderStories } from "../hooks/use-builder-stories";
+import { Story } from "@/lib/storage/dexie/dexie-db";
 
 type BuilderHomeProps = {
   stories: Story[];

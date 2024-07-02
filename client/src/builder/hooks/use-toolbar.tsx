@@ -1,21 +1,48 @@
 import { API_URL } from "@/constants";
-import { getRepository } from "@/lib/storage/indexed-db-repository";
-import { useCallback } from "react";
+import { useToast } from "@/design-system/primitives/use-toast";
+import { getRepository } from "@/lib/storage/dexie/indexed-db-repository";
+import { useCallback, useState } from "react";
 
 type ToolbarProps = {
   storyId: number;
 };
 
 export const useToolbar = ({ storyId }: ToolbarProps) => {
-  const synchronize = useCallback(async () => {
-    // TODO: handle case where user doesn't have an account
-    const data = await getRepository().getStory(storyId);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const { toast } = useToast();
 
-    await fetch(`${API_URL}/api/builder/save/game`, {
-      body: JSON.stringify(data),
+  const synchronize = useCallback(async () => {
+    const repo = getRepository();
+
+    const user = await repo.getUser();
+
+    if (!user) {
+      // Prompt user for sign-in/sign-up
+      setIsAuthModalOpen(true);
+      return;
+    }
+
+    const story = await repo.getStory(storyId);
+    const scenes = await repo.getScenes(storyId);
+
+    fetch(`${API_URL}/api/builder/save/game`, {
+      body: JSON.stringify({ story, scenes }),
       method: "POST",
       headers: { "Content-Type": "application/json" },
-    });
-  }, [storyId]);
-  return { synchronize };
+    })
+      .then(() => {
+        toast({
+          title: "Synchronization complete!",
+          description: "Your progress has successfully been saved.",
+        });
+      })
+      .catch(() => {
+        toast({
+          title: "Synchronization failed!",
+          description: "Something went wrong, please try again later.",
+        });
+      });
+  }, [storyId, toast]);
+
+  return { synchronize, isAuthModalOpen, setIsAuthModalOpen };
 };

@@ -1,9 +1,8 @@
 import { WithoutId } from "@/types";
-import { Scene, Story, db } from "./dexie-db";
-import { IndexedDBRepositoryPort } from "./port";
+import { Scene, Story, User, db } from "./dexie-db";
+import { LocalRepositoryPort } from "../port";
 
-// TODO: implement missing methods
-class IndexedDBRepository implements IndexedDBRepositoryPort {
+class IndexedDBRepository implements LocalRepositoryPort {
   async createStory(story: WithoutId<Story>) {
     const id = await db.stories.add(story);
     return { ...story, id };
@@ -40,6 +39,20 @@ class IndexedDBRepository implements IndexedDBRepositoryPort {
     return await db.scenes
       .filter((scene) => scene.storyId === storyId)
       .toArray();
+  }
+
+  async getUser() {
+    // There should always be one user in local database
+    return (await db.user.toArray())?.[0] ?? null;
+  }
+
+  async getUserCount() {
+    return await db.user.count();
+  }
+
+  async createUser(user: User) {
+    await db.user.add(user);
+    return user;
   }
 
   // TODO: actually implement other methods

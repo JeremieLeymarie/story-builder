@@ -1,12 +1,15 @@
 import { Button } from "@/design-system/primitives";
 import { BookOpenTextIcon, RefreshCcwIcon } from "lucide-react";
+import { getRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { SceneEditor } from "./editors/scene-editor";
-import { getRepository } from "@/lib/storage/indexed-db-repository";
 import { useToolbar } from "../hooks/use-toolbar";
+import { AuthModalForm } from "@/auth-modal-form";
 
 type Props = { storyId: number };
 export const Toolbar = ({ storyId }: Props) => {
-  const { synchronize } = useToolbar({ storyId });
+  const { synchronize, isAuthModalOpen, setIsAuthModalOpen } = useToolbar({
+    storyId,
+  });
 
   return (
     <div className="w-[275px] border-r p-2">
@@ -33,6 +36,18 @@ export const Toolbar = ({ storyId }: Props) => {
           <RefreshCcwIcon size="16px" /> &nbsp; Synchronize
         </Button>
       </div>
+      <AuthModalForm
+        open={isAuthModalOpen}
+        setOpen={setIsAuthModalOpen}
+        onSuccess={() => {
+          setIsAuthModalOpen(false);
+          synchronize();
+        }}
+        onError={(err) => {
+          setIsAuthModalOpen(false);
+          console.error(`Error in AuthModal: ${err}`);
+        }}
+      />
     </div>
   );
 };

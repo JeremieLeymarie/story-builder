@@ -1,0 +1,34 @@
+### Synchronize builder state
+POST http://localhost:8000/api/builder/save/game HTTP/1.1
+content-type: application/json
+
+{
+  "story" : {
+    "id" : 1,
+    "mongoId" : null, 
+    "authorId" : 1, 
+    "title" : "A story", 
+    "description" : "A story description", 
+    "image" : "http://image.fr",
+    "status" : "draft"
+  },
+  "scenes" : [
+    {
+      "id" : 1, 
+      "mongoId" : null, 
+      "storyId" : 1, 
+      "title" : "A scene", 
+      "content" : "A scene content", 
+      "actions" : [
+        {"text" : "An action text"}
+      ],
+      "builderParams" : {
+        "position" : {
+          "x" : 0, 
+          "y" : 0
+        }
+      }
+    }
+  ]
+}
+
