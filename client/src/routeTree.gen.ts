@@ -13,10 +13,12 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as WhiteboardImport } from './routes/whiteboard'
 import { Route as StoreImport } from './routes/store'
-import { Route as GameImport } from './routes/game'
 import { Route as IndexImport } from './routes/index'
+import { Route as GameIndexImport } from './routes/game/index'
 import { Route as BuilderStoriesImport } from './routes/builder/stories'
 import { Route as BuilderStoryIdImport } from './routes/builder/$storyId'
+import { Route as GameGameIdIndexImport } from './routes/game/$gameId/index'
+import { Route as GameGameIdSceneIdImport } from './routes/game/$gameId/$sceneId'
 
 // Create/Update Routes
 
@@ -30,13 +32,13 @@ const StoreRoute = StoreImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const GameRoute = GameImport.update({
-  path: '/game',
+const IndexRoute = IndexImport.update({
+  path: '/',
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexRoute = IndexImport.update({
-  path: '/',
+const GameIndexRoute = GameIndexImport.update({
+  path: '/game/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -50,6 +52,16 @@ const BuilderStoryIdRoute = BuilderStoryIdImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const GameGameIdIndexRoute = GameGameIdIndexImport.update({
+  path: '/game/$gameId/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const GameGameIdSceneIdRoute = GameGameIdSceneIdImport.update({
+  path: '/game/$gameId/$sceneId',
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -59,13 +71,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/game': {
-      id: '/game'
-      path: '/game'
-      fullPath: '/game'
-      preLoaderRoute: typeof GameImport
       parentRoute: typeof rootRoute
     }
     '/store': {
@@ -96,6 +101,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuilderStoriesImport
       parentRoute: typeof rootRoute
     }
+    '/game/': {
+      id: '/game/'
+      path: '/game'
+      fullPath: '/game'
+      preLoaderRoute: typeof GameIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/game/$gameId/$sceneId': {
+      id: '/game/$gameId/$sceneId'
+      path: '/game/$gameId/$sceneId'
+      fullPath: '/game/$gameId/$sceneId'
+      preLoaderRoute: typeof GameGameIdSceneIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/game/$gameId/': {
+      id: '/game/$gameId/'
+      path: '/game/$gameId'
+      fullPath: '/game/$gameId'
+      preLoaderRoute: typeof GameGameIdIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -103,11 +129,13 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
-  GameRoute,
   StoreRoute,
   WhiteboardRoute,
   BuilderStoryIdRoute,
   BuilderStoriesRoute,
+  GameIndexRoute,
+  GameGameIdSceneIdRoute,
+  GameGameIdIndexRoute,
 })
 
 /* prettier-ignore-end */
@@ -119,18 +147,17 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/game",
         "/store",
         "/whiteboard",
         "/builder/$storyId",
-        "/builder/stories"
+        "/builder/stories",
+        "/game/",
+        "/game/$gameId/$sceneId",
+        "/game/$gameId/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
-    },
-    "/game": {
-      "filePath": "game.tsx"
     },
     "/store": {
       "filePath": "store.tsx"
@@ -143,6 +170,15 @@ export const routeTree = rootRoute.addChildren({
     },
     "/builder/stories": {
       "filePath": "builder/stories.tsx"
+    },
+    "/game/": {
+      "filePath": "game/index.tsx"
+    },
+    "/game/$gameId/$sceneId": {
+      "filePath": "game/$gameId/$sceneId.tsx"
+    },
+    "/game/$gameId/": {
+      "filePath": "game/$gameId/index.tsx"
     }
   }
 }
