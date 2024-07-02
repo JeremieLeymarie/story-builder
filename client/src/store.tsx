@@ -15,7 +15,7 @@ type StoreHomeProps = {
 export const Store = ({ stories }: StoreHomeProps) => {
   return (
     <div className="flex p-4 gap-4 flex-wrap justify-center">
-      {stories.map(({ title, description, image, id }) => {
+      {stories.map(({ title, description, image, mongoId }) => {
         return (
           <Card
             style={{

@@ -58,10 +58,21 @@ async def post_builder_save(story: Story, response: Response):
             detail=str(err.args[1]),
         )
 
-@app.get('/api/store/load',status_code=200)
+@app.get('/api/store/load',status_code=HTTPStatus.OK)
 async def get_store_load():
     try:
         result = StoreDomain().load()
+        return result
+    except Exception as err:
+        raise HTTPException(
+            status_code=err.args[0],
+            detail=str(err.args[1]),
+        )
+
+@app.get('/api/store/download/{mongoId}',status_code=HTTPStatus.OK)
+async def get_store_download(mongoId:str):
+    try:
+        result = StoreDomain().download(mongoId)
         return result
     except Exception as err:
         raise HTTPException(
