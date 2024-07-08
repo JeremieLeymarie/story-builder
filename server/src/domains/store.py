@@ -11,12 +11,11 @@ class StoreDomain:
 
     def load(self):
         try:
-            data = list(self.db.stories.find({},{"scenes": 0}))
-            # data = list(self.db.stories.find({"status":"published"},{"scenes": 0}))
+            data = list(self.db.stories.find({"status": "published"}, {"scenes": 0}))
             data = [format_id(x) for x in data]
             return data
         except Exception as err:
-            raise Exception(HTTPStatus.INTERNAL_SERVER_ERROR, err)
+            raise Exception(err)
 
     def download(self, mongoId: str):
         try:
@@ -24,4 +23,4 @@ class StoreDomain:
             data = format_id(data)
             return data
         except Exception as err:
-            raise Exception(HTTPStatus.INTERNAL_SERVER_ERROR, err)
+            raise Exception(err)

@@ -9,6 +9,7 @@ from data_types.requests import (
 )
 from domains.builder import BuilderDomain
 from domains.store import StoreDomain
+from server.src.utils.error_adapter import raise_http_error
 
 app = FastAPI()
 
@@ -29,16 +30,14 @@ app.add_middleware(
 
 # USER ENDPOINTS
 
+
 @app.post("/api/user/login", status_code=HTTPStatus.OK)
 async def post_session(data: LoginUserInput, response: Response):
     try:
         result = UserDomain().authentify(data)
         return result
     except Exception as err:
-        raise HTTPException(
-            status_code=err.args[0],
-            detail=str(err.args[1]),
-        )
+        raise raise_http_error(err)
 
 
 @app.post("/api/user/register", status_code=HTTPStatus.CREATED)
@@ -47,48 +46,40 @@ async def post_user(data: CreateUserInput, response: Response):
         result = UserDomain().create(data)
         return result
     except Exception as err:
-        raise HTTPException(
-            status_code=err.args[0],
-            detail=str(err.args[1]),
-        )
+        raise raise_http_error(err)
 
 
 # BUILDER ENDPOINTS
+
 
 @app.post("/api/builder/save/game", status_code=HTTPStatus.OK)
 async def post_builder_save(body: SynchronizeBuilderRequestBody, response: Response):
     try:
         BuilderDomain().save(body.story, body.scenes)
     except Exception as err:
-        raise HTTPException(
-            status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
-            detail=str(err),
-        )
-        
-        
+        raise raise_http_error(err)
+
+
 # STORE ENDPOINTS
 
-@app.get('/api/store/load',status_code=HTTPStatus.OK)
+
+@app.get("/api/store/load", status_code=HTTPStatus.OK)
 async def get_store_load():
     try:
         result = StoreDomain().load()
         return result
     except Exception as err:
-        raise HTTPException(
-            status_code=err.args[0],
-            detail=str(err.args[1]),
-        )
+        raise raise_http_error(err)
 
-@app.get('/api/store/download/{mongoId}',status_code=HTTPStatus.OK)
-async def get_store_download(mongoId:str):
+
+@app.get("/api/store/download/{mongoId}", status_code=HTTPStatus.OK)
+async def get_store_download(mongoId: str):
     try:
         result = StoreDomain().download(mongoId)
         return result
     except Exception as err:
-        raise HTTPException(
-            status_code=err.args[0],
-            detail=str(err.args[1]),
-        )
+        raise raise_http_error(err)
+
 
 @app.get("/api/store/publish/{mongoId}", status_code=HTTPStatus.OK)
 async def publish_in_store(mongoId):
@@ -96,7 +87,4 @@ async def publish_in_store(mongoId):
         result = StoreDomain().download(mongoId)
         return result
     except Exception as err:
-        raise HTTPException(
-            status_code=err.args[0],
-            detail=str(err.args[1]),
-        )
+        raise raise_http_error(err)
