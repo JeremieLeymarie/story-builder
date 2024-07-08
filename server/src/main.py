@@ -32,7 +32,7 @@ app.add_middleware(
 
 
 @app.post("/api/user/login", status_code=HTTPStatus.OK)
-async def post_session(data: LoginUserInput, response: Response):
+async def post_session(data: LoginUserInput):
     try:
         result = UserDomain().authentify(data)
         return result
@@ -41,7 +41,7 @@ async def post_session(data: LoginUserInput, response: Response):
 
 
 @app.post("/api/user/register", status_code=HTTPStatus.CREATED)
-async def post_user(data: CreateUserInput, response: Response):
+async def post_user(data: CreateUserInput):
     try:
         result = UserDomain().create(data)
         return result
@@ -53,7 +53,7 @@ async def post_user(data: CreateUserInput, response: Response):
 
 
 @app.post("/api/builder/save/game", status_code=HTTPStatus.OK)
-async def post_builder_save(body: SynchronizeBuilderRequestBody, response: Response):
+async def post_builder_save(body: SynchronizeBuilderRequestBody):
     try:
         BuilderDomain().save(body.story, body.scenes)
     except Exception as err:
@@ -81,10 +81,10 @@ async def get_store_download(mongoId: str):
         raise raise_http_error(err)
 
 
-@app.get("/api/store/publish/{mongoId}", status_code=HTTPStatus.OK)
+@app.patch("/api/store/publish/{mongoId}", status_code=HTTPStatus.OK)
 async def publish_in_store(mongoId):
     try:
-        result = StoreDomain().download(mongoId)
-        return result
+        StoreDomain().publish(mongoId)
+        return {"success": True}
     except Exception as err:
         raise raise_http_error(err)
