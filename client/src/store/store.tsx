@@ -1,12 +1,11 @@
 import {
-  Button,
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/design-system/primitives";
-import { DownloadIcon } from "lucide-react";
-import { Story } from "./lib/storage/dexie/dexie-db";
+import { Story } from "../lib/storage/dexie/dexie-db";
+import { ModalValidator } from "./store-modal-validator";
 
 type StoreHomeProps = {
   stories: Story[];
@@ -34,11 +33,7 @@ export const Store = ({ stories }: StoreHomeProps) => {
                 {description}
               </CardDescription>
             </CardHeader>
-            <Button
-              className={`absolute opacity-0 transition ease-in-out duration-300 group-hover:opacity-100 bottom-4 right-4`}
-            >
-              Download &nbsp; <DownloadIcon size="15px" />
-            </Button>
+            <ModalValidator mongoId={mongoId} />
           </Card>
         );
       })}

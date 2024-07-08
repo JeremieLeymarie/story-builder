@@ -10,6 +10,7 @@ export type LocalRepositoryPort = {
   updateFirstScene: (storyId: number, sceneId: number) => Promise<void>;
 
   createScene: (scene: WithoutId<Scene>) => Promise<Scene>;
+  createScenes: (scenes: WithoutId<Scene>[]) => Promise<number[]>;
   updateScene: (scene: Scene) => Promise<Scene>;
   deleteScene: (id: number) => Promise<void>;
   getScene: (id: number) => Promise<Scene | null>;

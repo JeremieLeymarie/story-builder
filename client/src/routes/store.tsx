@@ -1,4 +1,4 @@
-import { Store } from "@/store";
+import { Store } from "@/store/store";
 import { Offline } from "@/offline";
 import { ErrorMessage } from "@/design-system/components/error-message";
 import { createFileRoute } from "@tanstack/react-router";
