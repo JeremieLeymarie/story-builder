@@ -27,6 +27,8 @@ app.add_middleware(
 # TODO: use API wrapper
 
 
+# USER ENDPOINTS
+
 @app.post("/api/user/login", status_code=HTTPStatus.OK)
 async def post_session(data: LoginUserInput, response: Response):
     try:
@@ -51,6 +53,8 @@ async def post_user(data: CreateUserInput, response: Response):
         )
 
 
+# BUILDER ENDPOINTS
+
 @app.post("/api/builder/save/game", status_code=HTTPStatus.OK)
 async def post_builder_save(body: SynchronizeBuilderRequestBody, response: Response):
     try:
@@ -60,6 +64,9 @@ async def post_builder_save(body: SynchronizeBuilderRequestBody, response: Respo
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
             detail=str(err),
         )
+        
+        
+# STORE ENDPOINTS
 
 @app.get('/api/store/load',status_code=HTTPStatus.OK)
 async def get_store_load():
@@ -74,6 +81,17 @@ async def get_store_load():
 
 @app.get('/api/store/download/{mongoId}',status_code=HTTPStatus.OK)
 async def get_store_download(mongoId:str):
+    try:
+        result = StoreDomain().download(mongoId)
+        return result
+    except Exception as err:
+        raise HTTPException(
+            status_code=err.args[0],
+            detail=str(err.args[1]),
+        )
+
+@app.get("/api/store/publish/{mongoId}", status_code=HTTPStatus.OK)
+async def publish_in_store(mongoId):
     try:
         result = StoreDomain().download(mongoId)
         return result

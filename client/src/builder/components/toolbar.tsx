@@ -12,6 +12,7 @@ export const Toolbar = ({ storyId }: Props) => {
       storyId,
     });
 
+  // Maybe we could use Navigation Menu for this component at some point
   return (
     <div className="w-[275px] border-r p-2">
       <p className="text-2xl font-semibold text-primary">Tools</p>
@@ -38,6 +39,9 @@ export const Toolbar = ({ storyId }: Props) => {
         </Button>
         <Button variant="default" className="w-full" onClick={testStory}>
           <TestTubesIcon size="16px" /> &nbsp; Test
+        </Button>
+        <Button variant="outline" className="w-full">
+          Publish
         </Button>
       </div>
       <AuthModalForm

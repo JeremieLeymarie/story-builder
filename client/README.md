@@ -1,8 +1,8 @@
-# Dev guide
+# How to use Server
 
-## Git workflow
+## Path to do All
 
-The usual workflow should look like this:
+- login
 
 1. Choosing an issue in the `ready` column in Github Project.
 2. Creating a branch for this issue. You can do this either by checking out locally or by using the built-in _create a branch_ button in Github Project.
@@ -30,42 +30,42 @@ In the `client` folder
 
 ```bash
 bun install
+```txt
+/api/login
 ```
 
-#### Run the client
+- register
 
-```bash
-bun run dev
+```txt
+/api/register
 ```
 
-### Server
+## Path to do builder
 
-In the `server` folder
+- Save your game data
 
-#### Activate virtual env
-
-```bash
-source venv/bin/activate
+```txt
+/api/builder/save/game
 ```
 
-#### Install the modules
+- Load your game data
 
-```bash
-pip3 install -r requirements.txt
+```txt
+/api/builder/load/game
 ```
 
-#### Run the API
+## Path to do player
 
-```bash
-fastapi run main.py
+- Save your game data
+
+```txt
+/api/player/save/game
 ```
 
-### Database
+- Load your game data
 
-The remote database is mongodb. It is dockerized so you don't have to install locally.
-
-```bash
-docker compose up
+```txt
+/api/player/load/game
 ```
 
 ## Project architecture

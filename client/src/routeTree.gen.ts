@@ -10,118 +10,118 @@
 
 // Import Routes
 
-import { Route as rootRoute } from "./routes/__root";
-import { Route as WhiteboardImport } from "./routes/whiteboard";
-import { Route as StoreImport } from "./routes/store";
-import { Route as IndexImport } from "./routes/index";
-import { Route as GameIndexImport } from "./routes/game/index";
-import { Route as BuilderStoriesImport } from "./routes/builder/stories";
-import { Route as BuilderStoryIdImport } from "./routes/builder/$storyId";
-import { Route as GameGameIdIndexImport } from "./routes/game/$gameId/index";
-import { Route as GameGameIdSceneIdImport } from "./routes/game/$gameId/$sceneId";
+import { Route as rootRoute } from './routes/__root'
+import { Route as WhiteboardImport } from './routes/whiteboard'
+import { Route as StoreImport } from './routes/store'
+import { Route as IndexImport } from './routes/index'
+import { Route as GameIndexImport } from './routes/game/index'
+import { Route as BuilderStoriesImport } from './routes/builder/stories'
+import { Route as BuilderStoryIdImport } from './routes/builder/$storyId'
+import { Route as GameGameIdIndexImport } from './routes/game/$gameId/index'
+import { Route as GameGameIdSceneIdImport } from './routes/game/$gameId/$sceneId'
 
 // Create/Update Routes
 
 const WhiteboardRoute = WhiteboardImport.update({
-  path: "/whiteboard",
+  path: '/whiteboard',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const StoreRoute = StoreImport.update({
-  path: "/store",
+  path: '/store',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const IndexRoute = IndexImport.update({
-  path: "/",
+  path: '/',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const GameIndexRoute = GameIndexImport.update({
-  path: "/game/",
+  path: '/game/',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const BuilderStoriesRoute = BuilderStoriesImport.update({
-  path: "/builder/stories",
+  path: '/builder/stories',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const BuilderStoryIdRoute = BuilderStoryIdImport.update({
-  path: "/builder/$storyId",
+  path: '/builder/$storyId',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const GameGameIdIndexRoute = GameGameIdIndexImport.update({
-  path: "/game/$gameId/",
+  path: '/game/$gameId/',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const GameGameIdSceneIdRoute = GameGameIdSceneIdImport.update({
-  path: "/game/$gameId/$sceneId",
+  path: '/game/$gameId/$sceneId',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 // Populate the FileRoutesByPath interface
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/store": {
-      id: "/store";
-      path: "/store";
-      fullPath: "/store";
-      preLoaderRoute: typeof StoreImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/whiteboard": {
-      id: "/whiteboard";
-      path: "/whiteboard";
-      fullPath: "/whiteboard";
-      preLoaderRoute: typeof WhiteboardImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/builder/$storyId": {
-      id: "/builder/$storyId";
-      path: "/builder/$storyId";
-      fullPath: "/builder/$storyId";
-      preLoaderRoute: typeof BuilderStoryIdImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/builder/stories": {
-      id: "/builder/stories";
-      path: "/builder/stories";
-      fullPath: "/builder/stories";
-      preLoaderRoute: typeof BuilderStoriesImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/game/": {
-      id: "/game/";
-      path: "/game";
-      fullPath: "/game";
-      preLoaderRoute: typeof GameIndexImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/game/$gameId/$sceneId": {
-      id: "/game/$gameId/$sceneId";
-      path: "/game/$gameId/$sceneId";
-      fullPath: "/game/$gameId/$sceneId";
-      preLoaderRoute: typeof GameGameIdSceneIdImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/game/$gameId/": {
-      id: "/game/$gameId/";
-      path: "/game/$gameId";
-      fullPath: "/game/$gameId";
-      preLoaderRoute: typeof GameGameIdIndexImport;
-      parentRoute: typeof rootRoute;
-    };
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/store': {
+      id: '/store'
+      path: '/store'
+      fullPath: '/store'
+      preLoaderRoute: typeof StoreImport
+      parentRoute: typeof rootRoute
+    }
+    '/whiteboard': {
+      id: '/whiteboard'
+      path: '/whiteboard'
+      fullPath: '/whiteboard'
+      preLoaderRoute: typeof WhiteboardImport
+      parentRoute: typeof rootRoute
+    }
+    '/builder/$storyId': {
+      id: '/builder/$storyId'
+      path: '/builder/$storyId'
+      fullPath: '/builder/$storyId'
+      preLoaderRoute: typeof BuilderStoryIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/builder/stories': {
+      id: '/builder/stories'
+      path: '/builder/stories'
+      fullPath: '/builder/stories'
+      preLoaderRoute: typeof BuilderStoriesImport
+      parentRoute: typeof rootRoute
+    }
+    '/game/': {
+      id: '/game/'
+      path: '/game'
+      fullPath: '/game'
+      preLoaderRoute: typeof GameIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/game/$gameId/$sceneId': {
+      id: '/game/$gameId/$sceneId'
+      path: '/game/$gameId/$sceneId'
+      fullPath: '/game/$gameId/$sceneId'
+      preLoaderRoute: typeof GameGameIdSceneIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/game/$gameId/': {
+      id: '/game/$gameId/'
+      path: '/game/$gameId'
+      fullPath: '/game/$gameId'
+      preLoaderRoute: typeof GameGameIdIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -136,7 +136,7 @@ export const routeTree = rootRoute.addChildren({
   GameIndexRoute,
   GameGameIdSceneIdRoute,
   GameGameIdIndexRoute,
-});
+})
 
 /* prettier-ignore-end */
 
