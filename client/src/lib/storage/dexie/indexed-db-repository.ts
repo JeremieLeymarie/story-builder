@@ -30,6 +30,14 @@ class IndexedDBRepository implements LocalRepositoryPort {
     return { ...scene, id };
   }
 
+  async createScenes(scenes: WithoutId<Scene>[]) {
+    const ids = await db.scenes.bulkAdd(scenes, {
+      allKeys: true,
+    });
+    //return Promise<Key[]>
+    return ids;
+  }
+
   async updateScene(scene: Scene) {
     await db.scenes.update(scene.id, scene);
     return scene;

@@ -10,7 +10,8 @@ class StoreDomain:
 
     def load(self):
         try:
-            data = list(self.db.stories.find())
+            data = list(self.db.stories.find({},{"scenes": 0}))
+            # data = list(self.db.stories.find({"status":"published"},{"scenes": 0}))
             data = [format_id(x) for x in data]
             return data
         except Exception as err:
