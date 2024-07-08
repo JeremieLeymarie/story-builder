@@ -34,7 +34,6 @@ class IndexedDBRepository implements LocalRepositoryPort {
     const ids = await db.scenes.bulkAdd(scenes, {
       allKeys: true,
     });
-    //return Promise<Key[]>
     return ids;
   }
 
