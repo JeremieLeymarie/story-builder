@@ -12,7 +12,7 @@ import { AlertTriangleIcon, DownloadIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 import { API_URL } from "@/constants";
 import { useToast } from "@/design-system/primitives/use-toast";
-import { getRepository } from "@/lib/storage/dexie/indexed-db-repository";
+import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 
 export const ModalValidator = ({ mongoId }: { mongoId?: string }) => {
   const { toast } = useToast();
@@ -20,13 +20,13 @@ export const ModalValidator = ({ mongoId }: { mongoId?: string }) => {
   const download = useCallback(
     async (mongoId: string | undefined) => {
       try {
-        let res = await fetch(`${API_URL}/api/store/download/${mongoId}`, {
+        const res = await fetch(`${API_URL}/api/store/download/${mongoId}`, {
           method: "GET",
         });
-        let storie = await res.json();
-        await getRepository().createStory(storie);
-        if (storie.scenes) {
-          await getRepository().createScenes(storie.scenes);
+        const story = await res.json();
+        await getLocalRepository().createStory(story);
+        if (story.scenes) {
+          await getLocalRepository().createScenes(story.scenes);
         }
         toast({
           title: "Download complete!",
@@ -39,7 +39,7 @@ export const ModalValidator = ({ mongoId }: { mongoId?: string }) => {
         });
       }
     },
-    [toast]
+    [toast],
   );
 
   return (
