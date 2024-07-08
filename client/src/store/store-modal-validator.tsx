@@ -20,24 +20,21 @@ export const ModalValidator = ({ mongoId }: { mongoId?: string }) => {
   const download = useCallback(
     async (mongoId: string | undefined) => {
       try {
-        let download: any = await fetch(
-          `${API_URL}/api/store/download/${mongoId}`,
-          {
-            method: "GET",
-          }
-        );
-        download = await download.json();
-        await getRepository().createStory(download);
-        if (download.scenes) {
-          await getRepository().createScenes(download.scenes);
+        let res = await fetch(`${API_URL}/api/store/download/${mongoId}`, {
+          method: "GET",
+        });
+        let storie = await res.json();
+        await getRepository().createStory(storie);
+        if (storie.scenes) {
+          await getRepository().createScenes(storie.scenes);
         }
         toast({
-          title: "download complete!",
-          description: "You can play.",
+          title: "Download complete!",
+          description: "Your game is now available in your library.",
         });
       } catch (error) {
         toast({
-          title: "download failed!",
+          title: "Download failed!",
           description: "Something went wrong, please try again later.",
         });
       }
@@ -63,7 +60,7 @@ export const ModalValidator = ({ mongoId }: { mongoId?: string }) => {
                 Are you sure?
               </DialogTitle>
               <DialogDescription>
-                you want to download this story
+                You are about to download a story on your device.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
@@ -81,7 +78,7 @@ export const ModalValidator = ({ mongoId }: { mongoId?: string }) => {
                   setIsModalOpen(false);
                 }}
               >
-                download
+                Download
               </Button>
             </DialogFooter>
           </DialogContent>
