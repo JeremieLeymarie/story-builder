@@ -12,7 +12,7 @@ import { AlertTriangleIcon, DownloadIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 import { API_URL } from "@/constants";
 import { useToast } from "@/design-system/primitives/use-toast";
-import { getRepository } from "@/lib/storage/dexie/indexed-db-repository";
+import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 
 export const ModalValidator = ({ mongoId }: { mongoId?: string }) => {
   const { toast } = useToast();
@@ -20,24 +20,21 @@ export const ModalValidator = ({ mongoId }: { mongoId?: string }) => {
   const download = useCallback(
     async (mongoId: string | undefined) => {
       try {
-        let download: any = await fetch(
-          `${API_URL}/api/store/download/${mongoId}`,
-          {
-            method: "GET",
-          }
-        );
-        download = await download.json();
-        await getRepository().createStory(download);
-        if (download.scenes) {
-          await getRepository().createScenes(download.scenes);
+        const res = await fetch(`${API_URL}/api/store/download/${mongoId}`, {
+          method: "GET",
+        });
+        const story = await res.json();
+        await getLocalRepository().createStory(story);
+        if (story.scenes) {
+          await getLocalRepository().createScenes(story.scenes);
         }
         toast({
-          title: "download complete!",
-          description: "You can play.",
+          title: "Download complete!",
+          description: "Your game is now available in your library.",
         });
       } catch (error) {
         toast({
-          title: "download failed!",
+          title: "Download failed!",
           description: "Something went wrong, please try again later.",
         });
       }
@@ -63,7 +60,7 @@ export const ModalValidator = ({ mongoId }: { mongoId?: string }) => {
                 Are you sure?
               </DialogTitle>
               <DialogDescription>
-                you want to download this story
+                You are about to download a story on your device.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
@@ -81,7 +78,7 @@ export const ModalValidator = ({ mongoId }: { mongoId?: string }) => {
                   setIsModalOpen(false);
                 }}
               >
-                download
+                Download
               </Button>
             </DialogFooter>
           </DialogContent>

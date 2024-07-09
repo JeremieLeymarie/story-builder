@@ -1,0 +1,43 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+
+  - repo: local
+    hooks:
+      - id: check-mypy
+        name: Run Mypy in server
+        entry: server/type-check.sh
+        language: script
+        files: ^server/.*\.pyi?$
+        stages: [pre-push]
+
+      - id: check-typescript
+        name: Run Typescript in client
+        entry: bash -c 'cd client && pnpm run typescript'
+        language: system
+        pass_filenames: false
+        files: ^client/
+        stages: [pre-push]
+
+      - id: check-lint
+        name: Run eslint in client
+        entry: bash -c 'cd client && pnpm run lint'
+        language: system
+        pass_filenames: false
+        files: ^client/
+        stages: [pre-push]
+
+      - id: check-format
+        name: Run prettier in client
+        entry: bash -c 'cd client && pnpm run format:write'
+        language: system
+        pass_filenames: false
+        files: ^client/
+        stages: [pre-push]

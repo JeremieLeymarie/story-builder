@@ -41,7 +41,7 @@ export const AuthModalForm = ({
       await persistUser(user);
       onSuccess();
     },
-    [onSuccess, persistUser]
+    [onSuccess, persistUser],
   );
 
   return (

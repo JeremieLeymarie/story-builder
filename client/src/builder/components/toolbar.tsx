@@ -1,6 +1,6 @@
 import { Button } from "@/design-system/primitives";
 import { BookOpenTextIcon, RefreshCcwIcon, TestTubesIcon } from "lucide-react";
-import { getRepository } from "@/lib/storage/dexie/indexed-db-repository";
+import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { SceneEditor } from "./editors/scene-editor";
 import { useToolbar } from "../hooks/use-toolbar";
 import { AuthModalForm } from "@/auth-modal-form";
@@ -16,7 +16,7 @@ export const Toolbar = ({ storyId }: Props) => {
     <div className="w-[275px] border-r p-2">
       <p className="text-2xl font-semibold text-primary">Tools</p>
       <hr />
-      <div className="mt-2 w-full flex flex-col gap-2">
+      <div className="mt-2 w-full flex flex-col gap-4">
         <SceneEditor
           trigger={
             <Button variant="outline" className="w-full">
@@ -26,7 +26,7 @@ export const Toolbar = ({ storyId }: Props) => {
           }
           triggerClassName="w-full"
           onSave={(values) =>
-            getRepository().createScene({
+            getLocalRepository().createScene({
               ...values,
               storyId,
               builderParams: { position: { x: 0, y: 0 } },

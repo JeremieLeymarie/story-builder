@@ -2,6 +2,8 @@ import { WithoutId } from "@/types";
 import { Scene, Story, User, db } from "./dexie-db";
 import { LocalRepositoryPort } from "../port";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 class IndexedDBRepository implements LocalRepositoryPort {
   async createStory(story: WithoutId<Story>) {
     const id = await db.stories.add(story);
@@ -34,13 +36,16 @@ class IndexedDBRepository implements LocalRepositoryPort {
     const ids = await db.scenes.bulkAdd(scenes, {
       allKeys: true,
     });
-    //return Promise<Key[]>
     return ids;
   }
 
   async updateScene(scene: Scene) {
     await db.scenes.update(scene.id, scene);
     return scene;
+  }
+
+  async getScene(id: number) {
+    return (await db.scenes.get(id)) ?? null;
   }
 
   async getScenes(storyId: number) {
@@ -67,6 +72,6 @@ class IndexedDBRepository implements LocalRepositoryPort {
 }
 
 const repository = new IndexedDBRepository();
-export const getRepository = () => {
+export const getLocalRepository = () => {
   return repository;
 };

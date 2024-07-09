@@ -1,4 +1,4 @@
-import { getRepository } from "@/lib/storage/dexie/indexed-db-repository";
+import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { useMemo, useEffect, useCallback, MouseEvent } from "react";
 import { useNodesState, useEdgesState, Node } from "reactflow";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
@@ -14,7 +14,7 @@ export const useBuilder = ({
 }) => {
   const [sceneNodes, sceneEdges] = useMemo(
     () => scenesToNodesAndEdgesAdapter({ scenes, story }),
-    [scenes, story]
+    [scenes, story],
   );
   const [nodes, setNodes, onNodesChange] = useNodesState(sceneNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(sceneEdges);
@@ -27,7 +27,7 @@ export const useBuilder = ({
 
   // TODO: use better typing
   const onNodeMove = useCallback((_: MouseEvent, node: Node) => {
-    getRepository().updateScene({
+    getLocalRepository().updateScene({
       ...node.data,
       builderParams: { position: node.position },
     });

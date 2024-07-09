@@ -3,6 +3,7 @@ from bson import ObjectId
 from utils.format_id import format_id
 from utils.db import Database
 
+
 class StoreDomain:
 
     def __init__(self) -> None:
@@ -17,10 +18,9 @@ class StoreDomain:
         except Exception as err:
             raise Exception(HTTPStatus.INTERNAL_SERVER_ERROR, err)
 
-    def download(self, mongoId : str):
+    def download(self, mongoId: str):
         try:
-            mongoId = ObjectId(mongoId)
-            data = self.db.stories.find_one({ "_id" : mongoId})
+            data = self.db.stories.find_one({"_id": ObjectId(mongoId)})
             data = format_id(data)
             return data
         except Exception as err:

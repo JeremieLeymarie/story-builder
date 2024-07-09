@@ -31,10 +31,15 @@ class UserDomain:
         result = self.db["users"].insert_one(dict(user_document))
         user_document["_id"] = str(result.inserted_id)
         del user_document["password"]
+
         if not result.inserted_id:
             raise Exception(HTTPStatus.INTERNAL_SERVER_ERROR, "user creation failed")
 
-        return user_document
+        return UserWithId(
+            email=user_document["email"],
+            username=user_document["username"],
+            mongoId=str(result.inserted_id),
+        )
 
     def authentify(self, input: LoginUserInput) -> User:
         user = self.db["users"].find_one(

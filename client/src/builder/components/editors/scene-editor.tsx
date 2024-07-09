@@ -40,7 +40,8 @@ const schema = z.object({
       text: z
         .string()
         .min(3, { message: "Action text has to be at least 3 characters" }),
-    })
+      sceneId: z.number().optional(),
+    }),
   ),
 });
 type Schema = z.infer<typeof schema>;
@@ -84,7 +85,7 @@ export const SceneEditor = ({
       onSave(values);
       setOpen(false);
     },
-    [onSave]
+    [onSave],
   );
 
   return (

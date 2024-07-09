@@ -19,7 +19,7 @@ You need on your system:
 * Bun
 * Docker
 * Python 3
-  
+
 ### Client
 
 Typescript execution & package management is handled by **bun**.
@@ -43,6 +43,11 @@ bun run dev
 In the `server` folder
 
 #### Activate virtual env
+
+```bash
+python3 -m venv venv
+```
+
 
 ```bash
 source venv/bin/activate
