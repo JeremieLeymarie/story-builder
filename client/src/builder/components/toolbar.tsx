@@ -4,13 +4,17 @@ import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { SceneEditor } from "./editors/scene-editor";
 import { useToolbar } from "../hooks/use-toolbar";
 import { AuthModalForm } from "@/auth-modal-form";
+import { StoryPublisher } from "./story-publisher";
+import { StoryStatus } from "@/lib/storage/dexie/dexie-db";
 
-type Props = { storyId: number };
-export const Toolbar = ({ storyId }: Props) => {
+type Props = {
+  storyId: number;
+  remoteStoryId?: string;
+  storyStatus: StoryStatus;
+};
+export const Toolbar = ({ storyId, remoteStoryId, storyStatus }: Props) => {
   const { synchronize, isAuthModalOpen, setIsAuthModalOpen, testStory } =
-    useToolbar({
-      storyId,
-    });
+    useToolbar({ storyId });
 
   // Maybe we could use Navigation Menu for this component at some point
   return (
@@ -40,9 +44,11 @@ export const Toolbar = ({ storyId }: Props) => {
         <Button variant="default" className="w-full" onClick={testStory}>
           <TestTubesIcon size="16px" /> &nbsp; Test
         </Button>
-        <Button variant="outline" className="w-full">
-          Publish
-        </Button>
+        <StoryPublisher
+          remoteStoryId={remoteStoryId}
+          storyStatus={storyStatus}
+          storyId={storyId}
+        />
       </div>
       <AuthModalForm
         open={isAuthModalOpen}

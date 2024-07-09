@@ -2,22 +2,23 @@ from crypt import crypt
 import datetime
 
 from hmac import compare_digest as compare_hash
-from http import HTTPStatus
 
 from data_types.user import User, UserWithId
-from data_types.requests import CreateUserInput, LoginUserInput
-from server.src.utils.errors import BadAuthException, InvalidActionException
+from data_types.requests import CreateUserRequest, LoginUserRequest
+from utils.errors import BadAuthException, InvalidActionException
 from utils.format_id import format_id
 from utils.db import Database
 
 
-# TODO: Move HTTP Status code outside of domain!
+# TODO: isolate DB logic in repository
+
+
 class UserDomain:
 
     def __init__(self) -> None:
         self.db = Database().get_db()
 
-    def create(self, user: CreateUserInput) -> UserWithId:
+    def create(self, user: CreateUserRequest) -> UserWithId:
         user_count = self.db["users"].count_documents(
             {"$or": [{"username": user.username}, {"email": user.email}]}
         )
@@ -39,10 +40,10 @@ class UserDomain:
         return UserWithId(
             email=user_document["email"],
             username=user_document["username"],
-            mongoId=str(result.inserted_id),
+            remoteId=str(result.inserted_id),
         )
 
-    def authentify(self, input: LoginUserInput) -> User:
+    def authentify(self, input: LoginUserRequest) -> User:
         user = self.db["users"].find_one(
             {
                 "$or": [

@@ -1,8 +1,8 @@
 from http import HTTPStatus
 from fastapi import HTTPException
-import logging, sys
+import logging
 
-from server.src.utils.errors import BadAuthException, InvalidActionException
+from utils.errors import BadAuthException, InvalidActionException
 
 
 def raise_http_error(error: Exception) -> HTTPException:

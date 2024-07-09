@@ -3,11 +3,18 @@ import { useSynchronizeBuilder } from "./use-synchronize-builder";
 
 type ToolbarProps = {
   storyId: number;
+  remoteStoryId?: string;
 };
 
 export const useToolbar = ({ storyId }: ToolbarProps) => {
-  const testProps = useTestStory({ storyId });
-  const synchronizeProps = useSynchronizeBuilder({ storyId });
+  const { testStory } = useTestStory({ storyId });
+  const { synchronize, isAuthModalOpen, setIsAuthModalOpen } =
+    useSynchronizeBuilder({ storyId });
 
-  return { ...testProps, ...synchronizeProps };
+  return {
+    testStory,
+    synchronize,
+    isAuthModalOpen,
+    setIsAuthModalOpen,
+  };
 };

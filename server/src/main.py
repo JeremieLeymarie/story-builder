@@ -1,15 +1,15 @@
 from http import HTTPStatus
-from fastapi import FastAPI, HTTPException, Response
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from domains.user import UserDomain
 from data_types.requests import (
-    CreateUserInput,
-    LoginUserInput,
-    SynchronizeBuilderRequestBody,
+    CreateUserRequest,
+    LoginUserRequest,
+    FullStoryBuilderRequest,
 )
-from domains.builder import BuilderDomain
-from domains.store import StoreDomain
-from server.src.utils.error_adapter import raise_http_error
+from domains.user_domain import UserDomain
+from domains.builder_domain import BuilderDomain
+from domains.store_domain import StoreDomain
+from utils.error_adapter import raise_http_error
 
 app = FastAPI()
 
@@ -32,7 +32,7 @@ app.add_middleware(
 
 
 @app.post("/api/user/login", status_code=HTTPStatus.OK)
-async def post_session(data: LoginUserInput):
+async def post_session(data: LoginUserRequest):
     try:
         result = UserDomain().authentify(data)
         return result
@@ -41,7 +41,7 @@ async def post_session(data: LoginUserInput):
 
 
 @app.post("/api/user/register", status_code=HTTPStatus.CREATED)
-async def post_user(data: CreateUserInput):
+async def post_user(data: CreateUserRequest):
     try:
         result = UserDomain().create(data)
         return result
@@ -53,7 +53,7 @@ async def post_user(data: CreateUserInput):
 
 
 @app.post("/api/builder/save/game", status_code=HTTPStatus.OK)
-async def post_builder_save(body: SynchronizeBuilderRequestBody):
+async def post_builder_save(body: FullStoryBuilderRequest):
     try:
         BuilderDomain().save(body.story, body.scenes)
     except Exception as err:
@@ -72,19 +72,19 @@ async def get_store_load():
         raise raise_http_error(err)
 
 
-@app.get("/api/store/download/{mongoId}", status_code=HTTPStatus.OK)
-async def get_store_download(mongoId: str):
+@app.get("/api/store/download/{remoteId}", status_code=HTTPStatus.OK)
+async def get_store_download(story: FullStoryBuilderRequest):
     try:
-        result = StoreDomain().download(mongoId)
+        result = StoreDomain().download(story)
         return result
     except Exception as err:
         raise raise_http_error(err)
 
 
-@app.patch("/api/store/publish/{mongoId}", status_code=HTTPStatus.OK)
-async def publish_in_store(mongoId):
+@app.patch("/api/store/publish", status_code=HTTPStatus.OK)
+async def publish_in_store(remoteId):
     try:
-        StoreDomain().publish(mongoId)
+        StoreDomain().publish(remoteId)
         return {"success": True}
     except Exception as err:
         raise raise_http_error(err)

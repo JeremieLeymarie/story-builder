@@ -26,7 +26,11 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
 
   return (
     <div className="w-full h-full border flex">
-      <Toolbar storyId={story.id} />
+      <Toolbar
+        storyId={story.id}
+        remoteStoryId={story.remoteId}
+        storyStatus={story.status}
+      />
       <ReactFlow
         nodeTypes={nodeTypes}
         nodes={nodes}

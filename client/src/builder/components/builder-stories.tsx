@@ -6,9 +6,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/design-system/primitives";
-import { CreateStoryForm } from "./create-story-form";
+import { StoryFormDialog } from "./story-form-dialog";
 import { Link } from "@tanstack/react-router";
-import { MoveRightIcon } from "lucide-react";
+import { MoveRightIcon, PlusIcon } from "lucide-react";
 import { useBuilderStories } from "../hooks/use-builder-stories";
 import { Story } from "@/lib/storage/dexie/dexie-db";
 
@@ -28,7 +28,14 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
           <CardDescription>A new adventure awaits</CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center items-center">
-          <CreateStoryForm onCreate={handleCreateStory} />
+          <StoryFormDialog
+            onSubmit={handleCreateStory}
+            trigger={
+              <Button>
+                <PlusIcon /> &nbsp;Build your own story
+              </Button>
+            }
+          />
         </CardContent>
       </Card>
       {stories.map(({ title, description, image, id }) => {

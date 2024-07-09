@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/design-system/primitives/card";
 import { Link } from "@tanstack/react-router";
-import { LayoutTemplateIcon } from "lucide-react";
+import { LayoutTemplateIcon, StoreIcon } from "lucide-react";
 
 export const Home = () => {
   return (
@@ -20,7 +20,8 @@ export const Home = () => {
       <CardContent className="flex flex-col gap-2">
         <Link to="/store">
           <Button variant="default" className="w-[200px]">
-            Store
+            <StoreIcon />
+            &nbsp;Store
           </Button>
         </Link>
         <Link to="/game">

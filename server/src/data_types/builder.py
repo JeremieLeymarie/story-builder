@@ -11,8 +11,8 @@ class StoryStatus(enum.Enum):
 
 class Story(BaseModel):
     id: int
-    mongoId: Optional[str] = None
-    authorId: int
+    remoteId: Optional[str] = None
+    authorId: Optional[int] = None
     title: str
     description: str
     image: str
@@ -38,9 +38,12 @@ class BuilderParams(BaseModel):
 
 class Scene(BaseModel):
     id: int
-    mongoId: Optional[str] = None
     storyId: int
     title: str
     content: str
     actions: list[Action]
     builderParams: BuilderParams
+
+
+class FullStory(Story):
+    scenes: list[Scene]

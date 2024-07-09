@@ -5,7 +5,7 @@ content-type: application/json
 {
   "story" : {
     "id" : 1,
-    "mongoId" : null,
+    "remoteId" : null,
     "authorId" : 1,
     "title" : "A story",
     "description" : "A story description",
@@ -15,7 +15,7 @@ content-type: application/json
   "scenes" : [
     {
       "id" : 1,
-      "mongoId" : null,
+      "remoteId" : null,
       "storyId" : 1,
       "title" : "A scene",
       "content" : "A scene content",

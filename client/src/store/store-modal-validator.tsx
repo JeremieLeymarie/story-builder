@@ -14,13 +14,13 @@ import { API_URL } from "@/constants";
 import { useToast } from "@/design-system/primitives/use-toast";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 
-export const ModalValidator = ({ mongoId }: { mongoId?: string }) => {
+export const ModalValidator = ({ remoteId }: { remoteId?: string }) => {
   const { toast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const download = useCallback(
-    async (mongoId: string | undefined) => {
+    async (remoteId: string | undefined) => {
       try {
-        const res = await fetch(`${API_URL}/api/store/download/${mongoId}`, {
+        const res = await fetch(`${API_URL}/api/store/download/${remoteId}`, {
           method: "GET",
         });
         const story = await res.json();
@@ -39,7 +39,7 @@ export const ModalValidator = ({ mongoId }: { mongoId?: string }) => {
         });
       }
     },
-    [toast],
+    [toast]
   );
 
   return (
@@ -74,7 +74,7 @@ export const ModalValidator = ({ mongoId }: { mongoId?: string }) => {
               </Button>
               <Button
                 onClick={() => {
-                  download(mongoId);
+                  download(remoteId);
                   setIsModalOpen(false);
                 }}
               >
