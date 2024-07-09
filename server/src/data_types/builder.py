@@ -9,7 +9,7 @@ class StoryStatus(enum.Enum):
     PUBLISHED = "published"
 
 
-class Story(BaseModel):
+class Story(BaseModel, use_enum_values=True):
     id: int
     remoteId: Optional[str] = None
     authorId: Optional[int] = None
@@ -17,9 +17,6 @@ class Story(BaseModel):
     description: str
     image: str
     status: StoryStatus
-
-    class Config:
-        use_enum_values = True
 
 
 class Action(BaseModel):

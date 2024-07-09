@@ -4,6 +4,8 @@ from data_types.requests import FullStoryBuilderRequest
 from repositories.story_repository_port import StoryRepositoryPort
 from utils.errors import InvalidStoryFormatException
 
+# TODO: remove Request specific types
+
 
 class StoreDomain:
 

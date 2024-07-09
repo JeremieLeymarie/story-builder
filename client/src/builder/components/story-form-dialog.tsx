@@ -24,7 +24,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 export const StoryFormDialog = (
-  props: Omit<StoryFormProps, "trigger"> & { trigger: JSX.Element }
+  props: Omit<StoryFormProps, "trigger"> & { trigger: JSX.Element },
 ) => {
   const [open, setOpen] = useState(false);
 
@@ -52,7 +52,8 @@ type StoryFormProps = {
   onSubmit: (props: OnSubmitStoryFormProps) => void;
   trigger?: JSX.Element;
   defaultValues?: Schema;
-  // TODO: add title & desc
+  title: string;
+  description: string;
 };
 
 export const ControlledStoryFormDialog = ({
@@ -61,6 +62,8 @@ export const ControlledStoryFormDialog = ({
   defaultValues,
   setOpen,
   open,
+  title,
+  description,
 }: StoryFormProps & { open: boolean; setOpen: (open: boolean) => void }) => {
   const form = useForm<Schema>({
     resolver: zodResolver(schema),
@@ -72,17 +75,17 @@ export const ControlledStoryFormDialog = ({
   });
 
   const submit = (data: Schema) => {
-    onSubmit({ ...data });
+    onSubmit?.({ ...data });
     setOpen(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
+      {!!trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Your story</DialogTitle>
-          <DialogDescription>Build your own adventure!</DialogDescription>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(submit)} className="space-y-8">
@@ -140,9 +143,7 @@ export const ControlledStoryFormDialog = ({
                 </FormItem>
               )}
             />
-            <Button variant="outline" type="submit">
-              Save
-            </Button>
+            <Button type="submit">Save</Button>
           </form>
         </Form>
       </DialogContent>

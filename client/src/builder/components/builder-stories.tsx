@@ -35,6 +35,8 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
                 <PlusIcon /> &nbsp;Build your own story
               </Button>
             }
+            title="Your story"
+            description="Build your own adventure!"
           />
         </CardContent>
       </Card>

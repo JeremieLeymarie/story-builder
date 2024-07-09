@@ -11,12 +11,9 @@ class BuilderDomain:
 
     def save(self, story: Story, scenes: list[Scene]) -> FullStory:
 
-        payload = {
-            **story.model_dump(),
-            **{"scenes": [scene.model_dump() for scene in scenes]},
-            "status": str(StoryStatus.SAVED),
-        }
+        story.status = StoryStatus.SAVED
+        full_story = FullStory(**story.model_dump(), scenes=scenes)
 
-        story = self.story_repository.save(FullStory(**payload))
+        story = self.story_repository.save(full_story)
 
         return story

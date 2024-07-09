@@ -6,4 +6,4 @@ GET http://localhost:8000/api/store/download/66827dd4893c9c5d129a4595 HTTP/1.1
 
 
 ### publish story
-PATCH http://localhost:8000/api/store/publish/66827dd4893c9c5d129a4595 HTTP/1.1
+PUT http://localhost:8000/api/store/publish/66827dd4893c9c5d129a4595 HTTP/1.1

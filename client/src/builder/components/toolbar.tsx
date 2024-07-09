@@ -5,16 +5,15 @@ import { SceneEditor } from "./editors/scene-editor";
 import { useToolbar } from "../hooks/use-toolbar";
 import { AuthModalForm } from "@/auth-modal-form";
 import { StoryPublisher } from "./story-publisher";
-import { StoryStatus } from "@/lib/storage/dexie/dexie-db";
+import { Scene, Story } from "@/lib/storage/dexie/dexie-db";
 
 type Props = {
-  storyId: number;
-  remoteStoryId?: string;
-  storyStatus: StoryStatus;
+  story: Story;
+  scenes: Scene[];
 };
-export const Toolbar = ({ storyId, remoteStoryId, storyStatus }: Props) => {
+export const Toolbar = ({ story, scenes }: Props) => {
   const { synchronize, isAuthModalOpen, setIsAuthModalOpen, testStory } =
-    useToolbar({ storyId });
+    useToolbar({ storyId: story.id });
 
   // Maybe we could use Navigation Menu for this component at some point
   return (
@@ -33,22 +32,24 @@ export const Toolbar = ({ storyId, remoteStoryId, storyStatus }: Props) => {
           onSave={(values) =>
             getLocalRepository().createScene({
               ...values,
-              storyId,
+              storyId: story.id,
               builderParams: { position: { x: 0, y: 0 } },
             })
           }
         />
-        <Button variant="outline" className="w-full" onClick={synchronize}>
-          <RefreshCcwIcon size="16px" /> &nbsp; Synchronize
-        </Button>
+
         <Button variant="default" className="w-full" onClick={testStory}>
           <TestTubesIcon size="16px" /> &nbsp; Test
         </Button>
-        <StoryPublisher
-          remoteStoryId={remoteStoryId}
-          storyStatus={storyStatus}
-          storyId={storyId}
-        />
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={synchronize}
+          disabled={story.status === "published"}
+        >
+          <RefreshCcwIcon size="16px" /> &nbsp; Synchronize
+        </Button>
+        <StoryPublisher story={story} scenes={scenes} />
       </div>
       <AuthModalForm
         open={isAuthModalOpen}

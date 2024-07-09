@@ -3,48 +3,49 @@ import { toast } from "@/design-system/primitives/use-toast";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { useCallback, useState } from "react";
 import { OnSubmitStoryFormProps } from "../components/story-form-dialog";
-import { StoryStatus } from "@/lib/storage/dexie/dexie-db";
-
-// TODO: We could open an modal containing the story's data, to make sure everything is ok before actually publishing the story
-// Alternatively, a simple confirmation modal would be good
+import { Scene, Story } from "@/lib/storage/dexie/dexie-db";
 
 export const usePublishStory = ({
-  storyId,
-  remoteStoryId,
-  storyStatus,
+  story,
+  scenes,
 }: {
-  storyId: number;
-  storyStatus: StoryStatus;
-  remoteStoryId?: string;
+  story: Story;
+  scenes: Scene[];
 }) => {
   const repo = getLocalRepository();
-  const [modal, setModal] = useState<"auth" | "edit-story" | null>(null);
-
-  const publish = useCallback(
-    async (data: OnSubmitStoryFormProps) => {
-      const story = await repo.updateStory({
-        ...data,
-        status: storyStatus,
-        id: storyId,
-      });
-
-      fetch(`${API_URL}/api/store/publish/${remoteStoryId}`, { method: "PUT" })
-        .then(() => {
-          // TODO: toasts & update dexie
-          toast({
-            title: "Your story!",
-            description: "Your progress has successfully been saved.",
-          });
-        })
-        .catch(() => {
-          toast({
-            title: "Synchronization failed!",
-            description: "Something went wrong, please try again later.",
-          });
-        });
-    },
-    [remoteStoryId, repo, storyId, storyStatus]
+  const [modal, setModal] = useState<"auth" | "edit-story" | "confirm" | null>(
+    null,
   );
+
+  const updateLocalStory = useCallback(
+    async (data: OnSubmitStoryFormProps) => {
+      await repo.updateStory({
+        ...data,
+        status: story.status,
+        id: story.id,
+      });
+      setModal("confirm");
+    },
+    [repo, story.id, story.status],
+  );
+
+  const publish = useCallback(async () => {
+    fetch(`${API_URL}/api/store/publish`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ story, scenes }),
+    })
+      .then(async () => {
+        await repo.updateStory({ ...story, status: "published" });
+        // TODO: navigate to individual store page
+      })
+      .catch(() => {
+        toast({
+          title: "Publication failed!",
+          description: "Something went wrong, please try again later.",
+        });
+      });
+  }, [repo, scenes, story]);
 
   const handlePublishClick = useCallback(async () => {
     const user = await repo.getUser();
@@ -61,6 +62,7 @@ export const usePublishStory = ({
   return {
     publish,
     handlePublishClick,
+    updateLocalStory,
     modal,
     setModal,
   };

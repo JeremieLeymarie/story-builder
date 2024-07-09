@@ -18,26 +18,16 @@ class StoryRepository(StoryRepositoryPort):
             else {"authorId": story.authorId, "id": story.id}
         )
 
-        story = self.db.stories.update_one(
+        payload = story.model_dump(mode="json")
+
+        story = self.db.stories.find_one_and_update(
             filter,
-            {"$set": {story}},
+            {"$set": payload},
             upsert=True,
             return_document=ReturnDocument.AFTER,
         )
 
         return FullStory(**format_id(story))
-
-    # TODO: make overloads work
-
-    # @overload
-    # def get_all(
-    #     self, *, with_scenes: Literal[True] = True, status: StoryStatus | None = None
-    # ) -> list[FullStory]: ...
-
-    # @overload
-    # def get_all(
-    #     self, *, with_scenes: Literal[False], status: StoryStatus | None
-    # ) -> list[Story]: ...
 
     def get_all(
         self, *, with_scenes: bool = True, status: StoryStatus | None = None
@@ -45,13 +35,13 @@ class StoryRepository(StoryRepositoryPort):
         filter = {}
 
         if status is not None:
-            filter["status"] = str(status)
+            filter["status"] = status.value
+
+        documents = self.db.stories.find(filter, {"scenes": 1 if with_scenes else 0})
 
         return [
-            FullStory(**format_id(story))
-            for story in list(
-                self.db.stories.find(filter, {"scenes": 1 if with_scenes else 0})
-            )
+            FullStory(**format_id(story)) if with_scenes else Story(**format_id(story))
+            for story in list(documents)
         ]
 
     def get(self, *, id: str) -> FullStory:
