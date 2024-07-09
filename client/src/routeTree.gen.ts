@@ -14,7 +14,8 @@ import { Route as rootRoute } from "./routes/__root";
 import { Route as WhiteboardImport } from "./routes/whiteboard";
 import { Route as StoreImport } from "./routes/store";
 import { Route as IndexImport } from "./routes/index";
-import { Route as GameIndexImport } from "./routes/game/index";
+import { Route as LibraryIndexImport } from "./routes/library/index";
+import { Route as LibraryStoryIdImport } from "./routes/library/$storyId";
 import { Route as BuilderStoriesImport } from "./routes/builder/stories";
 import { Route as BuilderStoryIdImport } from "./routes/builder/$storyId";
 import { Route as GameGameIdIndexImport } from "./routes/game/$gameId/index";
@@ -37,8 +38,13 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any);
 
-const GameIndexRoute = GameIndexImport.update({
-  path: "/game/",
+const LibraryIndexRoute = LibraryIndexImport.update({
+  path: "/library/",
+  getParentRoute: () => rootRoute,
+} as any);
+
+const LibraryStoryIdRoute = LibraryStoryIdImport.update({
+  path: "/library/$storyId",
   getParentRoute: () => rootRoute,
 } as any);
 
@@ -101,11 +107,18 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof BuilderStoriesImport;
       parentRoute: typeof rootRoute;
     };
-    "/game/": {
-      id: "/game/";
-      path: "/game";
-      fullPath: "/game";
-      preLoaderRoute: typeof GameIndexImport;
+    "/library/$storyId": {
+      id: "/library/$storyId";
+      path: "/library/$storyId";
+      fullPath: "/library/$storyId";
+      preLoaderRoute: typeof LibraryStoryIdImport;
+      parentRoute: typeof rootRoute;
+    };
+    "/library/": {
+      id: "/library/";
+      path: "/library";
+      fullPath: "/library";
+      preLoaderRoute: typeof LibraryIndexImport;
       parentRoute: typeof rootRoute;
     };
     "/game/$gameId/$sceneId": {
@@ -133,7 +146,8 @@ export const routeTree = rootRoute.addChildren({
   WhiteboardRoute,
   BuilderStoryIdRoute,
   BuilderStoriesRoute,
-  GameIndexRoute,
+  LibraryStoryIdRoute,
+  LibraryIndexRoute,
   GameGameIdSceneIdRoute,
   GameGameIdIndexRoute,
 });
@@ -151,7 +165,8 @@ export const routeTree = rootRoute.addChildren({
         "/whiteboard",
         "/builder/$storyId",
         "/builder/stories",
-        "/game/",
+        "/library/$storyId",
+        "/library/",
         "/game/$gameId/$sceneId",
         "/game/$gameId/"
       ]
@@ -171,8 +186,11 @@ export const routeTree = rootRoute.addChildren({
     "/builder/stories": {
       "filePath": "builder/stories.tsx"
     },
-    "/game/": {
-      "filePath": "game/index.tsx"
+    "/library/$storyId": {
+      "filePath": "library/$storyId.tsx"
+    },
+    "/library/": {
+      "filePath": "library/index.tsx"
     },
     "/game/$gameId/$sceneId": {
       "filePath": "game/$gameId/$sceneId.tsx"
