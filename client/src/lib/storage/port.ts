@@ -18,7 +18,7 @@ export type LocalRepositoryPort = {
   getScenes: (storyId: number) => Promise<Scene[]>;
 
   createStoryProgress: (
-    progress: WithoutId<StoryProgress>,
+    progress: WithoutId<StoryProgress>
   ) => Promise<StoryProgress>;
   updateStoryProgress: (progress: StoryProgress) => Promise<StoryProgress>;
   deleteStoryProgress: (id: number) => Promise<void>;
@@ -27,5 +27,6 @@ export type LocalRepositoryPort = {
 
   getUser: () => Promise<User | null>;
   getUserCOunt: () => Promise<number>;
-  createUser: (user: User) => Promise<User>;
+  createUser: (user: WithoutId<User>) => Promise<User>;
+  updateUser: (user: User) => Promise<User>;
 };

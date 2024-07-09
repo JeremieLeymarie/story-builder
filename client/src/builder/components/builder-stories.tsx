@@ -11,6 +11,7 @@ import { Link } from "@tanstack/react-router";
 import { MoveRightIcon, PlusIcon } from "lucide-react";
 import { useBuilderStories } from "../hooks/use-builder-stories";
 import { Story } from "@/lib/storage/dexie/dexie-db";
+import { StoryCard } from "@/design-system/components/story-card";
 
 type BuilderHomeProps = {
   stories: Story[];
@@ -40,27 +41,13 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
           />
         </CardContent>
       </Card>
-      {stories.map(({ title, description, image, id }) => {
+      {stories.map((story) => {
         return (
-          <Link to="/builder/$storyId" params={{ storyId: id }}>
-            <Card
-              style={{
-                background: `url('${image}')`,
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-              className={`w-[275px] h-[225px] group relative`}
-            >
-              <CardHeader>
-                <CardTitle className="bg-gray-50 bg-opacity-75 p-2 rounded-sm">
-                  {title}
-                </CardTitle>
-                <CardDescription className="text-gray-50 overflow-ellipsis overflow-hidden ...">
-                  {description}
-                </CardDescription>
-              </CardHeader>
-              <Link to="/builder/$storyId" params={{ storyId: id }}>
+          <StoryCard
+            key={story.id}
+            {...story}
+            button={
+              <Link to="/builder/$storyId" params={{ storyId: story.id }}>
                 <Button
                   className={`absolute opacity-0 transition ease-in-out duration-300 group-hover:opacity-100 bottom-4 right-4`}
                 >
@@ -68,8 +55,8 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
                   <MoveRightIcon size="15px" className="animate-bounce" />
                 </Button>
               </Link>
-            </Card>
-          </Link>
+            }
+          />
         );
       })}
     </div>

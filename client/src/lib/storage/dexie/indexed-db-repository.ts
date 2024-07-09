@@ -5,6 +5,8 @@ import { LocalRepositoryPort } from "../port";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 class IndexedDBRepository implements LocalRepositoryPort {
+  // STORIES
+
   async createStory(story: WithoutId<Story>) {
     const id = await db.stories.add(story);
     return { ...story, id };
@@ -29,6 +31,8 @@ class IndexedDBRepository implements LocalRepositoryPort {
     await db.stories.update(story.id, story);
     return story;
   }
+
+  // SCENES
 
   async updateFirstScene(storyId: number, sceneId: number) {
     await db.stories.update(storyId, { firstSceneId: sceneId });
@@ -61,8 +65,10 @@ class IndexedDBRepository implements LocalRepositoryPort {
       .toArray();
   }
 
+  // USER
+
   async getUser() {
-    // There should always be one user in local database
+    // There should always be maximum one user in local database
     return (await db.user.toArray())?.[0] ?? null;
   }
 
@@ -70,8 +76,13 @@ class IndexedDBRepository implements LocalRepositoryPort {
     return await db.user.count();
   }
 
-  async createUser(user: User) {
-    await db.user.add(user);
+  async createUser(user: WithoutId<User>) {
+    const id = await db.user.add(user);
+    return { ...user, id };
+  }
+
+  async updateUser(user: User) {
+    await db.user.update(user.id, user);
     return user;
   }
 

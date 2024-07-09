@@ -7,7 +7,7 @@ export const Route = createRootRoute({
   component: () => (
     <>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <div className="h-screen w-screen flex flex-col">
+        <div className="h-screen w-screen flex flex-col overflow-x-hidden">
           <Navbar />
           <div className="w-full flex-1">
             <Outlet />

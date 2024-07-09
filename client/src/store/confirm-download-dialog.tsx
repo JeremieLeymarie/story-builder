@@ -6,10 +6,11 @@ import { useToast } from "@/design-system/primitives/use-toast";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { ConfirmDialog } from "@/design-system/components";
 
-export const ModalValidator = ({ remoteId }: { remoteId?: string }) => {
+export const ConfirmDownloadDialog = ({ remoteId }: { remoteId?: string }) => {
   const { toast } = useToast();
+
   const download = useCallback(
-    async (remoteId: string | undefined) => {
+    async (remoteId?: string) => {
       try {
         const res = await fetch(`${API_URL}/api/store/download/${remoteId}`, {
           method: "GET",
@@ -30,7 +31,7 @@ export const ModalValidator = ({ remoteId }: { remoteId?: string }) => {
         });
       }
     },
-    [toast],
+    [toast]
   );
 
   return (
