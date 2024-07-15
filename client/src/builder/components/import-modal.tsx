@@ -36,9 +36,8 @@ export const ImportModal = () => {
 
   const importFile = useCallback(async () => {
     try {
-      console.log(fileContent);
       if (typeof fileContent == "string") {
-        let contentJson = JSON.parse(fileContent);
+        const contentJson = JSON.parse(fileContent);
         await getLocalRepository().createStory(contentJson.story);
         if (contentJson.scenes) {
           await getLocalRepository().createScenes(contentJson.scenes);
