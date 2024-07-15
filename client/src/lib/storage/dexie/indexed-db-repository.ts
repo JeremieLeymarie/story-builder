@@ -2,6 +2,7 @@ import { WithoutId } from "@/types";
 import { Scene, Story, StoryProgress, User, db } from "./dexie-db";
 import { LocalRepositoryPort } from "../port";
 
+// TODO: use more transaction
 class IndexedDBRepository implements LocalRepositoryPort {
   // STORIES
 
@@ -25,11 +26,12 @@ class IndexedDBRepository implements LocalRepositoryPort {
     const lastProgress = await db.storyProgresses
       .orderBy("lastPlayedAt")
       .limit(1)
+      .reverse()
       .first();
 
     if (!lastProgress) return null;
 
-    return (await db.stories.get(lastProgress.id)) ?? null;
+    return (await db.stories.get(lastProgress.storyId)) ?? null;
   }
 
   async getStories() {

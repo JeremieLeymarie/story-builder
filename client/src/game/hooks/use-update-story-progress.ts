@@ -8,8 +8,6 @@ type Props = {
 };
 
 export const useUpdateStoryProgress = ({ scene, storyProgress }: Props) => {
-  const repo = getLocalRepository();
-
   const updateStoryProgress = useCallback(
     async (progress: StoryProgress, scene: Scene) => {
       const payload = {
@@ -19,9 +17,9 @@ export const useUpdateStoryProgress = ({ scene, storyProgress }: Props) => {
         history: [...progress!.history, scene.id],
       };
 
-      await repo.updateStoryProgress(payload);
+      await getLocalRepository().updateStoryProgress(payload);
     },
-    [repo]
+    [],
   );
 
   useEffect(() => {

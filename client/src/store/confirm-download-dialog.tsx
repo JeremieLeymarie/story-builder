@@ -31,7 +31,7 @@ export const ConfirmDownloadDialog = ({ remoteId }: { remoteId?: string }) => {
         });
       }
     },
-    [toast]
+    [toast],
   );
 
   return (

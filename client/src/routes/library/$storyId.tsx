@@ -9,7 +9,7 @@ const Page = () => {
   const { storyId } = Route.useParams();
   const story = useLiveQuery(() => getLocalRepository().getStory(storyId));
   const progress = useLiveQuery(() =>
-    getLocalRepository().getStoryProgress(storyId)
+    getLocalRepository().getStoryProgress(storyId),
   );
 
   if (story === undefined || progress === undefined) {

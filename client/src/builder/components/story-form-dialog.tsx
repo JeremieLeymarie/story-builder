@@ -24,7 +24,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 export const StoryFormDialog = (
-  props: Omit<StoryFormProps, "trigger"> & { trigger: JSX.Element }
+  props: Omit<StoryFormProps, "trigger"> & { trigger: JSX.Element },
 ) => {
   const [open, setOpen] = useState(false);
 

@@ -13,7 +13,7 @@ export const Component = () => {
   const story = useLiveQuery(() => repo.getStory(gameId));
   const scene = useLiveQuery(
     () => (story?.firstSceneId ? repo.getScene(story.firstSceneId) : undefined),
-    [story]
+    [story],
   );
 
   const createStoryProgress = useCallback(
@@ -23,7 +23,7 @@ export const Component = () => {
 
       if (!story.firstSceneId) {
         throw new Error(
-          `Error: story should have a first scene. Story: ${story.id}`
+          `Error: story should have a first scene. Story: ${story.id}`,
         );
       }
 
@@ -38,7 +38,7 @@ export const Component = () => {
         ...payload,
       });
     },
-    [gameId, repo]
+    [gameId, repo],
   );
 
   useEffect(() => {
