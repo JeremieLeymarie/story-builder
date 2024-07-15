@@ -21,8 +21,8 @@ export type LocalRepositoryPort = {
     progress: WithoutId<StoryProgress>
   ) => Promise<StoryProgress>;
   updateStoryProgress: (progress: StoryProgress) => Promise<StoryProgress>;
-  deleteStoryProgress: (id: number) => Promise<void>;
-  getStoryProgress: (id: number) => Promise<StoryProgress | null>;
+  deleteStoryProgress: (storyId: number) => Promise<void>;
+  getStoryProgress: (storyId: number) => Promise<StoryProgress | null>;
   getStoryProgresses: () => Promise<StoryProgress[]>;
 
   getUser: () => Promise<User | null>;

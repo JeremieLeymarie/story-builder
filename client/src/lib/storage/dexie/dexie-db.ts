@@ -1,16 +1,11 @@
 import Dexie, { type EntityTable } from "dexie";
 
-type UserConfig = {
-  lastGamePlayed: number;
-};
-
 export type User = {
   id: number;
   remoteId?: string;
   username: string;
   email: string;
   password?: string;
-  config: UserConfig;
 };
 
 export const STORY_STATUS = ["draft", "saved", "published"] as const;
@@ -49,6 +44,7 @@ export type StoryProgress = {
   currentSceneId: number;
   character?: Record<string, unknown>;
   inventory?: Record<string, unknown>;
+  lastPlayedAt: Date;
 };
 
 // TODO: Chapters?
@@ -61,10 +57,10 @@ export const db = new Dexie("story-builder") as Dexie & {
 };
 
 db.version(1).stores({
-  user: "++id, remoteId, username, password, email, config",
+  user: "++id, remoteId, username, password, email",
   stories:
     "++id, remoteId, firstSceneId, authorId, title, description, image, status",
   scenes: "++id, storyId, title, content, actions, builderParams",
   storyProgresses:
-    "++id, remoteId, storyId, currentSceneId, character, inventory, history",
+    "++id, remoteId, storyId, currentSceneId, character, inventory, history, lastPlayedAt",
 });

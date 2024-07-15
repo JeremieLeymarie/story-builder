@@ -19,6 +19,11 @@ You need on your system:
 * Bun
 * Docker
 * Python 3
+* pre-commit
+
+```sh
+pip install pre-commit
+```
 
 ### Client
 

@@ -1,5 +1,5 @@
 import { WithoutId } from "@/types";
-import { Scene, Story, User, db } from "./dexie-db";
+import { Scene, Story, StoryProgress, User, db } from "./dexie-db";
 import { LocalRepositoryPort } from "../port";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -94,6 +94,16 @@ class IndexedDBRepository implements LocalRepositoryPort {
       .first();
 
     return progress ?? null;
+  }
+
+  async updateStoryProgress(storyProgress: StoryProgress) {
+    await db.storyProgresses.update(storyProgress.id, storyProgress);
+    return storyProgress;
+  }
+
+  async createStoryProgress(storyProgress: WithoutId<StoryProgress>) {
+    const id = await db.storyProgresses.add(storyProgress);
+    return { ...storyProgress, id };
   }
 }
 
