@@ -11,6 +11,7 @@ import { Link } from "@tanstack/react-router";
 import { MoveRightIcon } from "lucide-react";
 import { useBuilderStories } from "../hooks/use-builder-stories";
 import { Story } from "@/lib/storage/dexie/dexie-db";
+import { ImportModal } from "../components/import-modal";
 
 type BuilderHomeProps = {
   stories: Story[];
@@ -27,8 +28,10 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
           <CardTitle>New story</CardTitle>
           <CardDescription>A new adventure awaits</CardDescription>
         </CardHeader>
-        <CardContent className="flex justify-center items-center">
+        <CardContent className="flex flex-col justify-center items-center gap-2">
           <CreateStoryForm onCreate={handleCreateStory} />
+          <p className="text-sm text-muted-foreground">------ OR ------</p>
+          <ImportModal />
         </CardContent>
       </Card>
       {stories.map(({ title, description, image, id }) => {

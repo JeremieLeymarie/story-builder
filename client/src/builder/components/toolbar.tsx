@@ -4,12 +4,14 @@ import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { SceneEditor } from "./editors/scene-editor";
 import { useToolbar } from "../hooks/use-toolbar";
 import { AuthModalForm } from "@/auth-modal-form";
+import { ExportModal } from "./export-modal";
+import { Scene, Story } from "@/lib/storage/dexie/dexie-db";
 
-type Props = { storyId: number };
-export const Toolbar = ({ storyId }: Props) => {
+type Props = { story: Story; scenes: Scene[] };
+export const Toolbar = ({ story, scenes }: Props) => {
   const { synchronize, isAuthModalOpen, setIsAuthModalOpen, testStory } =
     useToolbar({
-      storyId,
+      storyId: story.id,
     });
 
   return (
@@ -28,7 +30,7 @@ export const Toolbar = ({ storyId }: Props) => {
           onSave={(values) =>
             getLocalRepository().createScene({
               ...values,
-              storyId,
+              storyId: story.id,
               builderParams: { position: { x: 0, y: 0 } },
             })
           }
@@ -36,6 +38,7 @@ export const Toolbar = ({ storyId }: Props) => {
         <Button variant="outline" className="w-full" onClick={synchronize}>
           <RefreshCcwIcon size="16px" /> &nbsp; Synchronize
         </Button>
+        <ExportModal story={story} scenes={scenes} />
         <Button variant="default" className="w-full" onClick={testStory}>
           <TestTubesIcon size="16px" /> &nbsp; Test
         </Button>
