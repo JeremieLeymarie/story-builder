@@ -2,8 +2,6 @@ import { WithoutId } from "@/types";
 import { Scene, Story, StoryProgress, User, db } from "./dexie-db";
 import { LocalRepositoryPort } from "../port";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 class IndexedDBRepository implements LocalRepositoryPort {
   // STORIES
 
@@ -21,6 +19,17 @@ class IndexedDBRepository implements LocalRepositoryPort {
     return await db.stories
       .filter((story) => story.authorId !== user.id)
       .toArray();
+  }
+
+  async getLastGamePlayed() {
+    const lastProgress = await db.storyProgresses
+      .orderBy("lastPlayedAt")
+      .limit(1)
+      .first();
+
+    if (!lastProgress) return null;
+
+    return (await db.stories.get(lastProgress.id)) ?? null;
   }
 
   async getStories() {
@@ -94,6 +103,10 @@ class IndexedDBRepository implements LocalRepositoryPort {
       .first();
 
     return progress ?? null;
+  }
+
+  async getStoryProgresses() {
+    return await db.storyProgresses.toArray();
   }
 
   async updateStoryProgress(storyProgress: StoryProgress) {

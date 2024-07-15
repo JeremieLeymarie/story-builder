@@ -11,13 +11,7 @@ import { useEffect, useState } from "react";
 const Index = () => {
   const repo = getLocalRepository();
   const user = useLiveQuery(() => repo.getUser());
-  const lastPlayedGame = useLiveQuery(
-    () =>
-      user?.config.lastGamePlayed
-        ? getLocalRepository().getStory(user?.config.lastGamePlayed)
-        : null,
-    [user]
-  );
+  const lastPlayedGame = useLiveQuery(() => repo.getLastGamePlayed(), [user]);
   const [storeItems, setStoreItems] = useState<Story[] | null>(null);
   const isOnline = useIsOnline();
 
@@ -39,11 +33,6 @@ const Index = () => {
   if (user === undefined || lastPlayedGame === undefined) {
     return <Loader />;
   }
-
-  // if ( === null) {
-  //   console.error("Error while loading scene: ", scene);
-  //   return <ErrorMessage />;
-  // }
 
   return <Home lastPlayedGame={lastPlayedGame} storeItems={storeItems} />;
 };

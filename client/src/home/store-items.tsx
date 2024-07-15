@@ -29,7 +29,7 @@ export const StoreItems = ({ stories }: { stories: Story[] }) => {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center items-center">
-            <Link to="/builder/stories">
+            <Link to="/store">
               <Button>
                 Go to store &nbsp; <MoveRightIcon />
               </Button>
