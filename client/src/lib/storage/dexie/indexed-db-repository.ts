@@ -86,7 +86,15 @@ class IndexedDBRepository implements LocalRepositoryPort {
     return user;
   }
 
-  // TODO: actually implement other methods
+  // STORY PROGRESS
+
+  async getStoryProgress(storyId: number) {
+    const progress = await db.storyProgresses
+      .filter((progress) => progress.storyId === storyId)
+      .first();
+
+    return progress ?? null;
+  }
 }
 
 const repository = new IndexedDBRepository();

@@ -24,6 +24,7 @@ export const Home = ({ lastPlayedGame, storeItems }: Props) => {
           <Divider />
         </>
       )}
+      {/* TODO: add builder section */}
     </div>
   );
 };
