@@ -1,51 +1,25 @@
 import {
   Button,
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/design-system/primitives";
-import { StoryFormDialog } from "./story-form-dialog";
 import { Link } from "@tanstack/react-router";
-import { MoveRightIcon, PlusIcon } from "lucide-react";
-import { useBuilderStories } from "../hooks/use-builder-stories";
+import { MoveRightIcon } from "lucide-react";
 import { Story } from "@/lib/storage/dexie/dexie-db";
-import { ImportModal } from "../components/import-modal";
 
-type BuilderHomeProps = {
+type Library = {
   stories: Story[];
 };
 
-export const BuilderStories = ({ stories }: BuilderHomeProps) => {
-  const { handleCreateStory } = useBuilderStories();
-
+export const Library = ({ stories }: Library) => {
   return (
     // TODO: justify-center might not be the best
     <div className="flex p-4 gap-4 flex-wrap justify-center">
-      <Card className="border-dashed w-[275px] h-[225px]">
-        <CardHeader>
-          <CardTitle>New story</CardTitle>
-          <CardDescription>A new adventure awaits</CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col justify-center items-center gap-2">
-          <StoryFormDialog
-            onSubmit={handleCreateStory}
-            trigger={
-              <Button>
-                <PlusIcon /> &nbsp;Build your own story
-              </Button>
-            }
-            title="Your story"
-            description="Build your own adventure!"
-          />
-          <p className="text-sm text-muted-foreground">------ OR ------</p>
-          <ImportModal />
-        </CardContent>
-      </Card>
       {stories.map(({ title, description, image, id }) => {
         return (
-          <Link to="/builder/$storyId" params={{ storyId: id }}>
+          <Link to="/library/$storyId" params={{ storyId: id }}>
             <Card
               style={{
                 background: `url('${image}')`,
@@ -63,11 +37,11 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
                   {description}
                 </CardDescription>
               </CardHeader>
-              <Link to="/builder/$storyId" params={{ storyId: id }}>
+              <Link to="/library/$storyId" params={{ storyId: id }}>
                 <Button
                   className={`absolute opacity-0 transition ease-in-out duration-300 group-hover:opacity-100 bottom-4 right-4`}
                 >
-                  Edit &nbsp;{" "}
+                  Play &nbsp;{" "}
                   <MoveRightIcon size="15px" className="animate-bounce" />
                 </Button>
               </Link>

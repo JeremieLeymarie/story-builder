@@ -2,20 +2,23 @@ import Dexie, { type EntityTable } from "dexie";
 
 export type User = {
   id: number;
-  mongoId?: string;
+  remoteId?: string;
   username: string;
   email: string;
   password?: string;
 };
 
+export const STORY_STATUS = ["draft", "saved", "published"] as const;
+export type StoryStatus = (typeof STORY_STATUS)[number];
+
 export type Story = {
   id: number;
-  mongoId?: string;
+  remoteId?: string;
   authorId?: number;
   title: string;
   description: string;
   image: string;
-  status: "draft" | "saved" | "published";
+  status: StoryStatus;
   firstSceneId?: number;
 };
 
@@ -26,7 +29,6 @@ export type Action = {
 
 export type Scene = {
   id: number;
-  mongoId?: string;
   storyId: number;
   title: string;
   content: string;
@@ -36,7 +38,7 @@ export type Scene = {
 
 export type StoryProgress = {
   id: number;
-  mongoId?: string;
+  remoteId?: string;
   storyId: number;
   history: number[];
   currentSceneId: number;
@@ -54,10 +56,10 @@ export const db = new Dexie("story-builder") as Dexie & {
 };
 
 db.version(1).stores({
-  user: "++id, mongoId, username, password, email",
+  user: "++id, remoteId, username, password, email",
   stories:
-    "++id, mongoId, firstSceneId, authorId, title, description, image, status",
-  scenes: "++id, mongoId, storyId, title, content, actions, builderParams",
+    "++id, remoteId, firstSceneId, authorId, title, description, image, status",
+  scenes: "++id, storyId, title, content, actions, builderParams",
   storyProgresses:
-    "++id, mongoId, storyId, currentSceneId, character, inventory, history",
+    "++id, remoteId, storyId, currentSceneId, character, inventory, history",
 });

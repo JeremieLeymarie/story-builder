@@ -9,17 +9,14 @@ class StoryStatus(enum.Enum):
     PUBLISHED = "published"
 
 
-class Story(BaseModel):
+class Story(BaseModel, use_enum_values=True):
     id: int
-    mongoId: Optional[str] = None
-    authorId: int
+    remoteId: Optional[str] = None
+    authorId: Optional[int] = None
     title: str
     description: str
     image: str
     status: StoryStatus
-
-    class Config:
-        use_enum_values = True
 
 
 class Action(BaseModel):
@@ -38,9 +35,12 @@ class BuilderParams(BaseModel):
 
 class Scene(BaseModel):
     id: int
-    mongoId: Optional[str] = None
     storyId: int
     title: str
     content: str
     actions: list[Action]
     builderParams: BuilderParams
+
+
+class FullStory(Story):
+    scenes: list[Scene]

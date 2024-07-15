@@ -1,14 +1,16 @@
 from http import HTTPStatus
-from fastapi import FastAPI, HTTPException, Response
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from domains.user import UserDomain
 from data_types.requests import (
-    CreateUserInput,
-    LoginUserInput,
-    SynchronizeBuilderRequestBody,
+    CreateUserRequest,
+    LoginUserRequest,
+    FullStoryBuilderRequest,
 )
-from domains.builder import BuilderDomain
-from domains.store import StoreDomain
+from domains.user_domain import UserDomain
+from domains.builder_domain import BuilderDomain
+from domains.store_domain import StoreDomain
+from repositories.story_repository import StoryRepository
+from utils.error_adapter import raise_http_error
 
 app = FastAPI()
 
@@ -27,58 +29,63 @@ app.add_middleware(
 # TODO: use API wrapper
 
 
+# USER ENDPOINTS
+
+
 @app.post("/api/user/login", status_code=HTTPStatus.OK)
-async def post_session(data: LoginUserInput, response: Response):
+async def post_session(data: LoginUserRequest):
     try:
         result = UserDomain().authentify(data)
         return result
     except Exception as err:
-        raise HTTPException(
-            status_code=err.args[0],
-            detail=str(err.args[1]),
-        )
+        raise raise_http_error(err)
 
 
 @app.post("/api/user/register", status_code=HTTPStatus.CREATED)
-async def post_user(data: CreateUserInput, response: Response):
+async def post_user(data: CreateUserRequest):
     try:
         result = UserDomain().create(data)
         return result
     except Exception as err:
-        raise HTTPException(
-            status_code=err.args[0],
-            detail=str(err.args[1]),
-        )
+        raise raise_http_error(err)
+
+
+# BUILDER ENDPOINTS
 
 
 @app.post("/api/builder/save/game", status_code=HTTPStatus.OK)
-async def post_builder_save(body: SynchronizeBuilderRequestBody, response: Response):
+async def post_builder_save(body: FullStoryBuilderRequest):
     try:
-        BuilderDomain().save(body.story, body.scenes)
+        BuilderDomain(story_repository=StoryRepository()).save(body.story, body.scenes)
     except Exception as err:
-        raise HTTPException(
-            status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
-            detail=str(err),
-        )
+        raise raise_http_error(err)
 
-@app.get('/api/store/load',status_code=HTTPStatus.OK)
+
+# STORE ENDPOINTS
+
+
+@app.get("/api/store/load", status_code=HTTPStatus.OK)
 async def get_store_load():
     try:
-        result = StoreDomain().load()
+        result = StoreDomain(story_repository=StoryRepository()).load()
         return result
     except Exception as err:
-        raise HTTPException(
-            status_code=err.args[0],
-            detail=str(err.args[1]),
-        )
+        raise raise_http_error(err)
 
-@app.get('/api/store/download/{mongoId}',status_code=HTTPStatus.OK)
-async def get_store_download(mongoId:str):
+
+@app.get("/api/store/download/{remote_id}", status_code=HTTPStatus.OK)
+async def get_store_download(remote_id: str):
     try:
-        result = StoreDomain().download(mongoId)
+        result = StoreDomain(story_repository=StoryRepository()).download(remote_id)
         return result
     except Exception as err:
-        raise HTTPException(
-            status_code=err.args[0],
-            detail=str(err.args[1]),
-        )
+        raise raise_http_error(err)
+
+
+@app.put("/api/store/publish", status_code=HTTPStatus.OK)
+async def publish_in_store(body: FullStoryBuilderRequest):
+    try:
+        StoreDomain(story_repository=StoryRepository()).publish(body)
+        return {"success": True}
+    except Exception as err:
+        raise raise_http_error(err)

@@ -3,17 +3,17 @@ from pydantic import BaseModel
 from data_types.builder import Scene, Story
 
 
-class CreateUserInput(BaseModel):
+class CreateUserRequest(BaseModel):
     username: str
     email: str
     password: str
 
 
-class LoginUserInput(BaseModel):
+class LoginUserRequest(BaseModel):
     usernameOrEmail: str
     password: str
 
 
-class SynchronizeBuilderRequestBody(BaseModel):
+class FullStoryBuilderRequest(BaseModel):
     story: Story
     scenes: list[Scene]

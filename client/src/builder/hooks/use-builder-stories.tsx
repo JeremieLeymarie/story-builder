@@ -1,16 +1,17 @@
-import { Story } from "@/lib/storage/dexie/dexie-db";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
-import { WithoutId } from "@/types";
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
+import { OnSubmitStoryFormProps } from "../components/story-form-dialog";
 
 export const useBuilderStories = () => {
   const navigate = useNavigate();
 
   const handleCreateStory = useCallback(
-    async (storyData: Omit<WithoutId<Story>, "firstSceneId">) => {
+    async (storyData: OnSubmitStoryFormProps) => {
       const repo = getLocalRepository();
-      const story = await repo.createStory(storyData);
+      const story = await repo.createStory({ ...storyData, status: "draft" });
+
+      // Create first scene with mock data
       const firstScene = await repo.createScene({
         storyId: story.id,
         builderParams: { position: { x: 0, y: 0 } },
@@ -32,7 +33,7 @@ export const useBuilderStories = () => {
         params: { storyId: story.id },
       });
     },
-    [navigate],
+    [navigate]
   );
 
   return { handleCreateStory };

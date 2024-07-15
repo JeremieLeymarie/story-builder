@@ -16,13 +16,20 @@ import {
   Input,
   Textarea,
 } from "@/design-system/primitives";
-import { Story } from "@/lib/storage/dexie/dexie-db";
+import { Story, STORY_STATUS } from "@/lib/storage/dexie/dexie-db";
 import { WithoutId } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
+export const StoryFormDialog = (
+  props: Omit<StoryFormProps, "trigger"> & { trigger: JSX.Element },
+) => {
+  const [open, setOpen] = useState(false);
+
+  return <ControlledStoryFormDialog {...props} open={open} setOpen={setOpen} />;
+};
 
 const schema = z.object({
   title: z
@@ -32,42 +39,53 @@ const schema = z.object({
     .string()
     .min(10, { message: "Description must be at least 10 characters long" }),
   image: z.string().url({ message: "Image has to be a valid URL" }),
+  status: z.enum(STORY_STATUS).optional(),
 });
 
 type Schema = z.infer<typeof schema>;
 
-type CreateStoryFormProps = {
-  onCreate: (props: Omit<WithoutId<Story>, "firstSceneId">) => void;
+export type OnSubmitStoryFormProps = Omit<
+  WithoutId<Story>,
+  "firstSceneId" | "authorId" | "status"
+>;
+type StoryFormProps = {
+  onSubmit: (props: OnSubmitStoryFormProps) => void;
+  trigger?: JSX.Element;
+  defaultValues?: Schema;
+  title: string;
+  description: string;
 };
 
-export const CreateStoryForm = ({ onCreate }: CreateStoryFormProps) => {
+export const ControlledStoryFormDialog = ({
+  onSubmit,
+  trigger,
+  defaultValues,
+  setOpen,
+  open,
+  title,
+  description,
+}: StoryFormProps & { open: boolean; setOpen: (open: boolean) => void }) => {
   const form = useForm<Schema>({
     resolver: zodResolver(schema),
-    defaultValues: {
+    defaultValues: defaultValues ?? {
       title: "",
       description: "",
       image: "",
     },
   });
-  const [open, setOpen] = useState(false);
 
   const submit = (data: Schema) => {
-    // TODO: use actual authorId when auth is implemented
-    onCreate({ ...data, authorId: 1, status: "draft" });
+    onSubmit?.({ ...data });
     setOpen(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <PlusIcon /> &nbsp;Build your own story
-        </Button>
-      </DialogTrigger>
+      {!!trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Start building your own adventure! </DialogTitle>
-          <DialogDescription>{}</DialogDescription>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(submit)} className="space-y-8">
@@ -125,9 +143,7 @@ export const CreateStoryForm = ({ onCreate }: CreateStoryFormProps) => {
                 </FormItem>
               )}
             />
-            <Button variant="outline" type="submit">
-              Save
-            </Button>
+            <Button type="submit">Save</Button>
           </form>
         </Form>
       </DialogContent>

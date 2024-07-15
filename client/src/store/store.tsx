@@ -14,7 +14,7 @@ type StoreHomeProps = {
 export const Store = ({ stories }: StoreHomeProps) => {
   return (
     <div className="flex p-4 gap-4 flex-wrap justify-center">
-      {stories.map(({ title, description, image, mongoId }) => {
+      {stories.map(({ title, description, image, remoteId }) => {
         return (
           <Card
             style={{
@@ -33,7 +33,7 @@ export const Store = ({ stories }: StoreHomeProps) => {
                 {description}
               </CardDescription>
             </CardHeader>
-            <ModalValidator mongoId={mongoId} />
+            <ModalValidator remoteId={remoteId} />
           </Card>
         );
       })}

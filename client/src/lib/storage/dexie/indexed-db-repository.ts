@@ -14,6 +14,13 @@ class IndexedDBRepository implements LocalRepositoryPort {
     return (await db.stories.get(id)) ?? null;
   }
 
+  async getGames() {
+    const user = await this.getUser();
+    return await db.stories
+      .filter((story) => story.authorId !== user?.id)
+      .toArray();
+  }
+
   async getStories() {
     return await db.stories.toArray();
   }

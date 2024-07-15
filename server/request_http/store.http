@@ -1,5 +1,9 @@
-### get storie
+### get story
 GET http://localhost:8000/api/store/load HTTP/1.1
 
-### download storie
+### download story
 GET http://localhost:8000/api/store/download/66827dd4893c9c5d129a4595 HTTP/1.1
+
+
+### publish story
+PUT http://localhost:8000/api/store/publish/66827dd4893c9c5d129a4595 HTTP/1.1
