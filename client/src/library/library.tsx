@@ -25,8 +25,7 @@ export const Library = ({ stories }: Library) => {
                 <Button
                   className={`absolute opacity-0 transition ease-in-out duration-300 group-hover:opacity-100 bottom-4 right-4`}
                 >
-                  Play &nbsp;{" "}
-                  <MoveRightIcon size="15px" className="animate-bounce" />
+                  <MoveRightIcon size="15px" />
                 </Button>
               }
             />

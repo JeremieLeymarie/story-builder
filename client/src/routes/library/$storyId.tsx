@@ -7,12 +7,19 @@ import { useLiveQuery } from "dexie-react-hooks";
 
 const Page = () => {
   const { storyId } = Route.useParams();
-  const story = useLiveQuery(() => getLocalRepository().getStory(storyId));
-  const progress = useLiveQuery(() =>
-    getLocalRepository().getStoryProgress(storyId),
+  const repo = getLocalRepository();
+  const story = useLiveQuery(() => repo.getStory(storyId));
+  const progress = useLiveQuery(() => repo.getStoryProgress(storyId));
+  const lastScene = useLiveQuery(
+    () => (progress ? repo.getScene(progress.currentSceneId) : progress),
+    [progress],
   );
 
-  if (story === undefined || progress === undefined) {
+  if (
+    story === undefined ||
+    progress === undefined ||
+    lastScene === undefined
+  ) {
     return <Loader />;
   }
 
@@ -22,7 +29,11 @@ const Page = () => {
 
   return (
     <div className="h-full w-full">
-      <LibraryGameDetail story={story} progress={progress} />
+      <LibraryGameDetail
+        story={story}
+        progress={progress}
+        currentScene={lastScene}
+      />
     </div>
   );
 };

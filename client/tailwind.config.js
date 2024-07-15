@@ -53,6 +53,9 @@ module.exports = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      boxShadow: {
+        "3xl": "0px 0px 34px 2px rgba(0,0,0,0.5)",
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
