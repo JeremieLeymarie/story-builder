@@ -34,7 +34,7 @@ export const ExportModal = ({
   );
 
   const handleModalState = (open: boolean) => {
-    if (open == true) {
+    if (open) {
       const blob = new Blob([storyJson], { type: "text/json" });
       const url = URL.createObjectURL(blob);
       setUrl(url);
