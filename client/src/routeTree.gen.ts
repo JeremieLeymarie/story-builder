@@ -15,19 +15,11 @@ import { Route as WhiteboardImport } from './routes/whiteboard'
 import { Route as StoreImport } from './routes/store'
 import { Route as IndexImport } from './routes/index'
 import { Route as LibraryIndexImport } from './routes/library/index'
-<<<<<<< HEAD
 import { Route as LibraryStoryKeyImport } from './routes/library/$storyKey'
 import { Route as BuilderStoriesImport } from './routes/builder/stories'
 import { Route as BuilderStoryKeyImport } from './routes/builder/$storyKey'
 import { Route as GameGameKeyIndexImport } from './routes/game/$gameKey/index'
 import { Route as GameGameKeySceneKeyImport } from './routes/game/$gameKey/$sceneKey'
-=======
-import { Route as LibraryStoryIdImport } from './routes/library/$storyId'
-import { Route as BuilderStoriesImport } from './routes/builder/stories'
-import { Route as BuilderStoryIdImport } from './routes/builder/$storyId'
-import { Route as GameGameIdIndexImport } from './routes/game/$gameId/index'
-import { Route as GameGameIdSceneIdImport } from './routes/game/$gameId/$sceneId'
->>>>>>> 73f930e (:construction: Get synchronization data)
 
 // Create/Update Routes
 
@@ -51,13 +43,8 @@ const LibraryIndexRoute = LibraryIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-<<<<<<< HEAD
 const LibraryStoryKeyRoute = LibraryStoryKeyImport.update({
   path: '/library/$storyKey',
-=======
-const LibraryStoryIdRoute = LibraryStoryIdImport.update({
-  path: '/library/$storyId',
->>>>>>> 73f930e (:construction: Get synchronization data)
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -66,7 +53,6 @@ const BuilderStoriesRoute = BuilderStoriesImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-<<<<<<< HEAD
 const BuilderStoryKeyRoute = BuilderStoryKeyImport.update({
   path: '/builder/$storyKey',
   getParentRoute: () => rootRoute,
@@ -79,20 +65,6 @@ const GameGameKeyIndexRoute = GameGameKeyIndexImport.update({
 
 const GameGameKeySceneKeyRoute = GameGameKeySceneKeyImport.update({
   path: '/game/$gameKey/$sceneKey',
-=======
-const BuilderStoryIdRoute = BuilderStoryIdImport.update({
-  path: '/builder/$storyId',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const GameGameIdIndexRoute = GameGameIdIndexImport.update({
-  path: '/game/$gameId/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const GameGameIdSceneIdRoute = GameGameIdSceneIdImport.update({
-  path: '/game/$gameId/$sceneId',
->>>>>>> 73f930e (:construction: Get synchronization data)
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -121,19 +93,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WhiteboardImport
       parentRoute: typeof rootRoute
     }
-<<<<<<< HEAD
     '/builder/$storyKey': {
       id: '/builder/$storyKey'
       path: '/builder/$storyKey'
       fullPath: '/builder/$storyKey'
       preLoaderRoute: typeof BuilderStoryKeyImport
-=======
-    '/builder/$storyId': {
-      id: '/builder/$storyId'
-      path: '/builder/$storyId'
-      fullPath: '/builder/$storyId'
-      preLoaderRoute: typeof BuilderStoryIdImport
->>>>>>> 73f930e (:construction: Get synchronization data)
       parentRoute: typeof rootRoute
     }
     '/builder/stories': {
@@ -143,19 +107,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuilderStoriesImport
       parentRoute: typeof rootRoute
     }
-<<<<<<< HEAD
     '/library/$storyKey': {
       id: '/library/$storyKey'
       path: '/library/$storyKey'
       fullPath: '/library/$storyKey'
       preLoaderRoute: typeof LibraryStoryKeyImport
-=======
-    '/library/$storyId': {
-      id: '/library/$storyId'
-      path: '/library/$storyId'
-      fullPath: '/library/$storyId'
-      preLoaderRoute: typeof LibraryStoryIdImport
->>>>>>> 73f930e (:construction: Get synchronization data)
       parentRoute: typeof rootRoute
     }
     '/library/': {
@@ -165,7 +121,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LibraryIndexImport
       parentRoute: typeof rootRoute
     }
-<<<<<<< HEAD
     '/game/$gameKey/$sceneKey': {
       id: '/game/$gameKey/$sceneKey'
       path: '/game/$gameKey/$sceneKey'
@@ -178,20 +133,6 @@ declare module '@tanstack/react-router' {
       path: '/game/$gameKey'
       fullPath: '/game/$gameKey'
       preLoaderRoute: typeof GameGameKeyIndexImport
-=======
-    '/game/$gameId/$sceneId': {
-      id: '/game/$gameId/$sceneId'
-      path: '/game/$gameId/$sceneId'
-      fullPath: '/game/$gameId/$sceneId'
-      preLoaderRoute: typeof GameGameIdSceneIdImport
-      parentRoute: typeof rootRoute
-    }
-    '/game/$gameId/': {
-      id: '/game/$gameId/'
-      path: '/game/$gameId'
-      fullPath: '/game/$gameId'
-      preLoaderRoute: typeof GameGameIdIndexImport
->>>>>>> 73f930e (:construction: Get synchronization data)
       parentRoute: typeof rootRoute
     }
   }
@@ -207,13 +148,8 @@ export const routeTree = rootRoute.addChildren({
   BuilderStoriesRoute,
   LibraryStoryKeyRoute,
   LibraryIndexRoute,
-<<<<<<< HEAD
   GameGameKeySceneKeyRoute,
   GameGameKeyIndexRoute,
-=======
-  GameGameIdSceneIdRoute,
-  GameGameIdIndexRoute,
->>>>>>> 73f930e (:construction: Get synchronization data)
 })
 
 /* prettier-ignore-end */

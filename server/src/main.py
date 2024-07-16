@@ -14,6 +14,7 @@ from repositories.user_repository import UserRepository
 from data_types.user import FullUser
 from domains.synchronization_domain import SynchronizationDomain
 from repositories.story_progress_repository import StoryProgressRepository
+from data_types.game import StoryProgress
 from utils.error_adapter import raise_http_error
 
 app = FastAPI()
@@ -116,5 +117,16 @@ async def get_synchronization_date(user_id: str):
             story_progress_repository=StoryProgressRepository(),
             story_repository=StoryRepository(),
         ).get_synchronization_data(user_id)
+    except Exception as err:
+        raise raise_http_error(err)
+
+
+@app.patch("/api/synchronize/progress", status_code=HTTPStatus.OK)
+async def synchronize_progress(payload: StoryProgress):
+    try:
+        SynchronizationDomain(
+            story_progress_repository=StoryProgressRepository(),
+            story_repository=StoryRepository(),
+        ).synchronize_progress(payload)
     except Exception as err:
         raise raise_http_error(err)

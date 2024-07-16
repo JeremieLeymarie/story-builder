@@ -4,6 +4,7 @@
 from repositories.story_progress_repository_port import StoryProgressRepositoryPort
 from repositories.story_repository_port import StoryRepositoryPort
 from data_types.synchronization import SynchronizationPayload
+from data_types.game import StoryProgress
 
 
 class SynchronizationDomain:
@@ -25,3 +26,6 @@ class SynchronizationDomain:
         return SynchronizationPayload(
             playerGames=player_games, builderGames=builder_games
         )
+
+    def synchronize_progress(self, story_progress: StoryProgress) -> StoryProgress:
+        return self.story_progress_repo.save(story_progress=story_progress)

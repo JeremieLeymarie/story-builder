@@ -5,9 +5,9 @@ from pydantic import BaseModel
 
 class StoryProgress(BaseModel):
     userId: int
-    id: int
-    remoteId: Optional[int] = None
+    remoteId: Optional[str] = None
     remoteStoryId: str
+    remoteUserId: str
     history: list[int]
     currentSceneId: int
     lastPlayedAt: datetime
