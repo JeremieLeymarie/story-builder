@@ -17,14 +17,14 @@ import {
   Textarea,
 } from "@/design-system/primitives";
 import { Story, STORY_STATUS } from "@/lib/storage/dexie/dexie-db";
-import { WithoutId } from "@/types";
+import { WithoutKey } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 export const StoryFormDialog = (
-  props: Omit<StoryFormProps, "trigger"> & { trigger: JSX.Element },
+  props: Omit<StoryFormProps, "trigger"> & { trigger: JSX.Element }
 ) => {
   const [open, setOpen] = useState(false);
 
@@ -45,7 +45,7 @@ const schema = z.object({
 type Schema = z.infer<typeof schema>;
 
 export type OnSubmitStoryFormProps = Omit<
-  WithoutId<Story>,
+  WithoutKey<Story>,
   "firstSceneId" | "authorId" | "status"
 >;
 type StoryFormProps = {

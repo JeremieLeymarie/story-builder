@@ -12,9 +12,9 @@ export const Store = ({ stories }: StoreHomeProps) => {
       {stories.map((story) => {
         return (
           <StoryCard
-            key={story.id}
             {...story}
-            button={<ConfirmDownloadDialog remoteId={story.remoteId} />}
+            button={<ConfirmDownloadDialog storyKey={story.key} />}
+            key={story.key}
           />
         );
       })}

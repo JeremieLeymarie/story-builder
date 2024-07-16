@@ -1,29 +1,29 @@
-import { WithoutId } from "@/types";
+import { WithoutKey } from "@/types";
 import { Scene, Story, StoryProgress, User } from "./dexie/dexie-db";
 
 export type LocalRepositoryPort = {
-  createStory: (story: WithoutId<Story>) => Promise<Story>;
+  createStory: (story: WithoutKey<Story>) => Promise<Story>;
   updateStory: (story: Story) => Promise<Story>;
-  getStory: (id: number) => Promise<Story | null>;
+  getStory: (key: string) => Promise<Story | null>;
   getStories: () => Promise<Story[]>;
   getGames: () => Promise<Story[]>;
   getLastGamePlayed: () => Promise<Story | null>;
-  updateFirstScene: (storyId: number, sceneId: number) => Promise<void>;
+  updateFirstScene: (storyKey: string, sceneKey: string) => Promise<void>;
 
-  createScene: (scene: WithoutId<Scene>) => Promise<Scene>;
-  createScenes: (scenes: WithoutId<Scene>[]) => Promise<number[]>;
+  createScene: (scene: WithoutKey<Scene>) => Promise<Scene>;
+  createScenes: (scenes: WithoutKey<Scene>[]) => Promise<string[]>;
   updateScene: (scene: Scene) => Promise<Scene>;
-  getScene: (id: number) => Promise<Scene | null>;
-  getScenes: (storyId: number) => Promise<Scene[]>;
+  getScene: (key: string) => Promise<Scene | null>;
+  getScenes: (storyKey: string) => Promise<Scene[]>;
 
   createStoryProgress: (
-    progress: WithoutId<StoryProgress>,
+    progress: WithoutKey<StoryProgress>
   ) => Promise<StoryProgress>;
   updateStoryProgress: (progress: StoryProgress) => Promise<StoryProgress>;
-  getStoryProgress: (storyId: number) => Promise<StoryProgress | null>;
+  getStoryProgress: (storyKey: string) => Promise<StoryProgress | null>;
   getStoryProgresses: () => Promise<StoryProgress[]>;
 
   getUser: () => Promise<User | null>;
-  createUser: (user: WithoutId<User>) => Promise<User>;
+  createUser: (user: WithoutKey<User>) => Promise<User>;
   updateUser: (user: User) => Promise<User>;
 };

@@ -20,8 +20,5 @@ const Page = () => {
 };
 
 export const Route = createFileRoute("/builder/$storyId")({
-  parseParams: ({ storyId }) => {
-    return { storyId: parseInt(storyId) };
-  },
   component: Page,
 });
