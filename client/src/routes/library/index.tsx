@@ -7,7 +7,6 @@ import { useLiveQuery } from "dexie-react-hooks";
 const Component = () => {
   const stories = useLiveQuery(() => getLocalRepository().getGames());
 
-  console.log(stories);
   return stories ? (
     <Library stories={stories} />
   ) : (

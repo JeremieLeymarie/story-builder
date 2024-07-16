@@ -22,6 +22,8 @@ export const ExportModal = ({
 }) => {
   const { toast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [url, setUrl] = useState<string>();
+  // TODO: check that this is not impacting perfs
   const storyJson = JSON.stringify(
     {
       story,
@@ -31,38 +33,30 @@ export const ExportModal = ({
     2
   );
 
-  const blob = new Blob([storyJson], { type: "text/json" });
-  const url = URL.createObjectURL(blob);
+  const handleModalState = (open: boolean) => {
+    if (open == true) {
+      const blob = new Blob([storyJson], { type: "text/json" });
+      const url = URL.createObjectURL(blob);
+      setUrl(url);
+    }
+    setIsModalOpen(open);
+  };
 
   const exportToast = useCallback(async () => {
-    try {
-      toast({
-        title: "Export complete!",
-        description: "Your game is now in your computer.",
-      });
-    } catch (error) {
-      toast({
-        title: "Export failed!",
-        description: "Something went wrong, please try again later.",
-      });
-    }
+    toast({
+      title: "Export complete!",
+      description: "Your game is now in your computer.",
+    });
   }, [toast]);
 
   const copyToast = useCallback(async () => {
-    try {
-      toast({
-        description: "Copy on clipboard !",
-      });
-    } catch (error) {
-      toast({
-        title: "Export failed!",
-        description: "Something went wrong, please try again later.",
-      });
-    }
+    toast({
+      description: "Copy on clipboard !",
+    });
   }, [toast]);
 
   return (
-    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+    <Dialog open={isModalOpen} onOpenChange={handleModalState}>
       <DialogTrigger asChild>
         <Button variant="outline" className="w-full">
           <DownloadIcon size="16px" />
@@ -82,23 +76,25 @@ export const ExportModal = ({
           <Button
             variant="secondary"
             onClick={() => {
-              setIsModalOpen(false);
+              handleModalState(false);
             }}
           >
             Cancel
           </Button>
-          <a
-            href={url}
-            download={story.title + ".json"}
-            onClick={() => {
-              exportToast();
-              setIsModalOpen(false);
-            }}
-          >
-            <Button>
-              <DownloadIcon size="16px" />
-            </Button>
-          </a>
+          {url && (
+            <a
+              href={url}
+              download={story.title + ".json"}
+              onClick={() => {
+                exportToast();
+                handleModalState(false);
+              }}
+            >
+              <Button>
+                <DownloadIcon size="16px" />
+              </Button>
+            </a>
+          )}
           <Button
             onClick={() => {
               navigator.clipboard.writeText(storyJson);
