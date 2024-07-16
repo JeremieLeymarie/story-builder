@@ -12,6 +12,8 @@ from domains.store_domain import StoreDomain
 from repositories.story_repository import StoryRepository
 from repositories.user_repository import UserRepository
 from data_types.user import FullUser
+from domains.synchronization_domain import SynchronizationDomain
+from repositories.story_progress_repository import StoryProgressRepository
 from utils.error_adapter import raise_http_error
 
 app = FastAPI()
@@ -100,5 +102,19 @@ async def publish_in_store(body: FullStoryBuilderRequest):
             story=body.story, scenes=body.scenes
         )
         return {"success": True}
+    except Exception as err:
+        raise raise_http_error(err)
+
+
+# SYNCHRONIZATION ENDPOINTS
+
+
+@app.get("/api/synchronize/{user_id}", status_code=HTTPStatus.OK)
+async def get_synchronization_date(user_id: str):
+    try:
+        SynchronizationDomain(
+            story_progress_repository=StoryProgressRepository(),
+            story_repository=StoryRepository(),
+        ).get_synchronization_data(user_id)
     except Exception as err:
         raise raise_http_error(err)
