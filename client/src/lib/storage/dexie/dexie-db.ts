@@ -44,6 +44,7 @@ export type StoryProgress = {
   currentSceneId: number;
   character?: Record<string, unknown>;
   inventory?: Record<string, unknown>;
+  lastPlayedAt: Date;
 };
 
 // TODO: Chapters?
@@ -61,5 +62,5 @@ db.version(1).stores({
     "++id, remoteId, firstSceneId, authorId, title, description, image, status",
   scenes: "++id, storyId, title, content, actions, builderParams",
   storyProgresses:
-    "++id, remoteId, storyId, currentSceneId, character, inventory, history",
+    "++id, remoteId, storyId, currentSceneId, character, inventory, history, lastPlayedAt",
 });

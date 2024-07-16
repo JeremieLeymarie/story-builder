@@ -1,10 +1,11 @@
 import { WithoutId } from "@/types";
-import { Scene, Story, User, db } from "./dexie-db";
+import { Scene, Story, StoryProgress, User, db } from "./dexie-db";
 import { LocalRepositoryPort } from "../port";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
+// TODO: use more transaction
 class IndexedDBRepository implements LocalRepositoryPort {
+  // STORIES
+
   async createStory(story: WithoutId<Story>) {
     const id = await db.stories.add(story);
     return { ...story, id };
@@ -21,6 +22,18 @@ class IndexedDBRepository implements LocalRepositoryPort {
       .toArray();
   }
 
+  async getLastGamePlayed() {
+    const lastProgress = await db.storyProgresses
+      .orderBy("lastPlayedAt")
+      .limit(1)
+      .reverse()
+      .first();
+
+    if (!lastProgress) return null;
+
+    return (await db.stories.get(lastProgress.storyId)) ?? null;
+  }
+
   async getStories() {
     return await db.stories.toArray();
   }
@@ -29,6 +42,8 @@ class IndexedDBRepository implements LocalRepositoryPort {
     await db.stories.update(story.id, story);
     return story;
   }
+
+  // SCENES
 
   async updateFirstScene(storyId: number, sceneId: number) {
     await db.stories.update(storyId, { firstSceneId: sceneId });
@@ -61,8 +76,10 @@ class IndexedDBRepository implements LocalRepositoryPort {
       .toArray();
   }
 
+  // USER
+
   async getUser() {
-    // There should always be one user in local database
+    // There should always be maximum one user in local database
     return (await db.user.toArray())?.[0] ?? null;
   }
 
@@ -70,12 +87,39 @@ class IndexedDBRepository implements LocalRepositoryPort {
     return await db.user.count();
   }
 
-  async createUser(user: User) {
-    await db.user.add(user);
+  async createUser(user: WithoutId<User>) {
+    const id = await db.user.add(user);
+    return { ...user, id };
+  }
+
+  async updateUser(user: User) {
+    await db.user.update(user.id, user);
     return user;
   }
 
-  // TODO: actually implement other methods
+  // STORY PROGRESS
+
+  async getStoryProgress(storyId: number) {
+    const progress = await db.storyProgresses
+      .filter((progress) => progress.storyId === storyId)
+      .first();
+
+    return progress ?? null;
+  }
+
+  async getStoryProgresses() {
+    return await db.storyProgresses.toArray();
+  }
+
+  async updateStoryProgress(storyProgress: StoryProgress) {
+    await db.storyProgresses.update(storyProgress.id, storyProgress);
+    return storyProgress;
+  }
+
+  async createStoryProgress(storyProgress: WithoutId<StoryProgress>) {
+    const id = await db.storyProgresses.add(storyProgress);
+    return { ...storyProgress, id };
+  }
 }
 
 const repository = new IndexedDBRepository();
