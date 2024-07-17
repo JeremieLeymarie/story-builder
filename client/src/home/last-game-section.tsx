@@ -30,7 +30,7 @@ export const LastGameSection = ({ lastGame }: { lastGame: Story }) => {
       </div>
 
       <div className="w-max h-max flex flex-col justify-center items-center">
-        <Link to="/library/$storyId" params={{ storyId: lastGame.id }}>
+        <Link to="/library/$storyKey" params={{ storyKey: lastGame.key }}>
           <Button className="text-xl max-md:text-lg shadow-3xl shadow-primary/50">
             Resume game &nbsp;
             <MoveRightIcon />

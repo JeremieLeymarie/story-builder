@@ -29,7 +29,7 @@ export const DetailProgress = ({
       </p>
       <div>
         <p className="font-semibold mb-2">Last backup:</p>
-        <GameLink progress={progress} gameId={currentScene.storyId}>
+        <GameLink progress={progress} gameKey={currentScene.storyKey}>
           <div className="border border-primary w-full py-2 px-4 group flex justify-between items-center gap-12">
             <div>
               <p className="uppercase font-semibold">{currentScene?.title}</p>
@@ -43,10 +43,10 @@ export const DetailProgress = ({
           </div>
         </GameLink>
       </div>
-      <GameLink progress={progress} gameId={currentScene.storyId}></GameLink>
+      <GameLink progress={progress} gameKey={currentScene.storyKey}></GameLink>
     </div>
     <div>
-      <GameLink progress={progress} gameId={currentScene.storyId}>
+      <GameLink progress={progress} gameKey={currentScene.storyKey}>
         <Button className="text-xl max-md:text-lg">
           Start at last backup &nbsp;
           <MoveRightIcon />

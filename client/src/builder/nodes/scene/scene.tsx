@@ -14,7 +14,7 @@ import { cn } from "@/lib/style";
 
 export type SceneNodeProps = NodeProps<SceneProps>;
 
-export const SceneNode = ({ id, data, yPos, xPos }: SceneNodeProps) => {
+export const SceneNode = ({ data, yPos, xPos }: SceneNodeProps) => {
   return (
     <Card className={cn("w-[375px]", data.isFirstScene && "bg-primary/60")}>
       <CardHeader>
@@ -32,7 +32,7 @@ export const SceneNode = ({ id, data, yPos, xPos }: SceneNodeProps) => {
             }
             setFirstScene={() =>
               getLocalRepository()
-                .updateFirstScene(data.storyId, data.id)
+                .updateFirstScene(data.storyKey, data.key)
                 .then(() => {
                   // TODO: add success toast
                 })
@@ -50,7 +50,7 @@ export const SceneNode = ({ id, data, yPos, xPos }: SceneNodeProps) => {
             {text}
             <Handle
               type="source"
-              id={`${id}-${i}`}
+              id={`${data.key}-${i}`}
               position={Position.Right}
               className="absolute h-3 w-3"
               style={{ right: -7 }}

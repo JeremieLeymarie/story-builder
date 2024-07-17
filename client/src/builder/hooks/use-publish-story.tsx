@@ -14,7 +14,7 @@ export const usePublishStory = ({
 }) => {
   const repo = getLocalRepository();
   const [modal, setModal] = useState<"auth" | "edit-story" | "confirm" | null>(
-    null,
+    null
   );
 
   const updateLocalStory = useCallback(
@@ -22,11 +22,11 @@ export const usePublishStory = ({
       await repo.updateStory({
         ...data,
         status: story.status,
-        id: story.id,
+        key: story.key,
       });
       setModal("confirm");
     },
-    [repo, story.id, story.status],
+    [repo, story.key, story.status]
   );
 
   const publish = useCallback(async () => {

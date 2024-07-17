@@ -12,14 +12,14 @@ export const useUpdateStoryProgress = ({ scene, storyProgress }: Props) => {
     async (progress: StoryProgress, scene: Scene) => {
       const payload = {
         ...progress,
-        currentSceneId: scene.id,
+        currentSceneKey: scene.key,
         lastPlayedAt: new Date(),
-        history: [...progress!.history, scene.id],
+        history: [...progress!.history, scene.key],
       };
 
       await getLocalRepository().updateStoryProgress(payload);
     },
-    [],
+    []
   );
 
   useEffect(() => {

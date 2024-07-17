@@ -6,13 +6,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 
 const Page = () => {
-  const { storyId } = Route.useParams();
+  const { storyKey } = Route.useParams();
   const repo = getLocalRepository();
-  const story = useLiveQuery(() => repo.getStory(storyId));
-  const progress = useLiveQuery(() => repo.getStoryProgress(storyId));
+  const story = useLiveQuery(() => repo.getStory(storyKey));
+  const progress = useLiveQuery(() => repo.getStoryProgress(storyKey));
   const lastScene = useLiveQuery(
-    () => (progress ? repo.getScene(progress.currentSceneId) : progress),
-    [progress],
+    () => (progress ? repo.getScene(progress.currentSceneKey) : progress),
+    [progress]
   );
 
   if (
@@ -38,9 +38,6 @@ const Page = () => {
   );
 };
 
-export const Route = createFileRoute("/library/$storyId")({
-  parseParams: ({ storyId }) => {
-    return { storyId: parseInt(storyId) };
-  },
+export const Route = createFileRoute("/library/$storyKey")({
   component: Page,
 });

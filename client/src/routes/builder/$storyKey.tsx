@@ -5,9 +5,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 
 const Page = () => {
-  const { storyId } = Route.useParams();
-  const scenes = useLiveQuery(() => getLocalRepository().getScenes(storyId));
-  const story = useLiveQuery(() => getLocalRepository().getStory(storyId));
+  const { storyKey } = Route.useParams();
+  const scenes = useLiveQuery(() => getLocalRepository().getScenes(storyKey));
+  const story = useLiveQuery(() => getLocalRepository().getStory(storyKey));
 
   if (!scenes || !story) {
     return <Loader />;
@@ -19,6 +19,6 @@ const Page = () => {
   );
 };
 
-export const Route = createFileRoute("/builder/$storyId")({
+export const Route = createFileRoute("/builder/$storyKey")({
   component: Page,
 });

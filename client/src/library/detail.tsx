@@ -33,7 +33,7 @@ export const LibraryGameDetail = ({ story, progress, currentScene }: Props) => {
         <DetailProgress currentScene={currentScene} progress={progress} />
       ) : (
         <div className="h-full w-full flex items-center justify-center">
-          <GameLink progress={null} gameId={story.id}>
+          <GameLink progress={null} gameKey={story.key}>
             <Button className="text-xl animate-bounce max-md:text-lg">
               Start game &nbsp;
               <MoveRightIcon />
