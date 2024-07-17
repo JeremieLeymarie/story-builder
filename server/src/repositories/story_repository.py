@@ -1,25 +1,19 @@
-from typing import Any, Mapping
-from bson import ObjectId
 from pymongo import ReturnDocument
 from data_types.builder import FullStory, Story, StoryStatus
 from repositories.story_repository_port import StoryRepositoryPort
 from repositories.mongo_repository import MongoRecord, MongoRepository
+
+STORY_COLLECTION = "stories"
 
 
 # TODO: convert this to key paradigm
 class StoryRepository(MongoRepository, StoryRepositoryPort):
 
     def save(self, story: FullStory) -> FullStory:
-        filter: Mapping[str, Any] = (
-            {"_id": ObjectId(story.remoteId)}
-            if story.remoteId
-            else {"authorId": story.authorId, "id": story.id}
-        )
-
         payload = story.model_dump(mode="json")
 
-        record: MongoRecord[dict] = self.db.stories.find_one_and_update(
-            filter,
+        record: MongoRecord[dict] = self.db[STORY_COLLECTION].find_one_and_update(
+            {"key": story.key},
             {"$set": payload},
             upsert=True,
             return_document=ReturnDocument.AFTER,
@@ -48,7 +42,5 @@ class StoryRepository(MongoRepository, StoryRepositoryPort):
             for story in list(documents)
         ]
 
-    def get(self, *, id: str) -> FullStory:
-        return FullStory(
-            **self.remove_mongo_id(self.db.stories.find_one({"_id": ObjectId(id)}))
-        )
+    def get(self, *, key: str) -> FullStory:
+        return FullStory(**self.remove_mongo_id(self.db.stories.find_one({"key": key})))

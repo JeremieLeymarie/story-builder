@@ -10,8 +10,7 @@ class StoryStatus(enum.Enum):
 
 
 class Story(BaseModel, use_enum_values=True):
-    id: int
-    remoteId: Optional[str] = None
+    key: int
     authorId: Optional[int] = None
     title: str
     description: str
@@ -34,7 +33,7 @@ class BuilderParams(BaseModel):
 
 
 class Scene(BaseModel):
-    id: int
+    key: int
     storyId: int
     title: str
     content: str

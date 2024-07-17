@@ -84,10 +84,10 @@ async def get_store_load():
         raise raise_http_error(err)
 
 
-@app.get("/api/store/download/{remote_id}", status_code=HTTPStatus.OK)
-async def get_store_download(remote_id: str):
+@app.get("/api/store/download/{key}", status_code=HTTPStatus.OK)
+async def get_store_download(key: str):
     try:
-        result = StoreDomain(story_repository=StoryRepository()).download(remote_id)
+        result = StoreDomain(story_repository=StoryRepository()).download(key=key)
         return result
     except Exception as err:
         raise raise_http_error(err)
@@ -96,7 +96,9 @@ async def get_store_download(remote_id: str):
 @app.put("/api/store/publish", status_code=HTTPStatus.OK)
 async def publish_in_store(body: FullStoryBuilderRequest):
     try:
-        StoreDomain(story_repository=StoryRepository()).publish(body)
+        StoreDomain(story_repository=StoryRepository()).publish(
+            story=body.story, scenes=body.scenes
+        )
         return {"success": True}
     except Exception as err:
         raise raise_http_error(err)

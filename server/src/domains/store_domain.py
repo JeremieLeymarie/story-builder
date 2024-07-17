@@ -1,5 +1,5 @@
 from typing import cast
-from data_types.builder import FullStory, Story, StoryStatus
+from data_types.builder import FullStory, Scene, Story, StoryStatus
 from data_types.requests import FullStoryBuilderRequest
 from repositories.story_repository_port import StoryRepositoryPort
 from utils.errors import InvalidStoryFormatException
@@ -18,20 +18,20 @@ class StoreDomain:
         )
         return cast(list[Story], data)
 
-    def download(self, remoteId: str) -> Story:
-        data = self.story_repository.get(id=remoteId)
+    def download(self, *, key: str) -> Story:
+        data = self.story_repository.get(key=key)
         return data
 
-    def _validate_story(self, story: FullStory) -> None:
+    def _validate_story(self, *, story: FullStory) -> None:
         if story.authorId == None:
             raise InvalidStoryFormatException(key="author_id")
 
         # TODO: check that story ends properly
         # TODO: check that story has a start
 
-    def publish(self, payload: FullStoryBuilderRequest) -> None:
-        story = FullStory(scenes=payload.scenes, **payload.story.model_dump())
-        self._validate_story(story)
+    def publish(self, *, story: Story, scenes: list[Scene]) -> None:
+        story = FullStory(scenes=scenes, **story.model_dump())
+        self._validate_story(story=story)
 
         story.status = StoryStatus.PUBLISHED
 
