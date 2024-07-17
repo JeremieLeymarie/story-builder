@@ -23,7 +23,7 @@ class StoreDomain:
         return data
 
     def _validate_story(self, *, story: FullStory) -> None:
-        if story.authorId == None:
+        if story.authorKey == None:
             raise InvalidStoryFormatException(key="author_id")
 
         # TODO: check that story ends properly

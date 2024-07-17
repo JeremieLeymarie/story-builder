@@ -5,7 +5,6 @@ export type User = {
   key: string;
   username: string;
   email: string;
-  password?: string;
 };
 
 export const STORY_STATUS = ["draft", "saved", "published"] as const;
@@ -55,11 +54,11 @@ export const db = new Dexie("story-builder") as Dexie & {
 };
 
 db.version(1).stores({
-  user: "&key, username, password, email",
-  stories: "&key, firstSceneId, authorId, title, description, image, status",
-  scenes: "&key, storyId, title, content, actions, builderParams",
+  user: "&key, username, email",
+  stories: "&key, firstSceneKey, authorKey, title, description, image, status",
+  scenes: "&key, storyKey, title, content, actions, builderParams",
   storyProgresses:
-    "&key, storyId, currentSceneId, character, inventory, history, lastPlayedAt",
+    "&key, storyKey, currentSceneKey, character, inventory, history, lastPlayedAt",
 });
 
 // Register nanoid middleware

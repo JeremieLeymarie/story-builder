@@ -5,7 +5,7 @@ content-type: application/json
 {
   "story" : {
     "key" : null,
-    "authorId" : 1,
+    "authorKey" : 1,
     "title" : "A story",
     "description" : "A story description",
     "image" : "http://image.fr",
@@ -14,7 +14,7 @@ content-type: application/json
   "scenes" : [
     {
       "key" : null,
-      "storyId" : 1,
+      "storyKey" : 1,
       "title" : "A scene",
       "content" : "A scene content",
       "actions" : [

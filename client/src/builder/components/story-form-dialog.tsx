@@ -46,7 +46,7 @@ type Schema = z.infer<typeof schema>;
 
 export type OnSubmitStoryFormProps = Omit<
   WithoutKey<Story>,
-  "firstSceneId" | "authorId" | "status"
+  "firstSceneKey" | "authorKey" | "status"
 >;
 type StoryFormProps = {
   onSubmit: (props: OnSubmitStoryFormProps) => void;
