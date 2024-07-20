@@ -20,7 +20,7 @@ repos:
 
       - id: check-typescript
         name: Run Typescript in client
-        entry: bash -c 'cd client && pnpm run typescript'
+        entry: bash -c 'cd client && bun run typescript'
         language: system
         pass_filenames: false
         files: ^client/
@@ -28,7 +28,7 @@ repos:
 
       - id: check-lint
         name: Run eslint in client
-        entry: bash -c 'cd client && pnpm run lint'
+        entry: bash -c 'cd client && bun run lint'
         language: system
         pass_filenames: false
         files: ^client/
@@ -36,7 +36,15 @@ repos:
 
       - id: check-format
         name: Run prettier in client
-        entry: bash -c 'cd client && pnpm run format:write'
+        entry: bash -c 'cd client && bun run format:write'
+        language: system
+        pass_filenames: false
+        files: ^client/
+        stages: [pre-push]
+
+      - id: client-test
+        name: Run all client tests
+        entry: bash -c 'cd client && bun run test'
         language: system
         pass_filenames: false
         files: ^client/

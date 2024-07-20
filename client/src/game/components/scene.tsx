@@ -1,7 +1,7 @@
 import { Scene } from "@/lib/storage/dexie/dexie-db";
 import { SceneAction } from "./scene-action";
 
-type GameSceneProps = Scene;
+type GameSceneProps = Omit<Scene, "key"> & { sceneKey: string };
 
 export const GameScene = ({
   title,

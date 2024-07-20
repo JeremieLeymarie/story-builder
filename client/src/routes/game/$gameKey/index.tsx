@@ -54,7 +54,9 @@ export const Component = () => {
     return <ErrorMessage />;
   }
 
-  return <GameScene {...scene} />;
+  const { key, ...sceneWithoutKey } = scene;
+
+  return <GameScene {...sceneWithoutKey} sceneKey={key} />;
 };
 
 export const Route = createFileRoute("/game/$gameKey/")({

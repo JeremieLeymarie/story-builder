@@ -16,12 +16,13 @@ import {
   Input,
   Textarea,
 } from "@/design-system/primitives";
-import { Story, STORY_STATUS } from "@/lib/storage/dexie/dexie-db";
+import { Story } from "@/lib/storage/dexie/dexie-db";
 import { WithoutKey } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { StoryGenreCombobox } from "./story-genre-combobox";
+import { schema, Schema } from "./schema";
 
 export const StoryFormDialog = (
   props: Omit<StoryFormProps, "trigger"> & { trigger: JSX.Element },
@@ -31,22 +32,9 @@ export const StoryFormDialog = (
   return <ControlledStoryFormDialog {...props} open={open} setOpen={setOpen} />;
 };
 
-const schema = z.object({
-  title: z
-    .string()
-    .min(2, { message: "Title must be at least 2 characters long" }),
-  description: z
-    .string()
-    .min(10, { message: "Description must be at least 10 characters long" }),
-  image: z.string().url({ message: "Image has to be a valid URL" }),
-  status: z.enum(STORY_STATUS).optional(),
-});
-
-type Schema = z.infer<typeof schema>;
-
 export type OnSubmitStoryFormProps = Omit<
   WithoutKey<Story>,
-  "firstSceneKey" | "authorKey" | "status"
+  "firstSceneKey" | "author" | "status" | "publicationDate" | "creationDate"
 >;
 type StoryFormProps = {
   onSubmit: (props: OnSubmitStoryFormProps) => void;
@@ -89,6 +77,21 @@ export const ControlledStoryFormDialog = ({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(submit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="genres"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <StoryGenreCombobox
+                      onChange={field.onChange}
+                      values={field.value}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="title"

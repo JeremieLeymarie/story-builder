@@ -1,7 +1,7 @@
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
-import { OnSubmitStoryFormProps } from "../components/story-form-dialog";
+import { OnSubmitStoryFormProps } from "../components/story-form/story-form-dialog";
 
 export const useBuilderStories = () => {
   const navigate = useNavigate();
@@ -9,7 +9,11 @@ export const useBuilderStories = () => {
   const handleCreateStory = useCallback(
     async (storyData: OnSubmitStoryFormProps) => {
       const repo = getLocalRepository();
-      const story = await repo.createStory({ ...storyData, status: "draft" });
+      const story = await repo.createStory({
+        ...storyData,
+        status: "draft",
+        creationDate: new Date(),
+      });
 
       // Create first scene with mock data
       const firstScene = await repo.createScene({

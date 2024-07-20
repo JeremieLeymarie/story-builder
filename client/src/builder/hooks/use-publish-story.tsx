@@ -2,7 +2,7 @@ import { API_URL } from "@/constants";
 import { toast } from "@/design-system/primitives/use-toast";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { useCallback, useState } from "react";
-import { OnSubmitStoryFormProps } from "../components/story-form-dialog";
+import { OnSubmitStoryFormProps } from "../components/story-form/story-form-dialog";
 import { Scene, Story } from "@/lib/storage/dexie/dexie-db";
 
 export const usePublishStory = ({
@@ -23,6 +23,7 @@ export const usePublishStory = ({
         ...data,
         status: story.status,
         key: story.key,
+        creationDate: new Date(),
       });
       setModal("confirm");
     },

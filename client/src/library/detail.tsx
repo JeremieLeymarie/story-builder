@@ -11,8 +11,6 @@ type Props = {
 };
 
 export const LibraryGameDetail = ({ story, progress, currentScene }: Props) => {
-  console.log(story, progress, currentScene);
-
   return (
     <div
       className="w-full h-full flex justify-evenly items-center max-lg:flex-col max-lg:justify-start"

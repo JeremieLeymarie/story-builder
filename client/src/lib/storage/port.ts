@@ -22,7 +22,10 @@ export type LocalRepositoryPort = {
   updateStoryProgress: (progress: StoryProgress) => Promise<StoryProgress>;
   getStoryProgress: (storyKey: string) => Promise<StoryProgress | null>;
   getStoryProgresses: () => Promise<StoryProgress[]>;
-  addAuthorKeyToStories: (userKey: string) => Promise<void>;
+  addAuthorToStories: (author: {
+    key: string;
+    username: string;
+  }) => Promise<void>;
 
   getUser: () => Promise<User | null>;
   createUser: (user: WithoutKey<User>) => Promise<User>;

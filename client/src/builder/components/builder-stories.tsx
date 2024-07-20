@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/design-system/primitives";
-import { StoryFormDialog } from "./story-form-dialog";
+import { StoryFormDialog } from "./story-form/story-form-dialog";
 import { Link } from "@tanstack/react-router";
 import { MoveRightIcon, PlusIcon } from "lucide-react";
 import { useBuilderStories } from "../hooks/use-builder-stories";
