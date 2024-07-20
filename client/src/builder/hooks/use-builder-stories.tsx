@@ -9,10 +9,13 @@ export const useBuilderStories = () => {
   const handleCreateStory = useCallback(
     async (storyData: OnSubmitStoryFormProps) => {
       const repo = getLocalRepository();
+      const user = await repo.getUser();
+
       const story = await repo.createStory({
         ...storyData,
         status: "draft",
         creationDate: new Date(),
+        ...(user && { author: { username: user.username, key: user.key } }),
       });
 
       // Create first scene with mock data

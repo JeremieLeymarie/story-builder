@@ -4,8 +4,6 @@ from data_types.requests import FullStoryBuilderRequest
 from repositories.story_repository_port import StoryRepositoryPort
 from utils.errors import InvalidStoryFormatException
 
-# TODO: remove Request specific types
-
 
 class StoreDomain:
 
@@ -23,7 +21,7 @@ class StoreDomain:
         return data
 
     def _validate_story(self, *, story: FullStory) -> None:
-        if story.authorKey == None:
+        if story.author == None:
             raise InvalidStoryFormatException(key="author_id")
 
         # TODO: check that story ends properly

@@ -20,7 +20,7 @@ export const Toolbar = ({ story, scenes }: Props) => {
     <div className="w-[275px] border-r p-2">
       <p className="text-2xl font-semibold text-primary">Tools</p>
       <hr />
-      <div className="mt-2 w-full flex flex-col gap-4">
+      <div className="mt-2 flex w-full flex-col gap-4">
         <SceneEditor
           trigger={
             <Button variant="outline" className="w-full">

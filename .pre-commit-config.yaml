@@ -44,7 +44,7 @@ repos:
 
       - id: client-test
         name: Run all client tests
-        entry: bash -c 'cd client && bun run test'
+        entry: bash -c 'cd client && bun run test:single'
         language: system
         pass_filenames: false
         files: ^client/

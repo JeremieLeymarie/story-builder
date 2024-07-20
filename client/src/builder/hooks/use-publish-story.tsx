@@ -19,11 +19,13 @@ export const usePublishStory = ({
 
   const updateLocalStory = useCallback(
     async (data: OnSubmitStoryFormProps) => {
+      const user = await repo.getUser();
       await repo.updateStory({
         ...data,
         status: story.status,
         key: story.key,
         creationDate: new Date(),
+        ...(user && { author: { key: user.key, username: user.username } }),
       });
       setModal("confirm");
     },

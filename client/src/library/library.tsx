@@ -2,36 +2,59 @@ import { Button } from "@/design-system/primitives";
 import { Link } from "@tanstack/react-router";
 import { MoveRightIcon } from "lucide-react";
 import { Story } from "@/lib/storage/dexie/dexie-db";
-import { StoryCard } from "@/design-system/components/story-card";
+import { StoryList } from "./story-list";
+import { Title } from "@/design-system/components";
 
 type Library = {
-  stories: Story[];
+  storiesFromStore: Story[];
+  userStories: Story[];
 };
 
-export const Library = ({ stories }: Library) => {
+/** Component that displays the current user's library
+ *
+ * @param {Story[]} storiesFromStore Stories published in the store
+ * @param {Story[]} userStories Stories created by the current user
+ * @returns
+ */
+export const Library = ({ storiesFromStore, userStories }: Library) => {
   return (
-    // TODO: justify-center might not be the best
-    <div className="flex p-4 gap-4 flex-wrap justify-center">
-      {stories.map((story) => {
-        return (
-          <Link
-            to="/library/$storyKey"
-            params={{ storyKey: story.key }}
-            key={story.key}
-          >
-            <StoryCard
-              {...story}
-              button={
-                <Button
-                  className={`absolute opacity-0 transition ease-in-out duration-300 group-hover:opacity-100 bottom-4 right-4`}
-                >
-                  <MoveRightIcon size="15px" />
-                </Button>
-              }
-            />
-          </Link>
-        );
-      })}
+    <div className="space-y-8 p-8">
+      <div className="space-y-8">
+        <Title variant="secondary">Your games</Title>
+        {storiesFromStore.length > 0 ? (
+          <StoryList stories={storiesFromStore} />
+        ) : (
+          <div>
+            <p className="text-sm text-muted-foreground">
+              You don't have any games in your library...
+            </p>
+            <Link to="/store">
+              <Button variant="link" className="text-md p-0">
+                Go to the store to find free adventure to play &nbsp;
+                <MoveRightIcon size="15px" className="animate-bounce" />
+              </Button>
+            </Link>
+          </div>
+        )}
+      </div>
+      <div className="space-y-8">
+        <Title variant="secondary">Games you've created</Title>
+        {userStories.length > 0 ? (
+          <StoryList stories={userStories} />
+        ) : (
+          <div>
+            <p className="text-sm text-muted-foreground">
+              You haven't created any game yet...
+            </p>
+            <Link to="/store">
+              <Button variant="link" className="text-md p-0">
+                Start building your own adventure &nbsp;
+                <MoveRightIcon size="15px" className="animate-bounce" />
+              </Button>
+            </Link>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

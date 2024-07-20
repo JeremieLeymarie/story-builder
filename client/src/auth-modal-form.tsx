@@ -61,7 +61,7 @@ export const AuthModalForm = ({
             <>
               Already have an account?{" "}
               <span
-                className="underline cursor-pointer"
+                className="cursor-pointer underline"
                 onClick={() => setForm("sign-in")}
               >
                 Sign in!
@@ -71,7 +71,7 @@ export const AuthModalForm = ({
             <>
               Don't have an account?{" "}
               <span
-                className="underline cursor-pointer"
+                className="cursor-pointer underline"
                 onClick={() => setForm("sign-up")}
               >
                 Sign up!

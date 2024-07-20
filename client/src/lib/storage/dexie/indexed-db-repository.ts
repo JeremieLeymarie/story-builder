@@ -94,7 +94,7 @@ class IndexedDBRepository implements LocalRepositoryPort {
 
   async getUser() {
     // There should always be maximum one user in local database
-    return (await db.user.toArray())?.[0] ?? null;
+    return ((await db.user.toArray())?.[0] ?? null) as User | null;
   }
 
   async getUserCount() {

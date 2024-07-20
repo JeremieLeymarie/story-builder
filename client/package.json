@@ -11,7 +11,8 @@
     "typescript": "tsc --noEmit",
     "format:check": "prettier --check --ignore-unknown .",
     "format:write": "prettier --write --ignore-unknown .",
-    "test": "vitest"
+    "test": "vitest",
+    "test:single": "vitest run"
   },
   "dependencies": {
     "@excalidraw/excalidraw": "^0.17.6",
