@@ -61,10 +61,7 @@ const CommandList = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.List
     ref={ref}
-    className={cn(
-      "max-h-[300px]  overflow-y-auto overflow-x-hidden",
-      className,
-    )}
+    className={cn("max-h-[300px] overflow-y-auto overflow-x-hidden", className)}
     {...props}
   />
 ));
@@ -119,7 +116,7 @@ const CommandItem = React.forwardRef<
   <CommandPrimitive.Item
     ref={ref}
     className={cn(
-      "flex justify-start items-center text_right select-none rounded-sm py-2 text-xs outline-none aria-selected:bg-blue-100 aria-selected:text-black ",
+      "text_right flex select-none items-center justify-start rounded-sm py-2 text-xs outline-none aria-selected:bg-primary/65 aria-selected:text-black",
       className,
     )}
     {...props}
@@ -135,7 +132,7 @@ const CommandShortcut = ({
   return (
     <span
       className={cn(
-        "ml-auto text-xs hover:text-black tracking-widest text-muted-foreground",
+        "ml-auto text-xs tracking-widest text-muted-foreground hover:text-black",
         className,
       )}
       {...props}

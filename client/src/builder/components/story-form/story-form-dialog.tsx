@@ -71,27 +71,12 @@ export const ControlledStoryFormDialog = ({
     <Dialog open={open} onOpenChange={setOpen}>
       {!!trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent>
-        <DialogHeader>
+        <DialogHeader className="p-1">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(submit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="genres"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Title</FormLabel>
-                  <FormControl>
-                    <StoryGenreCombobox
-                      onChange={field.onChange}
-                      values={field.value}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+          <form onSubmit={form.handleSubmit(submit)} className="space-y-6">
             <FormField
               control={form.control}
               name="title"
@@ -108,6 +93,22 @@ export const ControlledStoryFormDialog = ({
                     The displayed title of your story
                   </FormDescription>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="genres"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Genre</FormLabel>
+                  <FormControl>
+                    <StoryGenreCombobox
+                      onChange={field.onChange}
+                      values={field.value}
+                    />
+                  </FormControl>
+                  <FormDescription>The genre(s) of your story</FormDescription>
                 </FormItem>
               )}
             />

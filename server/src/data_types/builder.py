@@ -39,7 +39,8 @@ class Story(BaseModel, use_enum_values=True):
     image: str
     status: StoryStatus
     genres: list[StoryGenre]
-    publicationDate: Optional[str]
+    publicationDate: Optional[str] = None
+    creationDate: str
 
 
 class Action(BaseModel):
