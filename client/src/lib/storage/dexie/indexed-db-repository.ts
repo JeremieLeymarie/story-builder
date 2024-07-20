@@ -76,6 +76,21 @@ class IndexedDBRepository implements LocalRepositoryPort {
       .toArray();
   }
 
+  async addAuthorKeyToStories(authorKey: string) {
+    db.transaction("readwrite", "stories", async () => {
+      const storiesToUpdate = (await db.stories
+        .filter((story) => story.authorKey === undefined)
+        .keys()) as string[];
+
+      const payload = storiesToUpdate.map((key) => ({
+        key,
+        changes: { authorKey },
+      }));
+
+      db.stories.bulkUpdate(payload);
+    });
+  }
+
   // USER
 
   async getUser() {

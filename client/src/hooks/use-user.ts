@@ -16,7 +16,11 @@ export const useUser = () => {
         );
       }
 
-      return repo.createUser(user);
+      const createdUser = await repo.createUser(user);
+      // Side effect: once a user is created, update all of his or her existing stories' authorKey
+      await repo.addAuthorKeyToStories(createdUser.key);
+
+      return user;
     },
     [repo]
   );
