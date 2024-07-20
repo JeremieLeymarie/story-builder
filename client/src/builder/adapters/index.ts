@@ -50,7 +50,7 @@ export const scenesToNodesAndEdgesAdapter = ({
 
       return [nodes, [...acc[1], ...edges]];
     },
-    [[], []] as [Node<SceneProps, "scene">[], Edge[]]
+    [[], []] as [Node<SceneProps, "scene">[], Edge[]],
   );
 };
 

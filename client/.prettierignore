@@ -1,0 +1,6 @@
+# Ignore artifacts:
+build
+coverage
+
+# Generated files
+src/routeTree.gen.ts

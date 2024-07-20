@@ -24,7 +24,7 @@ export const useBuilderEdges = ({
 
       return { sceneToUpdate, actionIndex };
     },
-    [sceneNodes]
+    [sceneNodes],
   );
 
   const onConnect = useCallback(
@@ -46,7 +46,7 @@ export const useBuilderEdges = ({
 
       setEdges((eds) => addEdge(edge, eds));
     },
-    [getSceneToUpdate, setEdges]
+    [getSceneToUpdate, setEdges],
   );
 
   const onEdgesDelete = useCallback(
@@ -71,7 +71,7 @@ export const useBuilderEdges = ({
         });
       });
     },
-    [getSceneToUpdate]
+    [getSceneToUpdate],
   );
 
   return { onConnect, onEdgesDelete };

@@ -33,7 +33,7 @@ export const useBuilderStories = () => {
         params: { storyKey: story.key },
       });
     },
-    [navigate]
+    [navigate],
   );
 
   return { handleCreateStory };

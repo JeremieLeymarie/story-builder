@@ -12,7 +12,7 @@ export const useUser = () => {
 
       if (userCount > 0) {
         throw new Error(
-          "There should not be more than one user in local database"
+          "There should not be more than one user in local database",
         );
       }
 
@@ -22,7 +22,7 @@ export const useUser = () => {
 
       return user;
     },
-    [repo]
+    [repo],
   );
 
   return { persistUser };

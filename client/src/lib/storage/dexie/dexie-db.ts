@@ -79,7 +79,7 @@ db.use({
               Dexie.setByKeyPath(
                 value,
                 table.schema.primaryKey.keyPath!,
-                nanoid()
+                nanoid(),
               );
             });
           }

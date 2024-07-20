@@ -14,7 +14,7 @@ export const Component = () => {
   const scene = useLiveQuery(
     () =>
       story?.firstSceneKey ? repo.getScene(story.firstSceneKey) : undefined,
-    [story]
+    [story],
   );
 
   const createStoryProgress = useCallback(
@@ -24,7 +24,7 @@ export const Component = () => {
 
       if (!story.firstSceneKey) {
         throw new Error(
-          `Error: story should have a first scene. Story: ${story.key}`
+          `Error: story should have a first scene. Story: ${story.key}`,
         );
       }
 
@@ -39,7 +39,7 @@ export const Component = () => {
         ...payload,
       });
     },
-    [gameKey, repo]
+    [gameKey, repo],
   );
 
   useEffect(() => {

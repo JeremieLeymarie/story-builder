@@ -17,7 +17,7 @@ export type LocalRepositoryPort = {
   getScenes: (storyKey: string) => Promise<Scene[]>;
 
   createStoryProgress: (
-    progress: WithoutKey<StoryProgress>
+    progress: WithoutKey<StoryProgress>,
   ) => Promise<StoryProgress>;
   updateStoryProgress: (progress: StoryProgress) => Promise<StoryProgress>;
   getStoryProgress: (storyKey: string) => Promise<StoryProgress | null>;

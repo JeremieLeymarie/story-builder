@@ -19,7 +19,7 @@ export const useUpdateStoryProgress = ({ scene, storyProgress }: Props) => {
 
       await getLocalRepository().updateStoryProgress(payload);
     },
-    []
+    [],
   );
 
   useEffect(() => {

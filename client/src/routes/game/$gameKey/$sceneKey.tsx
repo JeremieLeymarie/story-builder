@@ -12,11 +12,11 @@ export const Component = () => {
   const repo = getLocalRepository();
   const scene = useLiveQuery(
     () => repo.getScene(sceneKey),
-    [sceneKey, gameKey]
+    [sceneKey, gameKey],
   );
   const getStoryProgress = useCallback(
     () => repo.getStoryProgress(gameKey),
-    [gameKey, repo]
+    [gameKey, repo],
   );
   const storyProgress = useInitialQuery(getStoryProgress);
 

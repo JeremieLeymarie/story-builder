@@ -12,7 +12,7 @@ const Page = () => {
   const progress = useLiveQuery(() => repo.getStoryProgress(storyKey));
   const lastScene = useLiveQuery(
     () => (progress ? repo.getScene(progress.currentSceneKey) : progress),
-    [progress]
+    [progress],
   );
 
   if (
