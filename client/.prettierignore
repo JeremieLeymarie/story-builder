@@ -2,5 +2,11 @@
 build
 coverage
 
-# Generated files
+
+# GENERATED FILES
+
+#router
 src/routeTree.gen.ts
+
+# http client
+src/lib/http-client

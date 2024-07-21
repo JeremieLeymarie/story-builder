@@ -1,5 +1,6 @@
 import { API_URL } from "@/constants";
 import { useToast } from "@/design-system/primitives/use-toast";
+import { apiSaveBuilderState } from "@/lib/http-client";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { useCallback, useState } from "react";
 
@@ -21,23 +22,21 @@ export const useSynchronizeBuilder = ({ storyKey }: { storyKey: string }) => {
     const story = await repo.getStory(storyKey);
     const scenes = await repo.getScenes(storyKey);
 
-    fetch(`${API_URL}/api/builder/save/game`, {
-      body: JSON.stringify({ story, scenes }),
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-    })
-      .then(() => {
-        toast({
-          title: "Synchronization complete!",
-          description: "Your progress has successfully been saved.",
-        });
-      })
-      .catch(() => {
-        toast({
-          title: "Synchronization failed!",
-          description: "Something went wrong, please try again later.",
-        });
+    if (!story) {
+      throw new Error(`Could not find story from key: ${storyKey}`);
+    }
+
+    const response = await apiSaveBuilderState({ body: { story, scenes } });
+    if (response.error) {
+      return toast({
+        title: "Synchronization failed!",
+        description: "Something went wrong, please try again later.",
       });
+    }
+    toast({
+      title: "Synchronization complete!",
+      description: "Your progress has successfully been saved.",
+    });
   }, [storyKey, toast]);
 
   return { synchronize, isAuthModalOpen, setIsAuthModalOpen };

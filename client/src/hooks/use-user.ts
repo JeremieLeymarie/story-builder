@@ -20,7 +20,7 @@ export const useUser = () => {
       // Side effect: once a user is created, update all of his or her existing stories' authorKey
       await repo.addAuthorToStories({ key, username });
 
-      return user;
+      return createdUser;
     },
     [repo],
   );

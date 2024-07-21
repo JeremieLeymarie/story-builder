@@ -1,7 +1,7 @@
-import { API_URL } from "@/constants";
 import { Loader } from "@/design-system/components";
 import { Home } from "@/home/home";
 import { useIsOnline } from "@/hooks/use-is-online";
+import { apiGetStoreItems } from "@/lib/http-client";
 import { Story } from "@/lib/storage/dexie/dexie-db";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { createFileRoute } from "@tanstack/react-router";
@@ -21,13 +21,13 @@ const Index = () => {
     }
 
     // TODO: request only necessary number of items
-    fetch(`${API_URL}/api/store/load`, {
-      method: "GET",
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        setStoreItems(res.slice(0, 3));
-      });
+    apiGetStoreItems().then((response) => {
+      if (response.error || !response.data) {
+        setStoreItems(null);
+      } else {
+        setStoreItems(response.data.slice(0, 3));
+      }
+    });
   }, [isOnline]);
 
   if (user === undefined || lastPlayedGame === undefined) {

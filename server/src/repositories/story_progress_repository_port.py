@@ -4,12 +4,12 @@ from data_types.game import StoryProgress
 
 
 class StoryProgressRepositoryPort(Protocol):
-    def get_from_user(self, user_id: str) -> list[StoryProgress]:
-        """Get all story progresses linked to a user_id
+    def get_from_user(self, user_key: str) -> list[StoryProgress]:
+        """Get all story progresses linked to a user
 
 
         Args:
-            user_id (str): the string representation of the user id
+            user_key (str): the string representation of the user key
 
         Returns:
             list[StoryProgress]: the matching database documents
@@ -17,7 +17,7 @@ class StoryProgressRepositoryPort(Protocol):
         ...
 
     def save(self, story_progress: StoryProgress) -> StoryProgress:
-        """Insert or update a story progress in the database using the remoteUserId and remoteStoryId to find it
+        """Insert or update a story progress in the database using the key to find it
 
 
         Args:

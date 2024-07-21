@@ -33,7 +33,7 @@ class StoryAuthor(BaseModel):
 
 class Story(BaseModel, use_enum_values=True):
     key: str
-    author: Optional[StoryAuthor] = None
+    author: Optional[StoryAuthor]
     title: str
     description: str
     image: str

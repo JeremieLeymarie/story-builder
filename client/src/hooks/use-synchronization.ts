@@ -25,8 +25,8 @@ export const useSynchronization = () => {
   const sync = useCallback((data: SynchronizationData) => {}, []);
 
   const fetchData = useCallback(async () => {
-    const raw = await fetch(`${API_URL}`);
-    const res = await raw.json();
+    const raw = await fetch(`${API_URL}/api/synchronize/{user_key}`);
+    const res: SynchronizationData = await raw.json();
   }, []);
 
   useEffect(() => {
