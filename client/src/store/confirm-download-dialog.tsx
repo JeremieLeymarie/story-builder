@@ -31,7 +31,7 @@ export const ConfirmDownloadDialog = ({ storyKey }: { storyKey?: string }) => {
         });
       }
     },
-    [toast],
+    [toast]
   );
 
   return (

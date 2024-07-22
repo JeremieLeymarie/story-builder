@@ -11,6 +11,7 @@ import { Link } from "@tanstack/react-router";
 import { MoveRightIcon, PlusIcon } from "lucide-react";
 import { useBuilderStories } from "../hooks/use-builder-stories";
 import { Story } from "@/lib/storage/dexie/dexie-db";
+import { ImportModal } from "../components/import-modal";
 import { StoryCard } from "@/design-system/components/story-card";
 
 type BuilderHomeProps = {
@@ -28,7 +29,7 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
           <CardTitle>New story</CardTitle>
           <CardDescription>A new adventure awaits</CardDescription>
         </CardHeader>
-        <CardContent className="flex items-center justify-center">
+        <CardContent className="flex flex-col justify-center items-center gap-2">
           <StoryFormDialog
             onSubmit={handleCreateStory}
             trigger={
@@ -39,6 +40,8 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
             title="Your story"
             description="Build your own adventure!"
           />
+          <p className="text-sm text-muted-foreground">------ OR ------</p>
+          <ImportModal />
         </CardContent>
       </Card>
       {stories.map((story) => {

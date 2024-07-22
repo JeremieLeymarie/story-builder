@@ -5,6 +5,7 @@ import { SceneEditor } from "./editors/scene-editor";
 import { useToolbar } from "../hooks/use-toolbar";
 import { AuthModalForm } from "@/auth-modal-form";
 import { StoryPublisher } from "./story-publisher";
+import { ExportModal } from "./export-modal";
 import { Scene, Story } from "@/lib/storage/dexie/dexie-db";
 
 type Props = {
@@ -37,7 +38,6 @@ export const Toolbar = ({ story, scenes }: Props) => {
             })
           }
         />
-
         <Button variant="default" className="w-full" onClick={testStory}>
           <TestTubesIcon size="16px" /> &nbsp; Test
         </Button>
@@ -50,6 +50,7 @@ export const Toolbar = ({ story, scenes }: Props) => {
           <RefreshCcwIcon size="16px" /> &nbsp; Synchronize
         </Button>
         <StoryPublisher story={story} scenes={scenes} />
+        <ExportModal story={story} scenes={scenes} />
       </div>
       <AuthModalForm
         open={isAuthModalOpen}

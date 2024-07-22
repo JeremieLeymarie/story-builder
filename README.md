@@ -5,7 +5,7 @@
 The usual workflow should look like this:
 
 1. Choosing an issue in the `ready` column in Github Project.
-2. Creating a branch for this issue. You can do this either by checking out locally or by using the built-in *create a branch* button in Github Project.
+2. Creating a branch for this issue. You can do this either by checking out locally or by using the built-in _create a branch_ button in Github Project.
 3. Resolving the issue locally.
 4. Creating a Pull Request (PR) via the Github interface and assigning your peers to review your work.
 5. Once the PR is validated by at least one other dev, merging the branch into the main branch.
@@ -16,10 +16,10 @@ The usual workflow should look like this:
 
 You need on your system:
 
-* Bun
-* Docker
-* Python 3
-* pre-commit
+- Bun
+- Docker
+- Python 3
+- pre-commit
 
 ```sh
 pip install pre-commit
@@ -50,9 +50,8 @@ In the `server` folder
 #### Activate virtual env
 
 ```bash
-python3 -m venv venv
+python3.12 -m venv venv
 ```
-
 
 ```bash
 source venv/bin/activate
