@@ -22,6 +22,7 @@ const schema = z.object({
     key: z.string({ message: "storyKey is required" }),
     firstSceneKey: z.string({ message: "FirstSceneKey is required" }),
     creationDate: z.string({ message: "creationDate is required" }).transform((val) => new Date(val)),
+    publicationDate: z.string({ message: "publicationDate is required" }).transform((val) => new Date(val)).optional(),
     genres: z.array(z.enum(STORY_GENRES)),
     authorId: z.string().optional(),
     image: z.string().url({ message: "Image has to be a valid URL" }),
@@ -89,9 +90,7 @@ export const ImportModal = () => {
         }
         try {
           await getLocalRepository().createStory(resZod.data.story); 
-          if (contentJson.scenes) {
-            await getLocalRepository().createScenes(resZod.data.scenes);
-          }
+          await getLocalRepository().createScenes(resZod.data.scenes);
         } catch (error) {
           if(error instanceof Dexie.DexieError && error.name == "ConstraintError"){
             toast({
