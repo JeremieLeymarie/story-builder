@@ -13,40 +13,40 @@ import { ChangeEvent, useCallback, useState } from "react";
 import { useToast } from "@/design-system/primitives/use-toast";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { z } from "zod";
+import { STORY_STATUS } from "@/lib/storage/dexie/dexie-db";
 
 const schema = z.object({
   story: z.object({
-    authorId: z.number(),
-    description: z.string(),
-    id: z.number(),
+    description: z.string({ message: "Description is required" }),
+    id: z.number({ message: "Id is required" }),
+    remoteId: z.string().nullable().optional(),
+    authorId: z.string().optional(),
     image: z.string().url({ message: "Image has to be a valid URL" }),
-    mongoId: z.string(),
-    status: z.string(),
-    title: z.string(),
-    scenes: z.array(z.object({}).optional()),
+    status: z.enum(STORY_STATUS, {
+      message: "Status has to be a valid Status",
+    }),
+    title: z.string({ message: "Title is required" }),
   }),
   scenes: z.array(
     z.object({
       id: z.number(),
-      mongoId: z.string().nullable().optional(),
-      storyId: z.number(),
-      title: z.string(),
-      content: z.string(),
+      title: z.string({ message: "Id is required" }),
+      content: z.string({ message: "Content is required" }),
       actions: z.array(
         z
           .object({
-            text: z.string(),
+            text: z.string({ message: "Text is required" }),
             sceneId: z.number().optional(),
           })
           .optional()
       ),
       builderParams: z.object({
         position: z.object({
-          x: z.number(),
-          y: z.number(),
+          x: z.number({ message: "X is required" }),
+          y: z.number({ message: "Y is required" }),
         }),
       }),
-      isFirstScene: z.boolean(),
+      isFirstScene: z.boolean({ message: "IsFirstScene is required" }),
     })
   ),
 });
@@ -76,7 +76,14 @@ export const ImportModal = () => {
       setFileContent(undefined);
       if (fileContent) {
         const contentJson = JSON.parse(fileContent);
-        schema.parse(contentJson);
+        const resZod = schema.safeParse(contentJson);
+        if (!resZod.success) {
+          toast({
+            title: "Invalid format",
+            description: resZod.error.issues[0].message,
+          });
+          return;
+        }
         await getLocalRepository().createStory(contentJson.story);
         if (contentJson.scenes) {
           await getLocalRepository().createScenes(contentJson.scenes);
