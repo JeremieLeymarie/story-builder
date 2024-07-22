@@ -8,12 +8,15 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useCallback } from "react";
 
 export const Component = () => {
-  const { sceneId, gameId } = Route.useParams();
+  const { sceneKey, gameKey } = Route.useParams();
   const repo = getLocalRepository();
-  const scene = useLiveQuery(() => repo.getScene(sceneId), [sceneId, gameId]);
+  const scene = useLiveQuery(
+    () => repo.getScene(sceneKey),
+    [sceneKey, gameKey],
+  );
   const getStoryProgress = useCallback(
-    () => repo.getStoryProgress(gameId),
-    [gameId, repo],
+    () => repo.getStoryProgress(gameKey),
+    [gameKey, repo],
   );
   const storyProgress = useInitialQuery(getStoryProgress);
 
@@ -31,9 +34,6 @@ export const Component = () => {
   return <GameScene {...scene} />;
 };
 
-export const Route = createFileRoute("/game/$gameId/$sceneId")({
-  parseParams: ({ gameId, sceneId }) => {
-    return { gameId: parseInt(gameId), sceneId: parseInt(sceneId) };
-  },
+export const Route = createFileRoute("/game/$gameKey/$sceneKey")({
   component: Component,
 });

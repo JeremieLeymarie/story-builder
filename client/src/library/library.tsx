@@ -15,9 +15,9 @@ export const Library = ({ stories }: Library) => {
       {stories.map((story) => {
         return (
           <Link
-            to="/library/$storyId"
-            params={{ storyId: story.id }}
-            key={story.id}
+            to="/library/$storyKey"
+            params={{ storyKey: story.key }}
+            key={story.key}
           >
             <StoryCard
               {...story}

@@ -13,7 +13,7 @@ export const useBuilderStories = () => {
 
       // Create first scene with mock data
       const firstScene = await repo.createScene({
-        storyId: story.id,
+        storyKey: story.key,
         builderParams: { position: { x: 0, y: 0 } },
         content: "This is a placeholder content for your first scene",
         title: "Your first scene",
@@ -26,11 +26,11 @@ export const useBuilderStories = () => {
           },
         ],
       });
-      repo.updateStory({ ...story, firstSceneId: firstScene.id });
+      repo.updateStory({ ...story, firstSceneKey: firstScene.key });
 
       navigate({
-        to: "/builder/$storyId",
-        params: { storyId: story.id },
+        to: "/builder/$storyKey",
+        params: { storyKey: story.key },
       });
     },
     [navigate],

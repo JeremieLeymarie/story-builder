@@ -7,7 +7,7 @@ export const GameScene = ({
   title,
   actions,
   content,
-  storyId,
+  storyKey,
 }: GameSceneProps) => {
   return (
     <div className="py-8 px-6 w-full">
@@ -17,7 +17,7 @@ export const GameScene = ({
       <p className="leading-7 [&:not(:first-child)]:mt-6">{content}</p>
       <div className="mt-4 w-full flex flex-wrap gap-3">
         {actions.map((action) => (
-          <SceneAction key={action.text} {...action} storyId={storyId} />
+          <SceneAction key={action.text} {...action} storyKey={storyKey} />
         ))}
       </div>
     </div>

@@ -10,9 +10,8 @@ class StoryStatus(enum.Enum):
 
 
 class Story(BaseModel, use_enum_values=True):
-    id: int
-    remoteId: Optional[str] = None
-    authorId: Optional[int] = None
+    key: str
+    authorKey: Optional[str] = None
     title: str
     description: str
     image: str
@@ -21,7 +20,7 @@ class Story(BaseModel, use_enum_values=True):
 
 class Action(BaseModel):
     text: str
-    sceneId: Optional[int] = None
+    sceneKey: Optional[str] = None
 
 
 class BuilderPosition(BaseModel):
@@ -34,8 +33,8 @@ class BuilderParams(BaseModel):
 
 
 class Scene(BaseModel):
-    id: int
-    storyId: int
+    key: str
+    storyKey: str
     title: str
     content: str
     actions: list[Action]

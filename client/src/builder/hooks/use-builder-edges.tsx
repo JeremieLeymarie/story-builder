@@ -37,7 +37,7 @@ export const useBuilderEdges = ({
 
       const actions = sceneData.sceneToUpdate.actions.map((action, i) => {
         if (i === sceneData.actionIndex) {
-          return { ...action, sceneId: parseInt(edge.target!) };
+          return { ...action, sceneKey: edge.target! };
         }
         return action;
       });
@@ -60,7 +60,7 @@ export const useBuilderEdges = ({
 
         const actions = sceneData.sceneToUpdate.actions.map((action, i) => {
           if (i === sceneData.actionIndex) {
-            return { ...action, sceneId: undefined };
+            return { ...action, sceneKey: undefined };
           }
           return action;
         });

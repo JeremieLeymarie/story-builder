@@ -34,15 +34,10 @@ export const AuthModalForm = ({
   onError: (err: string) => void;
 }) => {
   const [form, setForm] = useState<"sign-in" | "sign-up">("sign-up");
-  const { persistUser } = useUser();
 
-  const handleSuccess = useCallback(
-    async (user: User) => {
-      await persistUser(user);
-      onSuccess();
-    },
-    [onSuccess, persistUser],
-  );
+  const handleSuccess = useCallback(async () => {
+    onSuccess();
+  }, [onSuccess]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -114,10 +109,13 @@ const SignUpForm = ({
     resolver: zodResolver(signUpSchema),
     defaultValues: {},
   });
+  const { persistUser } = useUser();
 
-  const submit = async (body: SignUpSchema) => {
+  const submit = async ({ password, ...data }: SignUpSchema) => {
+    const user = await persistUser(data);
+
     fetch(`${API_URL}/api/user/register`, {
-      body: JSON.stringify(body),
+      body: JSON.stringify({ ...user, password }),
       method: "POST",
       headers: { "Content-Type": "application/json" },
     })
@@ -199,6 +197,7 @@ const SignInForm = ({
     resolver: zodResolver(signInSchema),
     defaultValues: {},
   });
+  const { persistUser } = useUser();
 
   const submit = async (body: SignInSchema) => {
     fetch(`${API_URL}/api/user/login`, {
@@ -207,7 +206,10 @@ const SignInForm = ({
       headers: { "Content-Type": "application/json" },
     })
       .then((res) => res.json())
-      .then((res) => onSuccess(res))
+      .then((res) => {
+        onSuccess(res);
+        persistUser(res);
+      })
       .catch((err) => onError(err));
   };
 

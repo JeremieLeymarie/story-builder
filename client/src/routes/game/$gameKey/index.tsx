@@ -7,38 +7,39 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useCallback, useEffect } from "react";
 
 export const Component = () => {
-  const { gameId } = Route.useParams();
+  const { gameKey } = Route.useParams();
   const repo = getLocalRepository();
   // TODO: only one live query would be better?
-  const story = useLiveQuery(() => repo.getStory(gameId));
+  const story = useLiveQuery(() => repo.getStory(gameKey));
   const scene = useLiveQuery(
-    () => (story?.firstSceneId ? repo.getScene(story.firstSceneId) : undefined),
+    () =>
+      story?.firstSceneKey ? repo.getScene(story.firstSceneKey) : undefined,
     [story],
   );
 
   const createStoryProgress = useCallback(
     async (story: Story) => {
-      const progress = await repo.getStoryProgress(gameId);
+      const progress = await repo.getStoryProgress(gameKey);
       if (progress) return progress;
 
-      if (!story.firstSceneId) {
+      if (!story.firstSceneKey) {
         throw new Error(
-          `Error: story should have a first scene. Story: ${story.id}`,
+          `Error: story should have a first scene. Story: ${story.key}`,
         );
       }
 
       const payload = {
-        history: [story.firstSceneId],
-        currentSceneId: story.firstSceneId,
+        history: [story.firstSceneKey],
+        currentSceneKey: story.firstSceneKey,
         lastPlayedAt: new Date(),
       };
 
       await repo.createStoryProgress({
-        storyId: story.id,
+        storyKey: story.key,
         ...payload,
       });
     },
-    [gameId, repo],
+    [gameKey, repo],
   );
 
   useEffect(() => {
@@ -56,9 +57,6 @@ export const Component = () => {
   return <GameScene {...scene} />;
 };
 
-export const Route = createFileRoute("/game/$gameId/")({
-  parseParams: ({ gameId }) => {
-    return { gameId: parseInt(gameId) };
-  },
+export const Route = createFileRoute("/game/$gameKey/")({
   component: Component,
 });

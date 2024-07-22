@@ -13,7 +13,7 @@ type Props = {
 };
 export const Toolbar = ({ story, scenes }: Props) => {
   const { synchronize, isAuthModalOpen, setIsAuthModalOpen, testStory } =
-    useToolbar({ storyId: story.id });
+    useToolbar({ storyKey: story.key });
 
   // Maybe we could use Navigation Menu for this component at some point
   return (
@@ -32,7 +32,7 @@ export const Toolbar = ({ story, scenes }: Props) => {
           onSave={(values) =>
             getLocalRepository().createScene({
               ...values,
-              storyId: story.id,
+              storyKey: story.key,
               builderParams: { position: { x: 0, y: 0 } },
             })
           }

@@ -40,7 +40,7 @@ const schema = z.object({
       text: z
         .string()
         .min(3, { message: "Action text has to be at least 3 characters" }),
-      sceneId: z.number().optional(),
+      sceneKey: z.string().optional(),
     }),
   ),
 });
@@ -52,7 +52,7 @@ type Props = {
     content?: string;
     actions: Action[];
     isFirstScene: boolean;
-    id: number;
+    key: string;
   };
   trigger: ReactNode;
   onSave: (input: Schema) => void;

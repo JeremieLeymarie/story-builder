@@ -1,35 +1,33 @@
 import Dexie, { type EntityTable } from "dexie";
+import { nanoid } from "nanoid";
 
 export type User = {
-  id: number;
-  remoteId?: string;
+  key: string;
   username: string;
   email: string;
-  password?: string;
 };
 
 export const STORY_STATUS = ["draft", "saved", "published"] as const;
 export type StoryStatus = (typeof STORY_STATUS)[number];
 
 export type Story = {
-  id: number;
-  remoteId?: string;
-  authorId?: number;
+  key: string;
+  authorKey?: string;
   title: string;
   description: string;
   image: string;
   status: StoryStatus;
-  firstSceneId?: number;
+  firstSceneKey?: string;
 };
 
 export type Action = {
   text: string;
-  sceneId?: number;
+  sceneKey?: string;
 };
 
 export type Scene = {
-  id: number;
-  storyId: number;
+  key: string;
+  storyKey: string;
   title: string;
   content: string;
   actions: Action[];
@@ -37,11 +35,10 @@ export type Scene = {
 };
 
 export type StoryProgress = {
-  id: number;
-  remoteId?: string;
-  storyId: number;
-  history: number[];
-  currentSceneId: number;
+  key: string;
+  storyKey: string;
+  history: string[];
+  currentSceneKey: string;
   character?: Record<string, unknown>;
   inventory?: Record<string, unknown>;
   lastPlayedAt: Date;
@@ -50,17 +47,46 @@ export type StoryProgress = {
 // TODO: Chapters?
 
 export const db = new Dexie("story-builder") as Dexie & {
-  user: EntityTable<User, "id">;
-  stories: EntityTable<Story, "id">;
-  scenes: EntityTable<Scene, "id">;
-  storyProgresses: EntityTable<StoryProgress, "id">;
+  user: EntityTable<User, "key">;
+  stories: EntityTable<Story, "key">;
+  scenes: EntityTable<Scene, "key">;
+  storyProgresses: EntityTable<StoryProgress, "key">;
 };
 
 db.version(1).stores({
-  user: "++id, remoteId, username, password, email",
-  stories:
-    "++id, remoteId, firstSceneId, authorId, title, description, image, status",
-  scenes: "++id, storyId, title, content, actions, builderParams",
+  user: "&key, username, email",
+  stories: "&key, firstSceneKey, authorKey, title, description, image, status",
+  scenes: "&key, storyKey, title, content, actions, builderParams",
   storyProgresses:
-    "++id, remoteId, storyId, currentSceneId, character, inventory, history, lastPlayedAt",
+    "&key, storyKey, currentSceneKey, character, inventory, history, lastPlayedAt",
+});
+
+// Register nanoid middleware
+db.use({
+  stack: "dbcore",
+  name: "primary-key-nanoid-mw",
+  create: (core) => ({
+    ...core,
+    table: (tableName) => {
+      const table = core.table(tableName);
+
+      return {
+        ...table,
+        mutate: (req) => {
+          if (req.type === "add") {
+            // For every insertion in the database, generate a nanoid and use it as the primary key
+            req.values.forEach((value) => {
+              Dexie.setByKeyPath(
+                value,
+                table.schema.primaryKey.keyPath!,
+                nanoid(),
+              );
+            });
+          }
+
+          return table.mutate(req);
+        },
+      };
+    },
+  }),
 });

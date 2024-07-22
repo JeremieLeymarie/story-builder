@@ -17,7 +17,7 @@ import {
   Textarea,
 } from "@/design-system/primitives";
 import { Story, STORY_STATUS } from "@/lib/storage/dexie/dexie-db";
-import { WithoutId } from "@/types";
+import { WithoutKey } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -45,8 +45,8 @@ const schema = z.object({
 type Schema = z.infer<typeof schema>;
 
 export type OnSubmitStoryFormProps = Omit<
-  WithoutId<Story>,
-  "firstSceneId" | "authorId" | "status"
+  WithoutKey<Story>,
+  "firstSceneKey" | "authorKey" | "status"
 >;
 type StoryFormProps = {
   onSubmit: (props: OnSubmitStoryFormProps) => void;

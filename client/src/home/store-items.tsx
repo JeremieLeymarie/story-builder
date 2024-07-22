@@ -19,7 +19,7 @@ export const StoreItems = ({ stories }: { stories: Story[] }) => {
       </p>
       <div className="w-full flex p-4 gap-8 flex-wrap justify-center">
         {stories.map((story) => (
-          <StoryCard {...story} key={story.id} />
+          <StoryCard {...story} key={story.key} />
         ))}
         <Card className="border-dashed w-[275px] h-[225px]">
           <CardHeader>

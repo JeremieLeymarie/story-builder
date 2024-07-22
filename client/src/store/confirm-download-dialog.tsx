@@ -6,13 +6,13 @@ import { useToast } from "@/design-system/primitives/use-toast";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { ConfirmDialog } from "@/design-system/components";
 
-export const ConfirmDownloadDialog = ({ remoteId }: { remoteId?: string }) => {
+export const ConfirmDownloadDialog = ({ storyKey }: { storyKey?: string }) => {
   const { toast } = useToast();
 
   const download = useCallback(
-    async (remoteId?: string) => {
+    async (storyKey?: string) => {
       try {
-        const res = await fetch(`${API_URL}/api/store/download/${remoteId}`, {
+        const res = await fetch(`${API_URL}/api/store/download/${storyKey}`, {
           method: "GET",
         });
         const story = await res.json();
@@ -46,7 +46,7 @@ export const ConfirmDownloadDialog = ({ remoteId }: { remoteId?: string }) => {
       title="Are you sure?"
       description="You are about to download a story on your device."
       confirmLabel="Download"
-      onConfirm={() => download(remoteId)}
+      onConfirm={() => download(storyKey)}
     />
   );
 };
