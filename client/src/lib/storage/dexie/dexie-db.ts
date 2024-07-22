@@ -1,6 +1,6 @@
 import Dexie, { type EntityTable } from "dexie";
 import { nanoid } from "nanoid";
- 
+
 export const STORY_GENRES = [
   "adventure",
   "children",
@@ -18,16 +18,16 @@ export const STORY_GENRES = [
   "western",
 ] as const;
 export type StoryGenre = (typeof STORY_GENRES)[number];
- 
+
 export type User = {
   key: string;
   username: string;
   email: string;
 };
- 
+
 export const STORY_STATUS = ["draft", "saved", "published"] as const;
 export type StoryStatus = (typeof STORY_STATUS)[number];
- 
+
 export type Story = {
   key: string;
   author?: {
@@ -43,12 +43,12 @@ export type Story = {
   publicationDate?: Date;
   creationDate: Date;
 };
- 
+
 export type Action = {
   text: string;
   sceneKey?: string;
 };
- 
+
 export type Scene = {
   key: string;
   storyKey: string;
@@ -57,7 +57,7 @@ export type Scene = {
   actions: Action[];
   builderParams: { position: { x: number; y: number } };
 };
- 
+
 export type StoryProgress = {
   key: string;
   storyKey: string;
@@ -67,14 +67,14 @@ export type StoryProgress = {
   inventory?: Record<string, unknown>;
   lastPlayedAt: Date;
 };
- 
+
 export const db = new Dexie("story-builder") as Dexie & {
   user: EntityTable<User, "key">;
   stories: EntityTable<Story, "key">;
   scenes: EntityTable<Scene, "key">;
   storyProgresses: EntityTable<StoryProgress, "key">;
 };
- 
+
 db.version(1).stores({
   user: "&key, username, email",
   stories:
@@ -83,7 +83,7 @@ db.version(1).stores({
   storyProgresses:
     "&key, storyKey, currentSceneKey, character, inventory, history, lastPlayedAt",
 });
- 
+
 // Register nanoid middleware
 db.use({
   stack: "dbcore",
@@ -92,7 +92,7 @@ db.use({
     ...core,
     table: (tableName) => {
       const table = core.table(tableName);
- 
+
       return {
         ...table,
         mutate: (req) => {
@@ -108,7 +108,7 @@ db.use({
               }
             });
           }
- 
+
           return table.mutate(req);
         },
       };

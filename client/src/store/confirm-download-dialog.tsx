@@ -47,7 +47,7 @@ export const ConfirmDownloadDialog = ({ storyKey }: { storyKey: string }) => {
         description: "Your game is now available in your library.",
       });
     },
-    [toast]
+    [toast],
   );
 
   return (

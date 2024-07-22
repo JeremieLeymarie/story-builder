@@ -21,8 +21,13 @@ const schema = z.object({
     description: z.string({ message: "Description is required" }),
     key: z.string({ message: "storyKey is required" }),
     firstSceneKey: z.string({ message: "FirstSceneKey is required" }),
-    creationDate: z.string({ message: "creationDate is required" }).transform((val) => new Date(val)),
-    publicationDate: z.string({ message: "publicationDate is required" }).transform((val) => new Date(val)).optional(),
+    creationDate: z
+      .string({ message: "creationDate is required" })
+      .transform((val) => new Date(val)),
+    publicationDate: z
+      .string({ message: "publicationDate is required" })
+      .transform((val) => new Date(val))
+      .optional(),
     genres: z.array(z.enum(STORY_GENRES)),
     authorId: z.string().optional(),
     image: z.string().url({ message: "Image has to be a valid URL" }),
@@ -34,15 +39,14 @@ const schema = z.object({
   scenes: z.array(
     z.object({
       key: z.string({ message: "Key is required" }),
-      storyKey:z.string({ message: "StoryKey is required" }),
+      storyKey: z.string({ message: "StoryKey is required" }),
       title: z.string({ message: "Title is required" }),
       content: z.string({ message: "Content is required" }),
       actions: z.array(
-        z
-          .object({
-            text: z.string({ message: "Text is required" }),
-            sceneKey: z.string().optional(),
-          })
+        z.object({
+          text: z.string({ message: "Text is required" }),
+          sceneKey: z.string().optional(),
+        }),
       ),
       builderParams: z.object({
         position: z.object({
@@ -51,7 +55,7 @@ const schema = z.object({
         }),
       }),
       isFirstScene: z.boolean({ message: "IsFirstScene is required" }),
-    })
+    }),
   ),
 });
 
@@ -63,9 +67,9 @@ export const ImportModal = () => {
   const handleChange = (event: ChangeEvent) => {
     const reader = new FileReader();
     const file = (event.target as HTMLInputElement)?.files?.[0];
-    if (file != null) {
+    if (file) {
       reader.onload = function () {
-        if (typeof reader.result == "string") {
+        if (typeof reader.result === "string") {
           setFileContent(reader.result);
         } else {
           console.error("error when reading file :" + reader.result);
@@ -84,21 +88,24 @@ export const ImportModal = () => {
         if (!resZod.success) {
           toast({
             title: "Invalid format",
-            description: resZod.error.issues[0].message,
+            description: resZod.error.issues[0]?.message,
           });
           return;
         }
         try {
-          await getLocalRepository().createStory(resZod.data.story); 
+          await getLocalRepository().createStory(resZod.data.story);
           await getLocalRepository().createScenes(resZod.data.scenes);
         } catch (error) {
-          if(error instanceof Dexie.DexieError && error.name == "ConstraintError"){
+          if (
+            error instanceof Dexie.DexieError &&
+            error.name === "ConstraintError"
+          ) {
             toast({
               title: "Import failed!",
               description: "You already have this game",
             });
           }
-          return
+          return;
         }
       }
       toast({

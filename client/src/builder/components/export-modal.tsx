@@ -30,7 +30,7 @@ export const ExportModal = ({
       scenes,
     },
     null,
-    2
+    2,
   );
 
   const handleModalState = (open: boolean) => {

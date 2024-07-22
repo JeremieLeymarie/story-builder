@@ -29,7 +29,7 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
           <CardTitle>New story</CardTitle>
           <CardDescription>A new adventure awaits</CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col justify-center items-center gap-2">
+        <CardContent className="flex flex-col items-center justify-center gap-2">
           <StoryFormDialog
             onSubmit={handleCreateStory}
             trigger={
