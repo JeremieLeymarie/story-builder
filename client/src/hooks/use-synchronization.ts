@@ -1,14 +1,9 @@
-import { API_URL } from "@/constants";
 import { useCallback, useEffect, useState } from "react";
 import { useIsOnline } from "./use-is-online";
-import { Story } from "@/lib/storage/dexie/dexie-db";
+import { Story, User } from "@/lib/storage/dexie/dexie-db";
+import { client } from "@/lib/http-client/client";
 
 export const SYNCHRO_STORAGE_KEY = "IS_SYNCHRONIZED";
-
-type SynchronizationData = {
-  playerGames: Story[];
-  builderStories: Story[] | null;
-};
 
 /**
  * Use the API to synchronize local data, if connected to network
@@ -17,23 +12,41 @@ type SynchronizationData = {
  * - Builder games
  */
 
-export const useSynchronization = () => {
+export const useSynchronization = ({ user }: { user: User | null }) => {
   const isOnline = useIsOnline();
-  //   const [synchronized, setSynchronized] = useState(false);
+  const [synchronizationState, setSynchronizationState] = useState<boolean>();
   const isSynchronized = sessionStorage.getItem(SYNCHRO_STORAGE_KEY) === "1";
 
-  const sync = useCallback((data: SynchronizationData) => {}, []);
+  const fetchData = useCallback(async (userKey: string) => {
+    const response = await client.GET("/api/synchronize/{user_key}", {
+      params: { path: { user_key: userKey } },
+    });
 
-  const fetchData = useCallback(async () => {
-    const raw = await fetch(`${API_URL}/api/synchronize/{user_key}`);
-    const res: SynchronizationData = await raw.json();
+    return response.data ?? null;
   }, []);
 
-  useEffect(() => {
-    if (isOnline && !isSynchronized) {
-      fetchData();
-    }
-  }, [fetchData, isOnline, isSynchronized]);
+  const sync = useCallback(
+    async (userKey: string) => {
+      const data = await fetchData(userKey);
 
-  //   return synchronized;
+      if (!data) {
+        setSynchronizationState(false);
+        return;
+      }
+
+      const { builderGames, playerGames } = data;
+
+      // Register that the app is synchronized for this session
+      sessionStorage.setItem(SYNCHRO_STORAGE_KEY, "1");
+    },
+    [fetchData],
+  );
+
+  useEffect(() => {
+    if (isOnline && !isSynchronized && user) {
+      sync(user.key);
+    }
+  }, [isOnline, isSynchronized, sync, user]);
+
+  return synchronizationState;
 };

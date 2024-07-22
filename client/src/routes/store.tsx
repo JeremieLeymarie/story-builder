@@ -5,14 +5,17 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Story } from "@/lib/storage/dexie/dexie-db";
 import { useEffect, useState } from "react";
 import { useIsOnline } from "@/hooks/use-is-online";
-import { apiGetStoreItems } from "@/lib/http-client";
 import { Loader } from "@/design-system/components";
+import { client } from "@/lib/http-client/client";
+import { fromAPIstoriesAdapter } from "@/lib/http-client/adapters";
 
 const StoreComponent = () => {
   const [stories, setStories] = useState<Story[] | null>();
 
   useEffect(() => {
-    apiGetStoreItems().then((response) => setStories(response.data ?? null));
+    client.GET("/api/store/load").then((res) => {
+      setStories(res.data ? fromAPIstoriesAdapter(res.data) : null);
+    });
   }, []);
 
   if (stories === undefined) return <Loader />;

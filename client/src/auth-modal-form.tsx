@@ -20,7 +20,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useUser } from "./hooks/use-user";
 import { User } from "@/lib/storage/dexie/dexie-db";
-import { apiCreateUser, apiUserLogin } from "./lib/http-client";
+import { client } from "./lib/http-client/client";
 
 export const AuthModalForm = ({
   open,
@@ -114,7 +114,9 @@ const SignUpForm = ({
   const submit = async ({ password, ...data }: SignUpSchema) => {
     const user = await persistUser(data);
 
-    const response = await apiCreateUser({ body: { ...user, password } });
+    const response = await client.POST("/api/user/register", {
+      body: { ...user, password },
+    });
 
     if (response.error) {
       onError("Error when trying to register user: invalid input");
@@ -199,7 +201,7 @@ const SignInForm = ({
   const { persistUser } = useUser();
 
   const submit = async (body: SignInSchema) => {
-    const response = await apiUserLogin({ body });
+    const response = await client.POST("/api/user/login", { body });
     if (response.error) {
       onError("Error when trying to login: invalid input");
     } else {

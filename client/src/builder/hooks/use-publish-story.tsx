@@ -3,7 +3,8 @@ import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { useCallback, useState } from "react";
 import { OnSubmitStoryFormProps } from "../components/story-form/story-form-dialog";
 import { Scene, Story } from "@/lib/storage/dexie/dexie-db";
-import { apiPublishInStore } from "@/lib/http-client";
+import { client } from "@/lib/http-client/client";
+import { fromClientStoryAdapter } from "@/lib/http-client/adapters";
 
 export const usePublishStory = ({
   story,
@@ -33,7 +34,9 @@ export const usePublishStory = ({
   );
 
   const publish = useCallback(async () => {
-    const response = await apiPublishInStore({ body: { scenes, story } });
+    const response = await client.PUT("/api/store/publish", {
+      body: { scenes, story: fromClientStoryAdapter(story) },
+    });
 
     if (response.error) {
       toast({

@@ -1,3 +1,3 @@
 export const capitalize = (str: string) => {
-  return str.length ? `${str[0].toUpperCase()}${str.slice(1)}` : str;
+  return str.length > 0 ? `${str[0]!.toUpperCase()}${str.slice(1)}` : str;
 };

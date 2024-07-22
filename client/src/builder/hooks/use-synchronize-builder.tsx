@@ -1,6 +1,6 @@
-import { API_URL } from "@/constants";
 import { useToast } from "@/design-system/primitives/use-toast";
-import { apiSaveBuilderState } from "@/lib/http-client";
+import { fromClientStoryAdapter } from "@/lib/http-client/adapters";
+import { client } from "@/lib/http-client/client";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { useCallback, useState } from "react";
 
@@ -26,7 +26,9 @@ export const useSynchronizeBuilder = ({ storyKey }: { storyKey: string }) => {
       throw new Error(`Could not find story from key: ${storyKey}`);
     }
 
-    const response = await apiSaveBuilderState({ body: { story, scenes } });
+    const response = await client.POST("/api/builder/save/game", {
+      body: { story: fromClientStoryAdapter(story), scenes },
+    });
     if (response.error) {
       return toast({
         title: "Synchronization failed!",

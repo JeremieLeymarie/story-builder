@@ -1,10 +1,10 @@
+import { client } from "@/lib/http-client/client";
 import { StoryProgress } from "@/lib/storage/dexie/dexie-db";
 import { useCallback } from "react";
-import { apiSynchronizeProgress } from "@/lib/http-client";
 
 export const useRemoteStoryProgress = () => {
   const saveProgress = useCallback((payload: StoryProgress) => {
-    apiSynchronizeProgress({
+    client.PATCH("/api/synchronize/progress", {
       body: { ...payload, lastPlayedAt: payload.lastPlayedAt.toISOString() },
     });
   }, []);

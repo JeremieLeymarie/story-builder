@@ -46,7 +46,7 @@ export type Story = {
  
 export type Action = {
   text: string;
-  sceneKey?: string | null;
+  sceneKey?: string;
 };
  
 export type Scene = {

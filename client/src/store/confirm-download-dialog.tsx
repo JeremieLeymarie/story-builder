@@ -4,25 +4,43 @@ import { useCallback } from "react";
 import { useToast } from "@/design-system/primitives/use-toast";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { ConfirmDialog } from "@/design-system/components";
-import { apiDownloadFromStore } from "@/lib/http-client";
+import { client } from "@/lib/http-client/client";
 
 export const ConfirmDownloadDialog = ({ storyKey }: { storyKey: string }) => {
   const { toast } = useToast();
 
   const download = useCallback(
     async (storyKey: string) => {
-      const res = await apiDownloadFromStore({ path: { key: storyKey } });
-      if (res.error) {
+      const { data, error } = await client.GET("/api/store/download/{key}", {
+        params: { path: { key: storyKey } },
+      });
+      if (error) {
         toast({
           title: "Download failed!",
           description: "Something went wrong, please try again later.",
         });
         return;
       }
-      const { scenes, ...story } = res.data;
-      await getLocalRepository().createStory(story);
+      const { scenes, ...story } = data;
+      // TODO: move this to adapters
+      await getLocalRepository().createStory({
+        ...story,
+        creationDate: new Date(story.creationDate),
+        author: story.author ?? undefined,
+        publicationDate: story.publicationDate
+          ? new Date(story.publicationDate)
+          : undefined,
+      });
       if (scenes) {
-        await getLocalRepository().createScenes(scenes);
+        await getLocalRepository().createScenes(
+          scenes.map((scene) => ({
+            ...scene,
+            actions: scene.actions.map((action) => ({
+              ...action,
+              sceneKey: action.sceneKey ?? undefined,
+            })),
+          })),
+        );
       }
       toast({
         title: "Download complete!",

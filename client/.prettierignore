@@ -9,4 +9,4 @@ coverage
 src/routeTree.gen.ts
 
 # http client
-src/lib/http-client
+src/lib/http-client/schema.d.ts
