@@ -1,11 +1,11 @@
-import { Story } from "../storage/dexie/dexie-db";
+import { Action, Scene, Story } from "../storage/dexie/dexie-db";
 import { components } from "./schema";
+
+// TODO: refacto this to have something easier to use
 
 /* API TO CLIENT DOMAIN */
 
-export const fromAPIstoryAdapter = (
-  story: components["schemas"]["Story"],
-): Story => {
+const fromAPIStoryAdapter = (story: components["schemas"]["Story"]): Story => {
   return {
     ...story,
     author: story.author ?? undefined,
@@ -16,15 +16,41 @@ export const fromAPIstoryAdapter = (
   };
 };
 
-export const fromAPIstoriesAdapter = (
+const fromAPIStoriesAdapter = (
   stories: components["schemas"]["Story"][],
 ): Story[] => {
-  return stories.map(fromAPIstoryAdapter);
+  return stories.map(fromAPIStoryAdapter);
 };
+
+const fromAPIActionAdapter = (
+  action: components["schemas"]["Action"],
+): Action => {
+  return {
+    ...action,
+    sceneKey: action.sceneKey ?? undefined,
+  };
+};
+
+const fromAPIActionsAdapter = (
+  actions: components["schemas"]["Action"][],
+): Action[] => actions.map(fromAPIActionAdapter);
+
+const fromAPISceneAdapter = (
+  scene: components["schemas"]["Scene-Output"],
+): Scene => {
+  return {
+    ...scene,
+    actions: fromAPIActionsAdapter(scene.actions),
+  };
+};
+
+const fromAPIScenesAdapter = (
+  scenes: components["schemas"]["Scene-Output"][],
+): Scene[] => scenes.map(fromAPISceneAdapter);
 
 /* CLIENT DOMAIN TO API*/
 
-export const fromClientStoryAdapter = (
+const fromClientStoryAdapter = (
   story: Story,
 ): components["schemas"]["Story"] => {
   return {
@@ -35,4 +61,18 @@ export const fromClientStoryAdapter = (
       : null,
     creationDate: story.creationDate.toISOString(),
   };
+};
+
+export const adapter = {
+  fromAPI: {
+    stories: fromAPIStoriesAdapter,
+    story: fromAPIStoryAdapter,
+    scenes: fromAPIScenesAdapter,
+    scene: fromAPISceneAdapter,
+    actions: fromAPIActionsAdapter,
+    action: fromAPIActionAdapter,
+  },
+  fromClient: {
+    story: fromClientStoryAdapter,
+  },
 };

@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import { OnSubmitStoryFormProps } from "../components/story-form/story-form-dialog";
 import { Scene, Story } from "@/lib/storage/dexie/dexie-db";
 import { client } from "@/lib/http-client/client";
-import { fromClientStoryAdapter } from "@/lib/http-client/adapters";
+import { adapter } from "@/lib/http-client/adapters";
 
 export const usePublishStory = ({
   story,
@@ -35,7 +35,7 @@ export const usePublishStory = ({
 
   const publish = useCallback(async () => {
     const response = await client.PUT("/api/store/publish", {
-      body: { scenes, story: fromClientStoryAdapter(story) },
+      body: { scenes, story: adapter.fromClient.story(story) },
     });
 
     if (response.error) {

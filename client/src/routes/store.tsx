@@ -7,14 +7,14 @@ import { useEffect, useState } from "react";
 import { useIsOnline } from "@/hooks/use-is-online";
 import { Loader } from "@/design-system/components";
 import { client } from "@/lib/http-client/client";
-import { fromAPIstoriesAdapter } from "@/lib/http-client/adapters";
+import { adapter } from "@/lib/http-client/adapters";
 
 const StoreComponent = () => {
   const [stories, setStories] = useState<Story[] | null>();
 
   useEffect(() => {
     client.GET("/api/store/load").then((res) => {
-      setStories(res.data ? fromAPIstoriesAdapter(res.data) : null);
+      setStories(res.data ? adapter.fromAPI.stories(res.data) : null);
     });
   }, []);
 

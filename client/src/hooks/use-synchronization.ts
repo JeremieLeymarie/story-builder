@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useIsOnline } from "./use-is-online";
 import { client } from "@/lib/http-client/client";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
-import { fromAPIstoriesAdapter } from "@/lib/http-client/adapters";
+import { adapter } from "@/lib/http-client/adapters";
 import { User } from "@/lib/storage/dexie/dexie-db";
 
 export const SYNCHRO_STORAGE_KEY = "IS_SYNCHRONIZED";
@@ -54,8 +54,8 @@ export const useSynchronization = ({ user }: { user?: User | null }) => {
       const { builderGames, playerGames } = data;
 
       repo.updateOrCreateStories([
-        ...(builderGames ? fromAPIstoriesAdapter(builderGames) : []),
-        ...fromAPIstoriesAdapter(playerGames),
+        ...(builderGames ? adapter.fromAPI.stories(builderGames) : []),
+        ...adapter.fromAPI.stories(playerGames),
       ]);
       // Register that the app is synchronized for this session
       sessionStorage.setItem(SYNCHRO_STORAGE_KEY, "1");

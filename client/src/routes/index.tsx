@@ -1,7 +1,7 @@
 import { Loader } from "@/design-system/components";
 import { Home } from "@/home/home";
 import { useIsOnline } from "@/hooks/use-is-online";
-import { fromAPIstoriesAdapter } from "@/lib/http-client/adapters";
+import { adapter } from "@/lib/http-client/adapters";
 import { client } from "@/lib/http-client/client";
 import { Story } from "@/lib/storage/dexie/dexie-db";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
@@ -28,7 +28,7 @@ const Index = () => {
       if (res.error || !res.data) {
         setStoreItems(null);
       } else {
-        setStoreItems(fromAPIstoriesAdapter(res.data.slice(0, 3)));
+        setStoreItems(adapter.fromAPI.stories(res.data.slice(0, 3)));
       }
     });
   }, [isOnline]);

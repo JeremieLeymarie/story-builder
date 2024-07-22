@@ -1,5 +1,5 @@
 import { useToast } from "@/design-system/primitives/use-toast";
-import { fromClientStoryAdapter } from "@/lib/http-client/adapters";
+import { adapter } from "@/lib/http-client/adapters";
 import { client } from "@/lib/http-client/client";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { useCallback, useState } from "react";
@@ -27,7 +27,7 @@ export const useSynchronizeBuilder = ({ storyKey }: { storyKey: string }) => {
     }
 
     const response = await client.POST("/api/builder/save/game", {
-      body: { story: fromClientStoryAdapter(story), scenes },
+      body: { story: adapter.fromClient.story(story), scenes },
     });
     if (response.error) {
       return toast({

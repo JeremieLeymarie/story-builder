@@ -5,6 +5,7 @@ import { useToast } from "@/design-system/primitives/use-toast";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { ConfirmDialog } from "@/design-system/components";
 import { client } from "@/lib/http-client/client";
+import { adapter } from "@/lib/http-client/adapters";
 
 export const ConfirmDownloadDialog = ({ storyKey }: { storyKey: string }) => {
   const { toast } = useToast();
@@ -22,25 +23,9 @@ export const ConfirmDownloadDialog = ({ storyKey }: { storyKey: string }) => {
         return;
       }
       const { scenes, ...story } = data;
-      // TODO: move this to adapters
-      await getLocalRepository().createStory({
-        ...story,
-        creationDate: new Date(story.creationDate),
-        author: story.author ?? undefined,
-        publicationDate: story.publicationDate
-          ? new Date(story.publicationDate)
-          : undefined,
-      });
+      await getLocalRepository().createStory(adapter.fromAPI.story(story));
       if (scenes) {
-        await getLocalRepository().createScenes(
-          scenes.map((scene) => ({
-            ...scene,
-            actions: scene.actions.map((action) => ({
-              ...action,
-              sceneKey: action.sceneKey ?? undefined,
-            })),
-          })),
-        );
+        await getLocalRepository().createScenes(adapter.fromAPI.scenes(scenes));
       }
       toast({
         title: "Download complete!",
