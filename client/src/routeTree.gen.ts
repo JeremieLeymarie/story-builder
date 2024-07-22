@@ -15,11 +15,11 @@ import { Route as WhiteboardImport } from './routes/whiteboard'
 import { Route as StoreImport } from './routes/store'
 import { Route as IndexImport } from './routes/index'
 import { Route as LibraryIndexImport } from './routes/library/index'
-import { Route as LibraryStoryIdImport } from './routes/library/$storyId'
+import { Route as LibraryStoryKeyImport } from './routes/library/$storyKey'
 import { Route as BuilderStoriesImport } from './routes/builder/stories'
-import { Route as BuilderStoryIdImport } from './routes/builder/$storyId'
-import { Route as GameGameIdIndexImport } from './routes/game/$gameId/index'
-import { Route as GameGameIdSceneIdImport } from './routes/game/$gameId/$sceneId'
+import { Route as BuilderStoryKeyImport } from './routes/builder/$storyKey'
+import { Route as GameGameKeyIndexImport } from './routes/game/$gameKey/index'
+import { Route as GameGameKeySceneKeyImport } from './routes/game/$gameKey/$sceneKey'
 
 // Create/Update Routes
 
@@ -43,8 +43,8 @@ const LibraryIndexRoute = LibraryIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const LibraryStoryIdRoute = LibraryStoryIdImport.update({
-  path: '/library/$storyId',
+const LibraryStoryKeyRoute = LibraryStoryKeyImport.update({
+  path: '/library/$storyKey',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -53,18 +53,18 @@ const BuilderStoriesRoute = BuilderStoriesImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const BuilderStoryIdRoute = BuilderStoryIdImport.update({
-  path: '/builder/$storyId',
+const BuilderStoryKeyRoute = BuilderStoryKeyImport.update({
+  path: '/builder/$storyKey',
   getParentRoute: () => rootRoute,
 } as any)
 
-const GameGameIdIndexRoute = GameGameIdIndexImport.update({
-  path: '/game/$gameId/',
+const GameGameKeyIndexRoute = GameGameKeyIndexImport.update({
+  path: '/game/$gameKey/',
   getParentRoute: () => rootRoute,
 } as any)
 
-const GameGameIdSceneIdRoute = GameGameIdSceneIdImport.update({
-  path: '/game/$gameId/$sceneId',
+const GameGameKeySceneKeyRoute = GameGameKeySceneKeyImport.update({
+  path: '/game/$gameKey/$sceneKey',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -93,11 +93,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WhiteboardImport
       parentRoute: typeof rootRoute
     }
-    '/builder/$storyId': {
-      id: '/builder/$storyId'
-      path: '/builder/$storyId'
-      fullPath: '/builder/$storyId'
-      preLoaderRoute: typeof BuilderStoryIdImport
+    '/builder/$storyKey': {
+      id: '/builder/$storyKey'
+      path: '/builder/$storyKey'
+      fullPath: '/builder/$storyKey'
+      preLoaderRoute: typeof BuilderStoryKeyImport
       parentRoute: typeof rootRoute
     }
     '/builder/stories': {
@@ -107,11 +107,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuilderStoriesImport
       parentRoute: typeof rootRoute
     }
-    '/library/$storyId': {
-      id: '/library/$storyId'
-      path: '/library/$storyId'
-      fullPath: '/library/$storyId'
-      preLoaderRoute: typeof LibraryStoryIdImport
+    '/library/$storyKey': {
+      id: '/library/$storyKey'
+      path: '/library/$storyKey'
+      fullPath: '/library/$storyKey'
+      preLoaderRoute: typeof LibraryStoryKeyImport
       parentRoute: typeof rootRoute
     }
     '/library/': {
@@ -121,18 +121,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LibraryIndexImport
       parentRoute: typeof rootRoute
     }
-    '/game/$gameId/$sceneId': {
-      id: '/game/$gameId/$sceneId'
-      path: '/game/$gameId/$sceneId'
-      fullPath: '/game/$gameId/$sceneId'
-      preLoaderRoute: typeof GameGameIdSceneIdImport
+    '/game/$gameKey/$sceneKey': {
+      id: '/game/$gameKey/$sceneKey'
+      path: '/game/$gameKey/$sceneKey'
+      fullPath: '/game/$gameKey/$sceneKey'
+      preLoaderRoute: typeof GameGameKeySceneKeyImport
       parentRoute: typeof rootRoute
     }
-    '/game/$gameId/': {
-      id: '/game/$gameId/'
-      path: '/game/$gameId'
-      fullPath: '/game/$gameId'
-      preLoaderRoute: typeof GameGameIdIndexImport
+    '/game/$gameKey/': {
+      id: '/game/$gameKey/'
+      path: '/game/$gameKey'
+      fullPath: '/game/$gameKey'
+      preLoaderRoute: typeof GameGameKeyIndexImport
       parentRoute: typeof rootRoute
     }
   }
@@ -144,12 +144,12 @@ export const routeTree = rootRoute.addChildren({
   IndexRoute,
   StoreRoute,
   WhiteboardRoute,
-  BuilderStoryIdRoute,
+  BuilderStoryKeyRoute,
   BuilderStoriesRoute,
-  LibraryStoryIdRoute,
+  LibraryStoryKeyRoute,
   LibraryIndexRoute,
-  GameGameIdSceneIdRoute,
-  GameGameIdIndexRoute,
+  GameGameKeySceneKeyRoute,
+  GameGameKeyIndexRoute,
 })
 
 /* prettier-ignore-end */
@@ -163,12 +163,12 @@ export const routeTree = rootRoute.addChildren({
         "/",
         "/store",
         "/whiteboard",
-        "/builder/$storyId",
+        "/builder/$storyKey",
         "/builder/stories",
-        "/library/$storyId",
+        "/library/$storyKey",
         "/library/",
-        "/game/$gameId/$sceneId",
-        "/game/$gameId/"
+        "/game/$gameKey/$sceneKey",
+        "/game/$gameKey/"
       ]
     },
     "/": {
@@ -180,23 +180,23 @@ export const routeTree = rootRoute.addChildren({
     "/whiteboard": {
       "filePath": "whiteboard.tsx"
     },
-    "/builder/$storyId": {
-      "filePath": "builder/$storyId.tsx"
+    "/builder/$storyKey": {
+      "filePath": "builder/$storyKey.tsx"
     },
     "/builder/stories": {
       "filePath": "builder/stories.tsx"
     },
-    "/library/$storyId": {
-      "filePath": "library/$storyId.tsx"
+    "/library/$storyKey": {
+      "filePath": "library/$storyKey.tsx"
     },
     "/library/": {
       "filePath": "library/index.tsx"
     },
-    "/game/$gameId/$sceneId": {
-      "filePath": "game/$gameId/$sceneId.tsx"
+    "/game/$gameKey/$sceneKey": {
+      "filePath": "game/$gameKey/$sceneKey.tsx"
     },
-    "/game/$gameId/": {
-      "filePath": "game/$gameId/index.tsx"
+    "/game/$gameKey/": {
+      "filePath": "game/$gameKey/index.tsx"
     }
   }
 }

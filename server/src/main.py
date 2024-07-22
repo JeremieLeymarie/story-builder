@@ -10,6 +10,8 @@ from domains.user_domain import UserDomain
 from domains.builder_domain import BuilderDomain
 from domains.store_domain import StoreDomain
 from repositories.story_repository import StoryRepository
+from repositories.user_repository import UserRepository
+from data_types.user import FullUser
 from utils.error_adapter import raise_http_error
 
 app = FastAPI()
@@ -35,7 +37,9 @@ app.add_middleware(
 @app.post("/api/user/login", status_code=HTTPStatus.OK)
 async def post_session(data: LoginUserRequest):
     try:
-        result = UserDomain().authentify(data)
+        result = UserDomain(user_repository=UserRepository()).authentify(
+            password=data.password, username_or_email=data.usernameOrEmail
+        )
         return result
     except Exception as err:
         raise raise_http_error(err)
@@ -44,7 +48,14 @@ async def post_session(data: LoginUserRequest):
 @app.post("/api/user/register", status_code=HTTPStatus.CREATED)
 async def post_user(data: CreateUserRequest):
     try:
-        result = UserDomain().create(data)
+        result = UserDomain(user_repository=UserRepository()).create(
+            FullUser(
+                email=data.email,
+                username=data.username,
+                password=data.password,
+                key=data.key,
+            )
+        )
         return result
     except Exception as err:
         raise raise_http_error(err)
@@ -73,10 +84,10 @@ async def get_store_load():
         raise raise_http_error(err)
 
 
-@app.get("/api/store/download/{remote_id}", status_code=HTTPStatus.OK)
-async def get_store_download(remote_id: str):
+@app.get("/api/store/download/{key}", status_code=HTTPStatus.OK)
+async def get_store_download(key: str):
     try:
-        result = StoreDomain(story_repository=StoryRepository()).download(remote_id)
+        result = StoreDomain(story_repository=StoryRepository()).download(key=key)
         return result
     except Exception as err:
         raise raise_http_error(err)
@@ -85,7 +96,9 @@ async def get_store_download(remote_id: str):
 @app.put("/api/store/publish", status_code=HTTPStatus.OK)
 async def publish_in_store(body: FullStoryBuilderRequest):
     try:
-        StoreDomain(story_repository=StoryRepository()).publish(body)
+        StoreDomain(story_repository=StoryRepository()).publish(
+            story=body.story, scenes=body.scenes
+        )
         return {"success": True}
     except Exception as err:
         raise raise_http_error(err)

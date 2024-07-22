@@ -1,6 +1,6 @@
 import { Button } from "@/design-system/primitives";
 import { usePublishStory } from "../hooks/use-publish-story";
-import { ControlledStoryFormDialog } from "./story-form-dialog";
+import { ControlledStoryFormDialog } from "./story-form/story-form-dialog";
 import { AuthModalForm } from "@/auth-modal-form";
 import { Scene, Story } from "@/lib/storage/dexie/dexie-db";
 import { StoreIcon } from "lucide-react";

@@ -1,7 +1,7 @@
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
-import { OnSubmitStoryFormProps } from "../components/story-form-dialog";
+import { OnSubmitStoryFormProps } from "../components/story-form/story-form-dialog";
 
 export const useBuilderStories = () => {
   const navigate = useNavigate();
@@ -9,11 +9,18 @@ export const useBuilderStories = () => {
   const handleCreateStory = useCallback(
     async (storyData: OnSubmitStoryFormProps) => {
       const repo = getLocalRepository();
-      const story = await repo.createStory({ ...storyData, status: "draft" });
+      const user = await repo.getUser();
+
+      const story = await repo.createStory({
+        ...storyData,
+        status: "draft",
+        creationDate: new Date(),
+        ...(user && { author: { username: user.username, key: user.key } }),
+      });
 
       // Create first scene with mock data
       const firstScene = await repo.createScene({
-        storyId: story.id,
+        storyKey: story.key,
         builderParams: { position: { x: 0, y: 0 } },
         content: "This is a placeholder content for your first scene",
         title: "Your first scene",
@@ -26,11 +33,11 @@ export const useBuilderStories = () => {
           },
         ],
       });
-      repo.updateStory({ ...story, firstSceneId: firstScene.id });
+      repo.updateStory({ ...story, firstSceneKey: firstScene.key });
 
       navigate({
-        to: "/builder/$storyId",
-        params: { storyId: story.id },
+        to: "/builder/$storyKey",
+        params: { storyKey: story.key },
       });
     },
     [navigate]

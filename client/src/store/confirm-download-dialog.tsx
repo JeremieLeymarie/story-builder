@@ -6,13 +6,13 @@ import { useToast } from "@/design-system/primitives/use-toast";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { ConfirmDialog } from "@/design-system/components";
 
-export const ConfirmDownloadDialog = ({ remoteId }: { remoteId?: string }) => {
+export const ConfirmDownloadDialog = ({ storyKey }: { storyKey?: string }) => {
   const { toast } = useToast();
 
   const download = useCallback(
-    async (remoteId?: string) => {
+    async (storyKey?: string) => {
       try {
-        const res = await fetch(`${API_URL}/api/store/download/${remoteId}`, {
+        const res = await fetch(`${API_URL}/api/store/download/${storyKey}`, {
           method: "GET",
         });
         const story = await res.json();
@@ -38,7 +38,7 @@ export const ConfirmDownloadDialog = ({ remoteId }: { remoteId?: string }) => {
     <ConfirmDialog
       trigger={
         <Button
-          className={`absolute opacity-0 transition ease-in-out duration-300 group-hover:opacity-100 bottom-4 right-4`}
+          className={`absolute bottom-4 right-4 opacity-0 transition duration-300 ease-in-out group-hover:opacity-100`}
         >
           Download &nbsp; <DownloadIcon size="15px" />
         </Button>
@@ -46,7 +46,7 @@ export const ConfirmDownloadDialog = ({ remoteId }: { remoteId?: string }) => {
       title="Are you sure?"
       description="You are about to download a story on your device."
       confirmLabel="Download"
-      onConfirm={() => download(remoteId)}
+      onConfirm={() => download(storyKey)}
     />
   );
 };

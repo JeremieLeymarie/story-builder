@@ -1,1 +1,1 @@
-export type WithoutId<T> = Omit<T, "id">;
+export type WithoutKey<T> = Omit<T, "key">;

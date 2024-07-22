@@ -4,12 +4,12 @@ import { PropsWithChildren } from "react";
 
 export const GameLink = ({
   progress,
-  gameId,
+  gameKey,
   children,
-}: PropsWithChildren<{ progress: StoryProgress | null; gameId: number }>) => {
+}: PropsWithChildren<{ progress: StoryProgress | null; gameKey: string }>) => {
   if (!progress) {
     return (
-      <Link to="/game/$gameId" params={{ gameId }}>
+      <Link to="/game/$gameKey" params={{ gameKey }}>
         {children}
       </Link>
     );
@@ -17,8 +17,8 @@ export const GameLink = ({
 
   return (
     <Link
-      to="/game/$gameId/$sceneId"
-      params={{ gameId, sceneId: progress.currentSceneId }}
+      to="/game/$gameKey/$sceneKey"
+      params={{ gameKey, sceneKey: progress.currentSceneKey }}
     >
       {children}
     </Link>

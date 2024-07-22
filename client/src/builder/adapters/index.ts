@@ -10,10 +10,10 @@ export const sceneToNodeAdapter = ({
   story: Story;
 }): Node<SceneProps, "scene"> => {
   const node = {
-    id: scene.id.toString(),
+    id: scene.key,
     position: scene.builderParams.position,
     type: "scene" as const,
-    data: { ...scene, isFirstScene: scene.id === story.firstSceneId },
+    data: { ...scene, isFirstScene: scene.key === story.firstSceneKey },
   };
 
   return node;
@@ -23,11 +23,11 @@ export const sceneToEdgesAdapter = (scene: Scene): Edge[] => {
   const edges = scene.actions
     .map((action, i) => {
       return {
-        sourceHandle: `${scene.id}-${i}`,
-        source: scene.id.toString(),
-        target: action.sceneId?.toString() ?? null,
+        sourceHandle: `${scene.key}-${i}`,
+        source: scene.key.toString(),
+        target: action.sceneKey?.toString() ?? null,
         targetHandle: null,
-        id: `${scene.id}-${i}`,
+        id: `${scene.key}-${i}`,
       };
     })
     .filter((action) => !!action.target) as Edge[];

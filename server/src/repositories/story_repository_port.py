@@ -5,7 +5,7 @@ from data_types.builder import FullStory, Story, StoryStatus
 
 class StoryRepositoryPort(Protocol):
     def save(self, story: FullStory) -> FullStory:
-        """Insert or update a story in the database using the authorId and storyId to find it
+        """Insert or update a story in the database using the key to find it
 
 
         Args:
@@ -31,12 +31,12 @@ class StoryRepositoryPort(Protocol):
         """
         ...
 
-    def get(self, *, id: str) -> FullStory:
-        """Get one story by id
+    def get(self, *, key: str) -> FullStory:
+        """Get one story by key
 
         Args:
-            id (str): the id of the story to retrieve
+            key (str): the key of the story to retrieve
 
         Returns:
-            FullStory: the story corresponding to the id
+            FullStory: the story corresponding to the key
         """

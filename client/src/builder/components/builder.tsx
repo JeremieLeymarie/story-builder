@@ -25,7 +25,7 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
   } = useBuilder({ scenes, story });
 
   return (
-    <div className="w-full h-full border flex">
+    <div className="flex h-full w-full border">
       <Toolbar story={story} scenes={scenes} />
       <ReactFlow
         nodeTypes={nodeTypes}

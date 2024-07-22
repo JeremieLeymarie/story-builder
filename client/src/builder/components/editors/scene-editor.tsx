@@ -40,7 +40,7 @@ const schema = z.object({
       text: z
         .string()
         .min(3, { message: "Action text has to be at least 3 characters" }),
-      sceneId: z.number().optional(),
+      sceneKey: z.string().optional(),
     }),
   ),
 });
@@ -52,7 +52,7 @@ type Props = {
     content?: string;
     actions: Action[];
     isFirstScene: boolean;
-    id: number;
+    key: string;
   };
   trigger: ReactNode;
   onSave: (input: Schema) => void;
@@ -149,8 +149,8 @@ export const SceneEditor = ({
             />
 
             <div>
-              <div className="flex gap-2 items-center mb-2">
-                <p className="font-bold text-md">Actions</p>
+              <div className="mb-2 flex items-center gap-2">
+                <p className="text-md font-bold">Actions</p>
                 <Button
                   variant="ghost"
                   type="button"

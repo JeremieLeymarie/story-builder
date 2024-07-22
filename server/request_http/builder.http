@@ -4,9 +4,8 @@ content-type: application/json
 
 {
   "story" : {
-    "id" : 1,
-    "remoteId" : null,
-    "authorId" : 1,
+    "key" : null,
+    "authorKey" : 1,
     "title" : "A story",
     "description" : "A story description",
     "image" : "http://image.fr",
@@ -14,9 +13,8 @@ content-type: application/json
   },
   "scenes" : [
     {
-      "id" : 1,
-      "remoteId" : null,
-      "storyId" : 1,
+      "key" : null,
+      "storyKey" : 1,
       "title" : "A scene",
       "content" : "A scene content",
       "actions" : [

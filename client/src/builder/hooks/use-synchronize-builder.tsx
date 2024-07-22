@@ -3,7 +3,7 @@ import { useToast } from "@/design-system/primitives/use-toast";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { useCallback, useState } from "react";
 
-export const useSynchronizeBuilder = ({ storyId }: { storyId: number }) => {
+export const useSynchronizeBuilder = ({ storyKey }: { storyKey: string }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { toast } = useToast();
 
@@ -18,8 +18,8 @@ export const useSynchronizeBuilder = ({ storyId }: { storyId: number }) => {
       return;
     }
 
-    const story = await repo.getStory(storyId);
-    const scenes = await repo.getScenes(storyId);
+    const story = await repo.getStory(storyKey);
+    const scenes = await repo.getScenes(storyKey);
 
     fetch(`${API_URL}/api/builder/save/game`, {
       body: JSON.stringify({ story, scenes }),
@@ -38,7 +38,7 @@ export const useSynchronizeBuilder = ({ storyId }: { storyId: number }) => {
           description: "Something went wrong, please try again later.",
         });
       });
-  }, [storyId, toast]);
+  }, [storyKey, toast]);
 
   return { synchronize, isAuthModalOpen, setIsAuthModalOpen };
 };

@@ -4,10 +4,10 @@ import { Link } from "@tanstack/react-router";
 
 export const SceneAction = ({
   text,
-  sceneId,
-  storyId,
-}: Action & { storyId: number }) => {
-  if (!sceneId) {
+  sceneKey,
+  storyKey,
+}: Action & { storyKey: string }) => {
+  if (!sceneKey) {
     // Only show actions that lead somewhere
     return null;
   }
@@ -15,8 +15,8 @@ export const SceneAction = ({
   return (
     <Link
       key={`${text}`}
-      to="/game/$gameId/$sceneId"
-      params={{ gameId: storyId, sceneId }}
+      to="/game/$gameKey/$sceneKey"
+      params={{ gameKey: storyKey, sceneKey }}
     >
       <Button className="w-[full]">{text}</Button>
     </Link>

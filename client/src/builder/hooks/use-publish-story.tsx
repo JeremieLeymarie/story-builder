@@ -2,7 +2,7 @@ import { API_URL } from "@/constants";
 import { toast } from "@/design-system/primitives/use-toast";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { useCallback, useState } from "react";
-import { OnSubmitStoryFormProps } from "../components/story-form-dialog";
+import { OnSubmitStoryFormProps } from "../components/story-form/story-form-dialog";
 import { Scene, Story } from "@/lib/storage/dexie/dexie-db";
 
 export const usePublishStory = ({
@@ -19,14 +19,17 @@ export const usePublishStory = ({
 
   const updateLocalStory = useCallback(
     async (data: OnSubmitStoryFormProps) => {
+      const user = await repo.getUser();
       await repo.updateStory({
         ...data,
         status: story.status,
-        id: story.id,
+        key: story.key,
+        creationDate: new Date(),
+        ...(user && { author: { key: user.key, username: user.username } }),
       });
       setModal("confirm");
     },
-    [repo, story.id, story.status],
+    [repo, story.key, story.status],
   );
 
   const publish = useCallback(async () => {

@@ -8,13 +8,13 @@ type StoreHomeProps = {
 
 export const Store = ({ stories }: StoreHomeProps) => {
   return (
-    <div className="flex p-4 gap-4 flex-wrap justify-center">
+    <div className="flex flex-wrap justify-center gap-4 p-4">
       {stories.map((story) => {
         return (
           <StoryCard
-            key={story.id}
             {...story}
-            button={<ConfirmDownloadDialog remoteId={story.remoteId} />}
+            button={<ConfirmDownloadDialog storyKey={story.key} />}
+            key={story.key}
           />
         );
       })}

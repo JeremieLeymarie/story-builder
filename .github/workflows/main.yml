@@ -29,6 +29,9 @@ jobs:
       - name: Typescript
         run: bun run typescript
 
+      - name: Test
+        run: bun run test:single
+
   server:
     runs-on: ubuntu-latest
 

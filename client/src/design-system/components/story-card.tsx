@@ -19,13 +19,13 @@ export const StoryCard = ({
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
-      className="w-[275px] h-[225px] group relative shadow-md"
+      className="group relative h-[225px] w-[275px] shadow-md"
     >
       <CardHeader>
-        <CardTitle className="bg-gray-50 bg-opacity-75 p-2 rounded-sm">
+        <CardTitle className="rounded-sm bg-gray-50 bg-opacity-75 p-2">
           {title}
         </CardTitle>
-        <CardDescription className="text-gray-50 overflow-ellipsis overflow-hidden ...">
+        <CardDescription className="... overflow-hidden overflow-ellipsis text-gray-50">
           {description}
         </CardDescription>
       </CardHeader>

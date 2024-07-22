@@ -14,14 +14,14 @@ type Props = {
 };
 export const Toolbar = ({ story, scenes }: Props) => {
   const { synchronize, isAuthModalOpen, setIsAuthModalOpen, testStory } =
-    useToolbar({ storyId: story.id });
+    useToolbar({ storyKey: story.key });
 
   // Maybe we could use Navigation Menu for this component at some point
   return (
     <div className="w-[275px] border-r p-2">
       <p className="text-2xl font-semibold text-primary">Tools</p>
       <hr />
-      <div className="mt-2 w-full flex flex-col gap-4">
+      <div className="mt-2 flex w-full flex-col gap-4">
         <SceneEditor
           trigger={
             <Button variant="outline" className="w-full">
@@ -33,7 +33,7 @@ export const Toolbar = ({ story, scenes }: Props) => {
           onSave={(values) =>
             getLocalRepository().createScene({
               ...values,
-              storyId: story.id,
+              storyKey: story.key,
               builderParams: { position: { x: 0, y: 0 } },
             })
           }
