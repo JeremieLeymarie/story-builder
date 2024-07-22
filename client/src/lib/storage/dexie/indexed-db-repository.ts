@@ -2,7 +2,6 @@ import { WithoutKey } from "@/types";
 import { Scene, Story, StoryProgress, User, db } from "./dexie-db";
 import { LocalRepositoryPort } from "../port";
 
-// TODO: use more transaction
 class IndexedDBRepository implements LocalRepositoryPort {
   // STORIES
 
@@ -18,7 +17,7 @@ class IndexedDBRepository implements LocalRepositoryPort {
   async getGames() {
     const user = await this.getUser();
     return await db.stories
-      .filter((story) => story.authorKey !== user?.key)
+      .filter((story) => story.author?.key !== user?.key)
       .toArray();
   }
 
@@ -76,15 +75,15 @@ class IndexedDBRepository implements LocalRepositoryPort {
       .toArray();
   }
 
-  async addAuthorKeyToStories(authorKey: string) {
+  async addAuthorToStories(author: { key: string; username: string }) {
     db.transaction("readwrite", "stories", async () => {
       const storiesToUpdate = (await db.stories
-        .filter((story) => story.authorKey === undefined)
+        .filter((story) => story.author === undefined)
         .keys()) as string[];
 
       const payload = storiesToUpdate.map((key) => ({
         key,
-        changes: { authorKey },
+        changes: { author },
       }));
 
       db.stories.bulkUpdate(payload);
@@ -95,7 +94,7 @@ class IndexedDBRepository implements LocalRepositoryPort {
 
   async getUser() {
     // There should always be maximum one user in local database
-    return (await db.user.toArray())?.[0] ?? null;
+    return ((await db.user.toArray())?.[0] ?? null) as User | null;
   }
 
   async getUserCount() {

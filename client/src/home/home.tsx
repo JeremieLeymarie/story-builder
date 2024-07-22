@@ -10,7 +10,7 @@ type Props = {
 
 export const Home = ({ lastPlayedGame, storeItems }: Props) => {
   return (
-    <div className="w-full h-full">
+    <div className="h-full w-full">
       {!!lastPlayedGame && (
         <>
           <LastGameSection lastGame={lastPlayedGame} />

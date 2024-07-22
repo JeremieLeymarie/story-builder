@@ -6,6 +6,7 @@ import { Story } from "@/lib/storage/dexie/dexie-db";
 import { useEffect, useState } from "react";
 import { API_URL } from "@/constants";
 import { useIsOnline } from "@/hooks/use-is-online";
+import { Loader } from "@/design-system/components";
 
 const StoreComponent = () => {
   const [stories, setStories] = useState<Story[]>();
@@ -19,6 +20,8 @@ const StoreComponent = () => {
     }
     getStories();
   }, []);
+
+  if (stories === undefined) return <Loader />;
 
   return stories ? (
     <Store stories={stories} />

@@ -9,13 +9,38 @@ class StoryStatus(enum.Enum):
     PUBLISHED = "published"
 
 
+class StoryGenre(enum.Enum):
+    ADVENTURE = "adventure"
+    CHILDREN = "children"
+    DETECTIVE = "detective"
+    DYSTOPIA = "dystopia"
+    FANTASY = "fantasy"
+    HISTORICAL = "historical"
+    HORROR = "horror"
+    HUMOR = "humor"
+    MYSTERY = "mystery"
+    ROMANCE = "romance"
+    SCIENCE_FICTION = "science-fiction"
+    THRILLER = "thriller"
+    SUSPENSE = "suspense"
+    WESTERN = "western"
+
+
+class StoryAuthor(BaseModel):
+    key: str
+    username: str
+
+
 class Story(BaseModel, use_enum_values=True):
     key: str
-    authorKey: Optional[str] = None
+    author: Optional[StoryAuthor] = None
     title: str
     description: str
     image: str
     status: StoryStatus
+    genres: list[StoryGenre]
+    publicationDate: Optional[str] = None
+    creationDate: str
 
 
 class Action(BaseModel):

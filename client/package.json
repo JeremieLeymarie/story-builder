@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "typescript": "tsc --noEmit",
     "format:check": "prettier --check --ignore-unknown .",
-    "format:write": "prettier --write --ignore-unknown ."
+    "format:write": "prettier --write --ignore-unknown .",
+    "test": "vitest",
+    "test:single": "vitest run"
   },
   "dependencies": {
     "@excalidraw/excalidraw": "^0.17.6",
@@ -18,6 +20,7 @@
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-popover": "^1.1.1",
     "@radix-ui/react-scroll-area": "^1.1.0",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-switch": "^1.1.0",
@@ -27,6 +30,7 @@
     "@tanstack/router-vite-plugin": "^1.35.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "cmdk": "^1.0.0",
     "dayjs": "^1.11.11",
     "dexie": "^4.0.7",
     "dexie-react-hooks": "^1.1.7",
@@ -57,12 +61,14 @@
     "eslint-plugin-react-refresh": "^0.4.6",
     "postcss": "^8.4.38",
     "prettier": "^3.3.2",
+    "prettier-plugin-tailwindcss": "^0.6.5",
     "sharp": "0.32.6",
     "sharp-ico": "0.1.5",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.2.2",
     "vite": "^5.2.10",
     "vite-plugin-pwa": "^0.20.0",
+    "vitest": "^2.0.3",
     "workbox-core": "^7.1.0"
   }
 }

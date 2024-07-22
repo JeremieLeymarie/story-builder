@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/design-system/primitives";
-import { StoryFormDialog } from "./story-form-dialog";
+import { StoryFormDialog } from "./story-form/story-form-dialog";
 import { Link } from "@tanstack/react-router";
 import { MoveRightIcon, PlusIcon } from "lucide-react";
 import { useBuilderStories } from "../hooks/use-builder-stories";
@@ -22,13 +22,13 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
 
   return (
     // TODO: justify-center might not be the best
-    <div className="flex p-4 gap-4 flex-wrap justify-center">
-      <Card className="border-dashed w-[275px] h-[225px]">
+    <div className="flex flex-wrap justify-center gap-4 p-4">
+      <Card className="h-[225px] w-[275px] border-dashed">
         <CardHeader>
           <CardTitle>New story</CardTitle>
           <CardDescription>A new adventure awaits</CardDescription>
         </CardHeader>
-        <CardContent className="flex justify-center items-center">
+        <CardContent className="flex items-center justify-center">
           <StoryFormDialog
             onSubmit={handleCreateStory}
             trigger={
@@ -49,7 +49,7 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
             button={
               <Link to="/builder/$storyKey" params={{ storyKey: story.key }}>
                 <Button
-                  className={`absolute opacity-0 transition ease-in-out duration-300 group-hover:opacity-100 bottom-4 right-4`}
+                  className={`absolute bottom-4 right-4 opacity-0 transition duration-300 ease-in-out group-hover:opacity-100`}
                 >
                   Edit &nbsp;{" "}
                   <MoveRightIcon size="15px" className="animate-bounce" />

@@ -1,3 +1,3 @@
 export const Divider = () => {
-  return <hr className="border-t-4 border-t-primary w-full" />;
+  return <hr className="w-full border-t-4 border-t-primary" />;
 };

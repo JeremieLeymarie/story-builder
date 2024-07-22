@@ -149,8 +149,8 @@ export const SceneEditor = ({
             />
 
             <div>
-              <div className="flex gap-2 items-center mb-2">
-                <p className="font-bold text-md">Actions</p>
+              <div className="mb-2 flex items-center gap-2">
+                <p className="text-md font-bold">Actions</p>
                 <Button
                   variant="ghost"
                   type="button"

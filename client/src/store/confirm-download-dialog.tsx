@@ -38,7 +38,7 @@ export const ConfirmDownloadDialog = ({ storyKey }: { storyKey?: string }) => {
     <ConfirmDialog
       trigger={
         <Button
-          className={`absolute opacity-0 transition ease-in-out duration-300 group-hover:opacity-100 bottom-4 right-4`}
+          className={`absolute bottom-4 right-4 opacity-0 transition duration-300 ease-in-out group-hover:opacity-100`}
         >
           Download &nbsp; <DownloadIcon size="15px" />
         </Button>

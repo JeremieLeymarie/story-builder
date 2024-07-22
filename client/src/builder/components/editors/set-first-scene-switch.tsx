@@ -14,8 +14,8 @@ export const SetFirstSceneSwitch = ({
   const [isChecked, setIsChecked] = useState(isFirstScene);
 
   return (
-    <div className="w-full p-3 border-primary border rounded-[--radius]">
-      <div className="w-full flex items-center gap-2">
+    <div className="w-full rounded-[--radius] border border-primary p-3">
+      <div className="flex w-full items-center gap-2">
         <ConfirmDialog
           title="Are you sure?"
           description="Changing this setting will make this scene the entry point of
