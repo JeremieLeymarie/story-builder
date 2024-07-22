@@ -302,7 +302,7 @@ export interface components {
             /** Playergames */
             playerGames: components["schemas"]["FullStory"][];
             /** Buildergames */
-            builderGames?: components["schemas"]["FullStory"][] | null;
+            builderGames: components["schemas"]["FullStory"][] | null;
         };
         /** User */
         User: {

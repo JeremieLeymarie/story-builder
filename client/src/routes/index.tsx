@@ -16,6 +16,8 @@ const Index = () => {
   const [storeItems, setStoreItems] = useState<Story[] | null>(null);
   const isOnline = useIsOnline();
 
+  // repo.createStory({ key: "coucou" });
+
   useEffect(() => {
     if (!isOnline) {
       return;

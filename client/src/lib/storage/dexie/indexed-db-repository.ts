@@ -10,6 +10,11 @@ class IndexedDBRepository implements LocalRepositoryPort {
     return { ...story, key };
   }
 
+  async updateOrCreateStories(stories: Story[]) {
+    const keys = await db.stories.bulkPut(stories, { allKeys: true });
+    return keys;
+  }
+
   async getStory(key: string) {
     return (await db.stories.get(key)) ?? null;
   }

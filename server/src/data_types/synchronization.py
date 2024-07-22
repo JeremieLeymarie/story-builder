@@ -6,4 +6,4 @@ from data_types.builder import FullStory
 
 class SynchronizationPayload(BaseModel):
     playerGames: list[FullStory]
-    builderGames: Optional[list[FullStory]] = None
+    builderGames: Optional[list[FullStory]]

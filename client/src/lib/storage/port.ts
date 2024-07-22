@@ -3,6 +3,7 @@ import { Scene, Story, StoryProgress, User } from "./dexie/dexie-db";
 
 export type LocalRepositoryPort = {
   createStory: (story: WithoutKey<Story>) => Promise<Story>;
+  updateOrCreateStories: (stories: Story[]) => Promise<string[]>;
   updateStory: (story: Story) => Promise<Story>;
   getStory: (key: string) => Promise<Story | null>;
   getStories: () => Promise<Story[]>;
