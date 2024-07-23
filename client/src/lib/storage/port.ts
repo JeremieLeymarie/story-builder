@@ -25,7 +25,9 @@ export type LocalRepositoryPort = {
   createStoryProgress: (
     progress: WithoutKey<StoryProgress>,
   ) => Promise<StoryProgress>;
-  updateStoryProgress: (progress: StoryProgress) => Promise<StoryProgress>;
+  updateStoryProgress: (
+    progress: Partial<StoryProgress> & { key: string },
+  ) => Promise<void>;
   getStoryProgress: (storyKey: string) => Promise<StoryProgress | null>;
   getStoryProgresses: () => Promise<StoryProgress[]>;
   addAuthorToStories: (author: {

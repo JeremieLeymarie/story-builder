@@ -12,6 +12,7 @@ import { Scene } from "@/lib/storage/domain";
 type GameSceneProps = Omit<Scene, "key"> & {
   sceneKey: string;
   saveProgress: () => void;
+  isLastScene: boolean;
 };
 
 export const GameScene = ({
@@ -20,6 +21,7 @@ export const GameScene = ({
   content,
   storyKey,
   saveProgress,
+  isLastScene,
 }: GameSceneProps) => {
   return (
     <div className="p-4">
