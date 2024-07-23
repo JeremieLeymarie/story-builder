@@ -21,7 +21,7 @@ export const LastGameSection = ({ lastGame }: { lastGame: Story }) => {
         {lastGame.genres.length && (
           <div className="flex flex-wrap gap-2">
             {lastGame.genres.map((genre) => (
-              <StoryGenreBadge variant={genre} />
+              <StoryGenreBadge key={genre} variant={genre} />
             ))}
           </div>
         )}

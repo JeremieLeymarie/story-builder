@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
-import { useIsOnline } from "./use-is-online";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useIsOnline } from "../../hooks/use-is-online";
 import { client } from "@/lib/http-client/client";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { adapter } from "@/lib/http-client/adapters";
 import { User } from "@/lib/storage/domain";
 
-export const SYNCHRO_STORAGE_KEY = "IS_SYNCHRONIZED";
+export const SYNCHRO_DATETIME_KEY = "LAST_SYNCHRO_AT";
 
 /**
  * Use the API to synchronize local data, if connected to network
@@ -21,9 +21,8 @@ export type SynchronizationState = {
   cause?: string;
 };
 export const useSynchronization = ({ user }: { user?: User | null }) => {
-  const repo = getLocalRepository();
+  const repo = useMemo(() => getLocalRepository(), []);
   const isOnline = useIsOnline();
-  const isSynchronized = sessionStorage.getItem(SYNCHRO_STORAGE_KEY) === "1";
 
   const [synchronizationState, setSynchronizationState] =
     useState<SynchronizationState>({
@@ -51,6 +50,7 @@ export const useSynchronization = ({ user }: { user?: User | null }) => {
         success: false,
         cause: "No internet connection",
       });
+      sessionStorage.removeItem(SYNCHRO_DATETIME_KEY);
       return;
     }
 
@@ -60,6 +60,7 @@ export const useSynchronization = ({ user }: { user?: User | null }) => {
         success: false,
         cause: "User not logged in",
       });
+      sessionStorage.removeItem(SYNCHRO_DATETIME_KEY);
       return;
     }
 
@@ -71,6 +72,8 @@ export const useSynchronization = ({ user }: { user?: User | null }) => {
         success: false,
         cause: "Unknown issue on our side",
       });
+      sessionStorage.removeItem(SYNCHRO_DATETIME_KEY);
+
       return;
     }
 
@@ -85,7 +88,11 @@ export const useSynchronization = ({ user }: { user?: User | null }) => {
     repo.updateOrCreateScenes(scenes);
 
     // Register that the app is synchronized for this session
-    sessionStorage.setItem(SYNCHRO_STORAGE_KEY, "1");
+    const syncDateTime = new Date().toISOString();
+    sessionStorage.setItem(SYNCHRO_DATETIME_KEY, syncDateTime);
+    // Dispatch custom event to be able to detect changes anywhere in the app
+    window.dispatchEvent(new StorageEvent("session-storage"));
+
     setSynchronizationState({
       isLoading: false,
       success: true,
@@ -93,6 +100,8 @@ export const useSynchronization = ({ user }: { user?: User | null }) => {
   }, [fetchData, isOnline, repo, user]);
 
   useEffect(() => {
+    const isSynchronized = !!sessionStorage.getItem(SYNCHRO_DATETIME_KEY);
+
     if (isSynchronized) {
       setSynchronizationState({
         isLoading: false,
@@ -101,7 +110,7 @@ export const useSynchronization = ({ user }: { user?: User | null }) => {
       return;
     }
     synchronize();
-  }, [isSynchronized, synchronize]);
+  }, [synchronize]);
 
   return { state: synchronizationState, synchronize };
 };

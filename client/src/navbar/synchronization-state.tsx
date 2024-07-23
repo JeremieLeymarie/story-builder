@@ -5,9 +5,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
-import { SynchronizationState } from "@/hooks/use-synchronization";
+import { SynchronizationState } from "@/navbar/hooks/use-synchronization";
 import { cn } from "@/lib/style";
 import { RefreshCcwIcon } from "lucide-react";
+import { useTimeFromLastSync } from "./hooks/use-time-from-last-sync";
 
 type State = "loading" | "success" | "failure";
 const SynchronizeButton = ({
@@ -23,12 +24,14 @@ const SynchronizeButton = ({
     failure: "Synchronization failure",
   }[state];
 
+  const timeFromLastSync = useTimeFromLastSync();
+
   return (
     <Button
       variant="ghost"
       size="sm"
       className={cn(
-        "flex items-center gap-1 align-middle text-xs",
+        "flex gap-2 text-xs",
         state === "success" && "text-positive hover:text-positive",
         state === "failure" && "text-destructive hover:text-destructive",
         state === "loading" && "text-muted-foreground hover:text-muted",
@@ -36,7 +39,10 @@ const SynchronizeButton = ({
       disabled={state === "loading"}
       onClick={synchronize}
     >
-      {label}
+      <div>
+        {label}
+        {timeFromLastSync && <p className="text-2xs">{timeFromLastSync}</p>}
+      </div>
       <RefreshCcwIcon
         size="18px"
         className={cn(
