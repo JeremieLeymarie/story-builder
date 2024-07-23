@@ -1,8 +1,8 @@
 import { ErrorMessage, Loader } from "@/design-system/components";
 import { GameScene } from "@/game/components/scene";
 import { useRemoteStoryProgress } from "@/hooks/use-remote-story-progress";
-import { Story, StoryProgress } from "@/lib/storage/dexie/dexie-db";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
+import { Story, StoryProgress } from "@/lib/storage/domain";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useCallback, useEffect, useState } from "react";
@@ -60,7 +60,7 @@ export const Component = () => {
   ) {
     return <Loader />;
   }
-  if (story === null || scene === null || storyProgress === null) {
+  if (story === null || scene === null) {
     console.error("Error while loading story: ", story);
     return <ErrorMessage />;
   }
@@ -71,7 +71,7 @@ export const Component = () => {
     <GameScene
       {...sceneWithoutKey}
       sceneKey={key}
-      saveProgress={() => saveProgress(storyProgress)}
+      saveProgress={() => storyProgress && saveProgress(storyProgress)}
     />
   );
 };

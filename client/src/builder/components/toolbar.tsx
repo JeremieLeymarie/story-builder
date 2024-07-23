@@ -6,7 +6,7 @@ import { useToolbar } from "../hooks/use-toolbar";
 import { AuthModalForm } from "@/auth-modal-form";
 import { StoryPublisher } from "./story-publisher";
 import { ExportModal } from "./export-modal";
-import { Scene, Story } from "@/lib/storage/dexie/dexie-db";
+import { Scene, Story } from "@/lib/storage/domain";
 
 type Props = {
   story: Story;

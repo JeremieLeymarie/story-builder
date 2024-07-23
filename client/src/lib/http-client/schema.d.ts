@@ -198,6 +198,8 @@ export interface components {
             publicationDate?: string | null;
             /** Creationdate */
             creationDate: string;
+            /** Firstscenekey */
+            firstSceneKey: string;
             /** Scenes */
             scenes: components["schemas"]["Scene-Output"][];
         };
@@ -265,6 +267,8 @@ export interface components {
             publicationDate?: string | null;
             /** Creationdate */
             creationDate: string;
+            /** Firstscenekey */
+            firstSceneKey: string;
         };
         /** StoryAuthor */
         StoryAuthor: {

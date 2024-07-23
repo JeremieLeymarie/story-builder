@@ -1,4 +1,4 @@
-import { STORY_GENRES, STORY_STATUS } from "@/lib/storage/dexie/dexie-db";
+import { STORY_GENRES, STORY_STATUS } from "@/lib/storage/domain";
 import { z } from "zod";
 
 export const schema = z.object({
@@ -11,6 +11,7 @@ export const schema = z.object({
   image: z.string().url({ message: "Image has to be a valid URL" }),
   status: z.enum(STORY_STATUS).optional(),
   genres: z.array(z.enum(STORY_GENRES)),
+  firstSceneKey: z.string().optional(),
 });
 
 export type Schema = z.infer<typeof schema>;

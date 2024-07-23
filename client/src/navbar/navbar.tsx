@@ -1,15 +1,18 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/design-system/primitives";
 import { SynchronizationState } from "../hooks/use-synchronization";
-import { User } from "../lib/storage/dexie/dexie-db";
 import { SynchronizationStateDisplay } from "./synchronization-state";
+import { UserDisplay } from "./user-display";
+import { User } from "@/lib/storage/domain";
 
 export const Navbar = ({
   syncState,
-  // user,
+  user,
+  synchronize,
 }: {
   syncState: SynchronizationState;
   user?: User | null;
+  synchronize: () => void;
 }) => {
   return (
     <div className="flex h-[50px] items-center justify-between border-b-4 border-b-primary px-4 py-6">
@@ -28,8 +31,14 @@ export const Navbar = ({
           <Button variant="ghost">Builder</Button>
         </Link>
       </div>
-      <SynchronizationStateDisplay syncState={syncState} />
-      <div></div>
+      <div className="flex items-center gap-6">
+        <SynchronizationStateDisplay
+          syncState={syncState}
+          synchronize={synchronize}
+        />
+        <UserDisplay user={user} />
+        {/* <ModeToggle /> */}
+      </div>
     </div>
   );
 };

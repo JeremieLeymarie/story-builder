@@ -1,5 +1,5 @@
-import { Scene, StoryProgress } from "@/lib/storage/dexie/dexie-db";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
+import { Scene, StoryProgress } from "@/lib/storage/domain";
 import { useCallback, useEffect } from "react";
 
 type Props = {

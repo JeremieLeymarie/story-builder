@@ -1,5 +1,5 @@
 import { client } from "@/lib/http-client/client";
-import { StoryProgress } from "@/lib/storage/dexie/dexie-db";
+import { StoryProgress } from "@/lib/storage/domain";
 import { useCallback } from "react";
 
 export const useRemoteStoryProgress = () => {

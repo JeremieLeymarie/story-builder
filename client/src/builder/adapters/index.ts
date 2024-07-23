@@ -1,4 +1,4 @@
-import { Scene, Story } from "@/lib/storage/dexie/dexie-db";
+import { Scene, Story } from "@/lib/storage/domain";
 import { SceneProps } from "../types";
 import { Edge, Node } from "reactflow";
 

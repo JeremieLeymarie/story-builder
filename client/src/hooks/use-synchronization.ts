@@ -3,7 +3,7 @@ import { useIsOnline } from "./use-is-online";
 import { client } from "@/lib/http-client/client";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { adapter } from "@/lib/http-client/adapters";
-import { User } from "@/lib/storage/dexie/dexie-db";
+import { User } from "@/lib/storage/domain";
 
 export const SYNCHRO_STORAGE_KEY = "IS_SYNCHRONIZED";
 
@@ -15,7 +15,6 @@ export const SYNCHRO_STORAGE_KEY = "IS_SYNCHRONIZED";
  */
 
 // TODO: test this
-
 export type SynchronizationState = {
   isLoading: boolean;
   success?: boolean;
@@ -24,11 +23,12 @@ export type SynchronizationState = {
 export const useSynchronization = ({ user }: { user?: User | null }) => {
   const repo = getLocalRepository();
   const isOnline = useIsOnline();
+  const isSynchronized = sessionStorage.getItem(SYNCHRO_STORAGE_KEY) === "1";
+
   const [synchronizationState, setSynchronizationState] =
     useState<SynchronizationState>({
       isLoading: true,
     });
-  const isSynchronized = sessionStorage.getItem(SYNCHRO_STORAGE_KEY) === "1";
 
   const fetchData = useCallback(async (userKey: string) => {
     const response = await client.GET("/api/synchronize/{user_key}", {
@@ -38,36 +38,13 @@ export const useSynchronization = ({ user }: { user?: User | null }) => {
     return response.data ?? null;
   }, []);
 
-  const synchronize = useCallback(
-    async (userKey: string) => {
-      const data = await fetchData(userKey);
+  const synchronize = useCallback(async () => {
+    // Start loading
+    setSynchronizationState({ isLoading: true });
 
-      if (!data) {
-        setSynchronizationState({
-          isLoading: false,
-          success: false,
-          cause: "Unknown issue on our side",
-        });
-        return;
-      }
+    // Fake loading to signify to the user that something is happening
+    await new Promise((res) => setTimeout(res, 500));
 
-      const { builderGames, playerGames } = data;
-
-      repo.updateOrCreateStories([
-        ...(builderGames ? adapter.fromAPI.stories(builderGames) : []),
-        ...adapter.fromAPI.stories(playerGames),
-      ]);
-      // Register that the app is synchronized for this session
-      sessionStorage.setItem(SYNCHRO_STORAGE_KEY, "1");
-      setSynchronizationState({
-        isLoading: false,
-        success: true,
-      });
-    },
-    [fetchData, repo],
-  );
-
-  useEffect(() => {
     if (!isOnline) {
       setSynchronizationState({
         isLoading: false,
@@ -85,6 +62,37 @@ export const useSynchronization = ({ user }: { user?: User | null }) => {
       });
       return;
     }
+
+    const data = await fetchData(user.key);
+
+    if (!data) {
+      setSynchronizationState({
+        isLoading: false,
+        success: false,
+        cause: "Unknown issue on our side",
+      });
+      return;
+    }
+
+    const { builderGames, playerGames } = data;
+
+    const { stories, scenes } = adapter.fromAPI.fullStories([
+      ...(builderGames ?? []),
+      ...playerGames,
+    ]);
+
+    repo.updateOrCreateStories(stories);
+    repo.updateOrCreateScenes(scenes);
+
+    // Register that the app is synchronized for this session
+    sessionStorage.setItem(SYNCHRO_STORAGE_KEY, "1");
+    setSynchronizationState({
+      isLoading: false,
+      success: true,
+    });
+  }, [fetchData, isOnline, repo, user]);
+
+  useEffect(() => {
     if (isSynchronized) {
       setSynchronizationState({
         isLoading: false,
@@ -92,9 +100,8 @@ export const useSynchronization = ({ user }: { user?: User | null }) => {
       });
       return;
     }
+    synchronize();
+  }, [isSynchronized, synchronize]);
 
-    synchronize(user.key);
-  }, [isOnline, isSynchronized, synchronize, user]);
-
-  return synchronizationState;
+  return { state: synchronizationState, synchronize };
 };

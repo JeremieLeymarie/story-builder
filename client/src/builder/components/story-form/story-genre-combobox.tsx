@@ -12,11 +12,11 @@ import {
 } from "@/design-system/primitives";
 import { cn } from "@/lib/style";
 import { useCallback, useState } from "react";
-import { STORY_GENRES, StoryGenre } from "@/lib/storage/dexie/dexie-db";
 import { CommandList } from "cmdk";
 import { capitalize } from "@/lib/string";
 import { StoryGenreBadge } from "@/design-system/components";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
+import { StoryGenre, STORY_GENRES } from "@/lib/storage/domain";
 
 export const StoryGenreCombobox = ({
   onChange,

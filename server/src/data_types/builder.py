@@ -41,6 +41,7 @@ class Story(BaseModel, use_enum_values=True):
     genres: list[StoryGenre]
     publicationDate: Optional[str] = None
     creationDate: str
+    firstSceneKey: str
 
 
 class Action(BaseModel):

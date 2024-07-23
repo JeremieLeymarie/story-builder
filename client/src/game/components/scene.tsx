@@ -1,4 +1,3 @@
-import { Scene } from "@/lib/storage/dexie/dexie-db";
 import { SceneAction } from "./scene-action";
 import { Button } from "@/design-system/primitives";
 import { SaveIcon } from "lucide-react";
@@ -8,6 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
+import { Scene } from "@/lib/storage/domain";
 
 type GameSceneProps = Omit<Scene, "key"> & {
   sceneKey: string;

@@ -19,8 +19,8 @@ import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useUser } from "./hooks/use-user";
-import { User } from "@/lib/storage/dexie/dexie-db";
 import { client } from "./lib/http-client/client";
+import { User } from "./lib/storage/domain";
 
 export const AuthModalForm = ({
   open,

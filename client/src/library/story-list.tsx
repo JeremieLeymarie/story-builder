@@ -1,6 +1,6 @@
 import { StoryCard } from "@/design-system/components";
 import { Button } from "@/design-system/primitives";
-import { Story } from "@/lib/storage/dexie/dexie-db";
+import { Story } from "@/lib/storage/domain";
 import { Link } from "@tanstack/react-router";
 import { MoveRightIcon } from "lucide-react";
 

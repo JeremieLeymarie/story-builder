@@ -10,9 +10,9 @@ import { StoryFormDialog } from "./story-form/story-form-dialog";
 import { Link } from "@tanstack/react-router";
 import { MoveRightIcon, PlusIcon } from "lucide-react";
 import { useBuilderStories } from "../hooks/use-builder-stories";
-import { Story } from "@/lib/storage/dexie/dexie-db";
 import { ImportModal } from "../components/import-modal";
 import { StoryCard } from "@/design-system/components/story-card";
+import { Story } from "@/lib/storage/domain";
 
 type BuilderHomeProps = {
   stories: Story[];

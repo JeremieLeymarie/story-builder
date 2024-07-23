@@ -2,12 +2,12 @@ import { Store } from "@/store/store";
 import { Offline } from "@/offline";
 import { ErrorMessage } from "@/design-system/components/error-message";
 import { createFileRoute } from "@tanstack/react-router";
-import { Story } from "@/lib/storage/dexie/dexie-db";
 import { useEffect, useState } from "react";
 import { useIsOnline } from "@/hooks/use-is-online";
 import { Loader } from "@/design-system/components";
 import { client } from "@/lib/http-client/client";
 import { adapter } from "@/lib/http-client/adapters";
+import { Story } from "@/lib/storage/domain";
 
 const StoreComponent = () => {
   const [stories, setStories] = useState<Story[] | null>();

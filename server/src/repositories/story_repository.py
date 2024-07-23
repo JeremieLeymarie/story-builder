@@ -51,6 +51,6 @@ class StoryRepository(MongoRepository, StoryRepositoryPort):
         return [FullStory(**self.remove_mongo_id(record)) for record in list(records)]
 
     def get_by_author_key(self, *, author_key: str) -> list[FullStory]:
-        records = self.db.stories.find({"key": author_key})
+        records = self.db.stories.find({"author.key": author_key})
 
         return [FullStory(**self.remove_mongo_id(record)) for record in list(records)]

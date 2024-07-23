@@ -1,7 +1,7 @@
-import { Story } from "@/lib/storage/dexie/dexie-db";
 import { LastGameSection } from "./last-game-section";
 import { Divider } from "./divider";
 import { StoreItems } from "./store-items";
+import { Story } from "@/lib/storage/domain";
 
 type Props = {
   lastPlayedGame?: Story | null;

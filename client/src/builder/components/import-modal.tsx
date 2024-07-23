@@ -13,8 +13,8 @@ import { ChangeEvent, useCallback, useState } from "react";
 import { useToast } from "@/design-system/primitives/use-toast";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { z } from "zod";
-import { STORY_GENRES, STORY_STATUS } from "@/lib/storage/dexie/dexie-db";
 import Dexie from "dexie";
+import { STORY_GENRES, STORY_STATUS } from "@/lib/storage/domain";
 
 const schema = z.object({
   story: z.object({

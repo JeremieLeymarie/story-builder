@@ -1,4 +1,4 @@
-import { StoryProgress } from "@/lib/storage/dexie/dexie-db";
+import { StoryProgress } from "@/lib/storage/domain";
 import { Link } from "@tanstack/react-router";
 import { PropsWithChildren } from "react";
 

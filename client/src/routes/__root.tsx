@@ -7,13 +7,14 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { Navbar } from "@/navbar/navbar";
 
 const Component = () => {
+  // TODO: Put this in a global store
   const user = useLiveQuery(getLocalRepository().getUser);
-  const syncState = useSynchronization({ user });
+  const { state, synchronize } = useSynchronization({ user });
 
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <div className="flex h-screen w-screen flex-col overflow-x-hidden">
-        <Navbar syncState={syncState} user={user} />
+        <Navbar syncState={state} user={user} synchronize={synchronize} />
         <div className="w-full flex-1">
           <Outlet />
         </div>

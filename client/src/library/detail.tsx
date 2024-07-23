@@ -1,10 +1,10 @@
-import { Scene, Story, StoryProgress } from "@/lib/storage/dexie/dexie-db";
 import { DetailProgress } from "./detail-progress";
 import { Button } from "@/design-system/primitives";
 import { MoveRightIcon } from "lucide-react";
 import { GameLink } from "./game-link";
 import { StoryGenreBadge, Title } from "@/design-system/components";
 import { formatDate } from "@/lib/date";
+import { Story, StoryProgress, Scene } from "@/lib/storage/domain";
 
 type Props = {
   story: Story;

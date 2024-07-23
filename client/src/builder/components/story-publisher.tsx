@@ -2,10 +2,10 @@ import { Button } from "@/design-system/primitives";
 import { usePublishStory } from "../hooks/use-publish-story";
 import { ControlledStoryFormDialog } from "./story-form/story-form-dialog";
 import { AuthModalForm } from "@/auth-modal-form";
-import { Scene, Story } from "@/lib/storage/dexie/dexie-db";
 import { StoreIcon } from "lucide-react";
 import { toast } from "@/design-system/primitives/use-toast";
 import { ConfirmDialog } from "@/design-system/components";
+import { Scene, Story } from "@/lib/storage/domain";
 
 export const StoryPublisher = ({
   story,

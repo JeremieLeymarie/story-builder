@@ -1,9 +1,24 @@
-import { Action, Scene, Story } from "../storage/dexie/dexie-db";
+import { Action, Scene, Story } from "../storage/domain";
 import { components } from "./schema";
 
-// TODO: refacto this to have something easier to use
-
 /* API TO CLIENT DOMAIN */
+
+const fromAPIActionsAdapter = (
+  actions: components["schemas"]["Action"][],
+): Action[] => actions.map(fromAPIActionAdapter);
+
+const fromAPISceneAdapter = (
+  scene: components["schemas"]["Scene-Output"],
+): Scene => {
+  return {
+    ...scene,
+    actions: fromAPIActionsAdapter(scene.actions),
+  };
+};
+
+const fromAPIScenesAdapter = (
+  scenes: components["schemas"]["Scene-Output"][],
+): Scene[] => scenes.map(fromAPISceneAdapter);
 
 const fromAPIStoryAdapter = (story: components["schemas"]["Story"]): Story => {
   return {
@@ -31,22 +46,31 @@ const fromAPIActionAdapter = (
   };
 };
 
-const fromAPIActionsAdapter = (
-  actions: components["schemas"]["Action"][],
-): Action[] => actions.map(fromAPIActionAdapter);
-
-const fromAPISceneAdapter = (
-  scene: components["schemas"]["Scene-Output"],
-): Scene => {
+const fromAPIFullStoryAdapter = (
+  fullStory: components["schemas"]["FullStory"],
+): { story: Story; scenes: Scene[] } => {
+  const { scenes, ...story } = fullStory;
   return {
-    ...scene,
-    actions: fromAPIActionsAdapter(scene.actions),
+    story: fromAPIStoryAdapter(story),
+    scenes: fromAPIScenesAdapter(scenes),
   };
 };
 
-const fromAPIScenesAdapter = (
-  scenes: components["schemas"]["Scene-Output"][],
-): Scene[] => scenes.map(fromAPISceneAdapter);
+const fromAPIFullStoriesAdapter = (
+  fullStories: components["schemas"]["FullStory"][],
+): { stories: Story[]; scenes: Scene[] } => {
+  return fullStories.reduce(
+    (acc, story) => {
+      const parsed = fromAPIFullStoryAdapter(story);
+
+      return {
+        scenes: [...acc.scenes, ...parsed.scenes],
+        stories: [...acc.stories, parsed.story],
+      };
+    },
+    { scenes: [], stories: [] } as { stories: Story[]; scenes: Scene[] },
+  );
+};
 
 /* CLIENT DOMAIN TO API*/
 
@@ -63,8 +87,20 @@ const fromClientStoryAdapter = (
   };
 };
 
+const fromClientFullStoryAdapter = (
+  story: Story,
+  scenes: Scene[],
+): components["schemas"]["FullStory"] => {
+  return {
+    ...fromClientStoryAdapter(story),
+    scenes,
+  };
+};
+
 export const adapter = {
   fromAPI: {
+    fullStories: fromAPIFullStoriesAdapter,
+    fullStory: fromAPIFullStoryAdapter,
     stories: fromAPIStoriesAdapter,
     story: fromAPIStoryAdapter,
     scenes: fromAPIScenesAdapter,
@@ -73,6 +109,7 @@ export const adapter = {
     action: fromAPIActionAdapter,
   },
   fromClient: {
+    fullStory: fromClientFullStoryAdapter,
     story: fromClientStoryAdapter,
   },
 };

@@ -1,9 +1,9 @@
 import { Button } from "@/design-system/primitives";
 import { Link } from "@tanstack/react-router";
 import { MoveRightIcon } from "lucide-react";
-import { Story } from "@/lib/storage/dexie/dexie-db";
 import { StoryList } from "./story-list";
 import { Title } from "@/design-system/components";
+import { Story } from "@/lib/storage/domain";
 
 type Library = {
   storiesFromStore: Story[];
