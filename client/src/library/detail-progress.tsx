@@ -1,16 +1,9 @@
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import { GameLink } from "./game-link";
 import { Button } from "@/design-system/primitives";
 import { MoveRightIcon } from "lucide-react";
-import { formatDate } from "@/lib/date";
+import { formatDate, timeFrom } from "@/lib/date";
 import { Title } from "@/design-system/components";
 import { StoryProgress, Scene } from "@/lib/storage/domain";
-dayjs.extend(relativeTime);
-
-const getLastPlayedTime = (date: Date) => {
-  return dayjs(date).fromNow();
-};
 
 export const DetailProgress = ({
   progress,
@@ -23,7 +16,7 @@ export const DetailProgress = ({
     <div className="mt-16 space-y-2 rounded-[--radius] bg-white bg-opacity-75 p-8">
       <Title variant="section">Your progress:</Title>
       <p className="text-sm text-muted-foreground">
-        Last played {getLastPlayedTime(progress.lastPlayedAt)}
+        Last played {timeFrom(progress.lastPlayedAt)}
       </p>
       <div>
         <p className="mb-2 font-semibold">Last backup:</p>

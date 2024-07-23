@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/design-system/primitives";
-import { SynchronizationState } from "../hooks/use-synchronization";
+import { SynchronizationState } from "./hooks/use-synchronization";
 import { SynchronizationStateDisplay } from "./synchronization-state";
 import { UserDisplay } from "./user-display";
 import { User } from "@/lib/storage/domain";
