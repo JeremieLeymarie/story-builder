@@ -1,3 +1,4 @@
+import { Story } from "@/lib/storage/domain";
 import { Card, CardDescription, CardHeader, CardTitle } from "../primitives";
 
 export const StoryCard = ({
@@ -5,12 +6,7 @@ export const StoryCard = ({
   image,
   description,
   button,
-}: {
-  title: string;
-  image: string;
-  description: string;
-  button?: JSX.Element;
-}) => {
+}: Omit<Story, "key"> & { button?: JSX.Element; storyKey: string }) => {
   return (
     <Card
       style={{
