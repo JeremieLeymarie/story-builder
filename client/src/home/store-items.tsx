@@ -17,9 +17,12 @@ export const StoreItems = ({ stories }: { stories: Story[] }) => {
     <div className="flex flex-col items-center bg-accent px-8 py-4 md:items-start">
       <Title variant="secondary">Other stories from the store:</Title>
       <div className="flex w-full flex-wrap justify-center gap-8 p-4">
-        {stories.map((story) => (
-          <StoryCard {...story} key={story.key} />
-        ))}
+        {stories.map((story) => {
+          const { key, ...storyWithoutKey } = story;
+          return (
+            <StoryCard {...storyWithoutKey} key={story.key} storyKey={key} />
+          );
+        })}
         <Card className="h-[225px] w-[275px] border-dashed">
           <CardHeader>
             <CardTitle>...and many others!</CardTitle>

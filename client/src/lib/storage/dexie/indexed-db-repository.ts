@@ -119,6 +119,14 @@ class IndexedDBRepository implements LocalRepositoryPort {
     });
   }
 
+  async getFinishedGameKeys() {
+    return (
+      await db.storyProgresses
+        .filter((progress) => !!progress.finished)
+        .toArray()
+    ).map((progress) => progress.storyKey);
+  }
+
   // USER
 
   async getUser() {

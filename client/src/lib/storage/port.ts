@@ -14,6 +14,10 @@ export type LocalRepositoryPort = {
   getGames: () => Promise<Story[]>;
   getLastGamePlayed: () => Promise<Story | null>;
   updateFirstScene: (storyKey: string, sceneKey: string) => Promise<void>;
+  addAuthorToStories: (author: {
+    key: string;
+    username: string;
+  }) => Promise<void>;
 
   createScene: (scene: WithoutKey<Scene>) => Promise<Scene>;
   updateOrCreateScenes: (scenes: Scene[]) => Promise<string[]>;
@@ -30,10 +34,7 @@ export type LocalRepositoryPort = {
   ) => Promise<void>;
   getStoryProgress: (storyKey: string) => Promise<StoryProgress | null>;
   getStoryProgresses: () => Promise<StoryProgress[]>;
-  addAuthorToStories: (author: {
-    key: string;
-    username: string;
-  }) => Promise<void>;
+  getFinishedGameKeys: () => Promise<string[]>;
 
   getUser: () => Promise<User | null>;
   createUser: (user: WithoutKey<User>) => Promise<User>;

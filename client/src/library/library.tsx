@@ -8,21 +8,30 @@ import { Story } from "@/lib/storage/domain";
 type Library = {
   storiesFromStore: Story[];
   userStories: Story[];
+  finishedGameKeys: string[];
 };
 
 /** Component that displays the current user's library
  *
  * @param {Story[]} storiesFromStore Stories published in the store
  * @param {Story[]} userStories Stories created by the current user
+ * @param {string[]} finishedGameKeys Keys of finished games
  * @returns
  */
-export const Library = ({ storiesFromStore, userStories }: Library) => {
+export const Library = ({
+  storiesFromStore,
+  userStories,
+  finishedGameKeys,
+}: Library) => {
   return (
     <div className="space-y-8 p-8">
       <div className="space-y-8">
         <Title variant="secondary">Your games</Title>
         {storiesFromStore.length > 0 ? (
-          <StoryList stories={storiesFromStore} />
+          <StoryList
+            stories={storiesFromStore}
+            finishedGameKeys={finishedGameKeys}
+          />
         ) : (
           <div>
             <p className="text-sm text-muted-foreground">
@@ -40,7 +49,10 @@ export const Library = ({ storiesFromStore, userStories }: Library) => {
       <div className="space-y-8">
         <Title variant="secondary">Games you've created</Title>
         {userStories.length > 0 ? (
-          <StoryList stories={userStories} />
+          <StoryList
+            stories={userStories}
+            finishedGameKeys={finishedGameKeys}
+          />
         ) : (
           <div>
             <p className="text-sm text-muted-foreground">

@@ -1,11 +1,6 @@
 import { SceneAction } from "./scene-action";
 import { Button } from "@/design-system/primitives";
-import {
-  BookUpIcon,
-  LibraryBigIcon,
-  LibraryIcon,
-  SaveIcon,
-} from "lucide-react";
+import { BookUpIcon, LibraryBigIcon, SaveIcon } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,

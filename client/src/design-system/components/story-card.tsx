@@ -6,7 +6,10 @@ export const StoryCard = ({
   image,
   description,
   button,
-}: Omit<Story, "key"> & { button?: JSX.Element; storyKey: string }) => {
+}: Omit<Story, "key"> & {
+  button?: JSX.Element;
+  storyKey: string;
+}) => {
   return (
     <Card
       style={{

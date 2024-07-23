@@ -45,10 +45,12 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
         </CardContent>
       </Card>
       {stories.map((story) => {
+        const { key, ...storyWithoutKey } = story;
         return (
           <StoryCard
-            {...story}
-            key={story.key}
+            {...storyWithoutKey}
+            key={key}
+            storyKey={key}
             button={
               <Link to="/builder/$storyKey" params={{ storyKey: story.key }}>
                 <Button
