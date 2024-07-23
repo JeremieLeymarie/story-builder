@@ -1,0 +1,11 @@
+key
+author.key
+author.username
+title
+description
+image
+status
+genres
+publicationDate
+creationDate
+scenes
