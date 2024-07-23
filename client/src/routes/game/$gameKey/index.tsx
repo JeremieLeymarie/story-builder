@@ -1,10 +1,11 @@
 import { ErrorMessage, Loader } from "@/design-system/components";
 import { GameScene } from "@/game/components/scene";
-import { Story } from "@/lib/storage/dexie/dexie-db";
+import { useRemoteStoryProgress } from "@/hooks/use-remote-story-progress";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
+import { Story, StoryProgress } from "@/lib/storage/domain";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export const Component = () => {
   const { gameKey } = Route.useParams();
@@ -16,6 +17,9 @@ export const Component = () => {
       story?.firstSceneKey ? repo.getScene(story.firstSceneKey) : undefined,
     [story],
   );
+  const [storyProgress, setStoryProgress] = useState<StoryProgress | null>();
+
+  const { saveProgress } = useRemoteStoryProgress();
 
   const createStoryProgress = useCallback(
     async (story: Story) => {
@@ -43,10 +47,17 @@ export const Component = () => {
   );
 
   useEffect(() => {
-    if (story) createStoryProgress(story);
+    if (story)
+      createStoryProgress(story).then((progress) =>
+        setStoryProgress(progress ?? null),
+      );
   }, [createStoryProgress, story]);
 
-  if (story === undefined || scene === undefined) {
+  if (
+    story === undefined ||
+    scene === undefined ||
+    storyProgress === undefined
+  ) {
     return <Loader />;
   }
   if (story === null || scene === null) {
@@ -56,7 +67,13 @@ export const Component = () => {
 
   const { key, ...sceneWithoutKey } = scene;
 
-  return <GameScene {...sceneWithoutKey} sceneKey={key} />;
+  return (
+    <GameScene
+      {...sceneWithoutKey}
+      sceneKey={key}
+      saveProgress={() => storyProgress && saveProgress(storyProgress)}
+    />
+  );
 };
 
 export const Route = createFileRoute("/game/$gameKey/")({

@@ -1,1 +1,1 @@
-export type WithoutKey<T> = Omit<T, "key">;
+export type WithoutKey<T extends { key: string }> = Omit<T, "key">;

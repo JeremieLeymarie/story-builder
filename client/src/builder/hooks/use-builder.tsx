@@ -3,7 +3,7 @@ import { useMemo, useEffect, useCallback, MouseEvent } from "react";
 import { useNodesState, useEdgesState, Node } from "reactflow";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
 import { useBuilderEdges } from "./use-builder-edges";
-import { Scene, Story } from "@/lib/storage/dexie/dexie-db";
+import { Scene, Story } from "@/lib/storage/domain";
 
 export const useBuilder = ({
   scenes,

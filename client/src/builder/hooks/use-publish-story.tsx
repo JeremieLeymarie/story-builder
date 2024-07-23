@@ -1,9 +1,10 @@
-import { API_URL } from "@/constants";
 import { toast } from "@/design-system/primitives/use-toast";
 import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { useCallback, useState } from "react";
 import { OnSubmitStoryFormProps } from "../components/story-form/story-form-dialog";
-import { Scene, Story } from "@/lib/storage/dexie/dexie-db";
+import { client } from "@/lib/http-client/client";
+import { adapter } from "@/lib/http-client/adapters";
+import { Scene, Story } from "@/lib/storage/domain";
 
 export const usePublishStory = ({
   story,
@@ -21,33 +22,34 @@ export const usePublishStory = ({
     async (data: OnSubmitStoryFormProps) => {
       const user = await repo.getUser();
       await repo.updateStory({
+        ...story,
         ...data,
-        status: story.status,
-        key: story.key,
-        creationDate: new Date(),
+        publicationDate: new Date(),
         ...(user && { author: { key: user.key, username: user.username } }),
       });
       setModal("confirm");
     },
-    [repo, story.key, story.status],
+    [repo, story],
   );
 
   const publish = useCallback(async () => {
-    fetch(`${API_URL}/api/store/publish`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ story, scenes }),
-    })
-      .then(async () => {
-        await repo.updateStory({ ...story, status: "published" });
-        // TODO: navigate to individual store page
-      })
-      .catch(() => {
-        toast({
-          title: "Publication failed!",
-          description: "Something went wrong, please try again later.",
-        });
+    const response = await client.PUT("/api/store/publish", {
+      body: { scenes, story: adapter.fromClient.story(story) },
+    });
+
+    if (response.error) {
+      toast({
+        title: "Publication failed!",
+        description: "Something went wrong, please try again later.",
       });
+    } else {
+      await repo.updateStory({ ...story, status: "published" });
+      toast({
+        title: "Congratulations!",
+        description: "Your story is now available in the store!",
+      });
+      // TODO: navigate to individual store page
+    }
   }, [repo, scenes, story]);
 
   const handlePublishClick = useCallback(async () => {

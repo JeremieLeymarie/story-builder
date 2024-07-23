@@ -11,7 +11,7 @@ import {
 import { DownloadIcon, CopyIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useToast } from "@/design-system/primitives/use-toast";
-import { Scene, Story } from "@/lib/storage/dexie/dexie-db";
+import { Scene, Story } from "@/lib/storage/domain";
 
 export const ExportModal = ({
   story,
@@ -30,7 +30,7 @@ export const ExportModal = ({
       scenes,
     },
     null,
-    2
+    2,
   );
 
   const handleModalState = (open: boolean) => {

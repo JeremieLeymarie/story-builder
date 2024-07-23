@@ -21,10 +21,10 @@ import {
   Textarea,
 } from "@/design-system/primitives";
 import { ReactNode } from "@tanstack/react-router";
-import { Action } from "@/lib/storage/dexie/dexie-db";
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { FormError } from "@/design-system/components";
 import { SetFirstSceneSwitch } from "./set-first-scene-switch";
+import { Action } from "@/lib/storage/domain";
 
 const schema = z.object({
   title: z

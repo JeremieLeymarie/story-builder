@@ -3,16 +3,16 @@ from pydantic import BaseModel
 
 
 class FullUser(BaseModel):
+    key: str
     email: str
     username: str
-    key: str
     password: str
 
 
 class User(BaseModel):
+    key: str
     email: str
     username: str
-    key: str
 
     @classmethod
     def from_full_user(cls, full_user: FullUser) -> Self:

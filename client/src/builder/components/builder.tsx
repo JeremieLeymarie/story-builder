@@ -7,7 +7,7 @@ import ReactFlow, {
 import { SceneNode } from "../nodes/scene/scene";
 import { Toolbar } from "./toolbar";
 import { useBuilder } from "../hooks/use-builder";
-import { Scene, Story } from "@/lib/storage/dexie/dexie-db";
+import { Scene, Story } from "@/lib/storage/domain";
 
 const nodeTypes = { scene: SceneNode };
 

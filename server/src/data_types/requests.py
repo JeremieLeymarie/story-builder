@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 
 from data_types.builder import Scene, Story
+from data_types.game import StoryProgress
 
 
 class CreateUserRequest(BaseModel):

@@ -1,4 +1,4 @@
-from typing import Literal, Protocol, overload
+from typing import Protocol
 
 from data_types.builder import FullStory, Story, StoryStatus
 
@@ -17,7 +17,10 @@ class StoryRepositoryPort(Protocol):
         ...
 
     def get_all(
-        self, *, with_scenes: bool = True, status: StoryStatus | None = None
+        self,
+        *,
+        with_scenes: bool = True,
+        status: StoryStatus | None = None,
     ) -> list[Story] | list[FullStory]:
         """Retrieve all stories from database
 
@@ -39,4 +42,24 @@ class StoryRepositoryPort(Protocol):
 
         Returns:
             FullStory: the story corresponding to the key
+        """
+
+    def get_by_keys(self, *, keys: list[str]) -> list[FullStory]:
+        """Get stories by keys
+
+        Args:
+            keys (list[str]): keys of the stories to retrieve
+
+        Returns:
+            list[FullStory]: the stories matching the keys
+        """
+
+    def get_by_author_key(self, *, author_key: str) -> list[FullStory]:
+        """Get stories by author key
+
+        Args:
+            author_key (str): key of the user
+
+        Returns:
+            list[FullStory]: the stories written the specified author
         """

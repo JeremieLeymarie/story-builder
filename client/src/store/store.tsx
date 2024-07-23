@@ -1,4 +1,4 @@
-import { Story } from "../lib/storage/dexie/dexie-db";
+import { Story } from "@/lib/storage/domain";
 import { ConfirmDownloadDialog } from "./confirm-download-dialog";
 import { StoryCard } from "@/design-system/components/story-card";
 

@@ -11,36 +11,34 @@ export const useBuilderStories = () => {
       const repo = getLocalRepository();
       const user = await repo.getUser();
 
-      const story = await repo.createStory({
-        ...storyData,
-        status: "draft",
-        creationDate: new Date(),
-        ...(user && { author: { username: user.username, key: user.key } }),
+      const story = await repo.createStoryWithFirstScene({
+        story: {
+          ...storyData,
+          status: "draft",
+          creationDate: new Date(),
+          ...(user && { author: { username: user.username, key: user.key } }),
+        },
+        firstScene: {
+          builderParams: { position: { x: 0, y: 0 } },
+          content: "This is a placeholder content for your first scene",
+          title: "Your first scene",
+          actions: [
+            {
+              text: "An action that leads to a scene",
+            },
+            {
+              text: "An action that leads to another scene",
+            },
+          ],
+        },
       });
-
-      // Create first scene with mock data
-      const firstScene = await repo.createScene({
-        storyKey: story.key,
-        builderParams: { position: { x: 0, y: 0 } },
-        content: "This is a placeholder content for your first scene",
-        title: "Your first scene",
-        actions: [
-          {
-            text: "An action that leads to a scene",
-          },
-          {
-            text: "An action that leads to another scene",
-          },
-        ],
-      });
-      repo.updateStory({ ...story, firstSceneKey: firstScene.key });
 
       navigate({
         to: "/builder/$storyKey",
         params: { storyKey: story.key },
       });
     },
-    [navigate]
+    [navigate],
   );
 
   return { handleCreateStory };

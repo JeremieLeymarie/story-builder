@@ -1,4 +1,3 @@
-import { Scene, StoryProgress } from "@/lib/storage/dexie/dexie-db";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { GameLink } from "./game-link";
@@ -6,6 +5,7 @@ import { Button } from "@/design-system/primitives";
 import { MoveRightIcon } from "lucide-react";
 import { formatDate } from "@/lib/date";
 import { Title } from "@/design-system/components";
+import { StoryProgress, Scene } from "@/lib/storage/domain";
 dayjs.extend(relativeTime);
 
 const getLastPlayedTime = (date: Date) => {

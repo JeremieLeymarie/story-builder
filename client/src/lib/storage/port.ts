@@ -1,8 +1,13 @@
 import { WithoutKey } from "@/types";
-import { Scene, Story, StoryProgress, User } from "./dexie/dexie-db";
+import { Story, Scene, StoryProgress, User } from "./domain";
 
 export type LocalRepositoryPort = {
-  createStory: (story: WithoutKey<Story>) => Promise<Story>;
+  createStory: (story: Story | WithoutKey<Story>) => Promise<Story | null>;
+  createStoryWithFirstScene: (props: {
+    story: WithoutKey<Omit<Story, "firstSceneKey">>;
+    firstScene: WithoutKey<Omit<Scene, "storyKey">>;
+  }) => Promise<Story | null>;
+  updateOrCreateStories: (stories: Story[]) => Promise<string[]>;
   updateStory: (story: Story) => Promise<Story>;
   getStory: (key: string) => Promise<Story | null>;
   getStories: () => Promise<Story[]>;
@@ -11,6 +16,7 @@ export type LocalRepositoryPort = {
   updateFirstScene: (storyKey: string, sceneKey: string) => Promise<void>;
 
   createScene: (scene: WithoutKey<Scene>) => Promise<Scene>;
+  updateOrCreateScenes: (scenes: Scene[]) => Promise<string[]>;
   createScenes: (scenes: WithoutKey<Scene>[]) => Promise<string[]>;
   updateScene: (scene: Scene) => Promise<Scene>;
   getScene: (key: string) => Promise<Scene | null>;

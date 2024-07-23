@@ -16,7 +16,7 @@ class StoreDomain:
         )
         return cast(list[Story], data)
 
-    def download(self, *, key: str) -> Story:
+    def download(self, *, key: str) -> FullStory:
         data = self.story_repository.get(key=key)
         return data
 

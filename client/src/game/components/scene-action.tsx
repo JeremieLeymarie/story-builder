@@ -1,5 +1,5 @@
 import { Button } from "@/design-system/primitives";
-import { Action } from "@/lib/storage/dexie/dexie-db";
+import { Action } from "@/lib/storage/domain";
 import { Link } from "@tanstack/react-router";
 
 export const SceneAction = ({

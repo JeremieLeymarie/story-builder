@@ -1,13 +1,37 @@
 import { WithoutKey } from "@/types";
-import { Scene, Story, StoryProgress, User, db } from "./dexie-db";
 import { LocalRepositoryPort } from "../port";
+import { Scene, Story, StoryProgress, User } from "../domain";
+import { db } from "./dexie-db";
 
 class IndexedDBRepository implements LocalRepositoryPort {
   // STORIES
 
-  async createStory(story: WithoutKey<Story>) {
+  async createStory(story: Story | WithoutKey<Story>) {
     const key = await db.stories.add(story);
     return { ...story, key };
+  }
+
+  async createStoryWithFirstScene({
+    story,
+    firstScene,
+  }: {
+    story: WithoutKey<Omit<Story, "firstSceneKey">>;
+    firstScene: WithoutKey<Omit<Scene, "storyKey">>;
+  }) {
+    return db.transaction("readwrite", ["stories", "scenes"], async () => {
+      const storyKey = await db.stories.add({
+        ...story,
+        firstSceneKey: "TEMPORARY_NULL_VALUE",
+      });
+      const sceneKey = await db.scenes.add({ ...firstScene, storyKey });
+      await db.stories.update(storyKey, { firstSceneKey: sceneKey });
+      return { ...story, firstSceneKey: sceneKey, key: storyKey };
+    });
+  }
+
+  async updateOrCreateStories(stories: Story[]) {
+    const keys = await db.stories.bulkPut(stories, { allKeys: true });
+    return keys;
   }
 
   async getStory(key: string) {
@@ -46,6 +70,11 @@ class IndexedDBRepository implements LocalRepositoryPort {
 
   async updateFirstScene(storyKey: string, sceneKey: string) {
     await db.stories.update(storyKey, { firstSceneKey: sceneKey });
+  }
+
+  async updateOrCreateScenes(scenes: Scene[]) {
+    const keys = await db.scenes.bulkPut(scenes, { allKeys: true });
+    return keys;
   }
 
   async createScene(scene: WithoutKey<Scene>) {

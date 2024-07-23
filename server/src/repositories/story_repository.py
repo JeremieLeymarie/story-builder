@@ -44,3 +44,13 @@ class StoryRepository(MongoRepository, StoryRepositoryPort):
 
     def get(self, *, key: str) -> FullStory:
         return FullStory(**self.remove_mongo_id(self.db.stories.find_one({"key": key})))
+
+    def get_by_keys(self, *, keys: list[str]) -> list[FullStory]:
+        records = self.db.stories.find({"key": {"$in": keys}})
+
+        return [FullStory(**self.remove_mongo_id(record)) for record in list(records)]
+
+    def get_by_author_key(self, *, author_key: str) -> list[FullStory]:
+        records = self.db.stories.find({"author.key": author_key})
+
+        return [FullStory(**self.remove_mongo_id(record)) for record in list(records)]

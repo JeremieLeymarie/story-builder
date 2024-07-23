@@ -16,13 +16,13 @@ import {
   Input,
   Textarea,
 } from "@/design-system/primitives";
-import { Story } from "@/lib/storage/dexie/dexie-db";
 import { WithoutKey } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { StoryGenreCombobox } from "./story-genre-combobox";
 import { schema, Schema } from "./schema";
+import { Story } from "@/lib/storage/domain";
 
 export const StoryFormDialog = (
   props: Omit<StoryFormProps, "trigger"> & { trigger: JSX.Element },
@@ -35,7 +35,7 @@ export const StoryFormDialog = (
 export type OnSubmitStoryFormProps = Omit<
   WithoutKey<Story>,
   "firstSceneKey" | "author" | "status" | "publicationDate" | "creationDate"
->;
+> & { firstSceneKey?: string };
 type StoryFormProps = {
   onSubmit: (props: OnSubmitStoryFormProps) => void;
   trigger?: JSX.Element;

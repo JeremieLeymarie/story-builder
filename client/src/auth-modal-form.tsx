@@ -1,4 +1,3 @@
-import { API_URL } from "@/constants";
 import {
   Button,
   Dialog,
@@ -20,7 +19,8 @@ import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useUser } from "./hooks/use-user";
-import { User } from "@/lib/storage/dexie/dexie-db";
+import { client } from "./lib/http-client/client";
+import { User } from "./lib/storage/domain";
 
 export const AuthModalForm = ({
   open,
@@ -114,14 +114,15 @@ const SignUpForm = ({
   const submit = async ({ password, ...data }: SignUpSchema) => {
     const user = await persistUser(data);
 
-    fetch(`${API_URL}/api/user/register`, {
-      body: JSON.stringify({ ...user, password }),
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((res) => res.json())
-      .then((res) => onSuccess(res))
-      .catch((err) => onError(err));
+    const response = await client.POST("/api/user/register", {
+      body: { ...user, password },
+    });
+
+    if (response.error) {
+      onError("Error when trying to register user: invalid input");
+    } else {
+      onSuccess(user);
+    }
   };
 
   return (
@@ -200,17 +201,13 @@ const SignInForm = ({
   const { persistUser } = useUser();
 
   const submit = async (body: SignInSchema) => {
-    fetch(`${API_URL}/api/user/login`, {
-      body: JSON.stringify(body),
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        onSuccess(res);
-        persistUser(res);
-      })
-      .catch((err) => onError(err));
+    const response = await client.POST("/api/user/login", { body });
+    if (response.error) {
+      onError("Error when trying to login: invalid input");
+    } else {
+      onSuccess(response.data);
+      persistUser(response.data);
+    }
   };
 
   return (

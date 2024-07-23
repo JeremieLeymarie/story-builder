@@ -69,6 +69,14 @@ pip3 install -r requirements.txt
 fastapi dev src/main.py
 ```
 
+### Adding routes to the API
+
+When you add endpoints to the API, make sure to use pydantic models for the request AND for the response. They are used for validation, but also for documentation (open-api and swagger generation). More importantly, remember to generate the client code by running:
+
+```sh
+cd client && bun run generate-client
+```
+
 ### Database
 
 The remote database is mongodb. It is dockerized so you don't have to install locally.

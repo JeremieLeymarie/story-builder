@@ -33,7 +33,7 @@ class StoryAuthor(BaseModel):
 
 class Story(BaseModel, use_enum_values=True):
     key: str
-    author: Optional[StoryAuthor] = None
+    author: Optional[StoryAuthor]
     title: str
     description: str
     image: str
@@ -41,6 +41,7 @@ class Story(BaseModel, use_enum_values=True):
     genres: list[StoryGenre]
     publicationDate: Optional[str] = None
     creationDate: str
+    firstSceneKey: str
 
 
 class Action(BaseModel):
