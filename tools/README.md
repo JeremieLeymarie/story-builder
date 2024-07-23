@@ -14,7 +14,7 @@ You need to have installed:
 At the root of the project run:
 
 ```sh
-./tools/mongo_extract.sh
+chmod +x ./tools/mongo_extract.sh && ./tools/mongo_extract.sh
 ```
 
 The generated CSV files will be located in the the ./data folder
