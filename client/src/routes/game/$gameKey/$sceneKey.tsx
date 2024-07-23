@@ -24,7 +24,7 @@ export const Component = () => {
     <GameScene
       {...sceneWithoutKey}
       sceneKey={key}
-      isLastScene={!!storyProgress.finished}
+      isLastScene={!sceneWithoutKey.actions.length}
       saveProgress={() => saveProgress(storyProgress)}
     />
   );
