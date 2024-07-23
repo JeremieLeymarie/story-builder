@@ -12,7 +12,7 @@ export const db = new Dexie("story-builder") as Dexie & {
 db.version(1).stores({
   user: "&key, username, email",
   stories:
-    "&key, firstSceneKey, title, description, image, status, genres, publicationDate, creationDate, author",
+    "&key, firstSceneKey, title, description, image, status, genres, publicationDate, creationDate, author, finished",
   scenes: "&key, storyKey, title, content, actions, builderParams",
   storyProgresses:
     "&key, storyKey, currentSceneKey, character, inventory, history, lastPlayedAt",
