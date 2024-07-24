@@ -1,6 +1,6 @@
 import { client } from "@/lib/http-client/client";
-import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { StoryProgress } from "@/lib/storage/domain";
+import { getLocalRepository } from "@/repositories/indexed-db-repository";
 import { useCallback, useState } from "react";
 
 export const useSaveStoryProgress = () => {
