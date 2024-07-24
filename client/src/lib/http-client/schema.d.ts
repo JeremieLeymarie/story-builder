@@ -308,12 +308,17 @@ export interface components {
              * Format: date-time
              */
             lastPlayedAt: string;
+<<<<<<< HEAD
             /** Finished */
             finished?: boolean | null;
             /** Storykey */
             storyKey: string;
             /** Lastsyncat */
             lastSyncAt?: string | null;
+=======
+            /** Storykey */
+            storyKey: string;
+>>>>>>> fdc8c87 (:construction: synchronize in game)
         };
         /**
          * StoryStatus

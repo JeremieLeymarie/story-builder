@@ -11,4 +11,3 @@ class StoryProgress(BaseModel):
     lastPlayedAt: datetime
     finished: Optional[bool] = None
     storyKey: str
-    lastSyncAt: Optional[str] = None
