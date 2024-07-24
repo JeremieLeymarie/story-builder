@@ -1,23 +1,28 @@
 import { WithoutKey } from "@/types";
-import { LocalRepositoryPort } from "../port";
-import { Scene, Story, StoryProgress, User } from "../domain";
-import { db } from "./dexie-db";
+import { Scene, Story, User } from "../lib/storage/domain";
+import { db } from "../lib/storage/dexie/dexie-db";
+import { LocalRepositoryPort } from "./local-repository-port";
 
-class IndexedDBRepository implements LocalRepositoryPort {
+const getUser = async () => {
+  // There should always be maximum one user in local database
+  return ((await db.user.toArray())?.[0] ?? null) as User | null;
+};
+
+const indexedDBRepository: LocalRepositoryPort = {
   // STORIES
 
-  async createStory(story: Story | WithoutKey<Story>) {
+  createStory: async (story: Story | WithoutKey<Story>) => {
     const key = await db.stories.add(story);
     return { ...story, key };
-  }
+  },
 
-  async createStoryWithFirstScene({
+  createStoryWithFirstScene: async ({
     story,
     firstScene,
   }: {
     story: WithoutKey<Omit<Story, "firstSceneKey">>;
     firstScene: WithoutKey<Omit<Scene, "storyKey">>;
-  }) {
+  }) => {
     return db.transaction("readwrite", ["stories", "scenes"], async () => {
       const storyKey = await db.stories.add({
         ...story,
@@ -25,27 +30,30 @@ class IndexedDBRepository implements LocalRepositoryPort {
       });
       const sceneKey = await db.scenes.add({ ...firstScene, storyKey });
       await db.stories.update(storyKey, { firstSceneKey: sceneKey });
-      return { ...story, firstSceneKey: sceneKey, key: storyKey };
+      return {
+        story: { ...story, firstSceneKey: sceneKey, key: storyKey },
+        scene: { ...firstScene, storyKey, key: sceneKey },
+      };
     });
-  }
+  },
 
-  async updateOrCreateStories(stories: Story[]) {
+  updateOrCreateStories: async (stories) => {
     const keys = await db.stories.bulkPut(stories, { allKeys: true });
     return keys;
-  }
+  },
 
-  async getStory(key: string) {
+  getStory: async (key) => {
     return (await db.stories.get(key)) ?? null;
-  }
+  },
 
-  async getGames() {
-    const user = await this.getUser();
+  getGames: async () => {
+    const user = await getUser();
     return await db.stories
       .filter((story) => story.author?.key !== user?.key)
       .toArray();
-  }
+  },
 
-  async getLastGamePlayed() {
+  getLastGamePlayed: async () => {
     const lastProgress = await db.storyProgresses
       .orderBy("lastPlayedAt")
       .limit(1)
@@ -55,56 +63,55 @@ class IndexedDBRepository implements LocalRepositoryPort {
     if (!lastProgress) return null;
 
     return (await db.stories.get(lastProgress.storyKey)) ?? null;
-  }
+  },
 
-  async getStories() {
+  getStories: async () => {
     return await db.stories.toArray();
-  }
+  },
 
-  async updateStory(story: Story) {
+  updateStory: async (story) => {
     await db.stories.update(story.key, story);
     return story;
-  }
+  },
 
   // SCENES
 
-  async updateFirstScene(storyKey: string, sceneKey: string) {
+  updateFirstScene: async (storyKey, sceneKey) => {
     await db.stories.update(storyKey, { firstSceneKey: sceneKey });
-  }
+  },
 
-  async updateOrCreateScenes(scenes: Scene[]) {
+  updateOrCreateScenes: async (scenes) => {
     const keys = await db.scenes.bulkPut(scenes, { allKeys: true });
     return keys;
-  }
+  },
 
-  async createScene(scene: WithoutKey<Scene>) {
+  createScene: async (scene) => {
     const key = await db.scenes.add(scene);
     return { ...scene, key };
-  }
+  },
 
-  async createScenes(scenes: WithoutKey<Scene>[]) {
+  createScenes: async (scenes) => {
     const keys = await db.scenes.bulkAdd(scenes, {
       allKeys: true,
     });
     return keys;
-  }
+  },
 
-  async updateScene(scene: Scene) {
-    await db.scenes.update(scene.key, scene);
-    return scene;
-  }
+  updateScene: async (key, scene) => {
+    await db.scenes.update(key, scene);
+  },
 
-  async getScene(key: string) {
+  getScene: async (key) => {
     return (await db.scenes.get(key)) ?? null;
-  }
+  },
 
-  async getScenes(storyKey: string) {
+  getScenes: async (storyKey) => {
     return await db.scenes
       .filter((scene) => scene.storyKey === storyKey)
       .toArray();
-  }
+  },
 
-  async addAuthorToStories(author: { key: string; username: string }) {
+  addAuthorToStories: async (author) => {
     db.transaction("readwrite", "stories", async () => {
       const storiesToUpdate = (await db.stories
         .filter((story) => story.author === undefined)
@@ -117,71 +124,65 @@ class IndexedDBRepository implements LocalRepositoryPort {
 
       db.stories.bulkUpdate(payload);
     });
-  }
+  },
 
-  async getFinishedGameKeys() {
+  getFinishedGameKeys: async () => {
     return (
       await db.storyProgresses
         .filter((progress) => !!progress.finished)
         .toArray()
     ).map((progress) => progress.storyKey);
-  }
+  },
 
-  async updateOrCreateStoryProgresses(progresses: StoryProgress[]) {
+  updateOrCreateStoryProgresses: async (progresses) => {
     const keys = await db.storyProgresses.bulkPut(progresses, {
       allKeys: true,
     });
     return keys;
-  }
+  },
 
   // USER
 
-  async getUser() {
-    // There should always be maximum one user in local database
-    return ((await db.user.toArray())?.[0] ?? null) as User | null;
-  }
+  getUser,
 
-  async getUserCount() {
+  getUserCount: async () => {
     return await db.user.count();
-  }
+  },
 
-  async createUser(user: WithoutKey<User>) {
+  createUser: async (user) => {
     const key = await db.user.add(user);
     return { ...user, key };
-  }
+  },
 
-  async updateUser(user: User) {
+  updateUser: async (user) => {
     await db.user.update(user.key, user);
     return user;
-  }
+  },
 
   // STORY PROGRESS
 
-  async getStoryProgress(storyKey: string) {
+  getStoryProgress: async (storyKey) => {
     const progress = await db.storyProgresses
       .filter((progress) => progress.storyKey === storyKey)
       .first();
 
     return progress ?? null;
-  }
+  },
 
-  async getStoryProgresses() {
+  getStoryProgresses: async () => {
     return await db.storyProgresses.toArray();
-  }
+  },
 
-  async updateStoryProgress(
-    storyProgress: Partial<StoryProgress> & { key: string },
-  ) {
+  updateStoryProgress: async (storyProgress) => {
     await db.storyProgresses.update(storyProgress.key, storyProgress);
-  }
+  },
 
-  async createStoryProgress(storyProgress: WithoutKey<StoryProgress>) {
+  createStoryProgress: async (storyProgress) => {
     const key = await db.storyProgresses.add(storyProgress);
     return { ...storyProgress, key };
-  }
-}
+  },
+};
 
-const repository = new IndexedDBRepository();
 export const getLocalRepository = () => {
-  return repository;
+  return indexedDBRepository;
 };

@@ -1,12 +1,12 @@
 import { WithoutKey } from "@/types";
-import { Story, Scene, StoryProgress, User } from "./domain";
+import { Story, Scene, StoryProgress, User } from "../lib/storage/domain";
 
 export type LocalRepositoryPort = {
   createStory: (story: Story | WithoutKey<Story>) => Promise<Story | null>;
   createStoryWithFirstScene: (props: {
     story: WithoutKey<Omit<Story, "firstSceneKey">>;
     firstScene: WithoutKey<Omit<Scene, "storyKey">>;
-  }) => Promise<Story | null>;
+  }) => Promise<{ story: Story; scene: Scene } | null>;
   updateOrCreateStories: (stories: Story[]) => Promise<string[]>;
   updateStory: (story: Story) => Promise<Story>;
   getStory: (key: string) => Promise<Story | null>;
@@ -22,7 +22,7 @@ export type LocalRepositoryPort = {
   createScene: (scene: WithoutKey<Scene>) => Promise<Scene>;
   updateOrCreateScenes: (scenes: Scene[]) => Promise<string[]>;
   createScenes: (scenes: WithoutKey<Scene>[]) => Promise<string[]>;
-  updateScene: (scene: Scene) => Promise<Scene>;
+  updateScene: (key: string, scene: Partial<Scene>) => Promise<void>;
   getScene: (key: string) => Promise<Scene | null>;
   getScenes: (storyKey: string) => Promise<Scene[]>;
 
@@ -41,6 +41,7 @@ export type LocalRepositoryPort = {
   getFinishedGameKeys: () => Promise<string[]>;
 
   getUser: () => Promise<User | null>;
+  getUserCount: () => Promise<number>;
   createUser: (user: WithoutKey<User>) => Promise<User>;
   updateUser: (user: User) => Promise<User>;
 };

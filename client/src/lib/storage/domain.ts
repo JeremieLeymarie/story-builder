@@ -65,3 +65,6 @@ export type StoryProgress = {
   lastPlayedAt: Date;
   finished?: boolean;
 };
+
+export const ENTITIES = ["story", "user", "story-progress"];
+export type Entity = (typeof ENTITIES)[number];

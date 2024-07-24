@@ -11,10 +11,10 @@ import {
 import { BracesIcon } from "lucide-react";
 import { ChangeEvent, useCallback, useState } from "react";
 import { useToast } from "@/design-system/primitives/use-toast";
-import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { z } from "zod";
 import Dexie from "dexie";
 import { STORY_GENRES, STORY_STATUS } from "@/lib/storage/domain";
+import { getLocalRepository } from "@/repositories/indexed-db-repository";
 
 const schema = z.object({
   story: z.object({

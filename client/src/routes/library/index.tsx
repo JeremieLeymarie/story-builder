@@ -1,6 +1,6 @@
 import { ErrorMessage, Loader } from "@/design-system/components";
-import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { Library } from "@/library/library";
+import { getLocalRepository } from "@/repositories/indexed-db-repository";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 

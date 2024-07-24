@@ -1,6 +1,6 @@
 import { Builder } from "@/builder/components/builder";
 import { Loader } from "@/design-system/components/loader";
-import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
+import { getLocalRepository } from "@/repositories/indexed-db-repository";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 

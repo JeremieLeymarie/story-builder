@@ -1,41 +1,27 @@
-import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
 import { OnSubmitStoryFormProps } from "../components/story-form/story-form-dialog";
+import { getBuilderService } from "@/services/builder-service";
+import { toast } from "@/design-system/primitives";
 
 export const useBuilderStories = () => {
   const navigate = useNavigate();
 
   const handleCreateStory = useCallback(
     async (storyData: OnSubmitStoryFormProps) => {
-      const repo = getLocalRepository();
-      const user = await repo.getUser();
+      const result =
+        await getBuilderService().createStoryWithFirstScene(storyData);
 
-      const story = await repo.createStoryWithFirstScene({
-        story: {
-          ...storyData,
-          status: "draft",
-          creationDate: new Date(),
-          ...(user && { author: { username: user.username, key: user.key } }),
-        },
-        firstScene: {
-          builderParams: { position: { x: 0, y: 0 } },
-          content: "This is a placeholder content for your first scene",
-          title: "Your first scene",
-          actions: [
-            {
-              text: "An action that leads to a scene",
-            },
-            {
-              text: "An action that leads to another scene",
-            },
-          ],
-        },
-      });
+      if (!result) {
+        return toast({
+          title: "Error",
+          description: "Could not create a new story. Please try again later",
+        });
+      }
 
       navigate({
         to: "/builder/$storyKey",
-        params: { storyKey: story.key },
+        params: { storyKey: result.story.key },
       });
     },
     [navigate],

@@ -1,18 +1,18 @@
 import { Button } from "@/design-system/primitives";
 import { BookOpenTextIcon, SaveIcon, TestTubesIcon } from "lucide-react";
-import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { SceneEditor } from "./editors/scene-editor";
 import { useToolbar } from "../hooks/use-toolbar";
 import { AuthModalForm } from "@/auth-modal-form";
 import { StoryPublisher } from "./story-publisher";
 import { ExportModal } from "./export-modal";
-import { Scene, Story } from "@/lib/storage/domain";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
+import { Scene, Story } from "@/lib/storage/domain";
+import { getLocalRepository } from "@/repositories/indexed-db-repository";
 
 type Props = {
   story: Story;

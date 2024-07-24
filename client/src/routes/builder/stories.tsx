@@ -1,7 +1,7 @@
 import { BuilderStories } from "@/builder/components/builder-stories";
 import { Loader } from "@/design-system/components";
 import { ErrorMessage } from "@/design-system/components/error-message";
-import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
+import { getLocalRepository } from "@/repositories/indexed-db-repository";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 

@@ -1,10 +1,10 @@
 import { toast } from "@/design-system/primitives/use-toast";
-import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { useCallback, useState } from "react";
 import { OnSubmitStoryFormProps } from "../components/story-form/story-form-dialog";
 import { client } from "@/lib/http-client/client";
 import { adapter } from "@/lib/http-client/adapters";
-import { Scene, Story } from "@/lib/storage/domain";
+import { Story, Scene } from "@/lib/storage/domain";
+import { getLocalRepository } from "@/repositories/indexed-db-repository";
 
 export const usePublishStory = ({
   story,

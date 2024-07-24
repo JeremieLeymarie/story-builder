@@ -8,9 +8,9 @@ import {
 import { Handle, NodeProps, Position } from "reactflow";
 import { SceneEditor } from "../../components/editors/scene-editor";
 import { EditIcon } from "lucide-react";
-import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { SceneProps } from "../../types";
 import { cn } from "@/lib/style";
+import { getLocalRepository } from "@/repositories/indexed-db-repository";
 
 export type SceneNodeProps = NodeProps<SceneProps>;
 
@@ -24,7 +24,7 @@ export const SceneNode = ({ data, yPos, xPos }: SceneNodeProps) => {
             defaultValues={data}
             trigger={<EditIcon />}
             onSave={(values) =>
-              getLocalRepository().updateScene({
+              getLocalRepository().updateScene(data.key, {
                 ...data,
                 ...values,
                 builderParams: { position: { x: xPos, y: yPos } },

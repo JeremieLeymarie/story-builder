@@ -1,6 +1,6 @@
-import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { Scene, StoryProgress } from "@/lib/storage/domain";
 import { useCallback, useEffect, useState } from "react";
+import { getLocalRepository } from "@/repositories/indexed-db-repository";
 
 type Props = {
   scene?: Scene | null;

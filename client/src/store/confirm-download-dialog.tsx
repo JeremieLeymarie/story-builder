@@ -2,10 +2,10 @@ import { Button } from "../design-system/primitives";
 import { DownloadIcon } from "lucide-react";
 import { useCallback } from "react";
 import { useToast } from "@/design-system/primitives/use-toast";
-import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { ConfirmDialog } from "@/design-system/components";
 import { client } from "@/lib/http-client/client";
 import { adapter } from "@/lib/http-client/adapters";
+import { getLocalRepository } from "@/repositories/indexed-db-repository";
 
 export const ConfirmDownloadDialog = ({ storyKey }: { storyKey: string }) => {
   const { toast } = useToast();

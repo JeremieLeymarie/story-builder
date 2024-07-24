@@ -1,9 +1,9 @@
-import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { useMemo, useEffect, useCallback, MouseEvent } from "react";
 import { useNodesState, useEdgesState, Node } from "reactflow";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
 import { useBuilderEdges } from "./use-builder-edges";
 import { Scene, Story } from "@/lib/storage/domain";
+import { getBuilderService } from "@/services/builder-service";
 
 export const useBuilder = ({
   scenes,
@@ -28,10 +28,10 @@ export const useBuilder = ({
 
   // TODO: use better typing
   const onNodeMove = useCallback((_: MouseEvent, node: Node) => {
-    getLocalRepository().updateScene({
-      ...node.data,
-      builderParams: { position: node.position },
-    });
+    getBuilderService().updateSceneBuilderPosition(
+      node.data.key,
+      node.position,
+    );
   }, []);
 
   return {

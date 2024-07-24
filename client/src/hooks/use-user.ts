@@ -1,5 +1,5 @@
-import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { User } from "@/lib/storage/domain";
+import { getLocalRepository } from "@/repositories/indexed-db-repository";
 import { WithoutKey } from "@/types";
 import { useCallback } from "react";
 

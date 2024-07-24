@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useIsOnline } from "../../hooks/use-is-online";
 import { client } from "@/lib/http-client/client";
-import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { adapter } from "@/lib/http-client/adapters";
 import { User } from "@/lib/storage/domain";
+import { getLocalRepository } from "@/repositories/indexed-db-repository";
 
 export const SYNCHRO_DATETIME_KEY = "LAST_SYNCHRO_AT";
 

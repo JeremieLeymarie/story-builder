@@ -1,7 +1,7 @@
 import { useToast } from "@/design-system/primitives/use-toast";
 import { adapter } from "@/lib/http-client/adapters";
 import { client } from "@/lib/http-client/client";
-import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
+import { getLocalRepository } from "@/repositories/indexed-db-repository";
 import { useCallback, useState } from "react";
 
 export const useSynchronizeBuilder = ({ storyKey }: { storyKey: string }) => {

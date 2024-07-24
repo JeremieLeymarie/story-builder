@@ -1,7 +1,7 @@
 import { ErrorMessage, Loader } from "@/design-system/components";
 import { GameScene } from "@/game/components/scene";
-import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { Story, StoryProgress } from "@/lib/storage/domain";
+import { getLocalRepository } from "@/repositories/indexed-db-repository";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useCallback, useEffect, useState } from "react";
