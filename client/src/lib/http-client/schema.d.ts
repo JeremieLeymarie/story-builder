@@ -286,6 +286,8 @@ export interface components {
         StoryProgress: {
             /** Key */
             key: string;
+            /** Userkey */
+            userKey: string;
             /** History */
             history: string[];
             /** Currentscenekey */
@@ -295,8 +297,13 @@ export interface components {
              * Format: date-time
              */
             lastPlayedAt: string;
+<<<<<<< HEAD
             /** Finished */
             finished?: boolean | null;
+=======
+            /** Storykey */
+            storyKey: string;
+>>>>>>> fdc8c87 (:construction: synchronize in game)
         };
         /**
          * StoryStatus
@@ -309,6 +316,8 @@ export interface components {
             playerGames: components["schemas"]["FullStory"][];
             /** Buildergames */
             builderGames: components["schemas"]["FullStory"][] | null;
+            /** Storyprogresses */
+            storyProgresses: components["schemas"]["StoryProgress"][];
         };
         /** User */
         User: {

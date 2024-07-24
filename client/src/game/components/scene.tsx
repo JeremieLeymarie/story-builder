@@ -1,6 +1,8 @@
 import { SceneAction } from "./scene-action";
 import { Button } from "@/design-system/primitives";
 import { BookUpIcon, LibraryBigIcon, SaveIcon } from "lucide-react";
+import { Button, toast } from "@/design-system/primitives";
+import { SaveIcon } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -30,7 +32,7 @@ export const GameScene = ({
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <Button variant="outline" onClick={saveProgress}>
+            <Button variant="outline" onClick={() => saveProgress(progress)}>
               <SaveIcon />
             </Button>
           </TooltipTrigger>

@@ -127,6 +127,13 @@ class IndexedDBRepository implements LocalRepositoryPort {
     ).map((progress) => progress.storyKey);
   }
 
+  async updateOrCreateStoryProgresses(progresses: StoryProgress[]) {
+    const keys = await db.storyProgresses.bulkPut(progresses, {
+      allKeys: true,
+    });
+    return keys;
+  }
+
   // USER
 
   async getUser() {

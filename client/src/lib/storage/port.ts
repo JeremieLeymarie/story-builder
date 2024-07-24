@@ -32,6 +32,10 @@ export type LocalRepositoryPort = {
   updateStoryProgress: (
     progress: Partial<StoryProgress> & { key: string },
   ) => Promise<void>;
+  updateOrCreateStoryProgresses: (
+    progresses: StoryProgress[],
+  ) => Promise<string[]>;
+
   getStoryProgress: (storyKey: string) => Promise<StoryProgress | null>;
   getStoryProgresses: () => Promise<StoryProgress[]>;
   getFinishedGameKeys: () => Promise<string[]>;

@@ -24,7 +24,9 @@ class SynchronizationDomain:
         builder_games = self.story_repo.get_by_author_key(author_key=user_key)
 
         return SynchronizationPayload(
-            playerGames=player_games, builderGames=builder_games
+            playerGames=player_games,
+            builderGames=builder_games,
+            storyProgresses=progresses,
         )
 
     def synchronize_progress(self, story_progress: StoryProgress) -> StoryProgress:

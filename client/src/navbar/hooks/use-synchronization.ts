@@ -77,7 +77,7 @@ export const useSynchronization = ({ user }: { user?: User | null }) => {
       return;
     }
 
-    const { builderGames, playerGames } = data;
+    const { builderGames, playerGames, storyProgresses } = data;
 
     const { stories, scenes } = adapter.fromAPI.fullStories([
       ...(builderGames ?? []),
@@ -86,6 +86,9 @@ export const useSynchronization = ({ user }: { user?: User | null }) => {
 
     repo.updateOrCreateStories(stories);
     repo.updateOrCreateScenes(scenes);
+    repo.updateOrCreateStoryProgresses(
+      adapter.fromAPI.storyProgresses(storyProgresses),
+    );
 
     // Register that the app is synchronized for this session
     const syncDateTime = new Date().toISOString();
