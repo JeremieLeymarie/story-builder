@@ -2,8 +2,8 @@ import { toast } from "@/design-system/primitives/use-toast";
 import { useCallback, useState } from "react";
 import { OnSubmitStoryFormProps } from "../components/story-form/story-form-dialog";
 import { Story, Scene } from "@/lib/storage/domain";
-import { getLocalRepository } from "@/repositories/indexed-db-repository";
-import { getBuilderService } from "@/services/builder-service";
+import { getBuilderService } from "@/services/builder";
+import { getUserService } from "@/services";
 
 export const usePublishStory = ({
   story,
@@ -12,27 +12,25 @@ export const usePublishStory = ({
   story: Story;
   scenes: Scene[];
 }) => {
-  const repo = getLocalRepository();
+  const builderService = getBuilderService();
+  const userService = getUserService();
   const [modal, setModal] = useState<"auth" | "edit-story" | "confirm" | null>(
     null,
   );
 
   const updateLocalStory = useCallback(
     async (data: OnSubmitStoryFormProps) => {
-      const user = await repo.getUser();
-      await repo.updateStory({
+      await builderService.updateStory({
         ...story,
         ...data,
-        publicationDate: new Date(),
-        ...(user && { author: { key: user.key, username: user.username } }),
       });
       setModal("confirm");
     },
-    [repo, story],
+    [builderService, story],
   );
 
   const publish = useCallback(async () => {
-    const success = await getBuilderService().publishStory(scenes, story);
+    const success = await builderService.publishStory(scenes, story);
 
     if (success) {
       toast({
@@ -46,10 +44,10 @@ export const usePublishStory = ({
         description: "Something went wrong, please try again later.",
       });
     }
-  }, [scenes, story]);
+  }, [builderService, scenes, story]);
 
   const handlePublishClick = useCallback(async () => {
-    const user = await repo.getUser();
+    const user = await userService.getCurrentUser();
 
     if (!user) {
       // Prompt user for sign-in/sign-up
@@ -58,7 +56,7 @@ export const usePublishStory = ({
     }
 
     setModal("edit-story");
-  }, [repo]);
+  }, [userService]);
 
   return {
     publish,

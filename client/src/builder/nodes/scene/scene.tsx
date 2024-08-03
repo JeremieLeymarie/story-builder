@@ -10,11 +10,14 @@ import { SceneEditor } from "../../components/editors/scene-editor";
 import { EditIcon } from "lucide-react";
 import { SceneProps } from "../../types";
 import { cn } from "@/lib/style";
-import { getLocalRepository } from "@/repositories/indexed-db-repository";
+import { getBuilderService } from "@/services/builder";
+import { toast } from "@/design-system/primitives";
 
 export type SceneNodeProps = NodeProps<SceneProps>;
 
 export const SceneNode = ({ data, yPos, xPos }: SceneNodeProps) => {
+  const builderService = getBuilderService();
+
   return (
     <Card className={cn("w-[375px]", data.isFirstScene && "bg-primary/60")}>
       <CardHeader>
@@ -24,20 +27,21 @@ export const SceneNode = ({ data, yPos, xPos }: SceneNodeProps) => {
             defaultValues={data}
             trigger={<EditIcon />}
             onSave={(values) =>
-              getLocalRepository().updateScene(data.key, {
+              builderService.updateScene({
                 ...data,
                 ...values,
                 builderParams: { position: { x: xPos, y: yPos } },
               })
             }
             setFirstScene={() =>
-              getLocalRepository()
-                .updateFirstScene(data.storyKey, data.key)
-                .then(() => {
-                  // TODO: add success toast
-                })
+              builderService
+                .changeFirstScene(data.storyKey, data.key)
                 .catch(() => {
-                  // TODO: add error toast
+                  toast({
+                    title: "Operation failed",
+                    description:
+                      "Something went wrong. Could not change the first scene of the story",
+                  });
                 })
             }
           />

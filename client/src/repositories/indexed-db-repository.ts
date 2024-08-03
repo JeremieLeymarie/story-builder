@@ -77,7 +77,11 @@ const indexedDBRepository: LocalRepositoryPort = {
   // SCENES
 
   updateFirstScene: async (storyKey, sceneKey) => {
-    await db.stories.update(storyKey, { firstSceneKey: sceneKey });
+    const result = await db.stories.update(storyKey, {
+      firstSceneKey: sceneKey,
+    });
+
+    return result > 0;
   },
 
   updateOrCreateScenes: async (scenes) => {
@@ -98,7 +102,9 @@ const indexedDBRepository: LocalRepositoryPort = {
   },
 
   updateScene: async (key, scene) => {
-    await db.scenes.update(key, scene);
+    const result = await db.scenes.update(key, scene);
+
+    return result > 0;
   },
 
   getScene: async (key) => {

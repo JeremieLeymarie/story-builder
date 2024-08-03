@@ -64,6 +64,10 @@ const _getUserService = ({
 
       return response;
     },
+
+    getCurrentUser: async () => {
+      return await localRepository.getUser();
+    },
   };
 };
 

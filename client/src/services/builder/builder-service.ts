@@ -179,6 +179,53 @@ const _getBuilderService = ({
       }
       return { error: null };
     },
+
+    addScene: async (scene: WithoutKey<Scene>) => {
+      const result = await localRepository.createScene(scene);
+
+      if (result)
+        performSync(["story"], () =>
+          remoteRepository.updateOrCreateScene(result),
+        );
+    },
+
+    updateStory: async (story: Story) => {
+      const user = await localRepository.getUser();
+      const result = await localRepository.updateStory({
+        ...story,
+        ...(user && { author: { key: user.key, username: user.username } }),
+      });
+
+      if (result) {
+        performSync(["story"], () => {
+          remoteRepository.updateOrCreateStory(result);
+        });
+      }
+    },
+
+    updateScene: async (scene: Scene) => {
+      const result = await localRepository.updateScene(scene.key, scene);
+
+      if (result)
+        performSync(["story"], () => {
+          remoteRepository.updateOrCreateScene(scene);
+        });
+    },
+
+    changeFirstScene: async (storyKey: string, newFirstSceneKey: string) => {
+      const result = await localRepository.updateFirstScene(
+        storyKey,
+        newFirstSceneKey,
+      );
+
+      const story = await localRepository.getStory(storyKey);
+
+      if (result && story) {
+        performSync(["story"], () => {
+          remoteRepository.updateOrCreateStory(story);
+        });
+      }
+    },
   };
 };
 

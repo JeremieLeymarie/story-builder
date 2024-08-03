@@ -12,7 +12,7 @@ import {
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
 import { Scene, Story } from "@/lib/storage/domain";
-import { getLocalRepository } from "@/repositories/indexed-db-repository";
+import { getBuilderService } from "@/services/builder";
 
 type Props = {
   story: Story;
@@ -37,7 +37,7 @@ export const Toolbar = ({ story, scenes }: Props) => {
           }
           triggerClassName="w-full"
           onSave={(values) =>
-            getLocalRepository().createScene({
+            getBuilderService().addScene({
               ...values,
               storyKey: story.key,
               builderParams: { position: { x: 0, y: 0 } },
