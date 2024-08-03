@@ -10,4 +10,8 @@ export type RepositoryPort = {
   ) => Promise<{ story: Story; scene: Scene } | null>;
 
   getUser: () => Promise<User | null>;
+
+  publishStory: (scenes: Scene[], story: Story) => Promise<boolean>;
+
+  updateStory: (story: Story) => Promise<Story>;
 };

@@ -515,7 +515,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["APIResponse"];
+                    "application/json": components["schemas"]["Story"];
                 };
             };
             /** @description Validation Error */

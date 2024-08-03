@@ -66,5 +66,5 @@ export type StoryProgress = {
   finished?: boolean;
 };
 
-export const ENTITIES = ["story", "user", "story-progress"];
+export const ENTITIES = ["story", "user", "story-progress"] as const;
 export type Entity = (typeof ENTITIES)[number];

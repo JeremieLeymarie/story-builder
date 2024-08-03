@@ -4,15 +4,15 @@ from data_types.builder import FullStory, Story, StoryStatus
 
 
 class StoryRepositoryPort(Protocol):
-    def save(self, story: FullStory) -> FullStory:
+    def save(self, story: Story) -> Story:
         """Insert or update a story in the database using the key to find it
 
 
         Args:
-            story (FullStory): the full story data to save in the database
+            story (Story): the full story data to save in the database
 
         Returns:
-            FullStory: the updated record
+            Story: the updated record
         """
         ...
 

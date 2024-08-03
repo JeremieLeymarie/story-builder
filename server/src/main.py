@@ -113,13 +113,13 @@ async def download_from_store(key: str):
         raise raise_http_error(err)
 
 
-@app.put("/api/store/publish", status_code=HTTPStatus.OK, response_model=APIResponse)
+@app.put("/api/store/publish", status_code=HTTPStatus.OK, response_model=Story)
 async def publish_in_store(body: FullStoryBuilderRequest):
     try:
-        StoreDomain(story_repository=StoryRepository()).publish(
+        story = StoreDomain(story_repository=StoryRepository()).publish(
             story=body.story, scenes=body.scenes
         )
-        return {"success": True}
+        return story
     except Exception as err:
         raise raise_http_error(err)
 

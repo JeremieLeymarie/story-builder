@@ -27,10 +27,11 @@ class StoreDomain:
         # TODO: check that story ends properly
         # TODO: check that story has a start
 
-    def publish(self, *, story: Story, scenes: list[Scene]) -> None:
+    def publish(self, *, story: Story, scenes: list[Scene]) -> Story:
         story = FullStory(scenes=scenes, **story.model_dump())
         self._validate_story(story=story)
 
         story.status = StoryStatus.PUBLISHED
 
-        self.story_repository.save(story=story)
+        story = self.story_repository.save(story=story)
+        return story

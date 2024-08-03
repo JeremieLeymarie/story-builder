@@ -159,6 +159,15 @@ const indexedDBRepository: LocalRepositoryPort = {
     return user;
   },
 
+  deleteUser: async (key: string) => {
+    try {
+      await db.user.delete(key);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  },
+
   // STORY PROGRESS
 
   getStoryProgress: async (storyKey) => {

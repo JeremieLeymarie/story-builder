@@ -44,4 +44,5 @@ export type LocalRepositoryPort = {
   getUserCount: () => Promise<number>;
   createUser: (user: WithoutKey<User>) => Promise<User>;
   updateUser: (user: User) => Promise<User>;
+  deleteUser: (key: string) => Promise<boolean>;
 };
