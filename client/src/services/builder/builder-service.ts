@@ -112,7 +112,6 @@ const _getBuilderService = ({
 
     editStory: async (story: Story) => {
       const user = await localRepository.getUser();
-
       await localRepository.updateStory({
         ...story,
         ...(user && { author: { key: user.key, username: user.username } }),
@@ -149,6 +148,9 @@ const _getBuilderService = ({
 
     addScene: async (scene: WithoutKey<Scene>) => {
       await localRepository.createScene(scene);
+      const result = await localRepository.createScene(scene);
+
+      return result;
     },
 
     updateStory: async (story: Story) => {

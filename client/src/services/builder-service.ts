@@ -141,6 +141,92 @@ const _getBuilderService = ({
         );
       }
     },
+<<<<<<<< HEAD:client/src/services/builder-service.ts
+========
+
+    importFromJSON: async (fileContent: string) => {
+      // TODO: refacto this try/catch mess
+      try {
+        const contentJson = JSON.parse(fileContent);
+
+        const resZod = fullStorySchema.safeParse(contentJson);
+
+        if (!resZod.success)
+          return { error: resZod.error.issues[0]?.message || "Invalid format" };
+
+        try {
+          const story = await localRepository.createStory(resZod.data.story);
+          const scenes = await localRepository.createScenes(resZod.data.scenes);
+
+          if (story && scenes)
+            performSync(["story"], () => {
+              remoteRepository.updateOrCreateFullStory(
+                resZod.data.story,
+                resZod.data.scenes,
+              );
+            });
+        } catch (error) {
+          if (
+            error instanceof Dexie.DexieError &&
+            error.name === "ConstraintError"
+          ) {
+            return { error: "Story already exists" };
+          }
+          return { error: "Something went wrong." };
+        }
+      } catch (_) {
+        return { error: "Invalid JSON format" };
+      }
+      return { error: null };
+    },
+
+    addScene: async (scene: WithoutKey<Scene>) => {
+      const result = await localRepository.createScene(scene);
+
+      if (result)
+        performSync(["story"], () =>
+          remoteRepository.updateOrCreateScene(result),
+        );
+    },
+
+    updateStory: async (story: Story) => {
+      const user = await localRepository.getUser();
+      const result = await localRepository.updateStory({
+        ...story,
+        ...(user && { author: { key: user.key, username: user.username } }),
+      });
+
+      if (result) {
+        performSync(["story"], () => {
+          remoteRepository.updateOrCreateStory(result);
+        });
+      }
+    },
+
+    updateScene: async (scene: Scene) => {
+      const result = await localRepository.updateScene(scene.key, scene);
+
+      if (result)
+        performSync(["story"], () => {
+          remoteRepository.updateOrCreateScene(scene);
+        });
+    },
+
+    changeFirstScene: async (storyKey: string, newFirstSceneKey: string) => {
+      const result = await localRepository.updateFirstScene(
+        storyKey,
+        newFirstSceneKey,
+      );
+
+      const story = await localRepository.getStory(storyKey);
+
+      if (result && story) {
+        performSync(["story"], () => {
+          remoteRepository.updateOrCreateStory(story);
+        });
+      }
+    },
+>>>>>>>> be6fd7e (:recycle: wip - service refacto - scenes & stories in builder):client/src/services/builder/builder-service.ts
   };
 };
 
