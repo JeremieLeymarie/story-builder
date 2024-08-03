@@ -21,6 +21,11 @@ export type RemoteRepositoryPort = {
     scene: Scene,
   ) => Promise<RemoteRepositoryResponse<Story>>;
 
+  updateOrCreateFullStory: (
+    story: Story,
+    scenes: Scene[],
+  ) => Promise<RemoteRepositoryResponse<{ story: Story; scenes: Scene[] }>>;
+
   publishStory: (
     scenes: Scene[],
     story: Story,

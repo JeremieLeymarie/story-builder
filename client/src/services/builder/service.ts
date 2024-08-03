@@ -2,9 +2,11 @@ import { Scene, Story } from "@/lib/storage/domain";
 import { LocalRepositoryPort } from "@/repositories/local-repository-port";
 import { RemoteRepositoryPort } from "@/repositories/remote-repository-port";
 import { WithoutKey } from "@/types";
-import { makePerformSync } from "./common/sync";
+import { makePerformSync } from "../common/sync";
 import { getLocalRepository } from "@/repositories/indexed-db-repository";
 import { getRemoteAPIRepository } from "@/repositories/remote-api-repository";
+import { fullStorySchema } from "./schemas";
+import Dexie from "dexie";
 
 // Maybe atomic repository actions could be isolated in helpers
 
@@ -140,6 +142,42 @@ const _getBuilderService = ({
           remoteRepository.updateOrCreateStory(story),
         );
       }
+    },
+
+    importFromJSON: async (fileContent: string) => {
+      // TODO: refacto this try/catch mess
+      try {
+        const contentJson = JSON.parse(fileContent);
+
+        const resZod = fullStorySchema.safeParse(contentJson);
+
+        if (!resZod.success)
+          return { error: resZod.error.issues[0]?.message || "Invalid format" };
+
+        try {
+          const story = await localRepository.createStory(resZod.data.story);
+          const scenes = await localRepository.createScenes(resZod.data.scenes);
+
+          if (story && scenes)
+            performSync(["story"], () => {
+              remoteRepository.updateOrCreateFullStory(
+                resZod.data.story,
+                resZod.data.scenes,
+              );
+            });
+        } catch (error) {
+          if (
+            error instanceof Dexie.DexieError &&
+            error.name === "ConstraintError"
+          ) {
+            return { error: "Story already exists" };
+          }
+          return { error: "Something went wrong." };
+        }
+      } catch (_) {
+        return { error: "Invalid JSON format" };
+      }
+      return { error: null };
     },
   };
 };

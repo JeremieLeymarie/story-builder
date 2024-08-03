@@ -32,6 +32,10 @@ const _getRemoteAPIRepository = (
       throw new Error("not implemented");
     },
 
+    updateOrCreateFullStory: async (story, scenes) => {
+      throw new Error("not implemented");
+    },
+
     updateOrCreateScene: async (scene) => {
       throw new Error("not implemented");
     },
