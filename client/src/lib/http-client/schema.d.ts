@@ -497,7 +497,11 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+<<<<<<< HEAD
                     "application/json": components["schemas"]["FullStory"];
+=======
+                    "application/json": components["schemas"]["Story"];
+>>>>>>> a50a5f6 (:recycle: wip - continue service refacto)
                 };
             };
             /** @description Validation Error */

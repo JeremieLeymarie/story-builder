@@ -9,7 +9,7 @@ STORY_COLLECTION = "stories"
 # TODO: convert this to key paradigm
 class StoryRepository(MongoRepository, StoryRepositoryPort):
 
-    def save(self, story: FullStory) -> FullStory:
+    def save(self, story: Story) -> Story:
         payload = story.model_dump(mode="json")
 
         record: MongoRecord[dict] = self.db[STORY_COLLECTION].find_one_and_update(
@@ -19,7 +19,7 @@ class StoryRepository(MongoRepository, StoryRepositoryPort):
             return_document=ReturnDocument.AFTER,
         )
 
-        return FullStory(**self.remove_mongo_id(record))
+        return Story(**self.remove_mongo_id(record))
 
     def save_all(self, stories: list[FullStory]) -> list[FullStory]:
 
