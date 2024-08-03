@@ -20,6 +20,8 @@ export type SynchronizationState = {
   success?: boolean;
   cause?: string;
 };
+
+// TODO: deprecate this
 export const useSynchronization = ({ user }: { user?: User | null }) => {
   const repo = useMemo(() => getLocalRepository(), []);
   const isOnline = useIsOnline();

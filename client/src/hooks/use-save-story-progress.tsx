@@ -3,6 +3,7 @@ import { StoryProgress } from "@/lib/storage/domain";
 import { getLocalRepository } from "@/repositories/indexed-db-repository";
 import { useCallback, useState } from "react";
 
+// TODO: deprecate this
 export const useSaveStoryProgress = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 

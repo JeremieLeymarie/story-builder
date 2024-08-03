@@ -59,6 +59,25 @@ const _getRemoteAPIRepository = (
 
       return { error: validationErrorToString(response.error) };
     },
+
+    getStoreItems: async () => {
+      const response = await client.GET("/api/store/load");
+
+      if (response.data)
+        return { data: adapter.fromAPI.stories(response.data) };
+
+      return { error: response.error };
+    },
+
+    downloadStory: async (key) => {
+      const { data, error } = await client.GET("/api/store/download/{key}", {
+        params: { path: { key } },
+      });
+
+      if (data) return { data: adapter.fromAPI.fullStory(data) };
+
+      return { error: validationErrorToString(error) };
+    },
   };
 };
 

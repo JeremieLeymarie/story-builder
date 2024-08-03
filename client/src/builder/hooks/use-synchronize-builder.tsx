@@ -4,6 +4,7 @@ import { client } from "@/lib/http-client/client";
 import { getLocalRepository } from "@/repositories/indexed-db-repository";
 import { useCallback, useState } from "react";
 
+// TODO: deprecate this
 export const useSynchronizeBuilder = ({ storyKey }: { storyKey: string }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { toast } = useToast();

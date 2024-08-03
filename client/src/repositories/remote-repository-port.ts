@@ -34,4 +34,10 @@ export type RemoteRepositoryPort = {
   register: (
     user: User & { password: string },
   ) => Promise<RemoteRepositoryResponse<User>>;
+
+  getStoreItems: () => Promise<RemoteRepositoryResponse<Story[]>>;
+
+  downloadStory: (
+    storyKey: string,
+  ) => Promise<RemoteRepositoryResponse<{ story: Story; scenes: Scene[] }>>;
 };

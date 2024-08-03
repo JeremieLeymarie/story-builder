@@ -4,7 +4,7 @@ import { RemoteRepositoryResponse } from "@/repositories/remote-repository-port"
 
 const LOCAL_STORAGE_SYNC_KEY = "unsynchronized_entities";
 
-const isOnline = () => {
+export const isOnline = () => {
   return navigator.onLine;
 };
 

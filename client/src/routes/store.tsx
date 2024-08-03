@@ -5,17 +5,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useIsOnline } from "@/hooks/use-is-online";
 import { Loader } from "@/design-system/components";
-import { client } from "@/lib/http-client/client";
-import { adapter } from "@/lib/http-client/adapters";
 import { Story } from "@/lib/storage/domain";
+import { getStoreService } from "@/services/store-service";
 
 const StoreComponent = () => {
   const [stories, setStories] = useState<Story[] | null>();
 
   useEffect(() => {
-    client.GET("/api/store/load").then((res) => {
-      setStories(res.data ? adapter.fromAPI.stories(res.data) : null);
-    });
+    getStoreService().getItems().then(setStories);
   }, []);
 
   if (stories === undefined) return <Loader />;
