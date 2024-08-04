@@ -4,11 +4,11 @@ import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { useSynchronization } from "@/navbar/hooks/use-synchronization";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Navbar } from "@/navbar/navbar";
-import { getLocalRepository } from "@/repositories/indexed-db-repository";
+import { getUserService } from "@/services";
 
 const Component = () => {
   // TODO: Put this in a global store
-  const user = useLiveQuery(getLocalRepository().getUser);
+  const user = useLiveQuery(getUserService().getCurrentUser);
   const { state, synchronize } = useSynchronization({ user });
 
   return (

@@ -7,10 +7,11 @@ export type LocalRepositoryPort = {
     story: WithoutKey<Omit<Story, "firstSceneKey">>;
     firstScene: WithoutKey<Omit<Scene, "storyKey">>;
   }) => Promise<{ story: Story; scene: Scene } | null>;
-  updateOrCreateStories: (stories: Story[]) => Promise<string[]>;
+  updateOrCreateStories: (stories: Story[]) => Promise<string[] | null>;
   updateStory: (story: Story) => Promise<Story>;
   getStory: (key: string) => Promise<Story | null>;
-  getStories: () => Promise<Story[]>;
+  getStories: () => Promise<Story[] | null>;
+  getStoriesByAuthor: (userKey?: string) => Promise<Story[] | null>;
   getGames: () => Promise<Story[]>;
   getLastGamePlayed: () => Promise<Story | null>;
   updateFirstScene: (storyKey: string, sceneKey: string) => Promise<void>;
@@ -22,20 +23,20 @@ export type LocalRepositoryPort = {
   createScene: (scene: WithoutKey<Scene>) => Promise<Scene>;
   updateOrCreateScenes: (scenes: Scene[]) => Promise<string[]>;
   createScenes: (scenes: WithoutKey<Scene>[]) => Promise<string[]>;
-  updateScene: (key: string, scene: Partial<Scene>) => Promise<boolean>;
+  updatePartialScene: (key: string, scene: Partial<Scene>) => Promise<boolean>;
   getScene: (key: string) => Promise<Scene | null>;
   getScenes: (storyKey: string) => Promise<Scene[]>;
 
   createStoryProgress: (
     progress: WithoutKey<StoryProgress>,
   ) => Promise<StoryProgress>;
-  updateStoryProgress: (
-    progress: Partial<StoryProgress> & { key: string },
-  ) => Promise<void>;
+
   updateOrCreateStoryProgresses: (
     progresses: StoryProgress[],
   ) => Promise<string[]>;
-
+  updateStoryProgress: (
+    progress: StoryProgress,
+  ) => Promise<StoryProgress | null>;
   getStoryProgress: (storyKey: string) => Promise<StoryProgress | null>;
   getStoryProgresses: () => Promise<StoryProgress[]>;
   getFinishedGameKeys: () => Promise<string[]>;

@@ -24,7 +24,9 @@ const _getBuilderService = ({
       sceneKey: string,
       position: Scene["builderParams"]["position"],
     ) => {
-      localRepository.updateScene(sceneKey, { builderParams: { position } });
+      localRepository.updatePartialScene(sceneKey, {
+        builderParams: { position },
+      });
 
       performSync(["story"], () =>
         remoteRepository.updatePartialScene(sceneKey, {
@@ -49,7 +51,7 @@ const _getBuilderService = ({
         return action;
       });
 
-      await localRepository.updateScene(sourceScene.key, {
+      await localRepository.updatePartialScene(sourceScene.key, {
         actions,
       });
 
@@ -72,7 +74,7 @@ const _getBuilderService = ({
         return action;
       });
 
-      await localRepository.updateScene(sourceScene.key, { actions });
+      await localRepository.updatePartialScene(sourceScene.key, { actions });
 
       performSync(["story"], () =>
         remoteRepository.updatePartialScene(sourceScene.key, { actions }),
@@ -204,7 +206,7 @@ const _getBuilderService = ({
     },
 
     updateScene: async (scene: Scene) => {
-      const result = await localRepository.updateScene(scene.key, scene);
+      const result = await localRepository.updatePartialScene(scene.key, scene);
 
       if (result)
         performSync(["story"], () => {
@@ -225,6 +227,21 @@ const _getBuilderService = ({
           remoteRepository.updateOrCreateStory(story);
         });
       }
+    },
+
+    getBuilderData: async (storyKey: string) => {
+      const story = await localRepository.getStory(storyKey);
+      const scenes = await localRepository.getScenes(storyKey);
+
+      return { story, scenes };
+    },
+
+    getBuilderStories: async () => {
+      const user = await localRepository.getUser();
+
+      const stories = await localRepository.getStoriesByAuthor(user?.key);
+
+      return stories;
     },
   };
 };

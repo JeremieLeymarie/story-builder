@@ -1,33 +1,26 @@
 import { ErrorMessage, Loader } from "@/design-system/components";
 import { Library } from "@/library/library";
-import { getLocalRepository } from "@/repositories/indexed-db-repository";
+import { getUserService } from "@/services";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 
 const Component = () => {
-  const repo = getLocalRepository();
-  const data = useLiveQuery(async () =>
-    Promise.all([
-      repo.getUser(),
-      repo.getStories(),
-      repo.getFinishedGameKeys(),
-    ]),
-  );
+  const { storiesFromStore, userStories, finishedGameKeys } =
+    useLiveQuery(getUserService().getLibraryData) ?? {};
 
-  const [user, stories, finishedGames] = data ?? [];
+  if (
+    storiesFromStore === undefined ||
+    userStories === undefined ||
+    finishedGameKeys === undefined
+  ) {
+    return <Loader />;
+  }
 
-  const userStories =
-    stories?.filter((story) => story.author?.key === user?.key) ?? [];
-  const storiesFromStore =
-    stories?.filter((story) => story.author?.key !== user?.key) ?? [];
-
-  if (!data) return <Loader />;
-
-  return stories ? (
+  return storiesFromStore && userStories ? (
     <Library
       storiesFromStore={storiesFromStore}
       userStories={userStories}
-      finishedGameKeys={finishedGames ?? []}
+      finishedGameKeys={finishedGameKeys}
     />
   ) : (
     <ErrorMessage text="Could not get your games. Please try again later" />

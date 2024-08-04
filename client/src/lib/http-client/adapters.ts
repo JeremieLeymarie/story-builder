@@ -112,6 +112,17 @@ const fromClientFullStoryAdapter = (
   };
 };
 
+const fromClientStoryProgressAdapter = (
+  storyProgress: StoryProgress,
+  userKey: string,
+): components["schemas"]["StoryProgress"] => {
+  return {
+    ...storyProgress,
+    userKey,
+    lastPlayedAt: storyProgress.lastPlayedAt.toISOString(),
+  };
+};
+
 export const adapter = {
   fromAPI: {
     fullStories: fromAPIFullStoriesAdapter,
@@ -128,5 +139,6 @@ export const adapter = {
   fromClient: {
     fullStory: fromClientFullStoryAdapter,
     story: fromClientStoryAdapter,
+    storyProgress: fromClientStoryProgressAdapter,
   },
 };

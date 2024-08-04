@@ -1,19 +1,14 @@
 import { ErrorMessage } from "@/design-system/components";
 import { Loader } from "@/design-system/components/loader";
 import { LibraryGameDetail } from "@/library/detail";
-import { getLocalRepository } from "@/repositories/indexed-db-repository";
+import { getUserService } from "@/services";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 
 const Page = () => {
   const { storyKey } = Route.useParams();
-  const repo = getLocalRepository();
-  const story = useLiveQuery(() => repo.getStory(storyKey));
-  const progress = useLiveQuery(() => repo.getStoryProgress(storyKey));
-  const lastScene = useLiveQuery(
-    () => (progress ? repo.getScene(progress.currentSceneKey) : progress),
-    [progress],
-  );
+  const { story, progress, lastScene } =
+    useLiveQuery(() => getUserService().getLibraryDetailData(storyKey)) ?? {};
 
   if (
     story === undefined ||

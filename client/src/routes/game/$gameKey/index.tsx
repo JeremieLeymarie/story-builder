@@ -1,54 +1,24 @@
 import { ErrorMessage, Loader } from "@/design-system/components";
 import { GameScene } from "@/game/components/scene";
-import { Story, StoryProgress } from "@/lib/storage/domain";
-import { getLocalRepository } from "@/repositories/indexed-db-repository";
+import { StoryProgress } from "@/lib/storage/domain";
+import { getGameService } from "@/services";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export const Component = () => {
   const { gameKey } = Route.useParams();
-  const repo = getLocalRepository();
-  // TODO: only one live query would be better?
-  const story = useLiveQuery(() => repo.getStory(gameKey));
-  const scene = useLiveQuery(
-    () =>
-      story?.firstSceneKey ? repo.getScene(story.firstSceneKey) : undefined,
-    [story],
-  );
+  const { getOrCreateStoryProgress, getFirstSceneData } = getGameService();
+
+  const { story, scene } = useLiveQuery(() => getFirstSceneData(gameKey)) ?? {};
   const [storyProgress, setStoryProgress] = useState<StoryProgress | null>();
-
-  const createStoryProgress = useCallback(
-    async (story: Story) => {
-      const progress = await repo.getStoryProgress(gameKey);
-      if (progress) return progress;
-
-      if (!story.firstSceneKey) {
-        throw new Error(
-          `Error: story should have a first scene. Story: ${story.key}`,
-        );
-      }
-
-      const payload = {
-        history: [story.firstSceneKey],
-        currentSceneKey: story.firstSceneKey,
-        lastPlayedAt: new Date(),
-      };
-
-      await repo.createStoryProgress({
-        storyKey: story.key,
-        ...payload,
-      });
-    },
-    [gameKey, repo],
-  );
 
   useEffect(() => {
     if (story)
-      createStoryProgress(story).then((progress) =>
+      getOrCreateStoryProgress(story).then((progress) =>
         setStoryProgress(progress ?? null),
       );
-  }, [createStoryProgress, story]);
+  }, [getOrCreateStoryProgress, story]);
 
   if (
     story === undefined ||

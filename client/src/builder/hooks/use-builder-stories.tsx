@@ -1,8 +1,8 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
 import { OnSubmitStoryFormProps } from "../components/story-form/story-form-dialog";
-import { getBuilderService } from "@/services/builder-service";
 import { toast } from "@/design-system/primitives";
+import { getBuilderService } from "@/services/builder";
 
 export const useBuilderStories = () => {
   const navigate = useNavigate();

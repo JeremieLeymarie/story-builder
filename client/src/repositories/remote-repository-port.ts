@@ -1,4 +1,4 @@
-import { Scene, Story, User } from "@/lib/storage/domain";
+import { Scene, Story, StoryProgress, User } from "@/lib/storage/domain";
 
 export type RemoteRepositoryResponse<TData = unknown> =
   | {
@@ -45,4 +45,9 @@ export type RemoteRepositoryPort = {
   downloadStory: (
     storyKey: string,
   ) => Promise<RemoteRepositoryResponse<{ story: Story; scenes: Scene[] }>>;
+
+  saveStoryProgress: (
+    storyProgress: StoryProgress,
+    userKey: string,
+  ) => Promise<RemoteRepositoryResponse<StoryProgress>>;
 };

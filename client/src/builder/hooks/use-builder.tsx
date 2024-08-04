@@ -3,7 +3,7 @@ import { useNodesState, useEdgesState, Node } from "reactflow";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
 import { useBuilderEdges } from "./use-builder-edges";
 import { Scene, Story } from "@/lib/storage/domain";
-import { getBuilderService } from "@/services/builder-service";
+import { getBuilderService } from "@/services/builder";
 
 export const useBuilder = ({
   scenes,

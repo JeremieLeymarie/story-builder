@@ -46,6 +46,20 @@ const indexedDBRepository: LocalRepositoryPort = {
     return (await db.stories.get(key)) ?? null;
   },
 
+  getStories: async () => {
+    const result = await db.stories.toArray();
+
+    return result ?? null;
+  },
+
+  getStoriesByAuthor: async (userKey) => {
+    const stories = await db.stories
+      .filter((story) => story.author?.key === userKey)
+      .toArray();
+
+    return stories ?? null;
+  },
+
   getGames: async () => {
     const user = await getUser();
     return await db.stories
@@ -65,10 +79,6 @@ const indexedDBRepository: LocalRepositoryPort = {
     return (await db.stories.get(lastProgress.storyKey)) ?? null;
   },
 
-  getStories: async () => {
-    return await db.stories.toArray();
-  },
-
   updateStory: async (story) => {
     await db.stories.update(story.key, story);
     return story;
@@ -77,11 +87,9 @@ const indexedDBRepository: LocalRepositoryPort = {
   // SCENES
 
   updateFirstScene: async (storyKey, sceneKey) => {
-    const result = await db.stories.update(storyKey, {
+    await db.stories.update(storyKey, {
       firstSceneKey: sceneKey,
     });
-
-    return result > 0;
   },
 
   updateOrCreateScenes: async (scenes) => {
@@ -101,7 +109,7 @@ const indexedDBRepository: LocalRepositoryPort = {
     return keys;
   },
 
-  updateScene: async (key, scene) => {
+  updatePartialScene: async (key, scene) => {
     const result = await db.scenes.update(key, scene);
 
     return result > 0;
@@ -189,7 +197,12 @@ const indexedDBRepository: LocalRepositoryPort = {
   },
 
   updateStoryProgress: async (storyProgress) => {
-    await db.storyProgresses.update(storyProgress.key, storyProgress);
+    const result = await db.storyProgresses.update(
+      storyProgress.key,
+      storyProgress,
+    );
+
+    return result ? storyProgress : null;
   },
 
   createStoryProgress: async (storyProgress) => {

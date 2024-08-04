@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useCallback } from "react";
 import { Connection, Edge, Node, addEdge } from "reactflow";
 import { SceneProps } from "../types";
 import { nodeToSceneAdapter } from "../adapters";
-import { getBuilderService } from "@/services/builder-service";
+import { getBuilderService } from "@/services/builder";
 
 export const useBuilderEdges = ({
   sceneNodes,

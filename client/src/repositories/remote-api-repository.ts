@@ -82,6 +82,16 @@ const _getRemoteAPIRepository = (
 
       return { error: validationErrorToString(error) };
     },
+
+    saveStoryProgress: async (progress, userKey) => {
+      const { data, error } = await client.PATCH("/api/synchronize/progress", {
+        body: adapter.fromClient.storyProgress(progress, userKey),
+      });
+
+      if (data) return { data: progress };
+
+      return { error: validationErrorToString(error) };
+    },
   };
 };
 

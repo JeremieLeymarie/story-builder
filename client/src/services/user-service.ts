@@ -68,6 +68,37 @@ const _getUserService = ({
     getCurrentUser: async () => {
       return await localRepository.getUser();
     },
+
+    getLibraryData: async () => {
+      const stories = await localRepository.getStories();
+      const user = await localRepository.getUser();
+
+      const userStories = stories?.filter(
+        (story) => story.author?.key === user?.key,
+      );
+      const storiesFromStore = stories?.filter(
+        (story) => story.author?.key !== user?.key,
+      );
+
+      const finishedGameKeys = await localRepository.getFinishedGameKeys();
+
+      return { userStories, storiesFromStore, finishedGameKeys };
+    },
+
+    getLibraryDetailData: async (storyKey: string) => {
+      const story = await localRepository.getStory(storyKey);
+      const progress = await localRepository.getStoryProgress(storyKey);
+
+      if (!progress) {
+        return { story, progress };
+      }
+
+      const lastScene = await localRepository.getScene(
+        progress?.currentSceneKey,
+      );
+
+      return { story, progress, lastScene };
+    },
   };
 };
 
