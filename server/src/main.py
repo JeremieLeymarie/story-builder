@@ -111,6 +111,7 @@ async def publish_in_store(body: FullStoryBuilderRequest):
 
 
 # SYNCHRONIZATION ENDPOINTS
+# TODO: what to do with these endpoints
 
 
 @app.get(

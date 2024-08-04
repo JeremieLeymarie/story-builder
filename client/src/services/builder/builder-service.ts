@@ -173,7 +173,6 @@ export const _getBuilderService = ({
 
     updateStory: async (story: Story) => {
       const user = await localRepository.getUser();
-
       await localRepository.updateStory({
         ...story,
         ...(user && { author: { key: user.key, username: user.username } }),
