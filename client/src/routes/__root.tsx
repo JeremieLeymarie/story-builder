@@ -11,6 +11,8 @@ const Component = () => {
   const user = useLiveQuery(getUserService().getCurrentUser);
   const { state, load, save } = useSync();
 
+  // TODO: try to sync unsynchronized entities
+
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <div className="relative flex h-screen w-screen flex-col overflow-x-hidden">

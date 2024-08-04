@@ -148,9 +148,8 @@ const _getBuilderService = ({
 
     addScene: async (scene: WithoutKey<Scene>) => {
       await localRepository.createScene(scene);
-      const result = await localRepository.createScene(scene);
 
-      return result;
+      return scene;
     },
 
     updateStory: async (story: Story) => {

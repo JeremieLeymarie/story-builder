@@ -38,6 +38,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+<<<<<<< HEAD
+=======
+    "/api/builder/save/game": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Save Builder State */
+        put: operations["API-save_builder_state"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+>>>>>>> 719c639 (:recycle: wip - sync refacto - use effects to trigger synchronization)
     "/api/store/load": {
         parameters: {
             query?: never;
