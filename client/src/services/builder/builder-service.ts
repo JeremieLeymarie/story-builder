@@ -226,6 +226,21 @@ export const _getBuilderService = ({
         },
       );
     },
+
+    getBuilderData: async (storyKey: string) => {
+      const story = await localRepository.getStory(storyKey);
+      const scenes = await localRepository.getScenes(storyKey);
+
+      return { story, scenes };
+    },
+
+    getBuilderStories: async () => {
+      const user = await localRepository.getUser();
+
+      const stories = await localRepository.getStoriesByAuthor(user?.key);
+
+      return stories;
+    },
   };
 };
 
