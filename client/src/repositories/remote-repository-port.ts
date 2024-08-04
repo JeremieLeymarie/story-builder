@@ -7,24 +7,13 @@ export type RemoteRepositoryResponse<TData = unknown> =
     }
   | { data?: never; error: string };
 
+type StandardAPIResponse = { message?: string | null; success: boolean };
+
 export type RemoteRepositoryPort = {
-  updatePartialScene: (
-    key: string,
-    scene: Partial<Scene>,
-  ) => Promise<RemoteRepositoryResponse<Scene>>;
-
-  updateOrCreateStory: (
-    story: Story,
-  ) => Promise<RemoteRepositoryResponse<Story>>;
-
-  updateOrCreateScene: (
-    scene: Scene,
-  ) => Promise<RemoteRepositoryResponse<Story>>;
-
-  updateOrCreateFullStory: (
+  saveStory: (
     story: Story,
     scenes: Scene[],
-  ) => Promise<RemoteRepositoryResponse<{ story: Story; scenes: Scene[] }>>;
+  ) => Promise<RemoteRepositoryResponse<StandardAPIResponse>>;
 
   publishStory: (
     scenes: Scene[],

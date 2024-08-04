@@ -46,9 +46,9 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put?: never;
         /** Save Builder State */
-        post: operations["API-save_builder_state"];
+        put: operations["API-save_builder_state"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;

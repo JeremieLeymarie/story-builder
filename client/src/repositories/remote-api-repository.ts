@@ -6,10 +6,16 @@ import { User } from "@/lib/storage/domain";
 
 const UNKNOWN_ERROR = "Unknown API Error";
 
-const validationErrorToString = (error: {
-  detail?: components["schemas"]["ValidationError"][];
-}) => {
-  return error.detail?.[0]?.msg ?? UNKNOWN_ERROR;
+const parseError = (
+  error:
+    | {
+        detail?: components["schemas"]["ValidationError"][];
+      }
+    | string,
+) => {
+  return typeof error === "string"
+    ? error
+    : error.detail?.[0]?.msg ?? UNKNOWN_ERROR;
 };
 
 // TODO: handle other errors that validation errors
@@ -25,23 +31,18 @@ const _getRemoteAPIRepository = (
       if (response.data) {
         return { data: adapter.fromAPI.story(response.data) };
       }
-      return { error: validationErrorToString(response.error) };
+      return { error: parseError(response.error) };
     },
 
-    updateOrCreateStory: async (story) => {
-      throw new Error("not implemented");
-    },
+    saveStory: async (story, scenes) => {
+      const { data, error } = await client.PUT("/api/builder/save/game", {
+        body: { story: adapter.fromClient.story(story), scenes },
+      });
 
-    updateOrCreateFullStory: async (story, scenes) => {
-      throw new Error("not implemented");
-    },
-
-    updateOrCreateScene: async (scene) => {
-      throw new Error("not implemented");
-    },
-
-    updatePartialScene: async (key, scene) => {
-      throw new Error("not implemented");
+      if (data) {
+        return { data };
+      }
+      return { error: parseError(error) };
     },
 
     login: async (usernameOrEmail, password) => {
@@ -51,7 +52,7 @@ const _getRemoteAPIRepository = (
 
       if (response.data) return response;
 
-      return { error: validationErrorToString(response.error) };
+      return { error: parseError(response.error) };
     },
 
     register: async (user: User & { password: string }) => {
@@ -61,7 +62,7 @@ const _getRemoteAPIRepository = (
 
       if (response.data) return response;
 
-      return { error: validationErrorToString(response.error) };
+      return { error: parseError(response.error) };
     },
 
     getStoreItems: async () => {
@@ -80,7 +81,7 @@ const _getRemoteAPIRepository = (
 
       if (data) return { data: adapter.fromAPI.fullStory(data) };
 
-      return { error: validationErrorToString(error) };
+      return { error: parseError(error) };
     },
 
     saveStoryProgress: async (progress, userKey) => {
@@ -90,7 +91,7 @@ const _getRemoteAPIRepository = (
 
       if (data) return { data: progress };
 
-      return { error: validationErrorToString(error) };
+      return { error: parseError(error) };
     },
   };
 };

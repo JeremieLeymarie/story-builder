@@ -1,16 +1,9 @@
 import { Button } from "@/design-system/primitives";
-import { BookOpenTextIcon, SaveIcon, TestTubesIcon } from "lucide-react";
+import { BookOpenTextIcon, TestTubesIcon } from "lucide-react";
 import { SceneEditor } from "./editors/scene-editor";
 import { useToolbar } from "../hooks/use-toolbar";
-import { AuthModalForm } from "@/auth-modal-form";
 import { StoryPublisher } from "./story-publisher";
 import { ExportModal } from "./export-modal";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/design-system/primitives/tooltip";
 import { Scene, Story } from "@/lib/storage/domain";
 import { getBuilderService } from "@/services/builder";
 
@@ -19,8 +12,7 @@ type Props = {
   scenes: Scene[];
 };
 export const Toolbar = ({ story, scenes }: Props) => {
-  const { synchronize, isAuthModalOpen, setIsAuthModalOpen, testStory } =
-    useToolbar({ storyKey: story.key });
+  const { testStory } = useToolbar({ storyKey: story.key });
 
   // Maybe we could use Navigation Menu for this component at some point
   return (
@@ -47,38 +39,9 @@ export const Toolbar = ({ story, scenes }: Props) => {
         <Button variant="outline" className="w-full" onClick={testStory}>
           <TestTubesIcon size="16px" /> &nbsp; Test
         </Button>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={synchronize}
-                disabled={story.status === "published"}
-              >
-                <SaveIcon size="16px" /> &nbsp; Save
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              Save your progress on all your devices and browsers.
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
         <StoryPublisher story={story} scenes={scenes} />
         <ExportModal story={story} scenes={scenes} />
       </div>
-      <AuthModalForm
-        open={isAuthModalOpen}
-        setOpen={setIsAuthModalOpen}
-        onSuccess={() => {
-          setIsAuthModalOpen(false);
-          synchronize();
-        }}
-        onError={(err) => {
-          setIsAuthModalOpen(false);
-          console.error(`Error in AuthModal: ${err}`);
-        }}
-      />
     </div>
   );
 };

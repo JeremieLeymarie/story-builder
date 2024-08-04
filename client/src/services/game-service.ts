@@ -39,10 +39,6 @@ const _getGameService = ({
         lastPlayedAt: new Date(),
         ...(!sceneActions.length && { finished: true }),
       });
-
-      performSync(["story-progress"], () => {
-        remoteRepository.saveStoryProgress(progress, user.key);
-      });
     },
 
     getOrCreateStoryProgress: async (story: Story) => {
@@ -65,13 +61,6 @@ const _getGameService = ({
         storyKey: story.key,
         ...payload,
       });
-
-      const user = await localRepository.getUser();
-
-      if (createdProgress && user)
-        performSync(["story-progress"], () => {
-          remoteRepository.saveStoryProgress(createdProgress, user.key);
-        });
 
       return createdProgress;
     },
@@ -98,6 +87,15 @@ const _getGameService = ({
     getStoryProgress: async (storyKey: string) => {
       const storyProgress = await localRepository.getStoryProgress(storyKey);
       return storyProgress;
+    },
+
+    syncStoryProgress: async (progress: StoryProgress) => {
+      const user = await localRepository.getUser();
+
+      if (user)
+        performSync(["story-progress"], () => {
+          remoteRepository.saveStoryProgress(progress, user.key);
+        });
     },
   };
 };

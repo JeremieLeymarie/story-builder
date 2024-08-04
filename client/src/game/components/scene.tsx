@@ -1,21 +1,13 @@
 import { SceneAction } from "./scene-action";
 import { Button } from "@/design-system/primitives";
-import { BookUpIcon, LibraryBigIcon, SaveIcon } from "lucide-react";
-import { Button, toast } from "@/design-system/primitives";
-import { SaveIcon } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/design-system/primitives/tooltip";
+import { BookUpIcon, LibraryBigIcon } from "lucide-react";
+
 import { Scene } from "@/lib/storage/domain";
 import { Divider } from "@/design-system/components/divider";
 import { Link } from "@tanstack/react-router";
 
 type GameSceneProps = Omit<Scene, "key"> & {
   sceneKey: string;
-  saveProgress: () => void;
   isLastScene: boolean;
 };
 
@@ -24,22 +16,11 @@ export const GameScene = ({
   actions,
   content,
   storyKey,
-  saveProgress,
   isLastScene,
 }: GameSceneProps) => {
   return (
     <div className="p-4">
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger>
-            <Button variant="outline" onClick={() => saveProgress(progress)}>
-              <SaveIcon />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>Save your progress in the cloud</TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      <div className="flex w-full justify-center px-6 py-8">
+      <div className="w-full px-6 py-8">
         <div>
           <h1 className="scroll-m-20 text-3xl font-bold tracking-tight lg:text-4xl">
             {title}

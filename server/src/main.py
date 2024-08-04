@@ -74,7 +74,7 @@ async def create_user(data: CreateUserRequest):
 # BUILDER ENDPOINTS
 
 
-@app.post(
+@app.put(
     "/api/builder/save/game", status_code=HTTPStatus.OK, response_model=APIResponse
 )
 async def save_builder_state(body: FullStoryBuilderRequest):
@@ -125,6 +125,7 @@ async def publish_in_store(body: FullStoryBuilderRequest):
 
 
 # SYNCHRONIZATION ENDPOINTS
+# TODO: what to do with these endpoints
 
 
 @app.get(

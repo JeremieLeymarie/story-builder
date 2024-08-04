@@ -7,9 +7,10 @@ import { Navbar } from "@/navbar/navbar";
 import { getUserService } from "@/services";
 
 const Component = () => {
-  // TODO: Put this in a global store
   const user = useLiveQuery(getUserService().getCurrentUser);
   const { state, synchronize } = useSynchronization({ user });
+
+  // TODO: try to sync unsynchronized entities
 
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
