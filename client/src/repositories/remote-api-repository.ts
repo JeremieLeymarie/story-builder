@@ -112,6 +112,19 @@ const _getRemoteAPIRepository = (
 
       return { error: parseError(error) };
     },
+
+    getSynchronizationData: async (userKey: string) => {
+      const { data, error } = await client.GET("/api/synchronize/{user_key}", {
+        params: { path: { user_key: userKey } },
+      });
+
+      if (data)
+        return {
+          data: adapter.fromAPI.synchronizationData(data),
+        };
+
+      return { error: parseError(error) };
+    },
   };
 };
 

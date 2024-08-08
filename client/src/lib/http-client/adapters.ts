@@ -28,6 +28,7 @@ const fromAPIStoryAdapter = (story: components["schemas"]["Story"]): Story => {
       ? new Date(story.publicationDate)
       : undefined,
     creationDate: new Date(story.creationDate),
+    lastSyncAt: story.lastSyncAt ? new Date(story.lastSyncAt) : undefined,
   };
 };
 
@@ -72,6 +73,29 @@ const fromAPIFullStoriesAdapter = (
   );
 };
 
+const fromAPISynchronizationAdapter = (
+  synchronizationPayload: components["schemas"]["SynchronizationPayload"],
+): {
+  storyProgresses: StoryProgress[];
+  builderGames: (Story & { scenes: Scene[] })[];
+  playerGames: (Story & { scenes: Scene[] })[];
+} => {
+  return {
+    storyProgresses: fromAPIStoryProgressesAdapter(
+      synchronizationPayload.storyProgresses,
+    ),
+    builderGames:
+      synchronizationPayload.builderGames?.map((story) => ({
+        ...fromAPIStoryAdapter(story),
+        scenes: fromAPIScenesAdapter(story.scenes),
+      })) ?? [],
+    playerGames: synchronizationPayload.playerGames?.map((story) => ({
+      ...fromAPIStoryAdapter(story),
+      scenes: fromAPIScenesAdapter(story.scenes),
+    })),
+  };
+};
+
 const fromAPIStoryProgressAdapter = (
   storyProgress: components["schemas"]["StoryProgress"],
 ): StoryProgress => {
@@ -100,6 +124,7 @@ const fromClientStoryAdapter = (
       ? story.publicationDate.toISOString()
       : null,
     creationDate: story.creationDate.toISOString(),
+    lastSyncAt: story.lastSyncAt ? story.lastSyncAt.toISOString() : undefined,
   };
 };
 
@@ -148,6 +173,7 @@ export const adapter = {
     action: fromAPIActionAdapter,
     storyProgresses: fromAPIStoryProgressesAdapter,
     storyProgress: fromAPIStoryProgressAdapter,
+    synchronizationData: fromAPISynchronizationAdapter,
   },
   fromClient: {
     fullStory: fromClientFullStoryAdapter,

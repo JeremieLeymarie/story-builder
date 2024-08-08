@@ -55,7 +55,6 @@ export type LocalRepositoryPort = {
   updateUser: (user: User) => Promise<User>;
   deleteUser: (key: string) => Promise<boolean>;
 
-  // OTHER
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   unitOfWork: <TWork extends (...args: any[]) => any>(
     work: TWork,

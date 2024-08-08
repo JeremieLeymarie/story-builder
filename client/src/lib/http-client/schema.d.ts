@@ -227,6 +227,8 @@ export interface components {
             creationDate: string;
             /** Firstscenekey */
             firstSceneKey: string;
+            /** Lastsyncat */
+            lastSyncAt?: string | null;
             /** Scenes */
             scenes: components["schemas"]["Scene-Output"][];
         };
@@ -296,6 +298,8 @@ export interface components {
             creationDate: string;
             /** Firstscenekey */
             firstSceneKey: string;
+            /** Lastsyncat */
+            lastSyncAt?: string | null;
         };
         /** StoryAuthor */
         StoryAuthor: {
@@ -331,6 +335,8 @@ export interface components {
 >>>>>>> fdc8c87 (:construction: synchronize in game)
             /** Storykey */
             storyKey: string;
+            /** Lastsyncat */
+            lastSyncAt?: string | null;
         };
         /**
          * StoryStatus
