@@ -73,6 +73,29 @@ const fromAPIFullStoriesAdapter = (
   );
 };
 
+const fromAPISynchronizationAdapter = (
+  synchronizationPayload: components["schemas"]["SynchronizationPayload"],
+): {
+  storyProgresses: StoryProgress[];
+  builderGames: (Story & { scenes: Scene[] })[];
+  playerGames: (Story & { scenes: Scene[] })[];
+} => {
+  return {
+    storyProgresses: fromAPIStoryProgressesAdapter(
+      synchronizationPayload.storyProgresses,
+    ),
+    builderGames:
+      synchronizationPayload.builderGames?.map((story) => ({
+        ...fromAPIStoryAdapter(story),
+        scenes: fromAPIScenesAdapter(story.scenes),
+      })) ?? [],
+    playerGames: synchronizationPayload.playerGames?.map((story) => ({
+      ...fromAPIStoryAdapter(story),
+      scenes: fromAPIScenesAdapter(story.scenes),
+    })),
+  };
+};
+
 const fromAPIStoryProgressAdapter = (
   storyProgress: components["schemas"]["StoryProgress"],
 ): StoryProgress => {
@@ -150,6 +173,7 @@ export const adapter = {
     action: fromAPIActionAdapter,
     storyProgresses: fromAPIStoryProgressesAdapter,
     storyProgress: fromAPIStoryProgressAdapter,
+    synchronizationData: fromAPISynchronizationAdapter,
   },
   fromClient: {
     fullStory: fromClientFullStoryAdapter,

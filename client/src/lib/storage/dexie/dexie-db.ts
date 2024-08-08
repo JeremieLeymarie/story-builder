@@ -9,6 +9,8 @@ export const db = new Dexie("story-builder") as Dexie & {
   stories: EntityTable<Story, "key">;
   scenes: EntityTable<Scene, "key">;
   storyProgresses: EntityTable<StoryProgress, "key">;
+  storyConflicts: EntityTable<Story & { scenes: Scene[] }, "key">;
+  storyProgressConflicts: EntityTable<StoryProgress, "key">;
 };
 
 db.version(1).stores({
@@ -18,6 +20,8 @@ db.version(1).stores({
   scenes: "&key, storyKey, title, content, actions, builderParams",
   storyProgresses:
     "&key, storyKey, currentSceneKey, character, inventory, history, lastPlayedAt",
+  storyConflicts: "&key",
+  storyProgressConflicts: "&key",
 });
 
 // Register nanoid middleware

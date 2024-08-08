@@ -8,6 +8,6 @@ export const useSyncStoryProgress = ({
   progress: StoryProgress;
 }) => {
   useEffect(() => {
-    getGameService().syncStoryProgress(progress);
+    getGameService().saveStoryProgress(progress);
   }, [progress]);
 };

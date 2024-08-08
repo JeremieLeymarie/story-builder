@@ -335,10 +335,13 @@ export interface components {
             storyKey: string;
             /** Lastsyncat */
             lastSyncAt?: string | null;
+<<<<<<< HEAD
 =======
             /** Storykey */
             storyKey: string;
 >>>>>>> fdc8c87 (:construction: synchronize in game)
+=======
+>>>>>>> 7a269af (:recycle: wip - sync refacto)
         };
         /**
          * StoryStatus
