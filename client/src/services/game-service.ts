@@ -89,12 +89,15 @@ const _getGameService = ({
       return storyProgress;
     },
 
-    syncStoryProgress: async (progress: StoryProgress) => {
+    saveStoryProgress: async (progress: StoryProgress) => {
       const user = await localRepository.getUser();
 
       if (user)
         performSync(["story-progress"], () => {
-          remoteRepository.saveStoryProgress(progress, user.key);
+          remoteRepository.saveStoryProgress(
+            { ...progress, lastSyncAt: new Date() },
+            user.key,
+          );
         });
     },
   };

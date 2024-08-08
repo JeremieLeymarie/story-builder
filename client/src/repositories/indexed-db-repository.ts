@@ -1,11 +1,24 @@
 import { WithoutKey } from "@/types";
-import { Scene, Story, User } from "../lib/storage/domain";
+import { Entity, Scene, Story, User } from "../lib/storage/domain";
 import { db } from "../lib/storage/dexie/dexie-db";
 import { LocalRepositoryPort } from "./local-repository-port";
 
 const getUser = async () => {
   // There should always be maximum one user in local database
   return ((await db.user.toArray())?.[0] ?? null) as User | null;
+};
+
+const entityToDexieTableAdapter = (entity: Entity) => {
+  const mapping = {
+    story: "stories",
+    scene: "scenes",
+    user: "user",
+    "story-progress": "storyProgresses",
+    "story-conflict": "storyConflicts",
+    "story-progress-conflict": "storyProgressConflicts",
+  };
+
+  return mapping[entity];
 };
 
 const indexedDBRepository: LocalRepositoryPort = {
@@ -52,12 +65,28 @@ const indexedDBRepository: LocalRepositoryPort = {
     return result ?? null;
   },
 
+  getStoriesByKeys: async (keys) => {
+    return await db.stories
+      .filter((story) => keys.includes(story.key))
+      .toArray();
+  },
+
   getStoriesByAuthor: async (userKey) => {
     const stories = await db.stories
       .filter((story) => story.author?.key === userKey)
       .toArray();
 
     return stories ?? null;
+  },
+
+  // STORY CONFLICTS
+
+  createStoryConflicts: async (stories) => {
+    return await db.storyConflicts.bulkAdd(stories, { allKeys: true });
+  },
+
+  deleteStoryConflicts: async (keys) => {
+    await db.storyConflicts.bulkDelete(keys);
   },
 
   getGames: async () => {
@@ -208,6 +237,26 @@ const indexedDBRepository: LocalRepositoryPort = {
   createStoryProgress: async (storyProgress) => {
     const key = await db.storyProgresses.add(storyProgress);
     return { ...storyProgress, key };
+  },
+
+  // STORY PROGRESS CONFLICTS
+
+  createStoryProgressConflicts: async (progresses) => {
+    return await db.storyProgressConflicts.bulkAdd(progresses, {
+      allKeys: true,
+    });
+  },
+
+  deleteStoryProgressConflicts: async (keys) => {
+    await db.storyProgressConflicts.bulkDelete(keys);
+  },
+
+  // OTHER
+  unitOfWork: (work, { mode, entities }) => {
+    const tables = entities.map(entityToDexieTableAdapter);
+    return db.transaction(mode ?? "readwrite", tables, work) as ReturnType<
+      typeof work
+    >;
   },
 };
 

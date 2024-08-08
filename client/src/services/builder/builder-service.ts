@@ -7,6 +7,7 @@ import { getLocalRepository } from "@/repositories/indexed-db-repository";
 import { getRemoteAPIRepository } from "@/repositories/remote-api-repository";
 import { fullStorySchema } from "./schemas";
 import Dexie from "dexie";
+import dayjs from "dayjs";
 
 const _getBuilderService = ({
   localRepository,
@@ -185,8 +186,81 @@ const _getBuilderService = ({
       return stories;
     },
 
-    syncBuilder: async (story: Story, scenes: Scene[]) => {
-      performSync(["story"], () => remoteRepository.saveStory(story, scenes));
+    saveBuilderState: async (story: Story, scenes: Scene[]) => {
+      const lastSyncAt = new Date();
+      const { data, error } = await performSync(["story"], () =>
+        remoteRepository.saveStory({ ...story, lastSyncAt }, scenes),
+      );
+
+      if (data) {
+        // This is stupid, the flow goes:
+        // 1. on any local update of stories or scenes, update remote
+        // 2. if remote update is successful, update
+        localRepository.updateStory({ ...story, lastSyncAt });
+      }
+    },
+
+    // TODO: TEST THIS IMPORTANT FUNCTION!
+    syncBuilderState: async (
+      remoteStories: (Story & { scenes: Scene[] })[],
+    ) => {
+      const localStories = await localRepository.getStoriesByKeys(
+        remoteStories.map(({ key }) => key),
+      );
+      const localStoriesByKey = localStories.reduce(
+        (acc, story) => ({
+          ...acc,
+          [story.key]: story,
+        }),
+        {} as Record<string, Story>,
+      );
+
+      // TODO: when and how to update lastSyncAt ???
+      const { conflicts, others } = remoteStories.reduce(
+        (acc, story) => {
+          const localStory = localStoriesByKey[story.key];
+          if (!localStory) {
+            return { ...acc, others: [...acc.others, story] };
+          }
+
+          if (
+            dayjs(story.lastSyncAt).isAfter(localStory.lastSyncAt) ||
+            (localStory.lastSyncAt === undefined &&
+              story.lastSyncAt !== undefined)
+          ) {
+            return { ...acc, conflicts: [...acc.conflicts, story] };
+          }
+
+          return { ...acc, others: [...acc.others, story] };
+        },
+        { conflicts: [], others: [] } as {
+          conflicts: (Story & { scenes: Scene[] })[];
+          others: (Story & { scenes: Scene[] })[];
+        },
+      );
+
+      const { storiesToUpdate, scenesToUpdate } = others.reduce(
+        (acc, story) => ({
+          storiesToUpdate: [...acc.storiesToUpdate, story],
+          scenesToUpdate: [...acc.scenesToUpdate, ...story.scenes],
+        }),
+        { storiesToUpdate: [], scenesToUpdate: [] } as {
+          storiesToUpdate: Story[];
+          scenesToUpdate: Scene[];
+        },
+      );
+
+      await localRepository.unitOfWork(
+        async () => {
+          await localRepository.createStoryConflicts(conflicts);
+          await localRepository.updateOrCreateStories(storiesToUpdate);
+          await localRepository.updateOrCreateScenes(scenesToUpdate);
+        },
+        {
+          mode: "readwrite",
+          entities: ["scene", "story", "story-conflict"],
+        },
+      );
     },
   };
 };

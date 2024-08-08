@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { SYNCHRO_DATETIME_KEY } from "./use-synchronization";
+import { SYNCHRO_DATETIME_KEY } from "./use-synchronization-old";
 import { timeFrom } from "@/lib/date";
 
 export const useTimeFromLastSync = () => {

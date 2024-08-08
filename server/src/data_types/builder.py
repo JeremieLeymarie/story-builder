@@ -42,6 +42,7 @@ class Story(BaseModel, use_enum_values=True):
     publicationDate: Optional[str] = None
     creationDate: str
     firstSceneKey: str
+    lastSyncAt: Optional[str] = None
 
 
 class Action(BaseModel):

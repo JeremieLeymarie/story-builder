@@ -8,14 +8,14 @@ import { getUserService } from "@/services";
 
 const Component = () => {
   const user = useLiveQuery(getUserService().getCurrentUser);
-  const { state, synchronize } = useSynchronization({ user });
+  // const { state, synchronize } = useSynchronization({ user });
 
   // TODO: try to sync unsynchronized entities
 
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <div className="flex h-screen w-screen flex-col overflow-x-hidden">
-        <Navbar syncState={state} user={user} synchronize={synchronize} />
+        <Navbar user={user} />
         <div className="w-full flex-1">
           <Outlet />
         </div>

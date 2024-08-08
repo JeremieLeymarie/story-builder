@@ -1,6 +1,13 @@
 import { WithoutKey } from "@/types";
-import { Story, Scene, StoryProgress, User } from "../lib/storage/domain";
+import {
+  Story,
+  Scene,
+  StoryProgress,
+  User,
+  Entity,
+} from "../lib/storage/domain";
 
+// TODO: Decide once and for all if we "| null" everywhere or not
 export type LocalRepositoryPort = {
   createStory: (story: Story | WithoutKey<Story>) => Promise<Story | null>;
   createStoryWithFirstScene: (props: {
@@ -11,6 +18,7 @@ export type LocalRepositoryPort = {
   updateStory: (story: Story) => Promise<Story>;
   getStory: (key: string) => Promise<Story | null>;
   getStories: () => Promise<Story[] | null>;
+  getStoriesByKeys: (keys: string[]) => Promise<Story[]>;
   getStoriesByAuthor: (userKey?: string) => Promise<Story[] | null>;
   getGames: () => Promise<Story[]>;
   getLastGamePlayed: () => Promise<Story | null>;
@@ -46,4 +54,11 @@ export type LocalRepositoryPort = {
   createUser: (user: WithoutKey<User>) => Promise<User>;
   updateUser: (user: User) => Promise<User>;
   deleteUser: (key: string) => Promise<boolean>;
+
+  // OTHER
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  unitOfWork: <TWork extends (...args: any[]) => any>(
+    work: TWork,
+    options: { mode?: "readwrite" | "readonly"; entities: Entity[] },
+  ) => ReturnType<TWork>;
 };

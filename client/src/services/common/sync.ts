@@ -1,4 +1,4 @@
-import { Entity } from "@/lib/storage/domain";
+import { SyncableEntity, User } from "@/lib/storage/domain";
 import { LocalRepositoryPort } from "@/repositories/local-repository-port";
 import { RemoteRepositoryResponse } from "@/repositories/remote-repository-port";
 
@@ -8,7 +8,7 @@ export const isOnline = () => {
   return navigator.onLine;
 };
 
-export const registerUnsyncEntities = (entitiesToAdd: Entity[]) => {
+export const registerUnsyncEntities = (entitiesToAdd: SyncableEntity[]) => {
   const entities = new Set(
     JSON.parse(localStorage.getItem(LOCAL_STORAGE_SYNC_KEY) ?? "[]"),
   );
@@ -16,6 +16,18 @@ export const registerUnsyncEntities = (entitiesToAdd: Entity[]) => {
 
   localStorage.setItem(LOCAL_STORAGE_SYNC_KEY, JSON.stringify([...entities]));
   window.dispatchEvent(new StorageEvent("local-storage"));
+};
+
+export const checkCanPerformSync = (user: User | null) => {
+  if (!isOnline()) {
+    return { error: "Network unreachable", canSync: false };
+  }
+
+  if (!user) {
+    return { error: "User not logged in", canSync: false };
+  }
+
+  return { canSync: true, error: undefined };
 };
 
 export const makePerformSync = (localRepository: LocalRepositoryPort) => {
@@ -26,19 +38,15 @@ export const makePerformSync = (localRepository: LocalRepositoryPort) => {
    * @returns A object containing the error or data
    */
   const _performSync = async <TFunc extends () => unknown>(
-    entities: Entity[],
+    entities: SyncableEntity[],
     fn: TFunc,
   ) => {
     const user = await localRepository.getUser();
+    const { canSync, error } = await checkCanPerformSync(user);
 
-    if (!isOnline()) {
+    if (!canSync) {
       registerUnsyncEntities(entities);
-      return { error: "Network unreachable", data: undefined };
-    }
-
-    if (!user) {
-      registerUnsyncEntities(entities);
-      return { error: "User not logged in", data: undefined };
+      return { error, data: undefined };
     }
 
     const response = await fn();

@@ -39,4 +39,12 @@ export type RemoteRepositoryPort = {
     storyProgress: StoryProgress,
     userKey: string,
   ) => Promise<RemoteRepositoryResponse<StoryProgress>>;
+
+  getSynchronizationData: (userKey: string) => Promise<
+    RemoteRepositoryResponse<{
+      playerGames: (Story & { scenes: Scene[] })[];
+      builderGames: (Story & { scenes: Scene[] })[];
+      storyProgresses: StoryProgress[];
+    }>
+  >;
 };

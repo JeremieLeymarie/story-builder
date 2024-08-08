@@ -10,6 +10,6 @@ export const useSyncBuilder = ({
   scenes: Scene[];
 }) => {
   useEffect(() => {
-    getBuilderService().syncBuilder(story, scenes);
+    getBuilderService().saveBuilderState(story, scenes);
   }, [story, scenes]);
 };
