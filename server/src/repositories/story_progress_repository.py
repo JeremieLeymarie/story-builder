@@ -1,8 +1,11 @@
 from bson import ObjectId
-from pymongo import ReturnDocument
+from pymongo import ReturnDocument, UpdateOne
 from repositories.mongo_repository import MongoRepository
 from repositories.story_progress_repository_port import StoryProgressRepositoryPort
 from data_types.game import StoryProgress
+
+
+STORY_PROGRESS_COLLECTION = "storyProgresses"
 
 
 class StoryProgressRepository(MongoRepository, StoryProgressRepositoryPort):
@@ -17,7 +20,7 @@ class StoryProgressRepository(MongoRepository, StoryProgressRepositoryPort):
         return progresses
 
     def save(self, story_progress: StoryProgress) -> StoryProgress:
-        progress = self.db.storyProgresses.find_one_and_update(
+        progress = self.db[STORY_PROGRESS_COLLECTION].find_one_and_update(
             {"key": story_progress.key},
             {"$set": story_progress.model_dump(mode="json")},
             upsert=True,
@@ -25,3 +28,18 @@ class StoryProgressRepository(MongoRepository, StoryProgressRepositoryPort):
         )
 
         return progress
+
+    def save_all(self, story_progresses: list[StoryProgress]) -> list[StoryProgress]:
+
+        self.db[STORY_PROGRESS_COLLECTION].bulk_write(
+            [
+                UpdateOne(
+                    {"key": progress.key},
+                    progress.model_dump(mode="json"),
+                    upsert=True,
+                )
+                for progress in story_progresses
+            ]
+        )
+
+        return story_progresses

@@ -73,29 +73,6 @@ const fromAPIFullStoriesAdapter = (
   );
 };
 
-const fromAPISynchronizationAdapter = (
-  synchronizationPayload: components["schemas"]["SynchronizationPayload"],
-): {
-  storyProgresses: StoryProgress[];
-  builderGames: (Story & { scenes: Scene[] })[];
-  playerGames: (Story & { scenes: Scene[] })[];
-} => {
-  return {
-    storyProgresses: fromAPIStoryProgressesAdapter(
-      synchronizationPayload.storyProgresses,
-    ),
-    builderGames:
-      synchronizationPayload.builderGames?.map((story) => ({
-        ...fromAPIStoryAdapter(story),
-        scenes: fromAPIScenesAdapter(story.scenes),
-      })) ?? [],
-    playerGames: synchronizationPayload.playerGames?.map((story) => ({
-      ...fromAPIStoryAdapter(story),
-      scenes: fromAPIScenesAdapter(story.scenes),
-    })),
-  };
-};
-
 const fromAPIStoryProgressAdapter = (
   storyProgress: components["schemas"]["StoryProgress"],
 ): StoryProgress => {
@@ -130,6 +107,10 @@ const fromClientStoryAdapter = (
   };
 };
 
+const fromClientStoriesAdapter = (
+  stories: Story[],
+): components["schemas"]["Story"][] => stories.map(fromClientStoryAdapter);
+
 const fromClientFullStoryAdapter = (
   story: Story,
   scenes: Scene[],
@@ -152,6 +133,14 @@ const fromClientStoryProgressAdapter = (
   };
 };
 
+const fromClientStoryProgressesAdapter = (
+  storyProgresses: StoryProgress[],
+  userKey: string,
+) =>
+  storyProgresses.map((progress) =>
+    fromClientStoryProgressAdapter(progress, userKey),
+  );
+
 export const adapter = {
   fromAPI: {
     fullStories: fromAPIFullStoriesAdapter,
@@ -164,11 +153,12 @@ export const adapter = {
     action: fromAPIActionAdapter,
     storyProgresses: fromAPIStoryProgressesAdapter,
     storyProgress: fromAPIStoryProgressAdapter,
-    synchronizationData: fromAPISynchronizationAdapter,
   },
   fromClient: {
     fullStory: fromClientFullStoryAdapter,
+    stories: fromClientStoriesAdapter,
     story: fromClientStoryAdapter,
+    storyProgresses: fromClientStoryProgressesAdapter,
     storyProgress: fromClientStoryProgressAdapter,
   },
 };

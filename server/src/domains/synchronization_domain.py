@@ -5,6 +5,7 @@ from repositories.story_progress_repository_port import StoryProgressRepositoryP
 from repositories.story_repository_port import StoryRepositoryPort
 from data_types.synchronization import SynchronizationPayload
 from data_types.game import StoryProgress
+from data_types.builder import FullStory, Scene, Story
 
 
 class SynchronizationDomain:
@@ -29,5 +30,22 @@ class SynchronizationDomain:
             storyProgresses=progresses,
         )
 
-    def synchronize_progress(self, story_progress: StoryProgress) -> StoryProgress:
-        return self.story_progress_repo.save(story_progress=story_progress)
+    def save_progresses(
+        self, story_progresses: list[StoryProgress]
+    ) -> list[StoryProgress]:
+        return self.story_progress_repo.save_all(story_progresses=story_progresses)
+
+    def save_builder_stories(
+        self, stories: list[Story], scenes: list[Scene]
+    ) -> list[FullStory]:
+        scenes_by_story_key: dict[str, list[Scene]] = {}
+        for scene in scenes:
+            scenes_by_story_key.setdefault(scene.storyKey, []).append(scene)
+
+        full_stories = [
+            FullStory(
+                **story.model_dump(mode="json"), scenes=scenes_by_story_key[story.key]
+            )
+            for story in stories
+        ]
+        return self.story_repo.save_all(stories=full_stories)

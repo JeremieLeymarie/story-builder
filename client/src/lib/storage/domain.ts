@@ -67,14 +67,7 @@ export type StoryProgress = {
   finished?: boolean;
 };
 
-export const ENTITIES = [
-  "story",
-  "scene",
-  "user",
-  "story-progress",
-  "story-conflict",
-  "story-progress-conflict",
-] as const;
+export const ENTITIES = ["story", "scene", "user", "story-progress"] as const;
 export type Entity = (typeof ENTITIES)[number];
 
 export const SYNCABLE_ENTITIES = ["story", "user", "story-progress"] as const;

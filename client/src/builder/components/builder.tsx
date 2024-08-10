@@ -8,7 +8,6 @@ import { SceneNode } from "../nodes/scene/scene";
 import { Toolbar } from "./toolbar";
 import { useBuilder } from "../hooks/use-builder";
 import { Scene, Story } from "@/lib/storage/domain";
-import { useSyncBuilder } from "../hooks/use-sync-builder";
 
 const nodeTypes = { scene: SceneNode };
 
@@ -24,8 +23,6 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
     onNodesChange,
     onEdgesDelete,
   } = useBuilder({ scenes, story });
-
-  useSyncBuilder({ story, scenes });
 
   return (
     <div className="flex h-full w-full border">

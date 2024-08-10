@@ -34,17 +34,6 @@ const _getRemoteAPIRepository = (
       return { error: parseError(response.error) };
     },
 
-    saveStory: async (story, scenes) => {
-      const { data, error } = await client.PUT("/api/builder/save/game", {
-        body: { story: adapter.fromClient.story(story), scenes },
-      });
-
-      if (data) {
-        return { data };
-      }
-      return { error: parseError(error) };
-    },
-
     login: async (usernameOrEmail, password) => {
       const response = await client.POST("/api/user/login", {
         body: { usernameOrEmail, password },
@@ -84,24 +73,41 @@ const _getRemoteAPIRepository = (
       return { error: parseError(error) };
     },
 
-    saveStoryProgress: async (progress, userKey) => {
-      const { data, error } = await client.PATCH("/api/synchronize/progress", {
-        body: adapter.fromClient.storyProgress(progress, userKey),
+    saveStoryProgresses: async (progresses, userKey) => {
+      const { data, error } = await client.PUT("/api/save/progresses", {
+        body: adapter.fromClient.storyProgresses(progresses, userKey),
       });
 
-      if (data) return { data: progress };
+      if (data) return { data: progresses };
 
       return { error: parseError(error) };
     },
 
+    saveStories: async (stories, scenes) => {
+      const { data, error } = await client.PUT("/api/save/builder", {
+        body: { stories: adapter.fromClient.stories(stories), scenes },
+      });
+
+      if (data) {
+        return { data };
+      }
+      return { error: parseError(error) };
+    },
+
     getSynchronizationData: async (userKey: string) => {
-      const { data, error } = await client.GET("/api/synchronize/{user_key}", {
+      const { data, error } = await client.GET("/api/load/{user_key}", {
         params: { path: { user_key: userKey } },
       });
 
       if (data)
         return {
-          data: adapter.fromAPI.synchronizationData(data),
+          data: {
+            builderGames: adapter.fromAPI.fullStories(data.builderGames ?? []),
+            playerGames: adapter.fromAPI.fullStories(data.playerGames),
+            storyProgresses: adapter.fromAPI.storyProgresses(
+              data.storyProgresses,
+            ),
+          },
         };
 
       return { error: parseError(error) };

@@ -79,16 +79,6 @@ const indexedDBRepository: LocalRepositoryPort = {
     return stories ?? null;
   },
 
-  // STORY CONFLICTS
-
-  createStoryConflicts: async (stories) => {
-    return await db.storyConflicts.bulkAdd(stories, { allKeys: true });
-  },
-
-  deleteStoryConflicts: async (keys) => {
-    await db.storyConflicts.bulkDelete(keys);
-  },
-
   getGames: async () => {
     const user = await getUser();
     return await db.stories
@@ -148,10 +138,12 @@ const indexedDBRepository: LocalRepositoryPort = {
     return (await db.scenes.get(key)) ?? null;
   },
 
-  getScenes: async (storyKey) => {
-    return await db.scenes
-      .filter((scene) => scene.storyKey === storyKey)
-      .toArray();
+  getScenes: async (storyKeys) => {
+    const predicate = Array.isArray(storyKeys)
+      ? (scene: Scene) => storyKeys.includes(scene.storyKey)
+      : (scene: Scene) => storyKeys === scene.storyKey;
+
+    return await db.scenes.filter(predicate).toArray();
   },
 
   addAuthorToStories: async (author) => {
@@ -237,18 +229,6 @@ const indexedDBRepository: LocalRepositoryPort = {
   createStoryProgress: async (storyProgress) => {
     const key = await db.storyProgresses.add(storyProgress);
     return { ...storyProgress, key };
-  },
-
-  // STORY PROGRESS CONFLICTS
-
-  createStoryProgressConflicts: async (progresses) => {
-    return await db.storyProgressConflicts.bulkAdd(progresses, {
-      allKeys: true,
-    });
-  },
-
-  deleteStoryProgressConflicts: async (keys) => {
-    await db.storyProgressConflicts.bulkDelete(keys);
   },
 
   // OTHER

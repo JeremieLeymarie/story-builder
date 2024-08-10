@@ -10,11 +10,6 @@ export type RemoteRepositoryResponse<TData = unknown> =
 type StandardAPIResponse = { message?: string | null; success: boolean };
 
 export type RemoteRepositoryPort = {
-  saveStory: (
-    story: Story,
-    scenes: Scene[],
-  ) => Promise<RemoteRepositoryResponse<StandardAPIResponse>>;
-
   publishStory: (
     scenes: Scene[],
     story: Story,
@@ -35,15 +30,20 @@ export type RemoteRepositoryPort = {
     storyKey: string,
   ) => Promise<RemoteRepositoryResponse<{ story: Story; scenes: Scene[] }>>;
 
-  saveStoryProgress: (
-    storyProgress: StoryProgress,
+  saveStoryProgresses: (
+    storyProgresses: StoryProgress[],
     userKey: string,
-  ) => Promise<RemoteRepositoryResponse<StoryProgress>>;
+  ) => Promise<RemoteRepositoryResponse<StoryProgress[]>>;
+
+  saveStories: (
+    stories: Story[],
+    scenes: Scene[],
+  ) => Promise<RemoteRepositoryResponse<StandardAPIResponse>>;
 
   getSynchronizationData: (userKey: string) => Promise<
     RemoteRepositoryResponse<{
-      playerGames: (Story & { scenes: Scene[] })[];
-      builderGames: (Story & { scenes: Scene[] })[];
+      playerGames: { stories: Story[]; scenes: Scene[] };
+      builderGames: { stories: Story[]; scenes: Scene[] };
       storyProgresses: StoryProgress[];
     }>
   >;

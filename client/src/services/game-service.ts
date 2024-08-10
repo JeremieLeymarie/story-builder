@@ -1,21 +1,11 @@
-import {
-  getLocalRepository,
-  getRemoteAPIRepository,
-  LocalRepositoryPort,
-  RemoteRepositoryPort,
-} from "@/repositories";
-import { makePerformSync } from "./common/sync";
-import { Action, Story, StoryProgress } from "@/lib/storage/domain";
+import { Action, Scene, Story, StoryProgress } from "@/lib/storage/domain";
+import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 
 const _getGameService = ({
   localRepository,
-  remoteRepository,
 }: {
   localRepository: LocalRepositoryPort;
-  remoteRepository: RemoteRepositoryPort;
 }) => {
-  const performSync = makePerformSync(localRepository);
-
   return {
     saveProgress: async (
       progress: StoryProgress,
@@ -89,16 +79,27 @@ const _getGameService = ({
       return storyProgress;
     },
 
-    saveStoryProgress: async (progress: StoryProgress) => {
-      const user = await localRepository.getUser();
+    loadGamesState: async ({
+      progresses,
+      libraryStories,
+    }: {
+      progresses: StoryProgress[];
+      libraryStories: { stories: Story[]; scenes: Scene[] };
+    }) => {
+      await localRepository.unitOfWork(
+        async () => {
+          await localRepository.updateOrCreateStoryProgresses(progresses);
+          await localRepository.updateOrCreateStories(libraryStories.stories);
+          await localRepository.updateOrCreateScenes(libraryStories.scenes);
+        },
+        { mode: "readwrite", entities: ["story", "scene"] },
+      );
+    },
 
-      if (user)
-        performSync(["story-progress"], () => {
-          remoteRepository.saveStoryProgress(
-            { ...progress, lastSyncAt: new Date() },
-            user.key,
-          );
-        });
+    getStoryProgresses: async () => {
+      const progresses = await localRepository.getStoryProgresses();
+
+      return progresses;
     },
   };
 };
@@ -106,5 +107,4 @@ const _getGameService = ({
 export const getGameService = () =>
   _getGameService({
     localRepository: getLocalRepository(),
-    remoteRepository: getRemoteAPIRepository(),
   });

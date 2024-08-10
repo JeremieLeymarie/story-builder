@@ -1,4 +1,4 @@
-from pymongo import ReturnDocument
+from pymongo import ReturnDocument, UpdateOne
 from data_types.builder import FullStory, Story, StoryStatus
 from repositories.story_repository_port import StoryRepositoryPort
 from repositories.mongo_repository import MongoRecord, MongoRepository
@@ -20,6 +20,21 @@ class StoryRepository(MongoRepository, StoryRepositoryPort):
         )
 
         return FullStory(**self.remove_mongo_id(record))
+
+    def save_all(self, stories: list[FullStory]) -> list[FullStory]:
+
+        self.db[STORY_COLLECTION].bulk_write(
+            [
+                UpdateOne(
+                    {"key": story.key},
+                    story.model_dump(mode="json"),
+                    upsert=True,
+                )
+                for story in stories
+            ]
+        )
+
+        return stories
 
     def get_all(
         self, *, with_scenes: bool = True, status: StoryStatus | None = None

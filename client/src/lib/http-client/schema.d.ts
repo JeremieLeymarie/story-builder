@@ -38,23 +38,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/builder/save/game": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Save Builder State */
-        put: operations["API-save_builder_state"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/store/load": {
         parameters: {
             query?: never;
@@ -106,7 +89,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/synchronize/{user_key}": {
+    "/api/load/{user_key}": {
         parameters: {
             query?: never;
             header?: never;
@@ -123,7 +106,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/synchronize/progress": {
+    "/api/save/progresses": {
         parameters: {
             query?: never;
             header?: never;
@@ -131,13 +114,30 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put?: never;
+        /** Synchronize Progresses */
+        put: operations["API-synchronize_progresses"];
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
-        /** Synchronize Progress */
-        patch: operations["API-synchronize_progress"];
+        patch?: never;
+        trace?: never;
+    };
+    "/api/save/builder": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Save Builder State */
+        put: operations["API-save_builder_state"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
 }
@@ -179,6 +179,13 @@ export interface components {
             password: string;
             /** Key */
             key: string;
+        };
+        /** FullStoriesRequest */
+        FullStoriesRequest: {
+            /** Stories */
+            stories: components["schemas"]["Story"][];
+            /** Scenes */
+            scenes: components["schemas"]["Scene-Input"][];
         };
         /** FullStory */
         FullStory: {
@@ -421,39 +428,6 @@ export interface operations {
             };
         };
     };
-    "API-save_builder_state": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["FullStoryBuilderRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
     "API-get_store_items": {
         parameters: {
             query?: never;
@@ -569,7 +543,7 @@ export interface operations {
             };
         };
     };
-    "API-synchronize_progress": {
+    "API-synchronize_progresses": {
         parameters: {
             query?: never;
             header?: never;
@@ -578,7 +552,40 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["StoryProgress"];
+                "application/json": components["schemas"]["StoryProgress"][];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    "API-save_builder_state": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FullStoriesRequest"];
             };
         };
         responses: {

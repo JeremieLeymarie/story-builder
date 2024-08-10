@@ -34,14 +34,7 @@ export const Component = () => {
 
   const { key, ...sceneWithoutKey } = scene;
 
-  return (
-    <GameScene
-      {...sceneWithoutKey}
-      sceneKey={key}
-      saveProgress={() => storyProgress && saveProgress(storyProgress)}
-      isLastScene={false}
-    />
-  );
+  return <GameScene {...sceneWithoutKey} sceneKey={key} isLastScene={false} />;
 };
 
 export const Route = createFileRoute("/game/$gameKey/")({

@@ -4,17 +4,28 @@ import {
   LocalRepositoryPort,
   RemoteRepositoryPort,
 } from "@/repositories";
-import { checkCanPerformSync } from "./common/sync";
+import { checkCanPerformSync, isOnline } from "./common/sync";
+import { getBuilderService } from "./builder";
+import { getGameService } from "./game-service";
+import { getUserService } from "./user-service";
 
 const _getSyncService = ({
   remoteRepository,
   localRepository,
+  builderService,
+  gameService,
+  userService,
 }: {
   remoteRepository: RemoteRepositoryPort;
   localRepository: LocalRepositoryPort;
+  // TODO: use ports
+  builderService: ReturnType<typeof getBuilderService>;
+  gameService: ReturnType<typeof getGameService>;
+  userService: ReturnType<typeof getUserService>;
 }) => {
   return {
-    getSynchronizationData: async () => {
+    // Load remote data into local data
+    load: async () => {
       const user = await localRepository.getUser();
       const { canSync, error } = checkCanPerformSync(user);
 
@@ -28,7 +39,40 @@ const _getSyncService = ({
         return { success: false, error: response.error };
       }
 
-      // TODO: use services to sync
+      const { builderGames, playerGames, storyProgresses } = response.data;
+      await Promise.all([
+        builderService.loadBuilderState(
+          builderGames.stories,
+          builderGames.scenes,
+        ),
+        gameService.loadGamesState({
+          progresses: storyProgresses,
+          libraryStories: playerGames,
+        }),
+      ]);
+    },
+
+    // Save local data into remote data
+    save: async () => {
+      const builderStories = await builderService.getBuilderStoriesState();
+      const progresses = await gameService.getStoryProgresses();
+      const user = await userService.getCurrentUser();
+
+      if (!user) {
+        return { success: false, cause: "User not logged in" };
+      }
+
+      if (!isOnline()) {
+        return { success: false, cause: "Network unreachable" };
+      }
+
+      await Promise.all([
+        remoteRepository.saveStoryProgresses(progresses, user.key),
+        remoteRepository.saveStories(
+          builderStories.stories ?? [],
+          builderStories.scenes,
+        ),
+      ]);
     },
   };
 };
@@ -37,4 +81,7 @@ export const getSyncService = () =>
   _getSyncService({
     remoteRepository: getRemoteAPIRepository(),
     localRepository: getLocalRepository(),
+    builderService: getBuilderService(),
+    gameService: getGameService(),
+    userService: getUserService(),
   });

@@ -2,6 +2,8 @@ import { SyncableEntity, User } from "@/lib/storage/domain";
 import { LocalRepositoryPort } from "@/repositories/local-repository-port";
 import { RemoteRepositoryResponse } from "@/repositories/remote-repository-port";
 
+// TODO: deprecate all of this?
+
 const LOCAL_STORAGE_SYNC_KEY = "unsynchronized_entities";
 
 export const isOnline = () => {

@@ -16,6 +16,16 @@ class StoryRepositoryPort(Protocol):
         """
         ...
 
+    def save_all(self, stories: list[FullStory]) -> list[FullStory]:
+        """Insert or update stories in the database
+
+        Args:
+            story (list[FullStory]): the full stories to save
+
+        Returns:
+            list[FullStory]: The updated (or inserted) records
+        """
+
     def get_all(
         self,
         *,
