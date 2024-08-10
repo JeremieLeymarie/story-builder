@@ -1,4 +1,3 @@
-from bson import ObjectId
 from pymongo import ReturnDocument, UpdateOne
 from repositories.mongo_repository import MongoRepository
 from repositories.story_progress_repository_port import StoryProgressRepositoryPort
