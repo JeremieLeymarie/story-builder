@@ -39,6 +39,7 @@ export interface paths {
         trace?: never;
     };
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     "/api/builder/save/game": {
         parameters: {
@@ -58,6 +59,8 @@ export interface paths {
         trace?: never;
     };
 >>>>>>> 719c639 (:recycle: wip - sync refacto - use effects to trigger synchronization)
+=======
+>>>>>>> 5b993b8 (:recycle: wip - sync refacto - switch to simple buttons)
     "/api/store/load": {
         parameters: {
             query?: never;
