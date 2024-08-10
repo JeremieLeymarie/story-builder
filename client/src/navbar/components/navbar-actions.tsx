@@ -2,7 +2,8 @@ import { AuthModalForm } from "@/auth-modal-form";
 import { Button } from "@/design-system/primitives";
 import { User } from "@/lib/storage/domain";
 import { useState } from "react";
-import { UserDropdown } from "./user-dropdown";
+import { ActionsDropdown } from "./actions-dropdown";
+import { LogInIcon } from "lucide-react";
 
 export const NavbarActions = ({
   user,
@@ -16,14 +17,20 @@ export const NavbarActions = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return user ? (
-    <UserDropdown
+    <ActionsDropdown
       username={user.username}
       saveLocalData={saveLocalData}
       loadRemoteData={loadRemoteData}
     />
   ) : (
     <>
-      <Button variant="outline" size="sm" onClick={() => setIsModalOpen(true)}>
+      <Button
+        variant="outline"
+        size="sm"
+        className="gap-2"
+        onClick={() => setIsModalOpen(true)}
+      >
+        <LogInIcon size="16px" />
         Log in
       </Button>
       <AuthModalForm

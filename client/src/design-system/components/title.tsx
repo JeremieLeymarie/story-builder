@@ -8,7 +8,10 @@ const titleVariants = cva("w-max break-words leading-none tracking-tight", {
       primary:
         "rounded-sm bg-gray-50 bg-opacity-75 p-2 text-3xl font-semibold max-md:text-xl",
       secondary: "mb-6 mt-2 bg-primary px-3 py-1 text-2xl font-semibold",
+      article: "text-4xl font-semibold max-md:text-2xl text-primary",
       section: "max-md:text-md bg-primary px-2 text-lg font-bold uppercase",
+      "sub-section":
+        "max-md:text-md text-primary text-lg underline underline-offset-8 font-semibold",
     },
   },
   defaultVariants: {

@@ -65,6 +65,13 @@ const _getUserService = ({
       return response;
     },
 
+    logout: async () => {
+      const user = await localRepository.getUser();
+
+      if (!user) return;
+      await localRepository.deleteUser(user.key);
+    },
+
     getCurrentUser: async () => {
       return await localRepository.getUser();
     },

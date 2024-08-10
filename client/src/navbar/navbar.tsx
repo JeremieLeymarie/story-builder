@@ -28,6 +28,9 @@ export const Navbar = ({
         <Link to="/builder/stories" className="block">
           <Button variant="ghost">Builder</Button>
         </Link>
+        <Link to="/about" className="block">
+          <Button variant="ghost">About</Button>
+        </Link>
       </div>
       <div className="flex items-center gap-6">
         <NavbarActions
