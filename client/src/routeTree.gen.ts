@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as WhiteboardImport } from './routes/whiteboard'
 import { Route as StoreImport } from './routes/store'
+import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
 import { Route as LibraryIndexImport } from './routes/library/index'
 import { Route as LibraryStoryKeyImport } from './routes/library/$storyKey'
@@ -30,6 +31,11 @@ const WhiteboardRoute = WhiteboardImport.update({
 
 const StoreRoute = StoreImport.update({
   path: '/store',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AboutRoute = AboutImport.update({
+  path: '/about',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -77,6 +83,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
     '/store': {
@@ -142,6 +155,7 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
+  AboutRoute,
   StoreRoute,
   WhiteboardRoute,
   BuilderStoryKeyRoute,
@@ -161,6 +175,7 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/about",
         "/store",
         "/whiteboard",
         "/builder/$storyKey",
@@ -173,6 +188,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/about": {
+      "filePath": "about.tsx"
     },
     "/store": {
       "filePath": "store.tsx"

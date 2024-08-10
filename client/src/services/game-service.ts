@@ -92,7 +92,7 @@ const _getGameService = ({
           await localRepository.updateOrCreateStories(libraryStories.stories);
           await localRepository.updateOrCreateScenes(libraryStories.scenes);
         },
-        { mode: "readwrite", entities: ["story", "scene"] },
+        { mode: "readwrite", entities: ["story", "scene", "story-progress"] },
       );
     },
 

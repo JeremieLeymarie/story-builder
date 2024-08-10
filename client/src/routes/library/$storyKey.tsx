@@ -1,5 +1,4 @@
-import { ErrorMessage } from "@/design-system/components";
-import { Loader } from "@/design-system/components/loader";
+import { BackdropLoader, ErrorMessage } from "@/design-system/components";
 import { LibraryGameDetail } from "@/library/detail";
 import { getUserService } from "@/services";
 import { createFileRoute } from "@tanstack/react-router";
@@ -15,7 +14,7 @@ const Page = () => {
     progress === undefined ||
     lastScene === undefined
   ) {
-    return <Loader />;
+    return <BackdropLoader />;
   }
 
   if (story === null) {

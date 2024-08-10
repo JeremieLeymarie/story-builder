@@ -2,12 +2,25 @@ import { AuthModalForm } from "@/auth-modal-form";
 import { Button } from "@/design-system/primitives";
 import { User } from "@/lib/storage/domain";
 import { useState } from "react";
+import { UserDropdown } from "./user-dropdown";
 
-export const UserDisplay = ({ user }: { user?: User | null }) => {
+export const NavbarActions = ({
+  user,
+  saveLocalData,
+  loadRemoteData,
+}: {
+  user?: User | null;
+  saveLocalData: () => void;
+  loadRemoteData: () => void;
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return user ? (
-    <div className="text-primary">{user.username}</div>
+    <UserDropdown
+      username={user.username}
+      saveLocalData={saveLocalData}
+      loadRemoteData={loadRemoteData}
+    />
   ) : (
     <>
       <Button variant="outline" size="sm" onClick={() => setIsModalOpen(true)}>

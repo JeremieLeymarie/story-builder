@@ -1,4 +1,4 @@
-import { ErrorMessage, Loader } from "@/design-system/components";
+import { ErrorMessage, BackdropLoader } from "@/design-system/components";
 import { GameScene } from "@/game/components/scene";
 import { StoryProgress } from "@/lib/storage/domain";
 import { getGameService } from "@/services";
@@ -25,7 +25,7 @@ export const Component = () => {
     scene === undefined ||
     storyProgress === undefined
   ) {
-    return <Loader />;
+    return <BackdropLoader />;
   }
   if (story === null || scene === null || storyProgress === null) {
     console.error("Error while loading story: ", story);

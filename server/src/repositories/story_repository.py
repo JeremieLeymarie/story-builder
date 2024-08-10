@@ -27,7 +27,7 @@ class StoryRepository(MongoRepository, StoryRepositoryPort):
             [
                 UpdateOne(
                     {"key": story.key},
-                    story.model_dump(mode="json"),
+                    {"$set": story.model_dump(mode="json")},
                     upsert=True,
                 )
                 for story in stories

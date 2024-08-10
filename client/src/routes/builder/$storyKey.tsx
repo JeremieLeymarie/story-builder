@@ -1,5 +1,5 @@
 import { Builder } from "@/builder/components/builder";
-import { Loader } from "@/design-system/components/loader";
+import { BackdropLoader } from "@/design-system/components";
 import { getBuilderService } from "@/services/builder";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -11,7 +11,7 @@ const Page = () => {
     useLiveQuery(() => builderService.getBuilderData(storyKey)) ?? {};
 
   if (!scenes || !story) {
-    return <Loader />;
+    return <BackdropLoader />;
   }
   return (
     <div className="h-full w-full">

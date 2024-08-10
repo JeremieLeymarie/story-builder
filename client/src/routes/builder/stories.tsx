@@ -1,5 +1,5 @@
 import { BuilderStories } from "@/builder/components/builder-stories";
-import { Loader } from "@/design-system/components";
+import { BackdropLoader } from "@/design-system/components";
 import { ErrorMessage } from "@/design-system/components/error-message";
 import { getBuilderService } from "@/services/builder";
 import { createFileRoute } from "@tanstack/react-router";
@@ -8,7 +8,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 const Component = () => {
   const stories = useLiveQuery(getBuilderService().getBuilderStories);
 
-  if (stories === undefined) return <Loader />;
+  if (stories === undefined) return <BackdropLoader />;
 
   return stories ? (
     <BuilderStories stories={stories} />

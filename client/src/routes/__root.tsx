@@ -4,18 +4,22 @@ import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Navbar } from "@/navbar/navbar";
 import { getUserService } from "@/services";
+import { useSync } from "@/navbar/hooks/use-sync";
+import { BackdropLoader } from "@/design-system/components";
 
 const Component = () => {
   const user = useLiveQuery(getUserService().getCurrentUser);
-  // const { state, synchronize } = useSynchronization({ user });
+  const { state, load, save } = useSync();
 
-  // TODO: try to sync unsynchronized entities
-
+  console.log();
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      <div className="flex h-screen w-screen flex-col overflow-x-hidden">
-        <Navbar user={user} />
-        <div className="w-full flex-1">
+      <div className="relative flex h-screen w-screen flex-col overflow-x-hidden">
+        <Navbar user={user} loadRemoteData={load} saveLocalData={save} />
+        <div className="relative w-full flex-1">
+          {state.loading && (
+            <BackdropLoader text="Loading application data..." />
+          )}
           <Outlet />
         </div>
       </div>

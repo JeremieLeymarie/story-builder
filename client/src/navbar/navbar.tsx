@@ -1,10 +1,17 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/design-system/primitives";
-import { UserDisplay } from "./user-display";
+import { NavbarActions } from "./components/navbar-actions";
 import { User } from "@/lib/storage/domain";
-import { SynchronizationBar } from "./synchronization-bar";
 
-export const Navbar = ({ user }: { user?: User | null }) => {
+export const Navbar = ({
+  user,
+  loadRemoteData,
+  saveLocalData,
+}: {
+  user?: User | null;
+  loadRemoteData: () => void;
+  saveLocalData: () => void;
+}) => {
   return (
     <div className="flex h-[50px] items-center justify-between border-b-4 border-b-primary px-4 py-6">
       <div className="flex gap-2">
@@ -23,8 +30,11 @@ export const Navbar = ({ user }: { user?: User | null }) => {
         </Link>
       </div>
       <div className="flex items-center gap-6">
-        <SynchronizationBar />
-        <UserDisplay user={user} />
+        <NavbarActions
+          user={user}
+          loadRemoteData={loadRemoteData}
+          saveLocalData={saveLocalData}
+        />
         {/* <ModeToggle /> */}
       </div>
     </div>

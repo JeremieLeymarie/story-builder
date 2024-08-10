@@ -35,7 +35,7 @@ class StoryProgressRepository(MongoRepository, StoryProgressRepositoryPort):
             [
                 UpdateOne(
                     {"key": progress.key},
-                    progress.model_dump(mode="json"),
+                    {"$set": progress.model_dump(mode="json")},
                     upsert=True,
                 )
                 for progress in story_progresses

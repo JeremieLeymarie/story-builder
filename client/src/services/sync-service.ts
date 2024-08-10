@@ -50,6 +50,8 @@ const _getSyncService = ({
           libraryStories: playerGames,
         }),
       ]);
+
+      return { success: true, error: undefined };
     },
 
     // Save local data into remote data
@@ -66,13 +68,21 @@ const _getSyncService = ({
         return { success: false, cause: "Network unreachable" };
       }
 
-      await Promise.all([
+      const [progressResponse, builderResponse] = await Promise.all([
         remoteRepository.saveStoryProgresses(progresses, user.key),
         remoteRepository.saveStories(
           builderStories.stories ?? [],
           builderStories.scenes,
         ),
       ]);
+
+      if (progressResponse.error) {
+        return { success: false, cause: "Failed to save story progresses." };
+      } else if (builderResponse.error) {
+        return { success: false, cause: "Failed to save builder stories." };
+      }
+
+      return { success: true };
     },
   };
 };

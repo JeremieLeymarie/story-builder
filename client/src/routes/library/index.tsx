@@ -1,4 +1,4 @@
-import { ErrorMessage, Loader } from "@/design-system/components";
+import { ErrorMessage, BackdropLoader } from "@/design-system/components";
 import { Library } from "@/library/library";
 import { getUserService } from "@/services";
 import { createFileRoute } from "@tanstack/react-router";
@@ -13,7 +13,7 @@ const Component = () => {
     userStories === undefined ||
     finishedGameKeys === undefined
   ) {
-    return <Loader />;
+    return <BackdropLoader />;
   }
 
   return storiesFromStore && userStories ? (

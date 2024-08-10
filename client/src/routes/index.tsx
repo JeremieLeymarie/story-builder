@@ -1,4 +1,4 @@
-import { Loader } from "@/design-system/components";
+import { BackdropLoader } from "@/design-system/components";
 import { Home } from "@/home/home";
 import { Story } from "@/lib/storage/domain";
 import { getGameService, getUserService } from "@/services";
@@ -19,7 +19,7 @@ const Index = () => {
   }, []);
 
   if (user === undefined || lastPlayedGame === undefined) {
-    return <Loader />;
+    return <BackdropLoader />;
   }
 
   return <Home lastPlayedGame={lastPlayedGame} storeItems={storeItems} />;
