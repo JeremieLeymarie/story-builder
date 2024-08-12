@@ -518,7 +518,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Story"];
+                    "application/json": components["schemas"]["FullStory"];
                 };
             };
             /** @description Validation Error */

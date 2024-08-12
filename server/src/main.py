@@ -99,7 +99,7 @@ async def download_from_store(key: str):
         raise raise_http_error(err)
 
 
-@app.put("/api/store/publish", status_code=HTTPStatus.OK, response_model=Story)
+@app.put("/api/store/publish", status_code=HTTPStatus.OK, response_model=FullStory)
 async def publish_in_store(body: FullStoryBuilderRequest):
     try:
         story = StoreDomain(story_repository=StoryRepository()).publish(

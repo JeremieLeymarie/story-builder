@@ -7,7 +7,7 @@ import { getRemoteAPIRepository } from "@/repositories/remote-api-repository";
 import { fullStorySchema } from "./schemas";
 import Dexie from "dexie";
 
-const _getBuilderService = ({
+export const _getBuilderService = ({
   localRepository,
   remoteRepository,
 }: {
@@ -98,13 +98,14 @@ const _getBuilderService = ({
     },
 
     publishStory: async (scenes: Scene[], story: Story) => {
+      // TODO: this is weird, the frontend handles the publication date and the API the status change. Only one should be responsible for updating the data
       const response = await remoteRepository.publishStory(scenes, {
         ...story,
         publicationDate: new Date(),
       });
 
       if (response.data) {
-        await localRepository.updateStory(response.data);
+        await localRepository.updateStory(response.data.story);
       }
 
       return !!response.data;
@@ -118,6 +119,7 @@ const _getBuilderService = ({
       });
     },
 
+    // TODO: this should not keep the author in the data??
     importFromJSON: async (fileContent: string) => {
       // TODO: refacto this try/catch mess
       try {
@@ -129,14 +131,19 @@ const _getBuilderService = ({
           return { error: resZod.error.issues[0]?.message || "Invalid format" };
 
         try {
-          await localRepository.createStory(resZod.data.story);
-          await localRepository.createScenes(resZod.data.scenes);
+          await localRepository.unitOfWork(
+            async () => {
+              await localRepository.createStory(resZod.data.story);
+              await localRepository.createScenes(resZod.data.scenes);
+            },
+            { mode: "readwrite", entities: ["story", "scene"] },
+          );
         } catch (error) {
           if (
             error instanceof Dexie.DexieError &&
             error.name === "ConstraintError"
           ) {
-            return { error: "Story already exists" };
+            return { error: "Story or scene already exists" };
           }
           return { error: "Something went wrong." };
         }

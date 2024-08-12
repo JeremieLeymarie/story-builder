@@ -39,7 +39,6 @@ export const fullStorySchema = z.object({
           y: z.number({ message: "Y is required" }),
         }),
       }),
-      isFirstScene: z.boolean({ message: "IsFirstScene is required" }),
     }),
   ),
 });

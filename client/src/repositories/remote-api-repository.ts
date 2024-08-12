@@ -29,7 +29,7 @@ const _getRemoteAPIRepository = (
       });
 
       if (response.data) {
-        return { data: adapter.fromAPI.story(response.data) };
+        return { data: adapter.fromAPI.fullStory(response.data) };
       }
       return { error: parseError(response.error) };
     },

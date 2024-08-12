@@ -13,7 +13,7 @@ export type RemoteRepositoryPort = {
   publishStory: (
     scenes: Scene[],
     story: Story,
-  ) => Promise<RemoteRepositoryResponse<Story>>;
+  ) => Promise<RemoteRepositoryResponse<{ story: Story; scenes: Scene[] }>>;
 
   login: (
     usernameOrEmail: string,
