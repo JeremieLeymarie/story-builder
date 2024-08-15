@@ -6,7 +6,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 
 const Component = () => {
-  const stories = useLiveQuery(getBuilderService().getBuilderStories);
+  const stories = useLiveQuery(getBuilderService().getUserBuilderStories);
 
   if (stories === undefined) return <BackdropLoader />;
 

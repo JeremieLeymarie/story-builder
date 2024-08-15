@@ -13,6 +13,7 @@
     "format:write": "prettier --write --ignore-unknown .",
     "test": "vitest",
     "test:single": "vitest run",
+    "coverage": "vitest run --coverage",
     "generate-client": "openapi-typescript http://localhost:8000/openapi.json -o src/lib/http-client/schema.d.ts"
   },
   "dependencies": {
@@ -58,6 +59,7 @@
     "@typescript-eslint/parser": "^7.8.0",
     "@vite-pwa/assets-generator": "^0.2.4",
     "@vitejs/plugin-react": "^4.2.1",
+    "@vitest/coverage-v8": "^2.0.5",
     "autoprefixer": "^10.4.19",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",

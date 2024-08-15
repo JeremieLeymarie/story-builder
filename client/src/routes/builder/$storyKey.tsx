@@ -8,7 +8,7 @@ const Page = () => {
   const { storyKey } = Route.useParams();
   const builderService = getBuilderService();
   const { scenes, story } =
-    useLiveQuery(() => builderService.getBuilderData(storyKey)) ?? {};
+    useLiveQuery(() => builderService.getBuilderStoryData(storyKey)) ?? {};
 
   if (!scenes || !story) {
     return <BackdropLoader />;

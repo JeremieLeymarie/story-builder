@@ -7,6 +7,7 @@ import { getRemoteAPIRepository } from "@/repositories/remote-api-repository";
 import { fullStorySchema } from "./schemas";
 import Dexie from "dexie";
 
+// TODO: revise error management? Maybe throw errors instead of string/boolean/null returns
 export const _getBuilderService = ({
   localRepository,
   remoteRepository,
@@ -14,6 +15,19 @@ export const _getBuilderService = ({
   localRepository: LocalRepositoryPort;
   remoteRepository: RemoteRepositoryPort;
 }) => {
+  const getUserBuilderStories = async () => {
+    const user = await localRepository.getUser();
+
+    const storiesWithAuthor = user?.key
+      ? await localRepository.getStoriesByAuthor(user?.key)
+      : [];
+
+    const storiesWithoutAuthor =
+      await localRepository.getStoriesByAuthor(undefined);
+
+    return [...(storiesWithAuthor ?? []), ...(storiesWithoutAuthor ?? [])];
+  };
+
   return {
     updateSceneBuilderPosition: async (
       sceneKey: string,
@@ -167,32 +181,33 @@ export const _getBuilderService = ({
       });
     },
 
-    updateScene: async (scene: Scene) => {
+    updateScene: async (scene: Partial<Scene> & Pick<Scene, "key">) => {
       await localRepository.updatePartialScene(scene.key, scene);
     },
 
     changeFirstScene: async (storyKey: string, newFirstSceneKey: string) => {
-      await localRepository.updateFirstScene(storyKey, newFirstSceneKey);
+      const isSceneKeyValid = await localRepository.getScene(newFirstSceneKey);
+
+      if (isSceneKeyValid)
+        return await localRepository.updateFirstScene(
+          storyKey,
+          newFirstSceneKey,
+        );
+
+      return false;
     },
 
-    getBuilderData: async (storyKey: string) => {
+    getBuilderStoryData: async (storyKey: string) => {
       const story = await localRepository.getStory(storyKey);
       const scenes = await localRepository.getScenes(storyKey);
 
       return { story, scenes };
     },
 
-    getBuilderStories: async () => {
-      const user = await localRepository.getUser();
+    getUserBuilderStories,
 
-      const stories = await localRepository.getStoriesByAuthor(user?.key);
-
-      return stories;
-    },
-
-    getBuilderStoriesState: async () => {
-      const user = await localRepository.getUser();
-      const stories = await localRepository.getStoriesByAuthor(user?.key);
+    getFullBuilderState: async () => {
+      const stories = await getUserBuilderStories();
       const scenes = await localRepository.getScenes(
         stories?.map((story) => story.key) ?? [],
       );

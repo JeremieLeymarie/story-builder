@@ -70,7 +70,7 @@ export const getLocalRepositoryStub = (): LocalRepositoryPort => {
           storage.stories[idx] = story;
           keys.push(story.key);
         } else {
-          const key = nanoid();
+          const key = story.key ?? nanoid();
           storage.stories.push({ ...story, key });
           keys.push(key);
         }
@@ -125,7 +125,16 @@ export const getLocalRepositoryStub = (): LocalRepositoryPort => {
       storyKey: string,
       sceneKey: string,
     ): Promise<boolean> {
-      throw new Error("Function not implemented.");
+      const idx = storage.stories.findIndex((s) => s.key === storyKey);
+      if (idx > -1) {
+        storage.stories[idx] = {
+          ...storage.stories[idx]!,
+          firstSceneKey: sceneKey,
+        };
+        return new Promise((res) => res(true));
+      }
+
+      return new Promise((res) => res(false));
     },
 
     addAuthorToStories: function (author: {
@@ -144,7 +153,7 @@ export const getLocalRepositoryStub = (): LocalRepositoryPort => {
           storage.scenes[idx] = scene;
           keys.push(scene.key);
         } else {
-          const key = nanoid();
+          const key = scene.key ?? nanoid();
           storage.scenes.push({ ...scene, key });
           keys.push(key);
         }
@@ -230,7 +239,7 @@ export const getLocalRepositoryStub = (): LocalRepositoryPort => {
           storage.storyProgresses[idx] = progress;
           keys.push(progress.key);
         } else {
-          const key = nanoid();
+          const key = progress.key ?? nanoid();
           storage.storyProgresses.push({ ...progress, key });
           keys.push(key);
         }

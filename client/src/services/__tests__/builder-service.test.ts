@@ -7,9 +7,7 @@ import {
 } from "@/repositories/stubs/remote-repository-stub";
 import { Scene, Story, User } from "@/lib/storage/domain";
 import { WithoutKey } from "@/types";
-
-const localRepository = getLocalRepositoryStub();
-const remoteRepository = getRemoteRepositoryStub();
+import { LocalRepositoryPort, RemoteRepositoryPort } from "@/repositories";
 
 const BASE_SCENE: WithoutKey<Scene> = {
   actions: [{ text: "action A" }, { text: "action B" }],
@@ -36,12 +34,17 @@ const BASE_USER: WithoutKey<User> = {
 
 describe("builder-service", () => {
   let builderService: ReturnType<typeof _getBuilderService>;
+  let localRepository: LocalRepositoryPort;
+  let remoteRepository: RemoteRepositoryPort;
 
   beforeAll(() => {
     vi.useFakeTimers();
   });
 
   beforeEach(() => {
+    localRepository = getLocalRepositoryStub();
+    remoteRepository = getRemoteRepositoryStub();
+
     builderService = _getBuilderService({
       localRepository,
       remoteRepository,
@@ -379,26 +382,308 @@ describe("builder-service", () => {
       expect(scenes).toStrictEqual(importedScenes);
     });
 
-    it("should not create story or scenes if story already exists", async () => {
-      await localRepository.createStory(importedStory);
+    it("should not create story if JSON is malformed", async () => {
+      const result = await builderService.importFromJSON(`tutu${fileContent}`);
 
-      const result = await builderService.importFromJSON(fileContent);
-
-      expect(result.error).toStrictEqual("Story or scene already exists");
-    });
-
-    it("should not create story or scenes if one of the scenes already exists", async () => {
-      await localRepository.createScenes(importedScenes);
-
-      const result = await builderService.importFromJSON(fileContent);
       const story = await localRepository.getStory("bloup");
+      const scenes = await localRepository.getScenes("bloup");
 
-      expect(result.error).toStrictEqual("Story or scene already exists");
+      expect(result).toStrictEqual({ error: "Invalid JSON format" });
       expect(story).toBeNull();
+      expect(scenes).toStrictEqual([]);
     });
 
-    it("should not create story if JSON is malformed");
+    it("should not create story if format is invalid", async () => {
+      const result = await builderService.importFromJSON(
+        JSON.stringify({ stories: ["tutu"] }),
+      );
 
-    it("should not create story if format is invalid");
+      const story = await localRepository.getStory("bloup");
+      const scenes = await localRepository.getScenes("bloup");
+
+      expect(result).toStrictEqual({ error: "Story is required" });
+      expect(story).toBeNull();
+      expect(scenes).toStrictEqual([]);
+    });
+  });
+
+  describe("addScene", () => {
+    it("should add scene to local database", async () => {
+      const scene = await builderService.addScene(BASE_SCENE);
+
+      expect(scene).toStrictEqual({ ...BASE_SCENE, key: scene?.key });
+    });
+  });
+
+  describe("updateStory", () => {
+    it("should update story in the local database", async () => {
+      const story = await localRepository.createStory(BASE_STORY);
+
+      if (!story) throw new Error("Could not create story");
+
+      await builderService.updateStory({
+        ...story,
+        title: "Pipou",
+        description: "shabadada",
+      });
+
+      const updatedStory = await localRepository.getStory(story.key);
+
+      expect(updatedStory).toStrictEqual({
+        ...story,
+        title: "Pipou",
+        description: "shabadada",
+      });
+    });
+
+    it("should add author if user is logged in", async () => {
+      const story = await localRepository.createStory(BASE_STORY);
+      const user = await localRepository.createUser(BASE_USER);
+
+      if (!story) throw new Error("Could not create story");
+
+      await builderService.updateStory({
+        ...story,
+        title: "Pipou",
+        description: "shabadada",
+      });
+
+      const updatedStory = await localRepository.getStory(story.key);
+
+      expect(updatedStory).toStrictEqual({
+        ...story,
+        title: "Pipou",
+        description: "shabadada",
+        author: { key: user.key, username: user.username },
+      });
+    });
+  });
+
+  describe("updateScene", () => {
+    it("should only update specified parts of the scene", async () => {
+      const scene = await localRepository.createScene(BASE_SCENE);
+
+      await builderService.updateScene({ content: "tututu", key: scene.key });
+
+      const updatedScene = await localRepository.getScene(scene.key);
+
+      expect(updatedScene).toStrictEqual({
+        ...scene,
+        content: "tututu",
+      });
+    });
+  });
+
+  describe("changeFirstScene", () => {
+    it("should update the first scene of a story", async () => {
+      const story = await localRepository.createStory(BASE_STORY);
+      if (!story) throw new Error("Could not create story");
+
+      const scene = await localRepository.createScene({
+        ...BASE_SCENE,
+        storyKey: story.key,
+      });
+
+      const result = await builderService.changeFirstScene(
+        story.key,
+        scene.key,
+      );
+
+      const updatedStory = await localRepository.getStory(story.key);
+
+      expect(updatedStory).toStrictEqual({
+        ...story,
+        firstSceneKey: scene.key,
+      });
+      expect(result).toBeTruthy();
+    });
+
+    it("should not update the story if the scene key is invalid", async () => {
+      const story = await localRepository.createStory(BASE_STORY);
+      if (!story) throw new Error("Could not create story");
+
+      const result = await builderService.changeFirstScene(
+        story.key,
+        "blabloum",
+      );
+
+      const updatedStory = await localRepository.getStory(story.key);
+
+      expect(result).toBeFalsy();
+      expect(updatedStory).toStrictEqual(story);
+    });
+
+    it("should not update the story if the story key is invalid", async () => {
+      const story = await localRepository.createStory(BASE_STORY);
+      if (!story) throw new Error("Could not create story");
+
+      const scene = await localRepository.createScene({
+        ...BASE_SCENE,
+        storyKey: story.key,
+      });
+
+      const result = await builderService.changeFirstScene(
+        "zhagaga",
+        scene.key,
+      );
+
+      const updatedStory = await localRepository.getStory(story.key);
+
+      expect(result).toBeFalsy();
+      expect(updatedStory).toStrictEqual(story);
+    });
+  });
+
+  describe("getBuilderStoryData", () => {
+    it("should return story data", async () => {
+      const story = await localRepository.createStory(BASE_STORY);
+      if (!story) throw new Error("Could not create story");
+      const scenes = Array(10)
+        .fill(1)
+        .map(() => ({ ...BASE_SCENE, storyKey: story.key }));
+      const sceneKeys = await localRepository.createScenes(scenes);
+
+      const builderData = await builderService.getBuilderStoryData(story.key);
+
+      expect(builderData.story).toStrictEqual(story);
+      expect(builderData.scenes).toStrictEqual(
+        scenes.map((_, i) => ({
+          ...BASE_SCENE,
+          storyKey: story.key,
+          key: sceneKeys[i],
+        })),
+      );
+    });
+
+    it("should return null data when given invalid story key", async () => {
+      const { story, scenes } =
+        await builderService.getBuilderStoryData("ziploula");
+
+      expect(story).toBeNull();
+      expect(scenes).toStrictEqual([]);
+    });
+  });
+
+  describe("getUserBuilderStories", () => {
+    it("should retrieve stories created by logged in user", async () => {
+      const userA = await localRepository.createUser(BASE_USER);
+      const storyA = await localRepository.createStory({
+        ...BASE_STORY,
+        title: "haha",
+        author: { username: userA.username, key: userA.key },
+      });
+      const storyB = await localRepository.createStory({
+        ...BASE_STORY,
+        title: "hihi",
+      });
+      await localRepository.createStory({
+        ...BASE_STORY,
+        title: "hihi",
+        author: { username: "hey", key: "ho" },
+      });
+
+      const stories = await builderService.getUserBuilderStories();
+
+      expect(stories).toStrictEqual([storyA, storyB]);
+    });
+
+    it("should retrieve stories created by user without account", async () => {
+      const storyA = await localRepository.createStory({
+        ...BASE_STORY,
+        title: "haha",
+      });
+      const storyB = await localRepository.createStory({
+        ...BASE_STORY,
+        title: "hihi",
+      });
+      await localRepository.createStory({
+        ...BASE_STORY,
+        title: "hihi",
+        author: { username: "hey", key: "ho" },
+      });
+
+      const stories = await builderService.getUserBuilderStories();
+
+      expect(stories).toStrictEqual([storyA, storyB]);
+    });
+
+    it("should return an empty array when user hasn't created any stories", async () => {
+      await localRepository.createUser(BASE_USER);
+
+      await localRepository.createStory({
+        ...BASE_STORY,
+        title: "hihi",
+        author: { username: "hey", key: "ho" },
+      });
+
+      const stories = await builderService.getUserBuilderStories();
+
+      expect(stories).toStrictEqual([]);
+    });
+  });
+
+  describe("getFullBuilderState", () => {
+    it("should get all stories and scenes", async () => {
+      const storiesPayload = Array(10)
+        .fill(null)
+        .map((_, i) => ({ ...BASE_STORY, title: `story ${i}` }));
+
+      const stories = [];
+      const scenes = [];
+
+      for (const story of storiesPayload) {
+        const s = await localRepository.createStory(story);
+        if (!s) throw new Error("Could not create story");
+        stories.push(s);
+
+        const scenesPayload = Array(10)
+          .fill(null)
+          .map((_, i) => ({
+            ...BASE_SCENE,
+            storyKey: s.key,
+            title: `scene ${i}`,
+          }));
+
+        for (const scene of scenesPayload) {
+          const sc = await localRepository.createScene(scene);
+          scenes.push(sc);
+        }
+      }
+
+      const result = await builderService.getFullBuilderState();
+
+      expect(result).toStrictEqual({ stories, scenes });
+    });
+  });
+
+  describe("loadBuilderState", () => {
+    it("should update local database with input data", async () => {
+      const storiesPayload = Array(10)
+        .fill(null)
+        .map((_, i) => ({
+          ...BASE_STORY,
+          title: `story-${i}`,
+          key: `story-key-${i}`,
+        }));
+
+      const scenesPayload = Array(10)
+        .fill(null)
+        .map((_, i) => ({
+          ...BASE_SCENE,
+          title: `scene-${i}`,
+          key: `scene-key-${i}`,
+          storyKey: `story-key-${i}`,
+        }));
+
+      await builderService.loadBuilderState(storiesPayload, scenesPayload);
+
+      const storiesInDB = await localRepository.getStories();
+      const scenesInDB = await localRepository.getScenes(
+        storiesPayload.map(({ key }) => key),
+      );
+
+      expect(storiesInDB).toStrictEqual(storiesPayload);
+      expect(scenesPayload).toStrictEqual(scenesInDB);
+    });
   });
 });

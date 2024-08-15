@@ -56,7 +56,7 @@ const _getSyncService = ({
 
     // Save local data into remote data
     save: async () => {
-      const builderStories = await builderService.getBuilderStoriesState();
+      const builderStories = await builderService.getFullBuilderState();
       const progresses = await gameService.getStoryProgresses();
       const user = await userService.getCurrentUser();
 

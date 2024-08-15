@@ -25,6 +25,10 @@ You need on your system:
 pip install pre-commit
 ```
 
+```sh
+pre-commit install
+```
+
 ### Client
 
 Typescript execution & package management is handled by **bun**.
