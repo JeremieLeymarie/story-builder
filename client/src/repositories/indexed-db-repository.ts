@@ -86,16 +86,14 @@ const indexedDBRepository: LocalRepositoryPort = {
       .toArray();
   },
 
-  getLastGamePlayed: async () => {
+  getMostRecentStoryProgress: async () => {
     const lastProgress = await db.storyProgresses
       .orderBy("lastPlayedAt")
       .limit(1)
       .reverse()
       .first();
 
-    if (!lastProgress) return null;
-
-    return (await db.stories.get(lastProgress.storyKey)) ?? null;
+    return lastProgress ?? null;
   },
 
   updateStory: async (story) => {

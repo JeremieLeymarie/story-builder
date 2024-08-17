@@ -117,8 +117,13 @@ export const getLocalRepositoryStub = (): LocalRepositoryPort => {
       );
     },
 
-    getLastGamePlayed: function (): Promise<Story | null> {
-      throw new Error("Function not implemented.");
+    getMostRecentStoryProgress: function (): Promise<StoryProgress | null> {
+      const progress =
+        storage.storyProgresses.sort(
+          (a, b) => b.lastPlayedAt.getTime() - a.lastPlayedAt.getTime(),
+        )?.[0] ?? null;
+
+      return new Promise((res) => res(progress));
     },
 
     updateFirstScene: function (
@@ -141,7 +146,11 @@ export const getLocalRepositoryStub = (): LocalRepositoryPort => {
       key: string;
       username: string;
     }): Promise<void> {
-      throw new Error("Function not implemented.");
+      storage.stories = storage.stories.map((s) =>
+        s.author === undefined ? { ...s, author } : s,
+      );
+
+      return new Promise((res) => res());
     },
 
     updateOrCreateScenes: function (scenes: Scene[]): Promise<string[]> {
@@ -234,7 +243,9 @@ export const getLocalRepositoryStub = (): LocalRepositoryPort => {
       const keys: string[] = [];
 
       progresses.forEach((progress) => {
-        const idx = storage.scenes.findIndex((s) => s.key === progress.key);
+        const idx = storage.storyProgresses.findIndex(
+          (s) => s.key === progress.key,
+        );
         if (idx > -1) {
           storage.storyProgresses[idx] = progress;
           keys.push(progress.key);
@@ -251,17 +262,30 @@ export const getLocalRepositoryStub = (): LocalRepositoryPort => {
     updateStoryProgress: function (
       progress: StoryProgress,
     ): Promise<StoryProgress | null> {
-      throw new Error("Function not implemented.");
+      const idx = storage.storyProgresses.findIndex(
+        (p) => p.key === progress.key,
+      );
+
+      if (idx > -1) {
+        storage.storyProgresses[idx] = progress;
+        return new Promise((res) => res(progress));
+      }
+
+      return new Promise((res) => res(null));
     },
 
     getStoryProgress: function (
       storyKey: string,
     ): Promise<StoryProgress | null> {
-      throw new Error("Function not implemented.");
+      return new Promise((res) =>
+        res(
+          storage.storyProgresses.find((p) => p.storyKey === storyKey) ?? null,
+        ),
+      );
     },
 
     getStoryProgresses: function (): Promise<StoryProgress[]> {
-      throw new Error("Function not implemented.");
+      return new Promise((res) => res(storage.storyProgresses));
     },
 
     getUser: function (): Promise<User | null> {

@@ -5,32 +5,8 @@ import {
   getRemoteRepositoryStub,
   stubRemoteStorageAccessors,
 } from "@/repositories/stubs/remote-repository-stub";
-import { Scene, Story, User } from "@/lib/storage/domain";
-import { WithoutKey } from "@/types";
 import { LocalRepositoryPort, RemoteRepositoryPort } from "@/repositories";
-
-const BASE_SCENE: WithoutKey<Scene> = {
-  actions: [{ text: "action A" }, { text: "action B" }],
-  builderParams: { position: { x: 0, y: 0 } },
-  content: "pas content",
-  storyKey: "zut",
-  title: "flûte",
-};
-
-const BASE_STORY: WithoutKey<Story> = {
-  title: "Tidididoudoum tidididoudoum",
-  description: "Sacré histoire...",
-  image: "http://ton-image.fr",
-  status: "draft",
-  firstSceneKey: "zut",
-  genres: ["adventure", "children"],
-  creationDate: new Date(),
-};
-
-const BASE_USER: WithoutKey<User> = {
-  email: "bob@mail.com",
-  username: "bob_bidou",
-};
+import { BASE_SCENE, BASE_USER, BASE_STORY } from "./data";
 
 describe("builder-service", () => {
   let builderService: ReturnType<typeof _getBuilderService>;

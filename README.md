@@ -21,12 +21,16 @@ You need on your system:
 - Python 3
 - pre-commit
 
+#### Pre-commit
+
 ```sh
 pip install pre-commit
 ```
 
+and then
+
 ```sh
-pre-commit install
+pre-commit install --hook-type pre-commit --hook-type pre-push
 ```
 
 ### Client

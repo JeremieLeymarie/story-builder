@@ -1,7 +1,7 @@
 import { Action, Scene, Story, StoryProgress } from "@/lib/storage/domain";
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 
-const _getGameService = ({
+export const _getGameService = ({
   localRepository,
 }: {
   localRepository: LocalRepositoryPort;
@@ -14,9 +14,9 @@ const _getGameService = ({
         sceneActions,
       }: { currentSceneKey: string; sceneActions: Action[] },
     ) => {
-      const user = await localRepository.getUser();
+      const scene = await localRepository.getScene(currentSceneKey);
 
-      if (!user) return null;
+      if (!scene) return null;
 
       // TODO: test history update && finished
       await localRepository.updateStoryProgress({
@@ -56,7 +56,13 @@ const _getGameService = ({
     },
 
     getLastGamePlayed: async () => {
-      return await localRepository.getLastGamePlayed();
+      const progress = await localRepository.getMostRecentStoryProgress();
+
+      if (!progress) return null;
+
+      const story = await localRepository.getStory(progress.storyKey);
+
+      return story;
     },
 
     getSceneData: async (sceneKey: string) => {
@@ -67,7 +73,7 @@ const _getGameService = ({
     getFirstSceneData: async (storyKey: string) => {
       const story = await localRepository.getStory(storyKey);
 
-      if (!story) return { story: null };
+      if (!story) return { story: null, scene: null };
 
       const scene = await localRepository.getScene(story.firstSceneKey);
 
@@ -77,6 +83,12 @@ const _getGameService = ({
     getStoryProgress: async (storyKey: string) => {
       const storyProgress = await localRepository.getStoryProgress(storyKey);
       return storyProgress;
+    },
+
+    getStoryProgresses: async () => {
+      const progresses = await localRepository.getStoryProgresses();
+
+      return progresses;
     },
 
     loadGamesState: async ({
@@ -94,12 +106,6 @@ const _getGameService = ({
         },
         { mode: "readwrite", entities: ["story", "scene", "story-progress"] },
       );
-    },
-
-    getStoryProgresses: async () => {
-      const progresses = await localRepository.getStoryProgresses();
-
-      return progresses;
     },
   };
 };

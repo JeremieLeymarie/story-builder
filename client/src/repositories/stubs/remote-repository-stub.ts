@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Scene, Story, User, StoryProgress } from "@/lib/storage/domain";
 import {
   RemoteRepositoryPort,
@@ -49,13 +50,13 @@ export const getRemoteRepositoryStub = (): RemoteRepositoryPort => {
     },
 
     login: function (
-      usernameOrEmail: string,
-      password: string,
+      _usernameOrEmail: string,
+      _password: string,
     ): Promise<RemoteRepositoryResponse<User>> {
       throw new Error("Function not implemented.");
     },
     register: function (
-      user: User & { password: string },
+      _user: User & { password: string },
     ): Promise<RemoteRepositoryResponse<User>> {
       throw new Error("Function not implemented.");
     },
@@ -63,25 +64,25 @@ export const getRemoteRepositoryStub = (): RemoteRepositoryPort => {
       throw new Error("Function not implemented.");
     },
     downloadStory: function (
-      storyKey: string,
+      _storyKey: string,
     ): Promise<RemoteRepositoryResponse<{ story: Story; scenes: Scene[] }>> {
       throw new Error("Function not implemented.");
     },
     saveStoryProgresses: function (
-      storyProgresses: StoryProgress[],
-      userKey: string,
+      _storyProgresses: StoryProgress[],
+      _userKey: string,
     ): Promise<RemoteRepositoryResponse<StoryProgress[]>> {
       throw new Error("Function not implemented.");
     },
     saveStories: function (
-      stories: Story[],
-      scenes: Scene[],
+      _stories: Story[],
+      _scenes: Scene[],
     ): Promise<
       RemoteRepositoryResponse<{ message?: string | null; success: boolean }>
     > {
       throw new Error("Function not implemented.");
     },
-    getSynchronizationData: function (userKey: string): Promise<
+    getSynchronizationData: function (_userKey: string): Promise<
       RemoteRepositoryResponse<{
         playerGames: { stories: Story[]; scenes: Scene[] };
         builderGames: { stories: Story[]; scenes: Scene[] };

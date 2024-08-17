@@ -47,7 +47,7 @@ export type LocalRepositoryPort = {
   ) => Promise<StoryProgress | null>;
   getStoryProgress: (storyKey: string) => Promise<StoryProgress | null>;
   getStoryProgresses: () => Promise<StoryProgress[]>;
-  getFinishedGameKeys: () => Promise<string[]>;
+  getMostRecentStoryProgress: () => Promise<StoryProgress | null>;
 
   getUser: () => Promise<User | null>;
   getUserCount: () => Promise<number>;
