@@ -25,7 +25,7 @@ export default defineConfig({
         name: "Story Builder",
         short_name: "Story Builder",
         description: "Create your choose-your-own-adventure gamebook",
-        theme_color: "#ffffff",
+        theme_color: "#facc15",
       },
 
       workbox: {

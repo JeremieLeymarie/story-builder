@@ -14,7 +14,8 @@
     "test": "vitest",
     "test:single": "vitest run",
     "coverage": "vitest run --coverage",
-    "generate-client": "openapi-typescript http://localhost:8000/openapi.json -o src/lib/http-client/schema.d.ts"
+    "generate-client": "openapi-typescript http://localhost:8000/openapi.json -o src/lib/http-client/schema.d.ts",
+    "generate-pwa-assets": "pwa-assets-generator --preset minimal-2023 public/story-builder-logo.svg"
   },
   "dependencies": {
     "@excalidraw/excalidraw": "^0.17.6",
