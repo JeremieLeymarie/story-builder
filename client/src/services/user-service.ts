@@ -96,7 +96,7 @@ const _getUserService = ({
       const progress = await localRepository.getStoryProgress(storyKey);
 
       if (!progress) {
-        return { story, progress };
+        return { story, progress, lastScene: null };
       }
 
       const lastScene = await localRepository.getScene(

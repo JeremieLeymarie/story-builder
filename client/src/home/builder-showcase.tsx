@@ -83,8 +83,8 @@ export const BuilderShowcase = () => {
   const [edges, , onEdgesChange] = useEdgesState(EDGES);
 
   return (
-    <div className="flex h-[400px] w-full max-lg:h-fit max-lg:flex-col">
-      <div className="flex h-full w-5/12 items-center bg-primary max-lg:w-full max-lg:py-8">
+    <div className="flex h-[400px] w-full bg-primary max-lg:h-fit max-lg:flex-col">
+      <div className="flex h-full w-5/12 items-center max-lg:w-full max-lg:py-8">
         <div className="flex w-full flex-col px-12">
           <Title variant="primary">Create your own stories!</Title>
           <p className="mt-4">
@@ -104,7 +104,7 @@ export const BuilderShowcase = () => {
           </div>
         </div>
       </div>
-      <div className="h-full w-7/12 max-lg:h-[400px] max-lg:w-full">
+      <div className="h-full w-7/12 bg-white max-lg:h-[400px] max-lg:w-full">
         <ReactFlow
           nodeTypes={nodeTypes}
           nodes={nodes}
@@ -113,6 +113,9 @@ export const BuilderShowcase = () => {
           onEdgesChange={onEdgesChange}
           minZoom={0.05}
           onInit={(instance) => instance.fitView()}
+          zoomOnScroll={false}
+          panOnScroll={false}
+          preventScrolling={false}
         >
           <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         </ReactFlow>

@@ -9,6 +9,7 @@ const Page = () => {
   const { story, progress, lastScene } =
     useLiveQuery(() => getUserService().getLibraryDetailData(storyKey)) ?? {};
 
+  console.log(story, progress, lastScene);
   if (
     story === undefined ||
     progress === undefined ||

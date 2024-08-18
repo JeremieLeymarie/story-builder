@@ -7,7 +7,10 @@ export const Divider = ({
 }: HTMLAttributes<HTMLHRElement>) => {
   return (
     <hr
-      className={cn("w-full border-t-4 border-t-primary", className)}
+      className={cn(
+        "h-1 w-full border-none bg-primary text-primary",
+        className,
+      )}
       {...props}
     />
   );

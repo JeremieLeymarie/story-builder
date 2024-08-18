@@ -1,9 +1,9 @@
 import { LastGameSection } from "./last-game-section";
-import { Divider } from "../design-system/components/divider";
-import { StoreItems } from "./store-items";
 import { Story } from "@/lib/storage/domain";
 import { BuilderShowcase } from "./builder-showcase";
 import { LibrarySection } from "./library-section";
+import { Divider } from "@/design-system/components";
+import { StoreSection } from "./store-section";
 
 type Props = {
   lastPlayedGame?: Story | null;
@@ -22,13 +22,14 @@ export const Home = ({ lastPlayedGame, storeItems, libraryStories }: Props) => {
       )}
       <LibrarySection stories={libraryStories} />
       <Divider />
-      {storeItems && (
+      <BuilderShowcase />
+      <Divider />
+      {storeItems && storeItems.length > 3 && (
         <>
-          <StoreItems stories={storeItems} />
+          <StoreSection stories={storeItems} />
           <Divider />
         </>
       )}
-      <BuilderShowcase />
       {/* TODO: add about section */}
     </div>
   );

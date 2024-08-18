@@ -13,7 +13,7 @@ export const Navbar = ({
   saveLocalData: () => void;
 }) => {
   return (
-    <div className="flex h-[50px] items-center justify-between border-b-4 border-b-primary px-4 py-6">
+    <div className="sticky top-0 z-50 flex h-[50px] items-center justify-between border-b-4 border-b-primary bg-white/85 px-4 py-6 backdrop-blur">
       <div className="flex gap-2">
         {/* TODO: Implement actual menu */}
         <Link to="/" className="block">

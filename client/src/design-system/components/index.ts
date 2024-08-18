@@ -1,4 +1,5 @@
 export * from "./confirm-dialog";
+export * from "./divider";
 export * from "./error-message";
 export * from "./form-error";
 export * from "./story-genre-badge";

@@ -15,7 +15,7 @@ type Props = {
 export const LibraryGameDetail = ({ story, progress, currentScene }: Props) => {
   return (
     <div
-      className="flex h-full w-full items-center justify-evenly max-lg:flex-col max-lg:justify-start"
+      className="flex h-full w-full flex-col items-center justify-start pt-32 lg:flex-row lg:justify-center lg:gap-28 lg:pt-0"
       style={{
         background: `url('${story.image}')`,
         backgroundRepeat: "no-repeat",
@@ -23,7 +23,7 @@ export const LibraryGameDetail = ({ story, progress, currentScene }: Props) => {
         backgroundPosition: "center",
       }}
     >
-      <div className="space-y-4 p-16 max-lg:space-y-2 max-lg:pb-8">
+      <div className="space-y-4 max-lg:space-y-2 max-lg:pb-8">
         <Title>{story.title}</Title>
         {story.genres.length && (
           <div className="flex flex-wrap gap-2">
@@ -48,9 +48,9 @@ export const LibraryGameDetail = ({ story, progress, currentScene }: Props) => {
       {progress && currentScene ? (
         <DetailProgress currentScene={currentScene} progress={progress} />
       ) : (
-        <div className="flex h-full w-full items-center justify-center">
+        <div className="mt-8 flex items-center justify-center">
           <GameLink progress={null} gameKey={story.key}>
-            <Button className="animate-bounce text-xl max-md:text-lg">
+            <Button className="text-xl shadow-3xl shadow-primary max-md:text-lg">
               Start game &nbsp;
               <MoveRightIcon />
             </Button>
