@@ -17,34 +17,37 @@ export type SceneNodeProps = NodeProps<SceneProps>;
 
 export const SceneNode = ({ data, yPos, xPos }: SceneNodeProps) => {
   const builderService = getBuilderService();
+  const isEditable = data.isEditable !== undefined ? data.isEditable : true;
 
   return (
     <Card className={cn("w-[375px]", data.isFirstScene && "bg-primary/60")}>
       <CardHeader>
         <div className="flex justify-between gap-1">
           <CardTitle>{data.title}</CardTitle>
-          <SceneEditor
-            defaultValues={data}
-            trigger={<EditIcon />}
-            onSave={(values) =>
-              builderService.updateScene({
-                ...data,
-                ...values,
-                builderParams: { position: { x: xPos, y: yPos } },
-              })
-            }
-            setFirstScene={() =>
-              builderService
-                .changeFirstScene(data.storyKey, data.key)
-                .catch(() => {
-                  toast({
-                    title: "Operation failed",
-                    description:
-                      "Something went wrong. Could not change the first scene of the story",
-                  });
+          {isEditable && (
+            <SceneEditor
+              defaultValues={data}
+              trigger={<EditIcon />}
+              onSave={(values) =>
+                builderService.updateScene({
+                  ...data,
+                  ...values,
+                  builderParams: { position: { x: xPos, y: yPos } },
                 })
-            }
-          />
+              }
+              setFirstScene={() =>
+                builderService
+                  .changeFirstScene(data.storyKey, data.key)
+                  .catch(() => {
+                    toast({
+                      title: "Operation failed",
+                      description:
+                        "Something went wrong. Could not change the first scene of the story",
+                    });
+                  })
+              }
+            />
+          )}
         </div>
         <CardDescription>{data.content}</CardDescription>
       </CardHeader>

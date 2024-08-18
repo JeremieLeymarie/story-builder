@@ -7,6 +7,7 @@ export type SceneProps = {
   key: string;
   storyKey: string;
   isFirstScene: boolean;
+  isEditable?: boolean;
 };
 
 export type BuilderNode = Node<SceneProps, "scene">;

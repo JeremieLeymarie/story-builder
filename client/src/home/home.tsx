@@ -2,6 +2,7 @@ import { LastGameSection } from "./last-game-section";
 import { Divider } from "../design-system/components/divider";
 import { StoreItems } from "./store-items";
 import { Story } from "@/lib/storage/domain";
+import { BuilderShowcase } from "./builder-showcase";
 
 type Props = {
   lastPlayedGame?: Story | null;
@@ -24,7 +25,8 @@ export const Home = ({ lastPlayedGame, storeItems }: Props) => {
           <Divider />
         </>
       )}
-      {/* TODO: add builder section */}
+      <BuilderShowcase />
+      {/* TODO: add about section */}
     </div>
   );
 };
