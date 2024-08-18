@@ -3,13 +3,15 @@ import { Divider } from "../design-system/components/divider";
 import { StoreItems } from "./store-items";
 import { Story } from "@/lib/storage/domain";
 import { BuilderShowcase } from "./builder-showcase";
+import { LibrarySection } from "./library-section";
 
 type Props = {
   lastPlayedGame?: Story | null;
   storeItems: Story[] | null;
+  libraryStories: Story[];
 };
 
-export const Home = ({ lastPlayedGame, storeItems }: Props) => {
+export const Home = ({ lastPlayedGame, storeItems, libraryStories }: Props) => {
   return (
     <div className="h-full w-full">
       {!!lastPlayedGame && (
@@ -18,7 +20,8 @@ export const Home = ({ lastPlayedGame, storeItems }: Props) => {
           <Divider />
         </>
       )}
-      {/* TODO: add library section */}
+      <LibrarySection stories={libraryStories} />
+      <Divider />
       {storeItems && (
         <>
           <StoreItems stories={storeItems} />

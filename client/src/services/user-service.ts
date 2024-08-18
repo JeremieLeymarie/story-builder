@@ -80,12 +80,10 @@ const _getUserService = ({
       const stories = await localRepository.getStories();
       const user = await localRepository.getUser();
 
-      const userStories = stories?.filter(
-        (story) => story.author?.key === user?.key,
-      );
-      const storiesFromStore = stories?.filter(
-        (story) => story.author?.key !== user?.key,
-      );
+      const userStories =
+        stories?.filter((story) => story.author?.key === user?.key) ?? null;
+      const storiesFromStore =
+        stories?.filter((story) => story.author?.key !== user?.key) ?? null;
 
       // TODO: add this to test
       const finishedGameKeys = await localRepository.getFinishedGameKeys();

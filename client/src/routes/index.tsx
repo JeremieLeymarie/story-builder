@@ -13,16 +13,30 @@ const Index = () => {
   const user = useLiveQuery(userService.getCurrentUser);
   const lastPlayedGame = useLiveQuery(gameService.getLastGamePlayed, [user]);
   const [storeItems, setStoreItems] = useState<Story[] | null>(null);
+  const libraryStories = useLiveQuery(userService.getLibraryData);
 
   useEffect(() => {
     getStoreService().getItems().then(setStoreItems);
   }, []);
 
-  if (user === undefined || lastPlayedGame === undefined) {
+  if (
+    user === undefined ||
+    lastPlayedGame === undefined ||
+    libraryStories === undefined
+  ) {
     return <BackdropLoader />;
   }
 
-  return <Home lastPlayedGame={lastPlayedGame} storeItems={storeItems} />;
+  return (
+    <Home
+      lastPlayedGame={lastPlayedGame}
+      storeItems={storeItems}
+      libraryStories={[
+        ...(libraryStories.storiesFromStore ?? []),
+        ...(libraryStories.userStories ?? []),
+      ]}
+    />
+  );
 };
 
 export const Route = createFileRoute("/")({
