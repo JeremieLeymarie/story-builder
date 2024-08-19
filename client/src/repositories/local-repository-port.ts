@@ -21,12 +21,12 @@ export type LocalRepositoryPort = {
   getStoriesByKeys: (keys: string[]) => Promise<Story[]>;
   getStoriesByAuthor: (userKey?: string) => Promise<Story[] | null>;
   getGames: () => Promise<Story[]>;
-  getLastGamePlayed: () => Promise<Story | null>;
   updateFirstScene: (storyKey: string, sceneKey: string) => Promise<void>;
   addAuthorToStories: (author: {
     key: string;
     username: string;
   }) => Promise<void>;
+  getFinishedGameKeys: () => Promise<string[]>;
 
   createScene: (scene: WithoutKey<Scene>) => Promise<Scene>;
   updateOrCreateScenes: (scenes: Scene[]) => Promise<string[]>;

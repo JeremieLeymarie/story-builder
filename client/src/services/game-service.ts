@@ -19,7 +19,7 @@ export const _getGameService = ({
       if (!scene) return null;
 
       // TODO: test history update && finished
-      await localRepository.updateStoryProgress({
+      const updatedProgress = await localRepository.updateStoryProgress({
         ...progress,
         currentSceneKey,
         history:
@@ -29,6 +29,8 @@ export const _getGameService = ({
         lastPlayedAt: new Date(),
         ...(!sceneActions.length && { finished: true }),
       });
+
+      return updatedProgress;
     },
 
     getOrCreateStoryProgress: async (story: Story) => {

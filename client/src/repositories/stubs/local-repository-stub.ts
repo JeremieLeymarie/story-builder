@@ -126,20 +126,27 @@ export const getLocalRepositoryStub = (): LocalRepositoryPort => {
       return new Promise((res) => res(progress));
     },
 
+    getFinishedGameKeys: function (): Promise<string[]> {
+      const keys = storage.storyProgresses
+        .filter((p) => p.finished)
+        .map(({ storyKey }) => storyKey);
+
+      return new Promise((res) => res(keys));
+    },
+
     updateFirstScene: function (
       storyKey: string,
       sceneKey: string,
-    ): Promise<boolean> {
+    ): Promise<void> {
       const idx = storage.stories.findIndex((s) => s.key === storyKey);
       if (idx > -1) {
         storage.stories[idx] = {
           ...storage.stories[idx]!,
           firstSceneKey: sceneKey,
         };
-        return new Promise((res) => res(true));
       }
 
-      return new Promise((res) => res(false));
+      return new Promise((res) => res());
     },
 
     addAuthorToStories: function (author: {

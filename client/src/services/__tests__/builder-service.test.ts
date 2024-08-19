@@ -460,10 +460,7 @@ describe("builder-service", () => {
         storyKey: story.key,
       });
 
-      const result = await builderService.changeFirstScene(
-        story.key,
-        scene.key,
-      );
+      await builderService.changeFirstScene(story.key, scene.key);
 
       const updatedStory = await localRepository.getStory(story.key);
 
@@ -471,7 +468,6 @@ describe("builder-service", () => {
         ...story,
         firstSceneKey: scene.key,
       });
-      expect(result).toBeTruthy();
     });
 
     it("should not update the story if the scene key is invalid", async () => {

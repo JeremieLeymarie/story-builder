@@ -168,9 +168,7 @@ export const _getBuilderService = ({
     },
 
     addScene: async (scene: WithoutKey<Scene>) => {
-      await localRepository.createScene(scene);
-
-      return scene;
+      return await localRepository.createScene(scene);
     },
 
     updateStory: async (story: Story) => {

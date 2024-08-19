@@ -2,9 +2,10 @@ import { Scene, Story } from "@/lib/storage/domain";
 import { LocalRepositoryPort } from "@/repositories/local-repository-port";
 import { RemoteRepositoryPort } from "@/repositories/remote-repository-port";
 import { WithoutKey } from "@/types";
-import { makePerformSync } from "./common/sync";
 import { getLocalRepository } from "@/repositories/indexed-db-repository";
 import { getRemoteAPIRepository } from "@/repositories/remote-api-repository";
+import { fullStorySchema } from "./builder/schemas";
+import Dexie from "dexie";
 
 // Maybe atomic repository actions could be isolated in helpers
 
@@ -15,20 +16,14 @@ const _getBuilderService = ({
   localRepository: LocalRepositoryPort;
   remoteRepository: RemoteRepositoryPort;
 }) => {
-  const performSync = makePerformSync(localRepository);
-
   return {
     updateSceneBuilderPosition: async (
       sceneKey: string,
       position: Scene["builderParams"]["position"],
     ) => {
-      localRepository.updateScene(sceneKey, { builderParams: { position } });
-
-      performSync(["story"], () =>
-        remoteRepository.updatePartialScene(sceneKey, {
-          builderParams: { position },
-        }),
-      );
+      localRepository.updatePartialScene(sceneKey, {
+        builderParams: { position },
+      });
     },
 
     addSceneConnection: async ({
@@ -47,13 +42,9 @@ const _getBuilderService = ({
         return action;
       });
 
-      await localRepository.updateScene(sourceScene.key, {
+      await localRepository.updatePartialScene(sourceScene.key, {
         actions,
       });
-
-      performSync(["story"], () =>
-        remoteRepository.updatePartialScene(sourceScene.key, { actions }),
-      );
     },
 
     removeSceneConnection: async ({
@@ -70,11 +61,7 @@ const _getBuilderService = ({
         return action;
       });
 
-      await localRepository.updateScene(sourceScene.key, { actions });
-
-      performSync(["story"], () =>
-        remoteRepository.updatePartialScene(sourceScene.key, { actions }),
-      );
+      await localRepository.updatePartialScene(sourceScene.key, { actions });
     },
 
     createStoryWithFirstScene: async (
@@ -107,11 +94,7 @@ const _getBuilderService = ({
         },
       });
 
-      if (result)
-        performSync(["story"], () => {
-          remoteRepository.updateOrCreateScene(result.scene);
-          remoteRepository.updateOrCreateStory(result.story);
-        });
+      return result;
     },
 
     publishStory: async (scenes: Scene[], story: Story) => {
@@ -121,7 +104,7 @@ const _getBuilderService = ({
       });
 
       if (response.data) {
-        await localRepository.updateStory(response.data);
+        await localRepository.updateStory(response.data.story);
       }
 
       return !!response.data;
@@ -135,14 +118,8 @@ const _getBuilderService = ({
         ...(user && { author: { key: user.key, username: user.username } }),
       });
 
-      if (result) {
-        performSync(["story"], () =>
-          remoteRepository.updateOrCreateStory(story),
-        );
-      }
+      return result;
     },
-<<<<<<<< HEAD:client/src/services/builder-service.ts
-========
 
     importFromJSON: async (fileContent: string) => {
       // TODO: refacto this try/catch mess
@@ -158,13 +135,7 @@ const _getBuilderService = ({
           const story = await localRepository.createStory(resZod.data.story);
           const scenes = await localRepository.createScenes(resZod.data.scenes);
 
-          if (story && scenes)
-            performSync(["story"], () => {
-              remoteRepository.updateOrCreateFullStory(
-                resZod.data.story,
-                resZod.data.scenes,
-              );
-            });
+          return { story, scenes };
         } catch (error) {
           if (
             error instanceof Dexie.DexieError &&
@@ -183,10 +154,7 @@ const _getBuilderService = ({
     addScene: async (scene: WithoutKey<Scene>) => {
       const result = await localRepository.createScene(scene);
 
-      if (result)
-        performSync(["story"], () =>
-          remoteRepository.updateOrCreateScene(result),
-        );
+      return result;
     },
 
     updateStory: async (story: Story) => {
@@ -196,20 +164,13 @@ const _getBuilderService = ({
         ...(user && { author: { key: user.key, username: user.username } }),
       });
 
-      if (result) {
-        performSync(["story"], () => {
-          remoteRepository.updateOrCreateStory(result);
-        });
-      }
+      return result;
     },
 
     updateScene: async (scene: Scene) => {
-      const result = await localRepository.updateScene(scene.key, scene);
+      const result = await localRepository.updatePartialScene(scene.key, scene);
 
-      if (result)
-        performSync(["story"], () => {
-          remoteRepository.updateOrCreateScene(scene);
-        });
+      return result;
     },
 
     changeFirstScene: async (storyKey: string, newFirstSceneKey: string) => {
@@ -218,15 +179,8 @@ const _getBuilderService = ({
         newFirstSceneKey,
       );
 
-      const story = await localRepository.getStory(storyKey);
-
-      if (result && story) {
-        performSync(["story"], () => {
-          remoteRepository.updateOrCreateStory(story);
-        });
-      }
+      return result;
     },
->>>>>>>> be6fd7e (:recycle: wip - service refacto - scenes & stories in builder):client/src/services/builder/builder-service.ts
   };
 };
 

@@ -87,6 +87,7 @@ const _getUserService = ({
         (story) => story.author?.key !== user?.key,
       );
 
+      // TODO: add this to test
       const finishedGameKeys = await localRepository.getFinishedGameKeys();
 
       return { userStories, storiesFromStore, finishedGameKeys };

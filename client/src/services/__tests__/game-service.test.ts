@@ -58,6 +58,7 @@ describe("game-service", () => {
 
       const p = await gameService.saveProgress(progress, {
         currentSceneKey: scene.key,
+        sceneActions: [],
       });
 
       expect(p).toStrictEqual({
@@ -66,6 +67,7 @@ describe("game-service", () => {
         currentSceneKey: scene.key,
         storyKey: "plouf",
         lastPlayedAt: now,
+        finished: true,
       });
     });
 
@@ -78,6 +80,7 @@ describe("game-service", () => {
 
       const p = await gameService.saveProgress(progress, {
         currentSceneKey: scene.key,
+        sceneActions: [],
       });
 
       expect(p).toStrictEqual({
@@ -86,12 +89,14 @@ describe("game-service", () => {
         currentSceneKey: scene.key,
         storyKey: "plouf",
         lastPlayedAt: now,
+        finished: true,
       });
     });
 
     it("should not do anything when the scene key is invalid", async () => {
       const p = await gameService.saveProgress(progress, {
         currentSceneKey: "tututu",
+        sceneActions: [],
       });
 
       expect(p).toBeNull();
