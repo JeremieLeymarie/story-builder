@@ -2,6 +2,8 @@ import Dexie, { type EntityTable } from "dexie";
 import { nanoid } from "nanoid";
 import { User, Story, Scene, StoryProgress } from "../domain";
 
+// TODO: move this file in a more appropriate location
+
 export const db = new Dexie("story-builder") as Dexie & {
   user: EntityTable<User, "key">;
   stories: EntityTable<Story, "key">;

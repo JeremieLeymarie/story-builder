@@ -1,18 +1,16 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/design-system/primitives";
-import { SynchronizationState } from "./hooks/use-synchronization";
-import { SynchronizationStateDisplay } from "./synchronization-state";
-import { UserDisplay } from "./user-display";
+import { NavbarActions } from "./components/navbar-actions";
 import { User } from "@/lib/storage/domain";
 
 export const Navbar = ({
-  syncState,
   user,
-  synchronize,
+  loadRemoteData,
+  saveLocalData,
 }: {
-  syncState: SynchronizationState;
   user?: User | null;
-  synchronize: () => void;
+  loadRemoteData: () => void;
+  saveLocalData: () => void;
 }) => {
   return (
     <div className="flex h-[50px] items-center justify-between border-b-4 border-b-primary px-4 py-6">
@@ -30,13 +28,16 @@ export const Navbar = ({
         <Link to="/builder/stories" className="block">
           <Button variant="ghost">Builder</Button>
         </Link>
+        <Link to="/about" className="block">
+          <Button variant="ghost">About</Button>
+        </Link>
       </div>
       <div className="flex items-center gap-6">
-        <SynchronizationStateDisplay
-          syncState={syncState}
-          synchronize={synchronize}
+        <NavbarActions
+          user={user}
+          loadRemoteData={loadRemoteData}
+          saveLocalData={saveLocalData}
         />
-        <UserDisplay user={user} />
         {/* <ModeToggle /> */}
       </div>
     </div>

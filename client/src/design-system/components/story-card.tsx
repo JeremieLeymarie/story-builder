@@ -13,6 +13,7 @@ export const StoryCard = ({
   return (
     <Card
       style={{
+        backgroundColor: "black",
         background: `url('${image}')`,
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",

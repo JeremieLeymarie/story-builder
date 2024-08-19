@@ -1,26 +1,20 @@
-import { ErrorMessage } from "@/design-system/components";
-import { Loader } from "@/design-system/components/loader";
-import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
+import { BackdropLoader, ErrorMessage } from "@/design-system/components";
 import { LibraryGameDetail } from "@/library/detail";
+import { getUserService } from "@/services";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 
 const Page = () => {
   const { storyKey } = Route.useParams();
-  const repo = getLocalRepository();
-  const story = useLiveQuery(() => repo.getStory(storyKey));
-  const progress = useLiveQuery(() => repo.getStoryProgress(storyKey));
-  const lastScene = useLiveQuery(
-    () => (progress ? repo.getScene(progress.currentSceneKey) : progress),
-    [progress],
-  );
+  const { story, progress, lastScene } =
+    useLiveQuery(() => getUserService().getLibraryDetailData(storyKey)) ?? {};
 
   if (
     story === undefined ||
     progress === undefined ||
     lastScene === undefined
   ) {
-    return <Loader />;
+    return <BackdropLoader />;
   }
 
   if (story === null) {

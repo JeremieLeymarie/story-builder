@@ -27,3 +27,15 @@ class StoryProgressRepositoryPort(Protocol):
             StoryProgress: the updated record
         """
         ...
+
+    def save_all(self, story_progresses: list[StoryProgress]) -> list[StoryProgress]:
+        """Insert or update story progresses in the database
+
+
+        Args:
+            story_progresses (list[StoryProgress]): the story progresses data to save in the database
+
+        Returns:
+            StoryProgress: the updated or inserted records
+        """
+        ...

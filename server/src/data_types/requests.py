@@ -19,3 +19,8 @@ class LoginUserRequest(BaseModel):
 class FullStoryBuilderRequest(BaseModel):
     story: Story
     scenes: list[Scene]
+
+
+class FullStoriesRequest(BaseModel):
+    stories: list[Story]
+    scenes: list[Scene]

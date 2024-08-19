@@ -1,17 +1,27 @@
-import { ErrorMessage, Loader } from "@/design-system/components";
+import { ErrorMessage, BackdropLoader } from "@/design-system/components";
 import { GameScene } from "@/game/components/scene";
-import { useGameScene } from "@/hooks/use-game-scene";
+import { useUpdateStoryProgress } from "@/game/hooks/use-update-story-progress";
+import { useInitialQuery } from "@/hooks/use-query";
+import { getGameService } from "@/services";
 import { createFileRoute } from "@tanstack/react-router";
+import { useLiveQuery } from "dexie-react-hooks";
 
 export const Component = () => {
   const { sceneKey, gameKey } = Route.useParams();
-  const { scene, storyProgress, saveProgress } = useGameScene({
-    sceneKey,
-    gameKey,
-  });
+  const gameService = getGameService();
+  const scene = useLiveQuery(
+    () => gameService.getSceneData(sceneKey),
+    [sceneKey, gameKey],
+  );
+
+  const storyProgress = useInitialQuery(() =>
+    gameService.getStoryProgress(gameKey),
+  );
+
+  useUpdateStoryProgress({ scene, storyProgress });
 
   if (scene === undefined || storyProgress === undefined) {
-    return <Loader />;
+    return <BackdropLoader />;
   }
 
   if (scene === null || storyProgress === null) {
@@ -25,7 +35,6 @@ export const Component = () => {
       {...sceneWithoutKey}
       sceneKey={key}
       isLastScene={!sceneWithoutKey.actions.length}
-      saveProgress={() => saveProgress(storyProgress)}
     />
   );
 };

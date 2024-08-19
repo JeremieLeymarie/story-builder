@@ -1,4 +1,4 @@
-import { STORY_GENRES, STORY_STATUS } from "@/lib/storage/domain";
+import { STORY_STATUS, STORY_GENRES } from "@/lib/storage/domain";
 import { z } from "zod";
 
 export const schema = z.object({

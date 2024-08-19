@@ -18,9 +18,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useUser } from "./hooks/use-user";
-import { client } from "./lib/http-client/client";
 import { User } from "./lib/storage/domain";
+import { getUserService } from "./services/user-service";
 
 export const AuthModalForm = ({
   open,
@@ -109,19 +108,14 @@ const SignUpForm = ({
     resolver: zodResolver(signUpSchema),
     defaultValues: {},
   });
-  const { persistUser } = useUser();
 
-  const submit = async ({ password, ...data }: SignUpSchema) => {
-    const user = await persistUser(data);
+  const submit = async (data: SignUpSchema) => {
+    const response = await getUserService().register(data);
 
-    const response = await client.POST("/api/user/register", {
-      body: { ...user, password },
-    });
-
-    if (response.error) {
-      onError("Error when trying to register user: invalid input");
+    if (response.data) {
+      onSuccess(response.data);
     } else {
-      onSuccess(user);
+      onError("Error when trying to register user: invalid input");
     }
   };
 
@@ -198,15 +192,17 @@ const SignInForm = ({
     resolver: zodResolver(signInSchema),
     defaultValues: {},
   });
-  const { persistUser } = useUser();
 
   const submit = async (body: SignInSchema) => {
-    const response = await client.POST("/api/user/login", { body });
-    if (response.error) {
-      onError("Error when trying to login: invalid input");
-    } else {
+    const response = await getUserService().login(
+      body.usernameOrEmail,
+      body.password,
+    );
+
+    if (response.data) {
       onSuccess(response.data);
-      persistUser(response.data);
+    } else {
+      onError("Error when trying to login: invalid input");
     }
   };
 

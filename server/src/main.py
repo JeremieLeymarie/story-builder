@@ -4,11 +4,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRoute
 from data_types.requests import (
     CreateUserRequest,
+    FullStoriesRequest,
     LoginUserRequest,
     FullStoryBuilderRequest,
 )
 from domains.user_domain import UserDomain
-from domains.builder_domain import BuilderDomain
 from domains.store_domain import StoreDomain
 from repositories.story_repository import StoryRepository
 from repositories.user_repository import UserRepository
@@ -71,20 +71,6 @@ async def create_user(data: CreateUserRequest):
         raise raise_http_error(err)
 
 
-# BUILDER ENDPOINTS
-
-
-@app.post(
-    "/api/builder/save/game", status_code=HTTPStatus.OK, response_model=APIResponse
-)
-async def save_builder_state(body: FullStoryBuilderRequest):
-    try:
-        BuilderDomain(story_repository=StoryRepository()).save(body.story, body.scenes)
-        return {"success": True}
-    except Exception as err:
-        raise raise_http_error(err)
-
-
 # STORE ENDPOINTS
 
 
@@ -113,13 +99,13 @@ async def download_from_store(key: str):
         raise raise_http_error(err)
 
 
-@app.put("/api/store/publish", status_code=HTTPStatus.OK, response_model=APIResponse)
+@app.put("/api/store/publish", status_code=HTTPStatus.OK, response_model=Story)
 async def publish_in_store(body: FullStoryBuilderRequest):
     try:
-        StoreDomain(story_repository=StoryRepository()).publish(
+        story = StoreDomain(story_repository=StoryRepository()).publish(
             story=body.story, scenes=body.scenes
         )
-        return {"success": True}
+        return story
     except Exception as err:
         raise raise_http_error(err)
 
@@ -128,7 +114,7 @@ async def publish_in_store(body: FullStoryBuilderRequest):
 
 
 @app.get(
-    "/api/synchronize/{user_key}",
+    "/api/load/{user_key}",
     status_code=HTTPStatus.OK,
     response_model=SynchronizationPayload,
 )
@@ -143,15 +129,25 @@ async def get_synchronization_data(user_key: str):
         raise raise_http_error(err)
 
 
-@app.patch(
-    "/api/synchronize/progress", status_code=HTTPStatus.OK, response_model=APIResponse
-)
-async def synchronize_progress(payload: StoryProgress):
+@app.put("/api/save/progresses", status_code=HTTPStatus.OK, response_model=APIResponse)
+async def synchronize_progresses(payload: list[StoryProgress]):
     try:
         SynchronizationDomain(
             story_progress_repository=StoryProgressRepository(),
             story_repository=StoryRepository(),
-        ).synchronize_progress(payload)
+        ).save_progresses(payload)
+        return {"success": True}
+    except Exception as err:
+        raise raise_http_error(err)
+
+
+@app.put("/api/save/builder", status_code=HTTPStatus.OK, response_model=APIResponse)
+async def save_builder_state(body: FullStoriesRequest):
+    try:
+        SynchronizationDomain(
+            story_repository=StoryRepository(),
+            story_progress_repository=StoryProgressRepository(),
+        ).save_builder_stories(body.stories, body.scenes)
         return {"success": True}
     except Exception as err:
         raise raise_http_error(err)

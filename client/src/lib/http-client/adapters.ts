@@ -1,4 +1,4 @@
-import { Action, Scene, Story } from "../storage/domain";
+import { Action, Scene, Story, StoryProgress } from "../storage/domain";
 import { components } from "./schema";
 
 /* API TO CLIENT DOMAIN */
@@ -72,6 +72,22 @@ const fromAPIFullStoriesAdapter = (
   );
 };
 
+const fromAPIStoryProgressAdapter = (
+  storyProgress: components["schemas"]["StoryProgress"],
+): StoryProgress => {
+  return {
+    ...storyProgress,
+    lastPlayedAt: new Date(storyProgress.lastPlayedAt),
+    finished: !!storyProgress.finished,
+  };
+};
+
+const fromAPIStoryProgressesAdapter = (
+  storyProgresses: components["schemas"]["StoryProgress"][],
+): StoryProgress[] => {
+  return storyProgresses.map(fromAPIStoryProgressAdapter);
+};
+
 /* CLIENT DOMAIN TO API*/
 
 const fromClientStoryAdapter = (
@@ -87,6 +103,10 @@ const fromClientStoryAdapter = (
   };
 };
 
+const fromClientStoriesAdapter = (
+  stories: Story[],
+): components["schemas"]["Story"][] => stories.map(fromClientStoryAdapter);
+
 const fromClientFullStoryAdapter = (
   story: Story,
   scenes: Scene[],
@@ -96,6 +116,25 @@ const fromClientFullStoryAdapter = (
     scenes,
   };
 };
+
+const fromClientStoryProgressAdapter = (
+  storyProgress: StoryProgress,
+  userKey: string,
+): components["schemas"]["StoryProgress"] => {
+  return {
+    ...storyProgress,
+    userKey,
+    lastPlayedAt: storyProgress.lastPlayedAt.toISOString(),
+  };
+};
+
+const fromClientStoryProgressesAdapter = (
+  storyProgresses: StoryProgress[],
+  userKey: string,
+) =>
+  storyProgresses.map((progress) =>
+    fromClientStoryProgressAdapter(progress, userKey),
+  );
 
 export const adapter = {
   fromAPI: {
@@ -107,9 +146,14 @@ export const adapter = {
     scene: fromAPISceneAdapter,
     actions: fromAPIActionsAdapter,
     action: fromAPIActionAdapter,
+    storyProgresses: fromAPIStoryProgressesAdapter,
+    storyProgress: fromAPIStoryProgressAdapter,
   },
   fromClient: {
     fullStory: fromClientFullStoryAdapter,
+    stories: fromClientStoriesAdapter,
     story: fromClientStoryAdapter,
+    storyProgresses: fromClientStoryProgressesAdapter,
+    storyProgress: fromClientStoryProgressAdapter,
   },
 };

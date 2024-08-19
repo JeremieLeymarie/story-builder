@@ -65,3 +65,9 @@ export type StoryProgress = {
   lastPlayedAt: Date;
   finished?: boolean;
 };
+
+export const ENTITIES = ["story", "scene", "user", "story-progress"] as const;
+export type Entity = (typeof ENTITIES)[number];
+
+export const SYNCABLE_ENTITIES = ["story", "user", "story-progress"] as const;
+export type SyncableEntity = (typeof SYNCABLE_ENTITIES)[number];
