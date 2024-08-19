@@ -24,7 +24,7 @@ export const Library = ({
   finishedGameKeys,
 }: Library) => {
   return (
-    <div className="space-y-8 p-8">
+    <div className="space-y-8 p-8 px-32">
       <div className="space-y-8">
         <Title variant="secondary">Your games</Title>
         {storiesFromStore.length > 0 ? (
