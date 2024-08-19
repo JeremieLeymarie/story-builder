@@ -11,10 +11,13 @@ type StoreHomeProps = {
 export const Store = ({ storiesByGenre }: StoreHomeProps) => {
   return (
     <div className="space-y-8 p-8 px-32">
-      <p>Embark on new adventures! Download new stories from the store</p>
+      <Title variant="secondary">Store</Title>
+      <p className="text-muted-foreground">
+        Embark on new adventures! Download new (free) stories from the store
+      </p>
       {Object.entries(storiesByGenre).map(([genre, stories]) => (
         <>
-          <Title variant="secondary" className="capitalize">
+          <Title variant="section" className="capitalize">
             {genre}
           </Title>
           <ScrollArea className="h-[400px] w-fit md:h-fit md:w-full">
