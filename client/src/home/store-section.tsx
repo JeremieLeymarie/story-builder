@@ -20,7 +20,7 @@ export const StoreSection = ({ stories }: { stories: Story[] }) => {
       <ScrollArea className="h-[400px] w-fit md:h-fit md:w-full">
         <div className="flex h-full w-fit flex-col gap-4 px-4 py-4 md:flex-row md:px-0">
           {stories.map((story) => (
-            <StoryCard {...story} key={story.key} />
+            <StoryCard {...story} key={story.key} storyKey={story.key} />
           ))}
           <Card className="h-[225px] w-[275px] border-dashed">
             <CardHeader>

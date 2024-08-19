@@ -24,7 +24,7 @@ export const LibrarySection = ({ stories }: { stories: Story[] }) => {
               params={{ storyKey: story.key }}
               key={story.key}
             >
-              <StoryCard {...story} />
+              <StoryCard {...story} storyKey={story.key} />
             </Link>
           ))}
           <Card className="h-[225px] w-[275px] border-dashed">

@@ -38,29 +38,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-    "/api/builder/save/game": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Save Builder State */
-        put: operations["API-save_builder_state"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
->>>>>>> 719c639 (:recycle: wip - sync refacto - use effects to trigger synchronization)
-=======
->>>>>>> 5b993b8 (:recycle: wip - sync refacto - switch to simple buttons)
     "/api/store/load": {
         parameters: {
             query?: never;
@@ -331,20 +308,12 @@ export interface components {
              * Format: date-time
              */
             lastPlayedAt: string;
-<<<<<<< HEAD
             /** Finished */
             finished?: boolean | null;
             /** Storykey */
             storyKey: string;
             /** Lastsyncat */
             lastSyncAt?: string | null;
-<<<<<<< HEAD
-=======
-            /** Storykey */
-            storyKey: string;
->>>>>>> fdc8c87 (:construction: synchronize in game)
-=======
->>>>>>> 7a269af (:recycle: wip - sync refacto)
         };
         /**
          * StoryStatus
@@ -523,11 +492,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-<<<<<<< HEAD
                     "application/json": components["schemas"]["FullStory"];
-=======
-                    "application/json": components["schemas"]["Story"];
->>>>>>> a50a5f6 (:recycle: wip - continue service refacto)
                 };
             };
             /** @description Validation Error */
