@@ -10,11 +10,13 @@ export const Store = ({ stories }: StoreHomeProps) => {
   return (
     <div className="flex flex-wrap justify-center gap-4 p-4">
       {stories.map((story) => {
+        const { key, ...storyWithoutKey } = story;
         return (
           <StoryCard
-            {...story}
+            {...storyWithoutKey}
             button={<ConfirmDownloadDialog storyKey={story.key} />}
-            key={story.key}
+            key={key}
+            storyKey={key}
           />
         );
       })}

@@ -5,25 +5,30 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 
 const Component = () => {
-  const stories = useLiveQuery(() => getLocalRepository().getStories());
-  const user = useLiveQuery(() => getLocalRepository().getUser());
-  const userStories = stories?.filter(
-    (story) => story.author?.key === user?.key,
-  );
-  const storiesFromStore = stories?.filter(
-    (story) => story.author?.key !== user?.key,
+  const repo = getLocalRepository();
+  const data = useLiveQuery(async () =>
+    Promise.all([
+      repo.getUser(),
+      repo.getStories(),
+      repo.getFinishedGameKeys(),
+    ]),
   );
 
-  if (
-    storiesFromStore === undefined ||
-    userStories === undefined ||
-    user === undefined
-  ) {
-    return <Loader />;
-  }
+  const [user, stories, finishedGames] = data ?? [];
+
+  const userStories =
+    stories?.filter((story) => story.author?.key === user?.key) ?? [];
+  const storiesFromStore =
+    stories?.filter((story) => story.author?.key !== user?.key) ?? [];
+
+  if (!data) return <Loader />;
 
   return stories ? (
-    <Library storiesFromStore={storiesFromStore} userStories={userStories} />
+    <Library
+      storiesFromStore={storiesFromStore}
+      userStories={userStories}
+      finishedGameKeys={finishedGames ?? []}
+    />
   ) : (
     <ErrorMessage text="Could not get your games. Please try again later" />
   );

@@ -63,4 +63,5 @@ export type StoryProgress = {
   character?: Record<string, unknown>;
   inventory?: Record<string, unknown>;
   lastPlayedAt: Date;
+  finished?: boolean;
 };

@@ -14,9 +14,17 @@ export const useBuilderEdges = ({
   const getSceneToUpdate = useCallback(
     (edge: Edge | Connection) => {
       const sourceScene = sceneNodes.find((scene) => scene.id === edge.source);
-      const actionIndex = parseInt(edge.sourceHandle?.split("-")[1] ?? "-1");
 
-      if (!sourceScene || edge.target === null || actionIndex === -1) {
+      const actionIndex = parseInt(
+        edge.sourceHandle?.split("-").at(-1) ?? "-1",
+      );
+
+      if (
+        !sourceScene ||
+        edge.target === null ||
+        actionIndex === -1 ||
+        Number.isNaN(actionIndex)
+      ) {
         return null;
       }
 

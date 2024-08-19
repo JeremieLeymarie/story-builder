@@ -16,6 +16,7 @@ export const useBuilder = ({
     () => scenesToNodesAndEdgesAdapter({ scenes, story }),
     [scenes, story],
   );
+
   const [nodes, setNodes, onNodesChange] = useNodesState(sceneNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(sceneEdges);
 

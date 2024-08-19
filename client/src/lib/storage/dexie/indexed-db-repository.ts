@@ -119,6 +119,14 @@ class IndexedDBRepository implements LocalRepositoryPort {
     });
   }
 
+  async getFinishedGameKeys() {
+    return (
+      await db.storyProgresses
+        .filter((progress) => !!progress.finished)
+        .toArray()
+    ).map((progress) => progress.storyKey);
+  }
+
   // USER
 
   async getUser() {
@@ -154,9 +162,10 @@ class IndexedDBRepository implements LocalRepositoryPort {
     return await db.storyProgresses.toArray();
   }
 
-  async updateStoryProgress(storyProgress: StoryProgress) {
+  async updateStoryProgress(
+    storyProgress: Partial<StoryProgress> & { key: string },
+  ) {
     await db.storyProgresses.update(storyProgress.key, storyProgress);
-    return storyProgress;
   }
 
   async createStoryProgress(storyProgress: WithoutKey<StoryProgress>) {

@@ -1,5 +1,5 @@
 import { LastGameSection } from "./last-game-section";
-import { Divider } from "./divider";
+import { Divider } from "../design-system/components/divider";
 import { StoreItems } from "./store-items";
 import { Story } from "@/lib/storage/domain";
 

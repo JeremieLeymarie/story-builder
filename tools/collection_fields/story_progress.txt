@@ -3,3 +3,4 @@ storyKey
 history
 currentSceneKey
 lastPlayedAt
+finished

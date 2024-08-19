@@ -8,3 +8,4 @@ class StoryProgress(BaseModel):
     history: list[str]
     currentSceneKey: str
     lastPlayedAt: datetime
+    finished: Optional[bool] = None

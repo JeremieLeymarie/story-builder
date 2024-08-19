@@ -295,6 +295,8 @@ export interface components {
              * Format: date-time
              */
             lastPlayedAt: string;
+            /** Finished */
+            finished?: boolean | null;
         };
         /**
          * StoryStatus

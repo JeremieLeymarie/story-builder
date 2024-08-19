@@ -90,7 +90,9 @@ export const SceneEditor = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className={triggerClassName}>{trigger}</DialogTrigger>
+      <DialogTrigger className={triggerClassName} asChild>
+        {trigger}
+      </DialogTrigger>
       {/* TODO: improve scrollbar, maybe by using the ScrollArea ShadCN UI component */}
       <DialogContent className="max-h-[calc(100vh-100px)] overflow-y-scroll">
         <DialogHeader>

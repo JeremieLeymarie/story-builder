@@ -72,6 +72,7 @@ export const Component = () => {
       {...sceneWithoutKey}
       sceneKey={key}
       saveProgress={() => storyProgress && saveProgress(storyProgress)}
+      isLastScene={false}
     />
   );
 };
