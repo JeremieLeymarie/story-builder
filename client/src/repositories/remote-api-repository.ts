@@ -15,7 +15,7 @@ const parseError = (
 ) => {
   return typeof error === "string"
     ? error
-    : error.detail?.[0]?.msg ?? UNKNOWN_ERROR;
+    : (error.detail?.[0]?.msg ?? UNKNOWN_ERROR);
 };
 
 // TODO: handle other errors that validation errors

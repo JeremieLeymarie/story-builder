@@ -15,7 +15,7 @@ type Props = {
 export const LibraryGameDetail = ({ story, progress, currentScene }: Props) => {
   return (
     <div
-      className="flex h-full w-full flex-col items-center justify-start pt-32 lg:flex-row lg:justify-center lg:gap-28 lg:pt-0"
+      className="flex h-full w-full flex-col items-center justify-start px-32 pt-32 lg:flex-row lg:justify-center lg:gap-28 lg:pt-0"
       style={{
         background: `url('${story.image}')`,
         backgroundRepeat: "no-repeat",
@@ -23,7 +23,7 @@ export const LibraryGameDetail = ({ story, progress, currentScene }: Props) => {
         backgroundPosition: "center",
       }}
     >
-      <div className="space-y-4 max-lg:space-y-2 max-lg:pb-8">
+      <div className="space-y-4 max-lg:space-y-2 max-lg:pb-8 lg:max-w-[50%]">
         <Title>{story.title}</Title>
         {story.genres.length && (
           <div className="flex flex-wrap gap-2">
