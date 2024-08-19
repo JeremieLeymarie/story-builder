@@ -14,7 +14,7 @@ const StoreComponent = () => {
   } | null>();
 
   useEffect(() => {
-    getStoreService().getItems().then(setStories);
+    getStoreService().getItemsByGenre().then(setStories);
   }, []);
 
   if (stories === undefined) return <BackdropLoader />;

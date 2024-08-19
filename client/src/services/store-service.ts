@@ -15,7 +15,7 @@ const _getStoreService = ({
   remoteRepository: RemoteRepositoryPort;
 }) => {
   return {
-    getItems: async () => {
+    getItemsByGenre: async () => {
       if (!isOnline()) return null;
       // TODO: request only necessary number of items
       const response = await remoteRepository.getStoreItems();
@@ -35,6 +35,14 @@ const _getStoreService = ({
         return { storiesByGenre };
       }
       return null;
+    },
+
+    getFirstItems: async (numberOfItems: number) => {
+      if (!isOnline()) return null;
+      // TODO: request only necessary number of items
+      const response = await remoteRepository.getStoreItems();
+
+      return response.data?.slice(0, numberOfItems) ?? null;
     },
 
     downloadStory: async (storyKey: string) => {

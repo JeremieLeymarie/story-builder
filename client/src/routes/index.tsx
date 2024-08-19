@@ -16,7 +16,7 @@ const Index = () => {
   const libraryStories = useLiveQuery(userService.getLibraryData);
 
   useEffect(() => {
-    getStoreService().getItems().then(setStoreItems);
+    getStoreService().getFirstItems(10).then(setStoreItems);
   }, []);
 
   if (
