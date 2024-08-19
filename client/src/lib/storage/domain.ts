@@ -39,7 +39,6 @@ export type Story = {
   genres: StoryGenre[];
   publicationDate?: Date;
   creationDate: Date;
-  lastSyncAt?: Date;
 };
 
 export type Action = {

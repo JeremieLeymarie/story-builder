@@ -207,8 +207,6 @@ export interface components {
             creationDate: string;
             /** Firstscenekey */
             firstSceneKey: string;
-            /** Lastsyncat */
-            lastSyncAt?: string | null;
             /** Scenes */
             scenes: components["schemas"]["Scene-Output"][];
         };
@@ -278,8 +276,6 @@ export interface components {
             creationDate: string;
             /** Firstscenekey */
             firstSceneKey: string;
-            /** Lastsyncat */
-            lastSyncAt?: string | null;
         };
         /** StoryAuthor */
         StoryAuthor: {
@@ -308,18 +304,10 @@ export interface components {
              * Format: date-time
              */
             lastPlayedAt: string;
-<<<<<<< HEAD
             /** Finished */
             finished?: boolean | null;
-=======
             /** Storykey */
             storyKey: string;
-<<<<<<< HEAD
->>>>>>> fdc8c87 (:construction: synchronize in game)
-=======
-            /** Lastsyncat */
-            lastSyncAt?: string | null;
->>>>>>> 7a269af (:recycle: wip - sync refacto)
         };
         /**
          * StoryStatus

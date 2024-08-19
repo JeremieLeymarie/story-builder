@@ -1,9 +1,8 @@
 import { useUpdateStoryProgress } from "@/game/hooks/use-update-story-progress";
-import { getLocalRepository } from "@/lib/storage/dexie/indexed-db-repository";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useCallback, useMemo } from "react";
 import { useInitialQuery } from "./use-query";
-import { useRemoteStoryProgress } from "./use-remote-story-progress";
+import { getLocalRepository } from "@/repositories";
 
 export const useGameScene = ({
   sceneKey,
@@ -32,7 +31,5 @@ export const useGameScene = ({
     storyProgress: initialProgress,
   });
 
-  const { saveProgress } = useRemoteStoryProgress();
-
-  return { scene, storyProgress, saveProgress };
+  return { scene, storyProgress };
 };

@@ -28,7 +28,6 @@ const fromAPIStoryAdapter = (story: components["schemas"]["Story"]): Story => {
       ? new Date(story.publicationDate)
       : undefined,
     creationDate: new Date(story.creationDate),
-    lastSyncAt: story.lastSyncAt ? new Date(story.lastSyncAt) : undefined,
   };
 };
 
@@ -79,9 +78,7 @@ const fromAPIStoryProgressAdapter = (
   return {
     ...storyProgress,
     lastPlayedAt: new Date(storyProgress.lastPlayedAt),
-    lastSyncAt: storyProgress.lastSyncAt
-      ? new Date(storyProgress.lastSyncAt)
-      : undefined,
+    finished: !!storyProgress.finished,
   };
 };
 
@@ -103,7 +100,6 @@ const fromClientStoryAdapter = (
       ? story.publicationDate.toISOString()
       : null,
     creationDate: story.creationDate.toISOString(),
-    lastSyncAt: story.lastSyncAt ? story.lastSyncAt.toISOString() : undefined,
   };
 };
 
@@ -129,7 +125,6 @@ const fromClientStoryProgressAdapter = (
     ...storyProgress,
     userKey,
     lastPlayedAt: storyProgress.lastPlayedAt.toISOString(),
-    lastSyncAt: storyProgress.lastSyncAt?.toISOString(),
   };
 };
 
