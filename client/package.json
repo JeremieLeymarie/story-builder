@@ -75,5 +75,8 @@
     "vite-plugin-pwa": "^0.20.0",
     "vitest": "^2.0.3",
     "workbox-core": "^7.1.0"
-  }
+  },
+  "trustedDependencies": [
+    "sharp"
+  ]
 }
