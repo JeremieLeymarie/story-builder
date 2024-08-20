@@ -1,5 +1,6 @@
 import { Story } from "@/lib/storage/domain";
 import { Card, CardDescription, CardHeader, CardTitle } from "../primitives";
+import { CSSProperties } from "react";
 
 export const StoryCard = ({
   title,
@@ -25,7 +26,16 @@ export const StoryCard = ({
         <CardTitle className="rounded-sm bg-gray-50 bg-opacity-75 p-2">
           {title}
         </CardTitle>
-        <CardDescription className="... overflow-hidden overflow-ellipsis text-gray-50">
+        <CardDescription
+          className="overflow-hidden overflow-ellipsis text-gray-50"
+          style={
+            {
+              display: "-webkit-box",
+              "-webkit-line-clamp": "5",
+              "-webkit-box-orient": "vertical ",
+            } as CSSProperties
+          }
+        >
           {description}
         </CardDescription>
       </CardHeader>
