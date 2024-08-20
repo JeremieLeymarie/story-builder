@@ -10,7 +10,7 @@ type StoreHomeProps = {
 
 export const Store = ({ storiesByGenre }: StoreHomeProps) => {
   return (
-    <div className="space-y-8 p-8 px-32">
+    <div className="flex flex-col items-center space-y-8 p-8 px-32 sm:items-start">
       <Title variant="secondary">Store</Title>
       <p className="text-muted-foreground">
         Embark on new adventures! Download new (free) stories from the store
@@ -20,7 +20,7 @@ export const Store = ({ storiesByGenre }: StoreHomeProps) => {
           <Title variant="section" className="capitalize">
             {genre}
           </Title>
-          <ScrollArea className="h-[400px] w-fit md:h-fit md:w-full">
+          <ScrollArea className="max-h-[800px] w-fit sm:max-h-[400px] md:h-fit md:w-full">
             <div className="flex h-full w-fit flex-col gap-4 px-4 py-4 md:flex-row md:px-0">
               {stories.map((story) => {
                 return (

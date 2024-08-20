@@ -12,7 +12,7 @@ export const StoryList = ({
   finishedGameKeys: string[];
 }) => {
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap">
       {stories.map((storyWithKey) => {
         const { key, ...story } = storyWithKey;
         const isCompleted = finishedGameKeys.includes(key);

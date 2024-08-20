@@ -24,8 +24,8 @@ export const Library = ({
   finishedGameKeys,
 }: Library) => {
   return (
-    <div className="space-y-8 p-8 px-32">
-      <div className="space-y-8">
+    <div className="flex flex-col items-center space-y-8 p-8 px-16 sm:items-start sm:px-32">
+      <div className="flex flex-col items-center space-y-8 sm:items-start">
         <Title variant="secondary">Your games</Title>
         {storiesFromStore.length > 0 ? (
           <StoryList
@@ -46,7 +46,7 @@ export const Library = ({
           </div>
         )}
       </div>
-      <div className="space-y-8">
+      <div className="flex flex-col items-center space-y-8 sm:items-start">
         <Title variant="secondary">Games you've created</Title>
         {userStories.length > 0 ? (
           <StoryList
