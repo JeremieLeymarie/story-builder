@@ -38,6 +38,7 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
         onEdgesDelete={onEdgesDelete}
         minZoom={0.05}
         onInit={(instance) => instance.fitView()}
+        defaultEdgeOptions={{ zIndex: 10000 }}
       >
         <Controls />
         <MiniMap />
