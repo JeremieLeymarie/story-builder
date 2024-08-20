@@ -18,7 +18,7 @@ import {
 } from "@/design-system/primitives";
 import { WithoutKey } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { StoryGenreCombobox } from "./story-genre-combobox";
 import { schema, Schema } from "./schema";
@@ -62,13 +62,21 @@ export const ControlledStoryFormDialog = ({
     },
   });
 
+  const handleOpen = useCallback(
+    (open: boolean) => {
+      setOpen(open);
+      if (!open) form.reset();
+    },
+    [form, setOpen],
+  );
+
   const submit = (data: Schema) => {
     onSubmit?.({ ...data });
-    setOpen(false);
+    handleOpen(false);
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpen}>
       {!!trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent>
         <DialogHeader className="p-1">

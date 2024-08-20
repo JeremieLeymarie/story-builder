@@ -14,7 +14,6 @@ import {
   Input,
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -78,122 +77,141 @@ export const SceneEditor = ({
 
   const isEditing = !!defaultValues;
 
-  const [open, setOpen] = useState(false);
+  const [open, _setOpen] = useState(false);
+
+  const handleOpen = useCallback(
+    (open: boolean) => {
+      _setOpen(open);
+      if (!open) form.reset();
+    },
+    [form],
+  );
 
   const submit = useCallback(
     (values: Schema) => {
       onSave(values);
-      setOpen(false);
+      handleOpen(false);
     },
-    [onSave],
+    [handleOpen, onSave],
   );
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpen}>
       <DialogTrigger className={triggerClassName} asChild>
         {trigger}
       </DialogTrigger>
-      {/* TODO: improve scrollbar, maybe by using the ScrollArea ShadCN UI component */}
-      <DialogContent className="max-h-[calc(100vh-100px)] overflow-y-scroll">
-        <DialogHeader>
+      <DialogContent className="max-w-[75vw] lg:max-w-[800px]">
+        <DialogHeader className="pb-6">
           {isEditing ? (
             <DialogTitle>Edit scene '{defaultValues.title}'</DialogTitle>
           ) : (
             <DialogTitle>New scene</DialogTitle>
           )}
-          <DialogDescription>{}</DialogDescription>
+          {isEditing && setFirstScene && (
+            <SetFirstSceneSwitch
+              isFirstScene={!!defaultValues?.isFirstScene}
+              setFirstScene={setFirstScene}
+            />
+          )}
         </DialogHeader>
-        {isEditing && setFirstScene && (
-          <SetFirstSceneSwitch
-            isFirstScene={!!defaultValues?.isFirstScene}
-            setFirstScene={setFirstScene}
-          />
-        )}
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(submit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Title</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="A very suspicious crossroads"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    The displayed title of the scene
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Content</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="You're at a crossroads. On the left, the forest, on the right, the village."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    The actual content of the scene.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
-            <div>
-              <div className="mb-2 flex items-center gap-2">
-                <p className="text-md font-bold">Actions</p>
-                <Button
-                  variant="ghost"
-                  type="button"
-                  onClick={() => append({ text: "" })}
-                >
-                  <PlusIcon size="18px" />
-                </Button>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(submit)}>
+            <div className="flex gap-8">
+              <div className="w-7/12 space-y-4">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="A very suspicious crossroads"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        The displayed title of the scene
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="content"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Content</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="You're at a crossroads. On the left, the forest, on the right, the village."
+                          className="max-h-[300px] min-h-[120px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        The actual content of the scene.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
-              <hr />
-              <FormDescription className="my-2">
-                Buttons that allow the player to move in your story
-              </FormDescription>
-              {fields.map((field, index) => (
-                <FormItem className="my-4" key={field.id}>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      placeholder="Go to the village"
-                      {...form.register(`actions.${index}.text` as const)}
-                      {...field}
-                    />
+              <div className="w-5/12 space-y-4">
+                <div>
+                  <div className="mb-2 flex items-center gap-2">
+                    <p className="text-md font-bold">Actions</p>
                     <Button
                       variant="ghost"
-                      size="sm"
                       type="button"
-                      onClick={() => remove(index)}
+                      onClick={() => append({ text: "" })}
                     >
-                      <TrashIcon size="18px" />
+                      <PlusIcon size="18px" />
                     </Button>
                   </div>
+                  <hr />
+                </div>
 
-                  {!!form.formState.errors.actions?.[index]?.text && (
-                    <FormError>
-                      {form.formState.errors.actions?.[index]?.text?.message}
-                    </FormError>
-                  )}
-                </FormItem>
-              ))}
+                <FormDescription className="my-2">
+                  Buttons that allow the player to move in your story
+                </FormDescription>
+                <div>
+                  {fields.map((field, index) => (
+                    <FormItem className="my-2" key={field.id}>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          placeholder="Go to the village"
+                          {...form.register(`actions.${index}.text` as const)}
+                          {...field}
+                        />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          type="button"
+                          onClick={() => remove(index)}
+                        >
+                          <TrashIcon size="18px" />
+                        </Button>
+                      </div>
+
+                      {!!form.formState.errors.actions?.[index]?.text && (
+                        <FormError>
+                          {
+                            form.formState.errors.actions?.[index]?.text
+                              ?.message
+                          }
+                        </FormError>
+                      )}
+                    </FormItem>
+                  ))}
+                </div>
+              </div>
             </div>
-            <Button variant="outline" type="submit">
-              Save
-            </Button>
+            <div className="flex justify-end">
+              <Button type="submit">Save</Button>
+            </div>
           </form>
         </Form>
       </DialogContent>
