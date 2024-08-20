@@ -1,4 +1,4 @@
-import { Node } from "reactflow";
+import { Node } from "@xyflow/react";
 
 export type SceneProps = {
   title: string;
@@ -10,4 +10,6 @@ export type SceneProps = {
   isEditable?: boolean;
 };
 
-export type BuilderNode = Node<SceneProps, "scene">;
+export type SceneNodeType = Node<SceneProps, "scene">;
+
+export type BuilderNode = SceneNodeType;

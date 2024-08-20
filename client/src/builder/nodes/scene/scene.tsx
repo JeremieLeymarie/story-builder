@@ -5,17 +5,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/design-system/primitives/card";
-import { Handle, NodeProps, Position } from "reactflow";
+import { Handle, NodeProps, Position } from "@xyflow/react";
 import { SceneEditor } from "../../components/editors/scene-editor";
 import { EditIcon } from "lucide-react";
-import { SceneProps } from "../../types";
+import { SceneNodeType } from "../../types";
 import { cn } from "@/lib/style";
 import { getBuilderService } from "@/services/builder";
 import { toast } from "@/design-system/primitives";
 
-export type SceneNodeProps = NodeProps<SceneProps>;
+export type SceneNodeProps = NodeProps<SceneNodeType>;
 
-export const SceneNode = ({ data, yPos, xPos }: SceneNodeProps) => {
+export const SceneNode = ({
+  data,
+  positionAbsoluteY,
+  positionAbsoluteX,
+}: SceneNodeProps) => {
   const builderService = getBuilderService();
   const isEditable = data.isEditable !== undefined ? data.isEditable : true;
 
@@ -32,7 +36,9 @@ export const SceneNode = ({ data, yPos, xPos }: SceneNodeProps) => {
                 builderService.updateScene({
                   ...data,
                   ...values,
-                  builderParams: { position: { x: xPos, y: yPos } },
+                  builderParams: {
+                    position: { x: positionAbsoluteX, y: positionAbsoluteY },
+                  },
                 })
               }
               setFirstScene={() =>

@@ -1,6 +1,6 @@
 import { Scene, Story } from "@/lib/storage/domain";
 import { SceneProps } from "../types";
-import { Edge, Node } from "reactflow";
+import { Edge, Node } from "@xyflow/react";
 
 export const sceneToNodeAdapter = ({
   scene,

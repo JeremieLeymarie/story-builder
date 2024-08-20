@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useCallback } from "react";
-import { Connection, Edge, Node, addEdge } from "reactflow";
+import { Connection, Edge, Node, addEdge } from "@xyflow/react";
 import { SceneProps } from "../types";
 import { nodeToSceneAdapter } from "../adapters";
 import { getBuilderService } from "@/services/builder";
