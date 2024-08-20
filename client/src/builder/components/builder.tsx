@@ -1,9 +1,10 @@
-import ReactFlow, {
+import {
+  ReactFlow,
   Background,
   BackgroundVariant,
   Controls,
   MiniMap,
-} from "reactflow";
+} from "@xyflow/react";
 import { SceneNode } from "../nodes/scene/scene";
 import { Toolbar } from "./toolbar";
 import { useBuilder } from "../hooks/use-builder";

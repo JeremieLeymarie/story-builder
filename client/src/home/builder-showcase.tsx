@@ -1,21 +1,21 @@
 import { SceneNode } from "@/builder/nodes/scene/scene";
-import { SceneProps } from "@/builder/types";
+import { SceneNodeType } from "@/builder/types";
 import { Title } from "@/design-system/components";
 import { Button } from "@/design-system/primitives";
 import { Link } from "@tanstack/react-router";
 import { MoveRightIcon } from "lucide-react";
-import ReactFlow, {
+import {
+  ReactFlow,
   Background,
   BackgroundVariant,
   Edge,
-  Node,
   useEdgesState,
   useNodesState,
-} from "reactflow";
+} from "@xyflow/react";
 
 const nodeTypes = { scene: SceneNode };
 
-const NODES: Node<SceneProps, string | undefined>[] = [
+const NODES: SceneNodeType[] = [
   {
     data: {
       title: "A mysterious crossroads",
@@ -63,7 +63,7 @@ const NODES: Node<SceneProps, string | undefined>[] = [
   },
 ];
 
-const EDGES: Edge<unknown>[] = [
+const EDGES: Edge[] = [
   {
     id: "edge-1",
     source: "scene-1",
