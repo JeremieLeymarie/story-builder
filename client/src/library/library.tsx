@@ -31,7 +31,7 @@ export const Library = ({
         <Card className="h-[225px] w-[275px] border-dashed">
             <CardHeader>
               <CardTitle>Import your game</CardTitle>
-              <CardDescription>A new adventure awaits</CardDescription>
+              <CardDescription>Import a story from a JSON file</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col items-center justify-center gap-2">
                 <ImportModal />
