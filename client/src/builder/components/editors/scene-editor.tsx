@@ -14,7 +14,6 @@ import {
   Input,
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -78,18 +77,26 @@ export const SceneEditor = ({
 
   const isEditing = !!defaultValues;
 
-  const [open, setOpen] = useState(false);
+  const [open, _setOpen] = useState(false);
+
+  const handleOpen = useCallback(
+    (open: boolean) => {
+      _setOpen(open);
+      if (!open) form.reset();
+    },
+    [form],
+  );
 
   const submit = useCallback(
     (values: Schema) => {
       onSave(values);
-      setOpen(false);
+      handleOpen(false);
     },
-    [onSave],
+    [handleOpen, onSave],
   );
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpen}>
       <DialogTrigger className={triggerClassName} asChild>
         {trigger}
       </DialogTrigger>
