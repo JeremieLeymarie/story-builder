@@ -1,4 +1,4 @@
-import { Builder } from "@/builder/components/builder";
+import { BuilderContainer } from "@/builder/components/builder-container";
 import { BackdropLoader } from "@/design-system/components";
 import { getBuilderService } from "@/services";
 import { createFileRoute } from "@tanstack/react-router";
@@ -15,7 +15,7 @@ const Page = () => {
   }
   return (
     <div className="h-full w-full">
-      <Builder scenes={scenes} story={story} />
+      <BuilderContainer scenes={scenes} story={story} />
     </div>
   );
 };

@@ -12,7 +12,7 @@ import { Scene, Story } from "@/lib/storage/domain";
 
 const nodeTypes = { scene: SceneNode };
 
-type BuilderProps = { story: Story; scenes: Scene[] };
+export type BuilderProps = { story: Story; scenes: Scene[] };
 
 export const Builder = ({ story, scenes }: BuilderProps) => {
   const {
