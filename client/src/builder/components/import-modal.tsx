@@ -54,7 +54,7 @@ export const ImportModal = () => {
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm">
+        <Button>
           <BracesIcon size="16px" />
           &nbsp; Import from JSON
         </Button>

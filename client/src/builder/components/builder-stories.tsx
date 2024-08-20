@@ -10,7 +10,6 @@ import { StoryFormDialog } from "./story-form/story-form-dialog";
 import { Link } from "@tanstack/react-router";
 import { MoveRightIcon, PlusIcon } from "lucide-react";
 import { useBuilderStories } from "../hooks/use-builder-stories";
-import { ImportModal } from "../components/import-modal";
 import { StoryCard } from "@/design-system/components/story-card";
 import { Story } from "@/lib/storage/domain";
 import { Title } from "@/design-system/components";
@@ -45,8 +44,6 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
               title="Your story"
               description="Build your own adventure!"
             />
-            <p className="text-sm text-muted-foreground">------ OR ------</p>
-            <ImportModal />
           </CardContent>
         </Card>
         {stories.map((story) => {

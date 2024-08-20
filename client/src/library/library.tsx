@@ -1,9 +1,10 @@
-import { Button } from "@/design-system/primitives";
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/design-system/primitives";
 import { Link } from "@tanstack/react-router";
-import { MoveRightIcon } from "lucide-react";
+import { MoveRightIcon} from "lucide-react";
 import { StoryList } from "./story-list";
 import { Title } from "@/design-system/components";
 import { Story } from "@/lib/storage/domain";
+import { ImportModal } from "@/builder/components/import-modal";
 
 type Library = {
   storiesFromStore: Story[];
@@ -27,6 +28,15 @@ export const Library = ({
     <div className="flex flex-col items-center space-y-8 p-8 px-16 sm:items-start sm:px-32">
       <div className="flex flex-col items-center space-y-8 sm:items-start">
         <Title variant="secondary">Your games</Title>
+        <Card className="h-[225px] w-[275px] border-dashed">
+            <CardHeader>
+              <CardTitle>Import your game</CardTitle>
+              <CardDescription>A new adventure awaits</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center justify-center gap-2">
+                <ImportModal />
+          </CardContent>
+        </Card>
         {storiesFromStore.length > 0 ? (
           <StoryList
             stories={storiesFromStore}
