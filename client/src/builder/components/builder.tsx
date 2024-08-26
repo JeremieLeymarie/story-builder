@@ -4,6 +4,7 @@ import {
   BackgroundVariant,
   Controls,
   MiniMap,
+  SelectionMode,
 } from "@xyflow/react";
 import { SceneNode } from "../nodes/scene/scene";
 import { Toolbar } from "./toolbar";
@@ -40,6 +41,10 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
         minZoom={0.05}
         onInit={(instance) => instance.fitView()}
         defaultEdgeOptions={{ zIndex: 10000 }}
+        nodesFocusable={true}
+        selectionOnDrag={true}
+        selectNodesOnDrag={true}
+        selectionMode={SelectionMode.Full}
       >
         <Controls />
         <MiniMap />

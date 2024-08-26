@@ -18,15 +18,17 @@ export const LibrarySection = ({ stories }: { stories: Story[] }) => {
       <Title variant="secondary">Stories from your library:</Title>
       <ScrollArea className="h-[400px] w-fit md:h-fit md:w-full">
         <div className="flex h-full w-fit flex-col gap-4 px-4 py-4 md:flex-row md:px-0">
-          {stories.map((story) => (
-            <Link
-              to="/library/$storyKey"
-              params={{ storyKey: story.key }}
-              key={story.key}
-            >
-              <StoryCard {...story} storyKey={story.key} />
-            </Link>
-          ))}
+          {stories.map(({ key, ...story }) => {
+            return (
+              <Link
+                to="/library/$storyKey"
+                params={{ storyKey: key }}
+                key={key}
+              >
+                <StoryCard {...story} storyKey={key} />
+              </Link>
+            );
+          })}
           <Card className="h-[225px] w-[275px] border-dashed">
             <CardHeader>
               <CardTitle>...and many others!</CardTitle>

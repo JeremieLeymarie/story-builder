@@ -87,7 +87,7 @@ const signUpSchema = z.object({
   username: z
     .string()
     .min(2, { message: "Username must be at least 2 characters long." })
-    .max(15, { message: "Username cannot be more than 15 characters long." }),
+    .max(25, { message: "Username cannot be more than 25 characters long." }),
   email: z.string().email({ message: "Email must be a valid email address" }),
   password: z
     .string()

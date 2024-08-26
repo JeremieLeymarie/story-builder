@@ -10,7 +10,7 @@ export const BackdropLoader = ({
   return (
     <div
       className={cn(
-        "absolute flex h-full w-full flex-col items-center justify-center gap-6 bg-white bg-opacity-90",
+        "absolute z-50 flex h-full w-full flex-col items-center justify-center gap-6 bg-white bg-opacity-90",
         className,
       )}
     >
@@ -25,7 +25,7 @@ export const BackdropLoader = ({
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className={"z-50 animate-spin text-primary"}
+        className="animate-spin text-primary"
       >
         <path d="M21 12a9 9 0 1 1-6.219-8.56" />
       </svg>

@@ -1,9 +1,5 @@
 import { useMemo, useEffect, useCallback, MouseEvent } from "react";
-import {
-  useNodesState,
-  useEdgesState,
-  useOnSelectionChange,
-} from "@xyflow/react";
+import { useNodesState, useEdgesState } from "@xyflow/react";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
 import { useBuilderEdges } from "./use-builder-edges";
 import { Scene, Story } from "@/lib/storage/domain";
@@ -25,19 +21,12 @@ export const useBuilder = ({
   const [nodes, setNodes, onNodesChange] = useNodesState(sceneNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(sceneEdges);
 
-  useOnSelectionChange({
-    onChange: (params) => {
-      console.log(params);
-    },
-  });
-
   const edgesProps = useBuilderEdges({ setEdges, sceneNodes });
 
   useEffect(() => {
     setNodes(sceneNodes);
   }, [sceneNodes, setNodes]);
 
-  // TODO: use better typing
   const onNodeMove = useCallback((_: MouseEvent, node: BuilderNode) => {
     getBuilderService().updateSceneBuilderPosition(
       node.data.key,

@@ -9,7 +9,7 @@ load_dotenv()
 class Database(metaclass=Singleton):
     def __init__(self):
         MONGO_URI = os.getenv("MONGO_URI")
-        if MONGO_URI == None:
+        if MONGO_URI is None:
             raise Exception("Invalid MONGO URI")
 
         self.client = MongoClient(MONGO_URI)

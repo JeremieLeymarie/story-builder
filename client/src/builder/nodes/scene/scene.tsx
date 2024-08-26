@@ -19,41 +19,50 @@ export const SceneNode = ({
   data,
   positionAbsoluteY,
   positionAbsoluteX,
+  selected,
 }: SceneNodeProps) => {
   const builderService = getBuilderService();
   const isEditable = data.isEditable !== undefined ? data.isEditable : true;
 
   return (
-    <Card className={cn("w-[375px]", data.isFirstScene && "bg-primary/60")}>
+    <Card
+      className={cn(
+        "group w-[375px]",
+        data.isFirstScene && "bg-primary/60",
+        selected && "border border-black",
+      )}
+    >
       <CardHeader>
         <div className="flex justify-between gap-1">
           <CardTitle>{data.title}</CardTitle>
-          {isEditable && (
-            <SceneEditor
-              defaultValues={data}
-              trigger={<EditIcon />}
-              onSave={(values) =>
-                builderService.updateScene({
-                  ...data,
-                  ...values,
-                  builderParams: {
-                    position: { x: positionAbsoluteX, y: positionAbsoluteY },
-                  },
-                })
-              }
-              setFirstScene={() =>
-                builderService
-                  .changeFirstScene(data.storyKey, data.key)
-                  .catch(() => {
-                    toast({
-                      title: "Operation failed",
-                      description:
-                        "Something went wrong. Could not change the first scene of the story",
-                    });
+          <div className="invisible group-hover:visible">
+            {isEditable && (
+              <SceneEditor
+                defaultValues={data}
+                trigger={<EditIcon />}
+                onSave={(values) =>
+                  builderService.updateScene({
+                    ...data,
+                    ...values,
+                    builderParams: {
+                      position: { x: positionAbsoluteX, y: positionAbsoluteY },
+                    },
                   })
-              }
-            />
-          )}
+                }
+                setFirstScene={() =>
+                  builderService
+                    .changeFirstScene(data.storyKey, data.key)
+                    .catch(() => {
+                      toast({
+                        title: "Operation failed",
+                        description:
+                          "Something went wrong. Could not change the first scene of the story",
+                      });
+                    })
+                }
+              />
+            )}
+          </div>
         </div>
         <CardDescription>{data.content}</CardDescription>
       </CardHeader>
