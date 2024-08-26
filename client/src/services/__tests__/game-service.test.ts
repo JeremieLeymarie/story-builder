@@ -27,6 +27,7 @@ describe("game-service", () => {
       currentSceneKey: "zut",
       storyKey: "plouf",
       lastPlayedAt: new Date(),
+      userKey: undefined,
     });
 
     user = await localRepository.createUser({
@@ -66,6 +67,7 @@ describe("game-service", () => {
         history: ["zut", scene.key],
         currentSceneKey: scene.key,
         storyKey: "plouf",
+        userKey: user.key,
         lastPlayedAt: now,
         finished: true,
       });
@@ -88,6 +90,7 @@ describe("game-service", () => {
         history: ["zut", scene.key],
         currentSceneKey: scene.key,
         storyKey: "plouf",
+        userKey: user.key,
         lastPlayedAt: now,
         finished: true,
       });
@@ -132,6 +135,7 @@ describe("game-service", () => {
         currentSceneKey: story.firstSceneKey,
         lastPlayedAt: now,
         storyKey: story.key,
+        userKey: user.key,
       });
     });
   });
@@ -149,6 +153,7 @@ describe("game-service", () => {
         history: ["tutu"],
         lastPlayedAt: new Date(),
         storyKey: story.key,
+        userKey: undefined,
       });
 
       const result = await gameService.getLastGamePlayed();
@@ -206,6 +211,7 @@ describe("game-service", () => {
         history: ["titi"],
         storyKey: "zou",
         lastPlayedAt: new Date(),
+        userKey: undefined,
       });
 
       const progresses = await localRepository.getStoryProgresses();

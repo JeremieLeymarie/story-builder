@@ -14,6 +14,7 @@ export const _getGameService = ({
         sceneActions,
       }: { currentSceneKey: string; sceneActions: Action[] },
     ) => {
+      const user = await localRepository.getUser();
       const scene = await localRepository.getScene(currentSceneKey);
 
       if (!scene) return null;
@@ -28,12 +29,14 @@ export const _getGameService = ({
             : [...progress.history, currentSceneKey],
         lastPlayedAt: new Date(),
         ...(!sceneActions.length && { finished: true }),
+        userKey: user?.key,
       });
 
       return updatedProgress;
     },
 
     getOrCreateStoryProgress: async (story: Story) => {
+      const user = await localRepository.getUser();
       const progress = await localRepository.getStoryProgress(story.key);
       if (progress) return progress;
 
@@ -51,6 +54,7 @@ export const _getGameService = ({
 
       const createdProgress = await localRepository.createStoryProgress({
         storyKey: story.key,
+        userKey: user?.key ?? undefined,
         ...payload,
       });
 
@@ -58,7 +62,10 @@ export const _getGameService = ({
     },
 
     getLastGamePlayed: async () => {
-      const progress = await localRepository.getMostRecentStoryProgress();
+      const user = await localRepository.getUser();
+      const progress = await localRepository.getMostRecentStoryProgress(
+        user?.key,
+      );
 
       if (!progress) return null;
 

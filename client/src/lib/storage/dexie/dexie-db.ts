@@ -17,7 +17,7 @@ db.version(1).stores({
     "&key, firstSceneKey, title, description, image, status, genres, publicationDate, creationDate, author, finished",
   scenes: "&key, storyKey, title, content, actions, builderParams",
   storyProgresses:
-    "&key, storyKey, currentSceneKey, character, inventory, history, lastPlayedAt",
+    "&key, storyKey, userKey, currentSceneKey, character, inventory, history, lastPlayedAt",
 });
 
 // Register nanoid middleware

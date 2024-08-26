@@ -77,8 +77,8 @@ const _getUserService = ({
     },
 
     getLibraryData: async () => {
-      const stories = await localRepository.getStories();
       const user = await localRepository.getUser();
+      const stories = await localRepository.getStories(user?.key);
 
       const userStories =
         stories?.filter((story) => story.author?.key === user?.key) ?? null;

@@ -59,6 +59,7 @@ export type Scene = {
 export type StoryProgress = {
   key: string;
   storyKey: string;
+  userKey: string | undefined;
   history: string[];
   currentSceneKey: string;
   character?: Record<string, unknown>;
