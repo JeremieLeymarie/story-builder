@@ -95,4 +95,10 @@ docker compose up -d
 
 ## Project architecture
 
-![alt text](archi.png)
+### Client archi
+
+![alt text](client-archi-story-builder.png)
+
+### Backend archi
+
+![alt text](server-archi-story-builder.png)
