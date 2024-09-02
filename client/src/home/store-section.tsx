@@ -16,7 +16,7 @@ import { MoveRightIcon } from "lucide-react";
 export const StoreSection = ({ stories }: { stories: Story[] }) => {
   return (
     <div className="flex flex-col items-center bg-accent px-32 py-4 md:items-start">
-      <Title variant="secondary">Other stories from the store:</Title>
+      <Title variant="secondary">Stories from the store:</Title>
       <ScrollArea className="h-[400px] w-fit md:h-fit md:w-full">
         <div className="flex h-full w-fit flex-col gap-4 px-4 py-4 md:flex-row md:px-0">
           {stories.map((story) => (

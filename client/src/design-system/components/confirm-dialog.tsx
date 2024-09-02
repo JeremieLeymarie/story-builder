@@ -51,7 +51,7 @@ export const ConfirmDialog = ({
           </DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <DialogFooter>
+        <DialogFooter className="pt-2">
           <DialogClose onClick={onCancel}>
             <Button variant="secondary">{cancelLabel}</Button>
           </DialogClose>

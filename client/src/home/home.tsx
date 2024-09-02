@@ -20,16 +20,16 @@ export const Home = ({ lastPlayedGame, storeItems, libraryStories }: Props) => {
           <Divider />
         </>
       )}
-      <LibrarySection stories={libraryStories} />
-      <Divider />
-      <BuilderShowcase />
-      <Divider />
+      {libraryStories.length > 3 && <LibrarySection stories={libraryStories} />}
       {storeItems && storeItems.length > 3 && (
         <>
           <StoreSection stories={storeItems} />
           <Divider />
         </>
       )}
+      <BuilderShowcase />
+      <Divider />
+
       {/* TODO: add about section */}
     </div>
   );

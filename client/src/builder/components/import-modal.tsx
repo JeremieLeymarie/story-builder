@@ -76,7 +76,7 @@ export const ImportModal = () => {
             value={fileContent}
           />
         </DialogHeader>
-        <DialogFooter>
+        <DialogFooter className="pt-2">
           <Button
             variant="secondary"
             onClick={() => {

@@ -51,7 +51,7 @@ export const ExportModal = ({
 
   const copyToast = useCallback(async () => {
     toast({
-      description: "Copy on clipboard !",
+      description: "Copied to clipboard !",
     });
   }, [toast]);
 
@@ -72,7 +72,7 @@ export const ExportModal = ({
             {storyJson}
           </Textarea>
         </DialogHeader>
-        <DialogFooter>
+        <DialogFooter className="py-2">
           <Button
             variant="secondary"
             onClick={() => {

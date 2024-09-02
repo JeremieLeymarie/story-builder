@@ -24,6 +24,7 @@ import { PlusIcon, TrashIcon } from "lucide-react";
 import { FormError } from "@/design-system/components";
 import { SetFirstSceneSwitch } from "./set-first-scene-switch";
 import { Action } from "@/lib/storage/domain";
+import { cn } from "@/lib/style";
 
 const schema = z.object({
   title: z
@@ -97,7 +98,7 @@ export const SceneEditor = ({
 
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
-      <DialogTrigger className={triggerClassName} asChild>
+      <DialogTrigger className={cn(triggerClassName, "cursor-pointer")} asChild>
         {trigger}
       </DialogTrigger>
       <DialogContent className="max-w-[75vw] lg:max-w-[800px]">

@@ -7,9 +7,9 @@ import {
   CardTitle,
 } from "@/design-system/primitives";
 import { Link } from "@tanstack/react-router";
-import { MoveRightIcon } from "lucide-react";
+import { MoveRightIcon, SwordIcon } from "lucide-react";
 import { StoryList } from "./story-list";
-import { Title } from "@/design-system/components";
+import { StoryCard, Title } from "@/design-system/components";
 import { Story } from "@/lib/storage/domain";
 import { ImportModal } from "@/builder/components/import-modal";
 
@@ -35,21 +35,55 @@ export const Library = ({
     <div className="flex flex-col items-center space-y-8 p-8 px-16 sm:items-start sm:px-32">
       <div className="flex flex-col items-center space-y-8 sm:items-start">
         <Title variant="secondary">Your games</Title>
-        <Card className="h-[225px] w-[275px] border-dashed">
-          <CardHeader>
-            <CardTitle>Import your game</CardTitle>
-            <CardDescription>Import a story from a JSON file</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center justify-center gap-2">
-            <ImportModal />
-          </CardContent>
-        </Card>
-        {storiesFromStore.length > 0 ? (
-          <StoryList
-            stories={storiesFromStore}
-            finishedGameKeys={finishedGameKeys}
-          />
-        ) : (
+        <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap">
+          <Card className="h-[225px] w-[275px] border-dashed">
+            <CardHeader>
+              <CardTitle>Import your game</CardTitle>
+              <CardDescription>Import a story from a JSON file</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center justify-center gap-2">
+              <ImportModal />
+            </CardContent>
+          </Card>
+          {storiesFromStore.length > 0 &&
+            storiesFromStore.map((storyWithKey) => {
+              const { key, ...story } = storyWithKey;
+              const isCompleted = finishedGameKeys.includes(key);
+
+              return (
+                <Link
+                  to="/library/$storyKey"
+                  params={{ storyKey: key }}
+                  key={key}
+                >
+                  <StoryCard
+                    {...story}
+                    storyKey={key}
+                    button={
+                      isCompleted ? (
+                        <Button
+                          className={`absolute bottom-4 right-4`}
+                          disabled={false}
+                          variant="secondary"
+                        >
+                          COMPLETED
+                        </Button>
+                      ) : (
+                        <Button
+                          className={`absolute bottom-4 right-4 opacity-0 transition duration-300 ease-in-out group-hover:opacity-100`}
+                        >
+                          <SwordIcon size="18px" />
+                          &nbsp;Play
+                        </Button>
+                      )
+                    }
+                  />
+                </Link>
+              );
+            })}
+        </div>
+
+        {storiesFromStore.length === 0 && (
           <div>
             <p className="text-sm text-muted-foreground">
               You don't have any games in your library...

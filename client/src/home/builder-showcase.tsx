@@ -115,6 +115,7 @@ export const BuilderShowcase = () => {
           onInit={(instance) => instance.fitView()}
           zoomOnScroll={false}
           panOnScroll={false}
+          defaultEdgeOptions={{ zIndex: 10000 }}
           preventScrolling={false}
         >
           <Background variant={BackgroundVariant.Dots} gap={12} size={1} />

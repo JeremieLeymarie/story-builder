@@ -21,7 +21,7 @@ export const SetFirstSceneSwitch = ({
           description="Changing this setting will make this scene the entry point of
                 your story. The current first scene will no longer be used as
                 the start of your story."
-          confirmLabel="Download"
+          confirmLabel="Confirm"
           onConfirm={() => {
             setFirstScene();
             setIsChecked(true);
