@@ -18,7 +18,6 @@
     "generate-pwa-assets": "pwa-assets-generator --preset minimal-2023 public/story-builder-logo.svg"
   },
   "dependencies": {
-    "@excalidraw/excalidraw": "^0.17.6",
     "@hey-api/client-fetch": "^0.1.10",
     "@hookform/resolvers": "^3.6.0",
     "@radix-ui/react-dialog": "^1.1.1",
