@@ -1,7 +1,7 @@
 from pymongo import ReturnDocument, UpdateOne
-from data_types.builder import FullStory, Story, StoryStatus
 from repositories.story_repository_port import StoryRepositoryPort
 from repositories.mongo_repository import MongoRecord, MongoRepository
+from domains.type_def import FullStory, Story, StoryStatus
 
 STORY_COLLECTION = "stories"
 

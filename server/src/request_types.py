@@ -1,7 +1,12 @@
+from typing import Optional
 from pydantic import BaseModel
 
-from data_types.builder import Scene, Story
-from data_types.game import StoryProgress
+from domains.type_def import FullStory, Scene, Story, StoryProgress
+
+
+class APIResponse(BaseModel):
+    success: bool
+    message: Optional[str] = None
 
 
 class CreateUserRequest(BaseModel):
@@ -24,3 +29,9 @@ class FullStoryBuilderRequest(BaseModel):
 class FullStoriesRequest(BaseModel):
     stories: list[Story]
     scenes: list[Scene]
+
+
+class SynchronizationPayload(BaseModel):
+    playerGames: list[FullStory]
+    builderGames: Optional[list[FullStory]]
+    storyProgresses: list[StoryProgress]

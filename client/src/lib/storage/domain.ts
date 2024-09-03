@@ -36,7 +36,6 @@ type StoryBase = {
   image: string;
   firstSceneKey: string;
   genres: StoryGenre[];
-  publicationDate?: Date;
   creationDate: Date;
 };
 
@@ -45,7 +44,10 @@ type ImportedStory = StoryBase & {
   status: "imported";
 };
 
-type PublishedStory = StoryBase & { status: "published" };
+type PublishedStory = StoryBase & {
+  status: "published";
+  publicationDate: Date;
+};
 type DraftStory = StoryBase & { status: "draft" };
 
 export type Story = ImportedStory | PublishedStory | DraftStory;

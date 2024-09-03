@@ -1,7 +1,7 @@
 from pymongo import ReturnDocument
 from repositories.user_repository_port import UserRepositoryPort
-from data_types.user import FullUser
 from repositories.mongo_repository import MongoRecord, MongoRepository
+from domains.type_def import FullUser
 
 USER_COLLECTION = "users"
 

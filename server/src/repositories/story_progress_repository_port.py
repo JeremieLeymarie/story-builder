@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from data_types.game import StoryProgress
+from domains.type_def import StoryProgress
 
 
 class StoryProgressRepositoryPort(Protocol):

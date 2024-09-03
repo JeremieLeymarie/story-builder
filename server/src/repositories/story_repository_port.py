@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from data_types.builder import FullStory, Story, StoryStatus
+from domains.type_def import FullStory, Story, StoryStatus
 
 
 class StoryRepositoryPort(Protocol):

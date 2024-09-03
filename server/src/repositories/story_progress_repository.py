@@ -1,7 +1,7 @@
 from pymongo import ReturnDocument, UpdateOne
 from repositories.mongo_repository import MongoRepository
 from repositories.story_progress_repository_port import StoryProgressRepositoryPort
-from data_types.game import StoryProgress
+from domains.type_def import StoryProgress
 
 
 STORY_PROGRESS_COLLECTION = "storyProgresses"
