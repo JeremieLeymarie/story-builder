@@ -119,38 +119,31 @@ export const _getBuilderService = ({
       return !!response.data;
     },
 
-    editStory: async (story: Story) => {
-      const user = await localRepository.getUser();
-      await localRepository.updateStory({
-        ...story,
-        ...(user && { author: { key: user.key, username: user.username } }),
-      });
-    },
+    // TODO: update all user stories on login
 
     addScene: async (scene: WithoutKey<Scene>) => {
       return await localRepository.createScene(scene);
     },
 
     updateStory: async (story: Story) => {
-      const user = await localRepository.getUser();
-      await localRepository.updateStory({
-        ...story,
-        ...(user && { author: { key: user.key, username: user.username } }),
-      });
+      await localRepository.updateStory(story);
     },
 
-    updateScene: async (scene: Partial<Scene> & Pick<Scene, "key">) => {
-      await localRepository.updatePartialScene(scene.key, scene);
+    updateScene: async ({
+      key,
+      ...scene
+    }: Partial<Scene> & Pick<Scene, "key">) => {
+      await localRepository.updatePartialScene(key, scene);
     },
 
     changeFirstScene: async (storyKey: string, newFirstSceneKey: string) => {
-      const isSceneKeyValid = await localRepository.getScene(newFirstSceneKey);
+      const isSceneKeyValid =
+        !!(await localRepository.getScene(newFirstSceneKey));
 
-      if (isSceneKeyValid)
-        return await localRepository.updateFirstScene(
-          storyKey,
-          newFirstSceneKey,
-        );
+      if (isSceneKeyValid) {
+        await localRepository.updateFirstScene(storyKey, newFirstSceneKey);
+        return true;
+      }
 
       return false;
     },
@@ -184,21 +177,6 @@ export const _getBuilderService = ({
           entities: ["scene", "story"],
         },
       );
-    },
-
-    getBuilderData: async (storyKey: string) => {
-      const story = await localRepository.getStory(storyKey);
-      const scenes = await localRepository.getScenes(storyKey);
-
-      return { story, scenes };
-    },
-
-    getBuilderStories: async () => {
-      const user = await localRepository.getUser();
-
-      const stories = await localRepository.getStoriesByAuthor(user?.key);
-
-      return stories;
     },
   };
 };

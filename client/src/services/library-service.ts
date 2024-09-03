@@ -10,7 +10,7 @@ import { isOnline } from "./common/sync";
 
 // TODO: uniformize responses
 // TODO: test all of this
-const _getLibraryService = ({
+export const _getLibraryService = ({
   localRepository,
   remoteRepository,
 }: {

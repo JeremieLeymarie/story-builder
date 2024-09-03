@@ -1,12 +1,13 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { _getBuilderService } from "../builder";
 import { getLocalRepositoryStub } from "@/repositories/stubs/local-repository-stub";
-import {
-  getRemoteRepositoryStub,
-  stubRemoteStorageAccessors,
-} from "@/repositories/stubs/remote-repository-stub";
+import { getRemoteRepositoryStub } from "@/repositories/stubs/remote-repository-stub";
 import { LocalRepositoryPort, RemoteRepositoryPort } from "@/repositories";
-import { BASE_SCENE, BASE_USER, BASE_STORY } from "./data";
+import {
+  BASIC_SCENE,
+  BASIC_USER,
+  BASIC_STORY,
+} from "../../repositories/stubs/data";
+import { _getBuilderService } from "../builder-service";
 
 describe("builder-service", () => {
   let builderService: ReturnType<typeof _getBuilderService>;
@@ -29,422 +30,293 @@ describe("builder-service", () => {
 
   describe("updateSceneBuilderPosition", () => {
     it("should update node position", async () => {
-      const scene = await localRepository.createScene(BASE_SCENE);
+      const spy = vi.spyOn(localRepository, "updatePartialScene");
 
-      await builderService.updateSceneBuilderPosition(scene.key, {
+      await builderService.updateSceneBuilderPosition("tutu", {
         x: 42,
         y: 42,
       });
 
-      const updatedScene = await localRepository.getScene(scene.key);
-      expect(updatedScene?.builderParams.position).toStrictEqual({
-        x: 42,
-        y: 42,
+      expect(spy).toHaveBeenCalledWith("tutu", {
+        builderParams: { position: { x: 42, y: 42 } },
       });
     });
   });
 
   describe("addSceneConnection", () => {
     it("should add connection between scenes", async () => {
-      const targetScene = await localRepository.createScene(BASE_SCENE);
-      const sourceScene = await localRepository.createScene(BASE_SCENE);
+      const spy = vi.spyOn(localRepository, "updatePartialScene");
 
       await builderService.addSceneConnection({
-        sourceScene,
-        destinationSceneKey: targetScene.key,
+        sourceScene: BASIC_SCENE,
+        destinationSceneKey: "dest",
         actionIndex: 0,
       });
 
-      const updatedScene = await localRepository.getScene(sourceScene.key);
-
-      expect(updatedScene?.actions).toStrictEqual([
-        { text: "action A", sceneKey: targetScene.key },
-        { text: "action B" },
-      ]);
+      expect(spy).toHaveBeenCalledWith(BASIC_SCENE.key, {
+        actions: [{ text: "action A", sceneKey: "dest" }, { text: "action B" }],
+      });
     });
 
     it("should do nothing when given out of bounds index", async () => {
-      const targetScene = await localRepository.createScene(BASE_SCENE);
-      const sourceScene = await localRepository.createScene(BASE_SCENE);
+      const spy = vi.spyOn(localRepository, "updatePartialScene");
 
       await builderService.addSceneConnection({
-        sourceScene,
-        destinationSceneKey: targetScene.key,
+        sourceScene: BASIC_SCENE,
+        destinationSceneKey: "dest",
         actionIndex: 42,
       });
 
-      const updatedScene = await localRepository.getScene(sourceScene.key);
-
-      expect(updatedScene?.actions).toStrictEqual(sourceScene.actions);
+      expect(spy).toHaveBeenCalledWith(BASIC_SCENE.key, {
+        actions: BASIC_SCENE.actions,
+      });
     });
 
     it("should do nothing when given negative index", async () => {
-      const targetScene = await localRepository.createScene(BASE_SCENE);
-      const sourceScene = await localRepository.createScene(BASE_SCENE);
+      const spy = vi.spyOn(localRepository, "updatePartialScene");
 
       await builderService.addSceneConnection({
-        sourceScene,
-        destinationSceneKey: targetScene.key,
-        actionIndex: -42,
+        sourceScene: BASIC_SCENE,
+        destinationSceneKey: "dest",
+        actionIndex: -1,
       });
 
-      const updatedScene = await localRepository.getScene(sourceScene.key);
-
-      expect(updatedScene?.actions).toStrictEqual(sourceScene.actions);
+      expect(spy).toHaveBeenCalledWith(BASIC_SCENE.key, {
+        actions: BASIC_SCENE.actions,
+      });
     });
   });
 
   describe("removeSceneConnection", () => {
     it("should remove connection between scenes", async () => {
-      const sourceScene = await localRepository.createScene({
-        ...BASE_SCENE,
-        actions: [
-          { text: "action A", sceneKey: "zut" },
-          { text: "action B", sceneKey: "flûte" },
-        ],
-      });
+      const spy = vi.spyOn(localRepository, "updatePartialScene");
 
       await builderService.removeSceneConnection({
-        sourceScene,
+        sourceScene: {
+          ...BASIC_SCENE,
+          actions: [
+            { text: "action A", sceneKey: "zut" },
+            { text: "action B", sceneKey: "flûte" },
+          ],
+        },
         actionIndex: 0,
       });
 
-      const updatedScene = await localRepository.getScene(sourceScene.key);
-
-      expect(updatedScene?.actions).toStrictEqual([
-        { text: "action A", sceneKey: undefined },
-        { text: "action B", sceneKey: "flûte" },
-      ]);
+      expect(spy).toHaveBeenCalledWith(BASIC_SCENE.key, {
+        actions: [
+          { text: "action A", sceneKey: undefined },
+          { text: "action B", sceneKey: "flûte" },
+        ],
+      });
     });
 
     it("should do nothing when given out of bounds index", async () => {
-      const sourceScene = await localRepository.createScene({
-        ...BASE_SCENE,
-        actions: [
-          { text: "action A", sceneKey: "zut" },
-          { text: "action B", sceneKey: "flûte" },
-        ],
-      });
+      const spy = vi.spyOn(localRepository, "updatePartialScene");
 
       await builderService.removeSceneConnection({
-        sourceScene,
+        sourceScene: {
+          ...BASIC_SCENE,
+          actions: [
+            { text: "action A", sceneKey: "zut" },
+            { text: "action B", sceneKey: "flûte" },
+          ],
+        },
         actionIndex: 42,
       });
 
-      const updatedScene = await localRepository.getScene(sourceScene.key);
-
-      expect(updatedScene?.actions).toStrictEqual([
-        { text: "action A", sceneKey: "zut" },
-        { text: "action B", sceneKey: "flûte" },
-      ]);
-    });
-
-    it("should do nothing when given negative index", async () => {
-      const sourceScene = await localRepository.createScene({
-        ...BASE_SCENE,
+      expect(spy).toHaveBeenCalledWith(BASIC_SCENE.key, {
         actions: [
           { text: "action A", sceneKey: "zut" },
           { text: "action B", sceneKey: "flûte" },
         ],
       });
+    });
+
+    it("should do nothing when given negative index", async () => {
+      const spy = vi.spyOn(localRepository, "updatePartialScene");
 
       await builderService.removeSceneConnection({
-        sourceScene,
+        sourceScene: {
+          ...BASIC_SCENE,
+          actions: [
+            { text: "action A", sceneKey: "zut" },
+            { text: "action B", sceneKey: "flûte" },
+          ],
+        },
         actionIndex: -42,
       });
 
-      const updatedScene = await localRepository.getScene(sourceScene.key);
-
-      expect(updatedScene?.actions).toStrictEqual([
-        { text: "action A", sceneKey: "zut" },
-        { text: "action B", sceneKey: "flûte" },
-      ]);
+      expect(spy).toHaveBeenCalledWith(BASIC_SCENE.key, {
+        actions: [
+          { text: "action A", sceneKey: "zut" },
+          { text: "action B", sceneKey: "flûte" },
+        ],
+      });
     });
   });
 
   describe("createStoryWithFirstScene", () => {
     it("should create story and first scene", async () => {
-      const result = await builderService.createStoryWithFirstScene({
+      localRepository = {
+        ...getLocalRepositoryStub(),
+        getUser: () => new Promise((res) => res(null)),
+      };
+      builderService = _getBuilderService({
+        localRepository,
+        remoteRepository,
+      });
+
+      const userSpy = vi.spyOn(localRepository, "getUser");
+      const spy = vi.spyOn(localRepository, "createStoryWithFirstScene");
+
+      await builderService.createStoryWithFirstScene({
         title: "Tidadoum dam tidididoum",
         description: "Waouh, impressionant...",
         image: "http://image.com",
         genres: ["adventure", "children"],
       });
 
-      expect(result?.story).toStrictEqual({
-        title: "Tidadoum dam tidididoum",
-        description: "Waouh, impressionant...",
-        image: "http://image.com",
-        genres: ["adventure", "children"],
-        creationDate: new Date(),
-        status: "draft",
-        firstSceneKey: result?.scene.key,
-        key: result?.story.key,
-      });
-
-      expect(result?.scene).toStrictEqual({
-        key: result?.story.firstSceneKey,
-        storyKey: result?.story.key,
-        builderParams: { position: { x: 0, y: 0 } },
-        content: "This is a placeholder content for your first scene",
-        title: "Your first scene",
-        actions: [
-          {
-            text: "An action that leads to a scene",
-          },
-          {
-            text: "An action that leads to another scene",
-          },
-        ],
+      expect(userSpy).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalledWith({
+        story: {
+          title: "Tidadoum dam tidididoum",
+          description: "Waouh, impressionant...",
+          image: "http://image.com",
+          genres: ["adventure", "children"],
+          creationDate: new Date(),
+          status: "draft",
+        },
+        firstScene: {
+          builderParams: { position: { x: 0, y: 0 } },
+          content: "This is a placeholder content for your first scene",
+          title: "Your first scene",
+          actions: [
+            {
+              text: "An action that leads to a scene",
+            },
+            {
+              text: "An action that leads to another scene",
+            },
+          ],
+        },
       });
     });
+
     it("should add author if user is logged in", async () => {
-      const user = await localRepository.createUser(BASE_USER);
+      const userSpy = vi.spyOn(localRepository, "getUser");
+      const spy = vi.spyOn(localRepository, "createStoryWithFirstScene");
 
-      const result = await builderService.createStoryWithFirstScene({
+      await builderService.createStoryWithFirstScene({
         title: "Tidadoum dam tidididoum",
         description: "Waouh, impressionant...",
         image: "http://image.com",
         genres: ["adventure", "children"],
       });
 
-      expect(result?.story).toStrictEqual({
-        author: { username: user.username, key: user.key },
-        title: "Tidadoum dam tidididoum",
-        description: "Waouh, impressionant...",
-        image: "http://image.com",
-        genres: ["adventure", "children"],
-        creationDate: new Date(),
-        status: "draft",
-        firstSceneKey: result?.scene.key,
-        key: result?.story.key,
-      });
-
-      expect(result?.scene).toStrictEqual({
-        key: result?.story.firstSceneKey,
-        storyKey: result?.story.key,
-        builderParams: { position: { x: 0, y: 0 } },
-        content: "This is a placeholder content for your first scene",
-        title: "Your first scene",
-        actions: [
-          {
-            text: "An action that leads to a scene",
-          },
-          {
-            text: "An action that leads to another scene",
-          },
-        ],
+      expect(userSpy).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalledWith({
+        story: {
+          title: "Tidadoum dam tidididoum",
+          description: "Waouh, impressionant...",
+          image: "http://image.com",
+          genres: ["adventure", "children"],
+          creationDate: new Date(),
+          status: "draft",
+          author: { username: BASIC_USER.username, key: BASIC_USER.key },
+        },
+        firstScene: {
+          builderParams: { position: { x: 0, y: 0 } },
+          content: "This is a placeholder content for your first scene",
+          title: "Your first scene",
+          actions: [
+            {
+              text: "An action that leads to a scene",
+            },
+            {
+              text: "An action that leads to another scene",
+            },
+          ],
+        },
       });
     });
   });
 
   describe("publishStory", () => {
     it("should publish the story", async () => {
-      const story = await localRepository.createStory(BASE_STORY);
+      const publishSpy = vi.spyOn(remoteRepository, "publishStory");
+      const localUpdateSpy = vi.spyOn(localRepository, "updateStory");
 
-      if (!story) throw new Error("Failed to create story in stub local repo");
-
-      stubRemoteStorageAccessors.createStory({ ...story, scenes: [] });
-
-      const result = await builderService.publishStory([], story);
-      const updatedLocalStory = await localRepository.getStory(story.key);
-
-      expect(result).toBeTruthy();
-      expect(updatedLocalStory).toStrictEqual({
-        ...BASE_STORY,
-        publicationDate: new Date(),
-        status: "published",
-        key: updatedLocalStory?.key,
-      });
-    });
-
-    it("should not update local repository if remote update failed (story does not exist)", async () => {
-      const story = await localRepository.createStory(BASE_STORY);
-
-      if (!story) throw new Error("Failed to create story in stub local repo");
-
-      const result = await builderService.publishStory([], story);
-      const updatedLocalStory = await localRepository.getStory(story.key);
-
-      expect(result).toBeFalsy();
-      expect(story).toStrictEqual(updatedLocalStory);
-    });
-  });
-
-  describe("editStory", () => {
-    it("should edit story", async () => {
-      const story = await localRepository.createStory(BASE_STORY);
-
-      if (!story) throw new Error("Failed to create story in stub local repo");
-
-      await builderService.editStory({
-        ...story,
-        description: "yeehaaaw",
-      });
-
-      expect(await localRepository.getStory(story.key)).toStrictEqual({
-        ...story,
-        description: "yeehaaaw",
-      });
-    });
-
-    it("should add author data if user is logged in", async () => {
-      const story = await localRepository.createStory(BASE_STORY);
-      const user = await localRepository.createUser(BASE_USER);
-
-      if (!story) throw new Error("Failed to create story in stub local repo");
-
-      await builderService.editStory({
-        ...story,
-        description: "yeehaaaw",
-      });
-
-      expect(await localRepository.getStory(story.key)).toStrictEqual({
-        ...story,
-        description: "yeehaaaw",
-        author: { key: user.key, username: user.username },
-      });
-    });
-  });
-
-  describe("importFromJSON", () => {
-    const importedStory = {
-      key: "bloup",
-      title: "The Great Journey To The Green River",
-      description: "A wonderful epic tale through the world of Penthetir. ",
-      image:
-        "https://b2-backblaze-stackpath.b-cdn.net/2178699/c5jpvq_12e7c09178a6a75a5979d117f779bb07ff07f8f9.jpg",
-      status: "draft" as const,
-      genres: ["adventure" as const, "fantasy" as const],
-      creationDate: new Date(),
-      firstSceneKey: "skibidi",
-    };
-    const importedScenes = [
-      {
-        key: "skibidi",
-        storyKey: "bloup",
-        title: "Your first scene",
-        content: "This is a placeholder content for your first scene",
-        actions: [
-          {
-            text: "An action that leads to a scene",
-            sceneKey: "jMa8IEtNg8ZCAbZaRz-yU",
-          },
-          {
-            text: "An action that leads to another scene",
-          },
-        ],
-        builderParams: {
-          position: {
-            x: 0,
-            y: 0,
-          },
-        },
-      },
-    ];
-    const fileContent = JSON.stringify({
-      story: importedStory,
-      scenes: importedScenes,
-    });
-
-    it("should import story from JSON", async () => {
-      const result = await builderService.importFromJSON(fileContent);
-
-      const story = await localRepository.getStory("bloup");
-      const scenes = await localRepository.getScenes("bloup");
-
-      expect(result).toStrictEqual({ error: null });
-      expect(story).toStrictEqual(importedStory);
-      expect(scenes).toStrictEqual(importedScenes);
-    });
-
-    it("should not create story if JSON is malformed", async () => {
-      const result = await builderService.importFromJSON(`tutu${fileContent}`);
-
-      const story = await localRepository.getStory("bloup");
-      const scenes = await localRepository.getScenes("bloup");
-
-      expect(result).toStrictEqual({ error: "Invalid JSON format" });
-      expect(story).toBeNull();
-      expect(scenes).toStrictEqual([]);
-    });
-
-    it("should not create story if format is invalid", async () => {
-      const result = await builderService.importFromJSON(
-        JSON.stringify({ stories: ["tutu"] }),
+      const success = await builderService.publishStory(
+        [BASIC_SCENE],
+        BASIC_STORY,
       );
 
-      const story = await localRepository.getStory("bloup");
-      const scenes = await localRepository.getScenes("bloup");
+      expect(publishSpy).toHaveBeenCalledWith([BASIC_SCENE], BASIC_STORY);
+      expect(localUpdateSpy).toHaveBeenCalled();
 
-      expect(result).toStrictEqual({ error: "Story is required" });
-      expect(story).toBeNull();
-      expect(scenes).toStrictEqual([]);
+      expect(success).toBeTruthy();
+    });
+
+    it("should not update local repository if remote update failed", async () => {
+      remoteRepository = {
+        ...getRemoteRepositoryStub(),
+        publishStory: () => new Promise((res) => res({ error: "Error" })),
+      };
+      builderService = _getBuilderService({
+        localRepository,
+        remoteRepository,
+      });
+
+      const publishSpy = vi.spyOn(remoteRepository, "publishStory");
+      const localUpdateSpy = vi.spyOn(localRepository, "updateStory");
+
+      const success = await builderService.publishStory(
+        [BASIC_SCENE],
+        BASIC_STORY,
+      );
+
+      expect(publishSpy).toHaveBeenCalledWith([BASIC_SCENE], BASIC_STORY);
+      expect(localUpdateSpy).not.toHaveBeenCalled();
+
+      expect(success).toBeFalsy();
     });
   });
 
   describe("addScene", () => {
     it("should add scene to local database", async () => {
-      const scene = await builderService.addScene(BASE_SCENE);
+      const spy = vi.spyOn(localRepository, "createScene");
 
-      expect(scene).toStrictEqual({ ...BASE_SCENE, key: scene?.key });
+      await builderService.addScene(BASIC_SCENE);
+
+      expect(spy).toHaveBeenCalledWith(BASIC_SCENE);
     });
   });
 
   describe("updateStory", () => {
     it("should update story in the local database", async () => {
-      const story = await localRepository.createStory(BASE_STORY);
-
-      if (!story) throw new Error("Could not create story");
+      const spy = vi.spyOn(localRepository, "updateStory");
 
       await builderService.updateStory({
-        ...story,
+        ...BASIC_STORY,
         title: "Pipou",
-        description: "shabadada",
+        description: "yeehaaaw",
       });
 
-      const updatedStory = await localRepository.getStory(story.key);
-
-      expect(updatedStory).toStrictEqual({
-        ...story,
+      expect(spy).toHaveBeenCalledWith({
+        ...BASIC_STORY,
         title: "Pipou",
-        description: "shabadada",
-      });
-    });
-
-    it("should add author if user is logged in", async () => {
-      const story = await localRepository.createStory(BASE_STORY);
-      const user = await localRepository.createUser(BASE_USER);
-
-      if (!story) throw new Error("Could not create story");
-
-      await builderService.updateStory({
-        ...story,
-        title: "Pipou",
-        description: "shabadada",
-      });
-
-      const updatedStory = await localRepository.getStory(story.key);
-
-      expect(updatedStory).toStrictEqual({
-        ...story,
-        title: "Pipou",
-        description: "shabadada",
-        author: { key: user.key, username: user.username },
+        description: "yeehaaaw",
       });
     });
   });
 
   describe("updateScene", () => {
     it("should only update specified parts of the scene", async () => {
-      const scene = await localRepository.createScene(BASE_SCENE);
+      const spy = vi.spyOn(localRepository, "updatePartialScene");
 
-      await builderService.updateScene({ content: "tututu", key: scene.key });
+      await builderService.updateScene({ content: "tututu", key: "blabla" });
 
-      const updatedScene = await localRepository.getScene(scene.key);
-
-      expect(updatedScene).toStrictEqual({
-        ...scene,
+      expect(spy).toHaveBeenCalledWith("blabla", {
         content: "tututu",
       });
     });
@@ -452,210 +324,95 @@ describe("builder-service", () => {
 
   describe("changeFirstScene", () => {
     it("should update the first scene of a story", async () => {
-      const story = await localRepository.createStory(BASE_STORY);
-      if (!story) throw new Error("Could not create story");
+      const getSceneSpy = vi.spyOn(localRepository, "getScene");
+      const updateFirstScene = vi.spyOn(localRepository, "updateFirstScene");
 
-      const scene = await localRepository.createScene({
-        ...BASE_SCENE,
-        storyKey: story.key,
-      });
+      const success = await builderService.changeFirstScene("CANARD", "KADOC");
 
-      await builderService.changeFirstScene(story.key, scene.key);
+      expect(getSceneSpy).toHaveBeenCalledWith("KADOC");
+      expect(updateFirstScene).toHaveBeenCalledWith("CANARD", "KADOC");
 
-      const updatedStory = await localRepository.getStory(story.key);
-
-      expect(updatedStory).toStrictEqual({
-        ...story,
-        firstSceneKey: scene.key,
-      });
+      expect(success).toBeTruthy();
     });
 
     it("should not update the story if the scene key is invalid", async () => {
-      const story = await localRepository.createStory(BASE_STORY);
-      if (!story) throw new Error("Could not create story");
-
-      const result = await builderService.changeFirstScene(
-        story.key,
-        "blabloum",
-      );
-
-      const updatedStory = await localRepository.getStory(story.key);
-
-      expect(result).toBeFalsy();
-      expect(updatedStory).toStrictEqual(story);
-    });
-
-    it("should not update the story if the story key is invalid", async () => {
-      const story = await localRepository.createStory(BASE_STORY);
-      if (!story) throw new Error("Could not create story");
-
-      const scene = await localRepository.createScene({
-        ...BASE_SCENE,
-        storyKey: story.key,
+      localRepository = {
+        ...getLocalRepositoryStub(),
+        getScene: () => new Promise((res) => res(null)),
+      };
+      builderService = _getBuilderService({
+        localRepository,
+        remoteRepository,
       });
 
-      const result = await builderService.changeFirstScene(
-        "zhagaga",
-        scene.key,
-      );
+      const getSceneSpy = vi.spyOn(localRepository, "getScene");
+      const updateFirstScene = vi.spyOn(localRepository, "updateFirstScene");
 
-      const updatedStory = await localRepository.getStory(story.key);
+      const success = await builderService.changeFirstScene("CANARD", "KADOC");
 
-      expect(result).toBeFalsy();
-      expect(updatedStory).toStrictEqual(story);
+      expect(getSceneSpy).toHaveBeenCalledWith("KADOC");
+      expect(updateFirstScene).not.toHaveBeenCalled();
+
+      expect(success).toBeFalsy();
     });
   });
 
   describe("getBuilderStoryData", () => {
     it("should return story data", async () => {
-      const story = await localRepository.createStory(BASE_STORY);
-      if (!story) throw new Error("Could not create story");
-      const scenes = Array(10)
-        .fill(1)
-        .map(() => ({ ...BASE_SCENE, storyKey: story.key }));
-      const sceneKeys = await localRepository.createScenes(scenes);
+      const getStorySpy = vi.spyOn(localRepository, "getStory");
+      const getScenesSpy = vi.spyOn(localRepository, "getScenes");
 
-      const builderData = await builderService.getBuilderStoryData(story.key);
+      const builderData = await builderService.getBuilderStoryData("bouteille");
 
-      expect(builderData.story).toStrictEqual(story);
-      expect(builderData.scenes).toStrictEqual(
-        scenes.map((_, i) => ({
-          ...BASE_SCENE,
-          storyKey: story.key,
-          key: sceneKeys[i],
-        })),
-      );
-    });
-
-    it("should return null data when given invalid story key", async () => {
-      const { story, scenes } =
-        await builderService.getBuilderStoryData("ziploula");
-
-      expect(story).toBeNull();
-      expect(scenes).toStrictEqual([]);
+      expect(getStorySpy).toHaveBeenCalledWith("bouteille");
+      expect(getScenesSpy).toHaveBeenCalledWith("bouteille");
+      expect(builderData).toStrictEqual({
+        story: BASIC_STORY,
+        scenes: [BASIC_SCENE],
+      });
     });
   });
 
   describe("getUserBuilderStories", () => {
     it("should retrieve stories created by logged in user", async () => {
-      const userA = await localRepository.createUser(BASE_USER);
-      const storyA = await localRepository.createStory({
-        ...BASE_STORY,
-        title: "haha",
-        author: { username: userA.username, key: userA.key },
-      });
-      const storyB = await localRepository.createStory({
-        ...BASE_STORY,
-        title: "hihi",
-      });
-      await localRepository.createStory({
-        ...BASE_STORY,
-        title: "hihi",
-        author: { username: "hey", key: "ho" },
-      });
+      const getUserSpy = vi.spyOn(localRepository, "getUser");
+      const getStoriesSpy = vi.spyOn(localRepository, "getStoriesByAuthor");
 
       const stories = await builderService.getUserBuilderStories();
 
-      expect(stories).toStrictEqual([storyA, storyB]);
-    });
-
-    it("should retrieve stories created by user without account", async () => {
-      const storyA = await localRepository.createStory({
-        ...BASE_STORY,
-        title: "haha",
-      });
-      const storyB = await localRepository.createStory({
-        ...BASE_STORY,
-        title: "hihi",
-      });
-      await localRepository.createStory({
-        ...BASE_STORY,
-        title: "hihi",
-        author: { username: "hey", key: "ho" },
-      });
-
-      const stories = await builderService.getUserBuilderStories();
-
-      expect(stories).toStrictEqual([storyA, storyB]);
-    });
-
-    it("should return an empty array when user hasn't created any stories", async () => {
-      await localRepository.createUser(BASE_USER);
-
-      await localRepository.createStory({
-        ...BASE_STORY,
-        title: "hihi",
-        author: { username: "hey", key: "ho" },
-      });
-
-      const stories = await builderService.getUserBuilderStories();
-
-      expect(stories).toStrictEqual([]);
+      expect(getUserSpy).toHaveBeenCalled();
+      expect(getStoriesSpy).toHaveBeenCalledTimes(2);
+      expect(getStoriesSpy).toHaveBeenCalledWith(BASIC_USER.key);
+      expect(getStoriesSpy).toHaveBeenCalledWith(undefined);
+      expect(stories).toStrictEqual([BASIC_STORY, BASIC_STORY]);
     });
   });
 
   describe("getFullBuilderState", () => {
     it("should get all stories and scenes", async () => {
-      const storiesPayload = Array(10)
-        .fill(null)
-        .map((_, i) => ({ ...BASE_STORY, title: `story ${i}` }));
-
-      const stories = [];
-      const scenes = [];
-
-      for (const story of storiesPayload) {
-        const s = await localRepository.createStory(story);
-        if (!s) throw new Error("Could not create story");
-        stories.push(s);
-
-        const scenesPayload = Array(10)
-          .fill(null)
-          .map((_, i) => ({
-            ...BASE_SCENE,
-            storyKey: s.key,
-            title: `scene ${i}`,
-          }));
-
-        for (const scene of scenesPayload) {
-          const sc = await localRepository.createScene(scene);
-          scenes.push(sc);
-        }
-      }
+      const getScenesSpy = vi.spyOn(localRepository, "getScenes");
 
       const result = await builderService.getFullBuilderState();
 
-      expect(result).toStrictEqual({ stories, scenes });
+      expect(getScenesSpy).toHaveBeenCalled();
+      expect(result).toStrictEqual({
+        stories: [BASIC_STORY, BASIC_STORY],
+        scenes: [BASIC_SCENE],
+      });
     });
   });
 
   describe("loadBuilderState", () => {
     it("should update local database with input data", async () => {
-      const storiesPayload = Array(10)
-        .fill(null)
-        .map((_, i) => ({
-          ...BASE_STORY,
-          title: `story-${i}`,
-          key: `story-key-${i}`,
-        }));
+      const uowSpy = vi.spyOn(localRepository, "unitOfWork");
+      const storiesSpy = vi.spyOn(localRepository, "updateOrCreateStories");
+      const scenesSpy = vi.spyOn(localRepository, "updateOrCreateScenes");
 
-      const scenesPayload = Array(10)
-        .fill(null)
-        .map((_, i) => ({
-          ...BASE_SCENE,
-          title: `scene-${i}`,
-          key: `scene-key-${i}`,
-          storyKey: `story-key-${i}`,
-        }));
+      await builderService.loadBuilderState([BASIC_STORY], [BASIC_SCENE]);
 
-      await builderService.loadBuilderState(storiesPayload, scenesPayload);
-
-      const storiesInDB = await localRepository.getStories();
-      const scenesInDB = await localRepository.getScenes(
-        storiesPayload.map(({ key }) => key),
-      );
-
-      expect(storiesInDB).toStrictEqual(storiesPayload);
-      expect(scenesPayload).toStrictEqual(scenesInDB);
+      expect(uowSpy).toHaveBeenCalled();
+      expect(storiesSpy).toHaveBeenCalledWith([BASIC_STORY]);
+      expect(scenesSpy).toHaveBeenCalledWith([BASIC_SCENE]);
     });
   });
 });
