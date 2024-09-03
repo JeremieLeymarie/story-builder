@@ -50,16 +50,6 @@ const indexedDBRepository: LocalRepositoryPort = {
     return (await db.stories.get(key)) ?? null;
   },
 
-  getStories: async (userKey) => {
-    const result = await db.stories
-      .filter(
-        (story) => story.author?.key === userKey || story.author === undefined,
-      )
-      .toArray();
-
-    return result ?? null;
-  },
-
   getStoriesByKeys: async (keys) => {
     return await db.stories
       .filter((story) => keys.includes(story.key))
@@ -213,8 +203,10 @@ const indexedDBRepository: LocalRepositoryPort = {
     return progress ?? null;
   },
 
-  getStoryProgresses: async () => {
-    return await db.storyProgresses.toArray();
+  getStoryProgresses: async (userKey) => {
+    return await db.storyProgresses
+      .filter((progress) => progress.userKey === userKey)
+      .toArray();
   },
 
   updateStoryProgress: async (storyProgress) => {

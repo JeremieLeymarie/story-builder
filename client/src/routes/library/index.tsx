@@ -5,23 +5,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 
 const Component = () => {
-  const { storiesFromStore, userStories, finishedGameKeys } =
+  const { games, finishedGameKeys } =
     useLiveQuery(getLibraryService().getLibrary) ?? {};
 
-  if (
-    storiesFromStore === undefined ||
-    userStories === undefined ||
-    finishedGameKeys === undefined
-  ) {
+  if (games === undefined || finishedGameKeys === undefined) {
     return <BackdropLoader />;
   }
 
-  return storiesFromStore && userStories ? (
-    <Library
-      storiesFromStore={storiesFromStore}
-      userStories={userStories}
-      finishedGameKeys={finishedGameKeys}
-    />
+  return games ? (
+    <Library stories={games} finishedGameKeys={finishedGameKeys} />
   ) : (
     <ErrorMessage text="Could not get your games. Please try again later" />
   );

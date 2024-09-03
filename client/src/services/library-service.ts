@@ -9,6 +9,7 @@ import { fullStorySchema } from "./common/schemas";
 import { isOnline } from "./common/sync";
 
 // TODO: uniformize responses
+// TODO: test all of this
 const _getLibraryService = ({
   localRepository,
   remoteRepository,
@@ -35,8 +36,12 @@ const _getLibraryService = ({
       const { data } = await remoteRepository.downloadStory(storyKey);
 
       if (data) {
-        await localRepository.createStory(data.story);
-        await localRepository.createScenes(data.scenes);
+        const story = await localRepository.getStory(data.story.key);
+
+        if (!story) {
+          await localRepository.createStory(data.story);
+          await localRepository.createScenes(data.scenes);
+        }
 
         await _addToLibrary({ story: data.story });
 
@@ -129,17 +134,20 @@ const _getLibraryService = ({
 
     getLibrary: async () => {
       const user = await localRepository.getUser();
-      const stories = await localRepository.getStories(user?.key);
+      const storyKeys = (
+        await localRepository.getStoryProgresses(user?.key)
+      ).map(({ storyKey }) => storyKey);
 
-      const userStories =
-        stories?.filter((story) => story.author?.key === user?.key) ?? null;
-      const storiesFromStore =
-        stories?.filter((story) => story.author?.key !== user?.key) ?? null;
+      const games = await localRepository.getStoriesByKeys(storyKeys);
 
-      // TODO: add this to test
+      // TODO: add this to tests
       const finishedGameKeys = await localRepository.getFinishedGameKeys();
 
-      return { userStories, storiesFromStore, finishedGameKeys };
+      console.log({ games, user });
+      return {
+        games: games.filter((game) => game.author?.key !== user?.key),
+        finishedGameKeys,
+      };
     },
 
     getLibraryDetail: async (storyKey: string) => {
