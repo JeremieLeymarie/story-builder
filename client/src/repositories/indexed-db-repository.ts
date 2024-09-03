@@ -117,6 +117,12 @@ const indexedDBRepository: LocalRepositoryPort = {
     return keys;
   },
 
+  updateScenes: async (scenes) => {
+    await db.scenes.bulkUpdate(
+      scenes.map(({ key, ...scene }) => ({ key, changes: scene })),
+    );
+  },
+
   createScene: async (scene) => {
     const key = await db.scenes.add(scene);
     return { ...scene, key };

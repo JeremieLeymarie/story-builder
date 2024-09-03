@@ -30,6 +30,7 @@ export type LocalRepositoryPort = {
 
   createScene: (scene: WithoutKey<Scene>) => Promise<Scene>;
   updateOrCreateScenes: (scenes: Scene[]) => Promise<string[]>;
+  updateScenes: (scenes: ({ key: string } & Partial<Scene>)[]) => Promise<void>;
   createScenes: (scenes: (WithoutKey<Scene> | Scene)[]) => Promise<string[]>;
   updatePartialScene: (key: string, scene: Partial<Scene>) => Promise<boolean>;
   getScene: (key: string) => Promise<Scene | null>;

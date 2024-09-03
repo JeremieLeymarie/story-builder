@@ -1,17 +1,11 @@
-import {
-  getLocalRepository,
-  getRemoteAPIRepository,
-  LocalRepositoryPort,
-  RemoteRepositoryPort,
-} from "@/repositories";
+import { getRemoteAPIRepository, RemoteRepositoryPort } from "@/repositories";
 import { isOnline } from "./common/sync";
 import { Story, StoryGenre } from "@/lib/storage/domain";
 
+// Is this replaceable?
 const _getStoreService = ({
-  localRepository,
   remoteRepository,
 }: {
-  localRepository: LocalRepositoryPort;
   remoteRepository: RemoteRepositoryPort;
 }) => {
   return {
@@ -44,24 +38,10 @@ const _getStoreService = ({
 
       return response.data?.slice(0, numberOfItems) ?? null;
     },
-
-    downloadStory: async (storyKey: string) => {
-      if (!isOnline()) return false;
-      const { data } = await remoteRepository.downloadStory(storyKey);
-
-      if (data) {
-        await localRepository.createStory(data.story);
-        await localRepository.createScenes(data.scenes);
-        return true;
-      }
-
-      return false;
-    },
   };
 };
 
 export const getStoreService = () =>
   _getStoreService({
-    localRepository: getLocalRepository(),
     remoteRepository: getRemoteAPIRepository(),
   });

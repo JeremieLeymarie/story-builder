@@ -4,8 +4,6 @@ import { RemoteRepositoryPort } from "@/repositories/remote-repository-port";
 import { WithoutKey } from "@/types";
 import { getLocalRepository } from "@/repositories/indexed-db-repository";
 import { getRemoteAPIRepository } from "@/repositories/remote-api-repository";
-import { fullStorySchema } from "./schemas";
-import Dexie from "dexie";
 
 // TODO: revise error management? Maybe throw errors instead of string/boolean/null returns
 export const _getBuilderService = ({
@@ -131,40 +129,6 @@ export const _getBuilderService = ({
         ...story,
         ...(user && { author: { key: user.key, username: user.username } }),
       });
-    },
-
-    // TODO: this should not keep the author in the data??
-    importFromJSON: async (fileContent: string) => {
-      // TODO: refacto this try/catch mess
-      try {
-        const contentJson = JSON.parse(fileContent);
-
-        const resZod = fullStorySchema.safeParse(contentJson);
-
-        if (!resZod.success)
-          return { error: resZod.error.issues[0]?.message || "Invalid format" };
-
-        try {
-          await localRepository.unitOfWork(
-            async () => {
-              await localRepository.createStory(resZod.data.story);
-              await localRepository.createScenes(resZod.data.scenes);
-            },
-            { mode: "readwrite", entities: ["story", "scene"] },
-          );
-        } catch (error) {
-          if (
-            error instanceof Dexie.DexieError &&
-            error.name === "ConstraintError"
-          ) {
-            return { error: "Story or scene already exists" };
-          }
-          return { error: "Something went wrong." };
-        }
-      } catch (_) {
-        return { error: "Invalid JSON format" };
-      }
-      return { error: null };
     },
 
     addScene: async (scene: WithoutKey<Scene>) => {
