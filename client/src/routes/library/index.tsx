@@ -1,12 +1,12 @@
 import { BackdropLoader, ErrorMessage } from "@/design-system/components";
 import { Library } from "@/library/library";
-import { getUserService } from "@/services";
+import { getLibraryService } from "@/services";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 
 const Component = () => {
   const { storiesFromStore, userStories, finishedGameKeys } =
-    useLiveQuery(getUserService().getLibraryData) ?? {};
+    useLiveQuery(getLibraryService().getLibrary) ?? {};
 
   if (
     storiesFromStore === undefined ||

@@ -123,6 +123,8 @@ const _getLibraryService = ({
       );
 
       await _addToLibrary({ story });
+
+      return { error: null };
     },
 
     getLibrary: async () => {

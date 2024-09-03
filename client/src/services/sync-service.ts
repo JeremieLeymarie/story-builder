@@ -5,9 +5,9 @@ import {
   RemoteRepositoryPort,
 } from "@/repositories";
 import { checkCanPerformSync, isOnline } from "./common/sync";
-import { getBuilderService } from "./builder";
 import { getGameService } from "./game-service";
 import { getUserService } from "./user-service";
+import { getBuilderService } from "./builder-service";
 
 const _getSyncService = ({
   remoteRepository,

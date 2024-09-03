@@ -1,6 +1,6 @@
 import { Builder } from "@/builder/components/builder";
 import { BackdropLoader } from "@/design-system/components";
-import { getBuilderService } from "@/services/builder";
+import { getBuilderService } from "@/services";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 

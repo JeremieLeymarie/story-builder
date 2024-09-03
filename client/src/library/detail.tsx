@@ -37,7 +37,7 @@ export const LibraryGameDetail = ({ story, progress, currentScene }: Props) => {
             Story by: {story.author?.username}
           </p>
         )}
-        {!!story.publicationDate && (
+        {story.status === "published" && !!story.publicationDate && (
           <p className="max-md:text-md text-lg text-white">
             Published on
             {formatDate(story.publicationDate)}

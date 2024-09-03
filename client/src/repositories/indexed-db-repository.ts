@@ -1,4 +1,3 @@
-import { WithoutKey } from "@/types";
 import { Entity, Scene, Story, User } from "../lib/storage/domain";
 import { db } from "../lib/storage/dexie/dexie-db";
 import { LocalRepositoryPort } from "./local-repository-port";
@@ -22,18 +21,12 @@ const entityToDexieTableAdapter = (entity: Entity) => {
 const indexedDBRepository: LocalRepositoryPort = {
   // STORIES
 
-  createStory: async (story: Story | WithoutKey<Story>) => {
+  createStory: async (story) => {
     const key = await db.stories.add(story);
-    return { ...story, key };
+    return { ...story, key } as Story;
   },
 
-  createStoryWithFirstScene: async ({
-    story,
-    firstScene,
-  }: {
-    story: WithoutKey<Omit<Story, "firstSceneKey">>;
-    firstScene: WithoutKey<Omit<Scene, "storyKey">>;
-  }) => {
+  createStoryWithFirstScene: async ({ story, firstScene }) => {
     return db.transaction("readwrite", ["stories", "scenes"], async () => {
       const storyKey = await db.stories.add({
         ...story,
@@ -42,7 +35,7 @@ const indexedDBRepository: LocalRepositoryPort = {
       const sceneKey = await db.scenes.add({ ...firstScene, storyKey });
       await db.stories.update(storyKey, { firstSceneKey: sceneKey });
       return {
-        story: { ...story, firstSceneKey: sceneKey, key: storyKey },
+        story: { ...story, firstSceneKey: sceneKey, key: storyKey } as Story,
         scene: { ...firstScene, storyKey, key: sceneKey },
       };
     });

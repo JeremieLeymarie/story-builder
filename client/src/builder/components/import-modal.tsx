@@ -11,7 +11,7 @@ import {
 import { BracesIcon } from "lucide-react";
 import { ChangeEvent, useCallback, useState } from "react";
 import { useToast } from "@/design-system/primitives/use-toast";
-import { getBuilderService } from "@/services/builder";
+import { getLibraryService } from "@/services";
 
 export const ImportModal = () => {
   const { toast } = useToast();
@@ -38,7 +38,7 @@ export const ImportModal = () => {
       return toast({ description: "No content in file." });
     }
 
-    const { error } = await getBuilderService().importFromJSON(fileContent);
+    const { error } = await getLibraryService().importFromJSON(fileContent);
     if (error)
       return toast({
         title: "Import failed!",

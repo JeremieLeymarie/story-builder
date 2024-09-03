@@ -110,11 +110,7 @@ export const _getBuilderService = ({
     },
 
     publishStory: async (scenes: Scene[], story: Story) => {
-      // TODO: this is weird, the frontend handles the publication date and the API the status change. Only one should be responsible for updating the data
-      const response = await remoteRepository.publishStory(scenes, {
-        ...story,
-        publicationDate: new Date(),
-      });
+      const response = await remoteRepository.publishStory(scenes, story);
 
       if (response.data) {
         await localRepository.updateStory(response.data.story);

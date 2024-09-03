@@ -1,5 +1,14 @@
-import { Action, Scene, Story, StoryProgress } from "../storage/domain";
+import { z } from "zod";
+import {
+  Action,
+  Scene,
+  Story,
+  STORY_GENRES,
+  StoryProgress,
+} from "../storage/domain";
 import { components } from "./schema";
+
+// TODO: all of these should be tested
 
 /* API TO CLIENT DOMAIN */
 
@@ -20,16 +29,36 @@ const fromAPIScenesAdapter = (
   scenes: components["schemas"]["Scene-Output"][],
 ): Scene[] => scenes.map(fromAPISceneAdapter);
 
+const baseStorySchemaFields = {
+  key: z.string(),
+  author: z.object({ key: z.string(), username: z.string() }).optional(),
+  title: z.string(),
+  description: z.string(),
+  image: z.string(),
+  firstSceneKey: z.string(),
+  genres: z.array(z.enum(STORY_GENRES)),
+  creationDate: z.string().transform((val) => new Date(val)),
+};
+
+const storySchema = z.discriminatedUnion("status", [
+  z.object({
+    ...baseStorySchemaFields,
+    status: z.literal("published"),
+    publicationDate: z.string().transform((val) => new Date(val)),
+  }),
+  z.object({
+    ...baseStorySchemaFields,
+    status: z.literal("imported"),
+    originalStoryKey: z.string(),
+  }),
+  z.object({
+    ...baseStorySchemaFields,
+    status: z.literal("draft"),
+  }),
+]);
+
 const fromAPIStoryAdapter = (story: components["schemas"]["Story"]): Story => {
-  return {
-    ...story,
-    author: story.author ?? undefined,
-    publicationDate: story.publicationDate
-      ? new Date(story.publicationDate)
-      : undefined,
-    creationDate: new Date(story.creationDate),
-    lastSyncAt: story.lastSyncAt ? new Date(story.lastSyncAt) : undefined,
-  };
+  return storySchema.parse(story);
 };
 
 const fromAPIStoriesAdapter = (
@@ -97,11 +126,11 @@ const fromClientStoryAdapter = (
   return {
     ...story,
     author: story.author ?? null,
-    publicationDate: story.publicationDate
-      ? story.publicationDate.toISOString()
-      : null,
+    publicationDate:
+      "publicationDate" in story && story.publicationDate
+        ? story.publicationDate.toISOString()
+        : null,
     creationDate: story.creationDate.toISOString(),
-    lastSyncAt: story.lastSyncAt ? story.lastSyncAt.toISOString() : undefined,
   };
 };
 
