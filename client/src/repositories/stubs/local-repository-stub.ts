@@ -1,3 +1,4 @@
+import { Mock, vi } from "vitest";
 import { LocalRepositoryPort } from "../local-repository-port";
 import {
   BASIC_SCENE,
@@ -6,71 +7,73 @@ import {
   BASIC_USER,
 } from "./data";
 
-const P =
-  <T>(returnValue?: T) =>
-  () =>
-    new Promise<T>((res) => res(returnValue as T));
+const mock = <T>(returnValue?: T) =>
+  vi.fn(() => new Promise<T>((res) => res(returnValue as T)));
 
-export const getLocalRepositoryStub = (): LocalRepositoryPort => {
+export type MockLocalRepository = {
+  [K in keyof LocalRepositoryPort]: Mock<LocalRepositoryPort[K]>;
+};
+
+export const getLocalRepositoryStub = (): MockLocalRepository => {
   return {
-    createStory: P(BASIC_STORY),
+    createStory: mock(BASIC_STORY),
 
-    createStoryWithFirstScene: P({ story: BASIC_STORY, scene: BASIC_SCENE }),
+    createStoryWithFirstScene: mock({ story: BASIC_STORY, scene: BASIC_SCENE }),
 
-    updateOrCreateStories: P(["key"]),
+    updateOrCreateStories: mock(["key"]),
 
-    updateStory: P(BASIC_STORY),
+    updateStory: mock(BASIC_STORY),
 
-    getStory: P(BASIC_STORY),
+    getStory: mock(BASIC_STORY),
 
-    getStoriesByKeys: P([BASIC_STORY]),
+    getStoriesByKeys: mock([BASIC_STORY]),
 
-    getStoriesByAuthor: P([BASIC_STORY]),
+    getStoriesByAuthor: mock([BASIC_STORY]),
 
-    getGames: P([BASIC_STORY]),
+    getGames: mock([BASIC_STORY]),
 
-    getMostRecentStoryProgress: P(BASIC_STORY_PROGRESS),
+    getMostRecentStoryProgress: mock(BASIC_STORY_PROGRESS),
 
-    getFinishedGameKeys: P(["key"]),
+    getFinishedGameKeys: mock(["key"]),
 
-    updateFirstScene: P(),
+    updateFirstScene: mock(),
 
-    addAuthorToStories: P(),
+    addAuthorToStories: mock(),
 
-    updateOrCreateScenes: P(["key"]),
+    updateOrCreateScenes: mock(["key"]),
 
-    createScene: P(BASIC_SCENE),
+    createScene: mock(BASIC_SCENE),
 
-    createScenes: P(["key"]),
+    createScenes: mock(["key"]),
 
-    updatePartialScene: P(true),
+    updatePartialScene: mock(true),
 
-    updateScenes: P(),
+    updateScenes: mock(),
 
-    getScene: P(BASIC_SCENE),
+    getScene: mock(BASIC_SCENE),
 
-    getScenes: P([BASIC_SCENE]),
+    getScenes: mock([BASIC_SCENE]),
 
-    createStoryProgress: P(BASIC_STORY_PROGRESS),
+    createStoryProgress: mock(BASIC_STORY_PROGRESS),
 
-    updateOrCreateStoryProgresses: P(["key"]),
+    updateOrCreateStoryProgresses: mock(["key"]),
 
-    updateStoryProgress: P(BASIC_STORY_PROGRESS),
+    updateStoryProgress: mock(BASIC_STORY_PROGRESS),
 
-    getStoryProgress: P(BASIC_STORY_PROGRESS),
+    getStoryProgress: mock(BASIC_STORY_PROGRESS),
 
-    getStoryProgresses: P([BASIC_STORY_PROGRESS]),
+    getStoryProgresses: mock([BASIC_STORY_PROGRESS]),
 
-    getUser: P(BASIC_USER),
+    getUser: mock(BASIC_USER),
 
-    getUserCount: P(1),
+    getUserCount: mock(1),
 
-    createUser: P(BASIC_USER),
+    createUser: mock(BASIC_USER),
 
-    updateUser: P(BASIC_USER),
+    updateUser: mock(BASIC_USER),
 
-    deleteUser: P(true),
+    deleteUser: mock(true),
 
-    unitOfWork: (work) => work(),
+    unitOfWork: vi.fn((work) => work()),
   };
 };

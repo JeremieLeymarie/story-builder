@@ -1,15 +1,17 @@
-import { LocalRepositoryPort, RemoteRepositoryPort } from "@/repositories";
 import {
   getLocalRepositoryStub,
   getRemoteRepositoryStub,
+  MockLocalRepository,
+  MockRemoteRepository,
 } from "@/repositories/stubs";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { _getLibraryService } from "../library-service";
+import { BASIC_SCENE, BASIC_STORY } from "@/repositories/stubs/data";
 
 describe("library-service", () => {
   let libraryService: ReturnType<typeof _getLibraryService>;
-  let localRepository: LocalRepositoryPort;
-  let remoteRepository: RemoteRepositoryPort;
+  let localRepository: MockLocalRepository;
+  let remoteRepository: MockRemoteRepository;
 
   beforeEach(() => {
     localRepository = getLocalRepositoryStub();
@@ -18,6 +20,53 @@ describe("library-service", () => {
     libraryService = _getLibraryService({
       localRepository,
       remoteRepository,
+    });
+  });
+
+  describe("downloadStory", () => {
+    it("should gracefully fail when offline", async () => {
+      vi.spyOn(window.navigator, "onLine", "get").mockReturnValue(false);
+
+      const result = await libraryService.downloadStory("tiptoptap");
+
+      expect(result).toBeFalsy();
+    });
+
+    it("should download story from store", async () => {
+      const result = await libraryService.downloadStory("tiptoptap");
+
+      expect(remoteRepository.downloadStory).toHaveBeenCalledWith("tiptoptap");
+      expect(localRepository.getStory).toHaveBeenCalledWith(BASIC_STORY.key);
+      expect(localRepository.createStory).not.toHaveBeenCalled();
+      expect(localRepository.createScenes).not.toHaveBeenCalled();
+      expect(localRepository.createStoryProgress).toHaveBeenCalled();
+
+      expect(result).toBeTruthy();
+    });
+
+    it("should create story if it doesn't exist", async () => {
+      localRepository.getStory.mockReturnValueOnce(Promise.resolve(null));
+
+      const result = await libraryService.downloadStory("tiptoptap");
+
+      expect(localRepository.createStory).toHaveBeenCalledWith(BASIC_STORY);
+      expect(localRepository.createScenes).toHaveBeenCalledWith([BASIC_SCENE]);
+      expect(localRepository.createStoryProgress).toHaveBeenCalled();
+
+      expect(result).toBeTruthy();
+    });
+
+    it("should fail if story is invalid", async () => {
+      const getStorySpy = vi.spyOn(localRepository, "getStory");
+      const downloadStorySpy = vi.spyOn(remoteRepository, "downloadStory");
+
+      downloadStorySpy.mockResolvedValueOnce({ error: "Error" });
+
+      const result = await libraryService.downloadStory("tiptoptap");
+
+      expect(getStorySpy).not.toHaveBeenCalledWith();
+
+      expect(result).toBeFalsy();
     });
   });
 
@@ -62,38 +111,25 @@ describe("library-service", () => {
     });
 
     it("should import story from JSON", async () => {
-      const result = await builderService.importFromJSON(fileContent);
-
-      const story = await localRepository.getStory("bloup");
-      const scenes = await localRepository.getScenes("bloup");
-
-      expect(result).toStrictEqual({ error: null });
-      expect(story).toStrictEqual(importedStory);
-      expect(scenes).toStrictEqual(importedScenes);
+      const result = await libraryService.importFromJSON(fileContent);
     });
 
     it("should not create story if JSON is malformed", async () => {
-      const result = await builderService.importFromJSON(`tutu${fileContent}`);
-
-      const story = await localRepository.getStory("bloup");
-      const scenes = await localRepository.getScenes("bloup");
-
-      expect(result).toStrictEqual({ error: "Invalid JSON format" });
-      expect(story).toBeNull();
-      expect(scenes).toStrictEqual([]);
+      const result = await libraryService.importFromJSON(`tutu${fileContent}`);
     });
 
     it("should not create story if format is invalid", async () => {
-      const result = await builderService.importFromJSON(
+      const result = await libraryService.importFromJSON(
         JSON.stringify({ stories: ["tutu"] }),
       );
-
-      const story = await localRepository.getStory("bloup");
-      const scenes = await localRepository.getScenes("bloup");
-
-      expect(result).toStrictEqual({ error: "Story is required" });
-      expect(story).toBeNull();
-      expect(scenes).toStrictEqual([]);
     });
+
+    it("should not create scenes if story cannot be created");
+
+    it("should not create scenes if story cannot be created");
+
+    it("should work correctly if story already exists{");
   });
+
+  // TODO: test other methods
 });

@@ -1,3 +1,4 @@
+import { Mock, vi } from "vitest";
 import {
   RemoteRepositoryPort,
   RemoteRepositoryResponse,
@@ -9,14 +10,19 @@ import {
   BASIC_USER,
 } from "./data";
 
-const P =
-  <T>(returnValue: T) =>
-  () =>
-    new Promise<RemoteRepositoryResponse<T>>((res) =>
-      res({ data: returnValue }),
-    );
+const P = <T>(returnValue: T) =>
+  vi.fn(
+    () =>
+      new Promise<RemoteRepositoryResponse<T>>((res) =>
+        res({ data: returnValue }),
+      ),
+  );
 
-export const getRemoteRepositoryStub = (): RemoteRepositoryPort => {
+export type MockRemoteRepository = {
+  [K in keyof RemoteRepositoryPort]: Mock<RemoteRepositoryPort[K]>;
+};
+
+export const getRemoteRepositoryStub = (): MockRemoteRepository => {
   return {
     publishStory: P({ story: BASIC_STORY, scenes: [BASIC_SCENE] }),
 
