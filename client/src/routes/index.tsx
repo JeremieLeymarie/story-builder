@@ -31,10 +31,7 @@ const Index = () => {
     <Home
       lastPlayedGame={lastPlayedGame}
       storeItems={storeItems}
-      libraryStories={[
-        ...(libraryStories.storiesFromStore ?? []),
-        ...(libraryStories.userStories ?? []),
-      ]}
+      libraryStories={libraryStories.games}
     />
   );
 };

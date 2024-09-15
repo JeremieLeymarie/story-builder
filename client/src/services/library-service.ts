@@ -92,12 +92,13 @@ export const _getLibraryService = ({
 
       // This could be a performance issue
       for (const scene of zodParsed.data.scenes) {
+        const { key: oldSceneKey, ...sceneData } = scene;
         const { key } = await localRepository.createScene({
-          ...scene,
+          ...sceneData,
           storyKey: story?.key,
           actions: [],
         });
-        oldScenesToNewScenes[scene.key] = key;
+        oldScenesToNewScenes[oldSceneKey] = key;
       }
 
       await localRepository.updateScenes(
@@ -140,12 +141,10 @@ export const _getLibraryService = ({
 
       const games = await localRepository.getStoriesByKeys(storyKeys);
 
-      // TODO: add this to tests
       const finishedGameKeys = await localRepository.getFinishedGameKeys();
 
-      console.log({ games, user });
       return {
-        games: games.filter((game) => game.author?.key !== user?.key),
+        games,
         finishedGameKeys,
       };
     },
