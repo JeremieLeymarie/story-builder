@@ -1,8 +1,8 @@
 import { ErrorMessage, BackdropLoader } from "@/design-system/components";
 import { GameScene } from "@/game/components/scene";
 import { useUpdateStoryProgress } from "@/game/hooks/use-update-story-progress";
-import { useInitialQuery } from "@/hooks/use-query";
 import { getGameService } from "@/services";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 
@@ -14,9 +14,10 @@ export const Component = () => {
     [sceneKey, gameKey],
   );
 
-  const storyProgress = useInitialQuery(() =>
-    gameService.getStoryProgress(gameKey),
-  );
+  const { data: storyProgress } = useQuery({
+    queryFn: () => gameService.getStoryProgress(gameKey),
+    queryKey: ["story-progress"],
+  });
 
   useUpdateStoryProgress({ scene, storyProgress });
 

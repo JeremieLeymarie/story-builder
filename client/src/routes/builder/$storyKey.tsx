@@ -1,18 +1,27 @@
 import { BuilderContainer } from "@/builder/components/builder-container";
-import { BackdropLoader } from "@/design-system/components";
 import { getBuilderService } from "@/services";
+import { BackdropLoader, ErrorMessage } from "@/design-system/components";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useLiveQuery } from "dexie-react-hooks";
 
 const Page = () => {
   const { storyKey } = Route.useParams();
   const builderService = getBuilderService();
-  const { scenes, story } =
-    useLiveQuery(() => builderService.getBuilderStoryData(storyKey)) ?? {};
+  const { data, isLoading } = useQuery({
+    queryFn: () => builderService.getBuilderStoryData(storyKey),
+    queryKey: ["builder-story-data"],
+  });
 
-  if (!scenes || !story) {
+  if (isLoading || !data) {
     return <BackdropLoader />;
   }
+
+  const { scenes, story } = data;
+
+  if (!story) {
+    return <ErrorMessage />;
+  }
+
   return (
     <div className="h-full w-full">
       <BuilderContainer scenes={scenes} story={story} />

@@ -1,8 +1,8 @@
 import { useUpdateStoryProgress } from "@/game/hooks/use-update-story-progress";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useCallback, useMemo } from "react";
-import { useInitialQuery } from "./use-query";
 import { getLocalRepository } from "@/repositories";
+import { useQuery } from "@tanstack/react-query";
 
 export const useGameScene = ({
   sceneKey,
@@ -23,7 +23,11 @@ export const useGameScene = ({
     () => repo.getStoryProgress(gameKey),
     [gameKey, repo],
   );
-  const initialProgress = useInitialQuery(getStoryProgress);
+
+  const { data: initialProgress } = useQuery({
+    queryFn: getStoryProgress,
+    queryKey: ["story-progress"],
+  });
 
   // Update story progress
   const storyProgress = useUpdateStoryProgress({

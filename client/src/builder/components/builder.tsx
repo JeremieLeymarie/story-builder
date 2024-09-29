@@ -41,10 +41,10 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
         minZoom={0.05}
         onInit={(instance) => instance.fitView()}
         defaultEdgeOptions={{ zIndex: 10000 }}
-        nodesFocusable={true}
-        selectionOnDrag={true}
-        selectNodesOnDrag={true}
         selectionMode={SelectionMode.Full}
+        nodesFocusable
+        selectionOnDrag
+        selectNodesOnDrag
       >
         <Controls />
         <MiniMap />

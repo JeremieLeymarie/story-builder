@@ -29,6 +29,8 @@
     "@radix-ui/react-switch": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.1",
     "@radix-ui/react-tooltip": "^1.1.2",
+    "@tanstack/react-query": "^5.56.2",
+    "@tanstack/react-query-devtools": "^5.58.0",
     "@tanstack/react-router": "^1.35.3",
     "@tanstack/router-devtools": "^1.35.3",
     "@tanstack/router-vite-plugin": "^1.35.4",
