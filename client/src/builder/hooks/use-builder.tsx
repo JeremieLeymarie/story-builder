@@ -3,8 +3,8 @@ import { useNodesState, useEdgesState } from "@xyflow/react";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
 import { useBuilderEdges } from "./use-builder-edges";
 import { Scene, Story } from "@/lib/storage/domain";
-import { getBuilderService } from "@/services/builder";
 import { BuilderNode } from "../types";
+import { getBuilderService } from "@/services";
 
 export const useBuilder = ({
   scenes,

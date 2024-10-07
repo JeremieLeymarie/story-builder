@@ -1,14 +1,10 @@
-# TODO: Should this be a domain by itself?
-
-
 from repositories.story_progress_repository_port import StoryProgressRepositoryPort
 from repositories.story_repository_port import StoryRepositoryPort
-from data_types.synchronization import SynchronizationPayload
-from data_types.game import StoryProgress
-from data_types.builder import FullStory, Scene, Story
+from domains.type_def import FullStory, Scene, Story, StoryProgress
+from request_types import SynchronizationPayload
 
 
-class SynchronizationDomain:
+class SynchronizationService:
     def __init__(
         self,
         story_progress_repository: StoryProgressRepositoryPort,

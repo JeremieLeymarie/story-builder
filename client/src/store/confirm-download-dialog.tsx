@@ -3,14 +3,14 @@ import { DownloadIcon } from "lucide-react";
 import { useCallback } from "react";
 import { useToast } from "@/design-system/primitives/use-toast";
 import { ConfirmDialog } from "@/design-system/components";
-import { getStoreService } from "@/services/store-service";
+import { getLibraryService } from "@/services";
 
 export const ConfirmDownloadDialog = ({ storyKey }: { storyKey: string }) => {
   const { toast } = useToast();
 
   const download = useCallback(
     async (storyKey: string) => {
-      const success = await getStoreService().downloadStory(storyKey);
+      const success = await getLibraryService().downloadStory(storyKey);
 
       if (success) {
         toast({

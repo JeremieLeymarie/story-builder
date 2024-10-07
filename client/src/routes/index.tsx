@@ -1,7 +1,7 @@
 import { BackdropLoader } from "@/design-system/components";
 import { Home } from "@/home/home";
 import { Story } from "@/lib/storage/domain";
-import { getGameService, getUserService } from "@/services";
+import { getGameService, getLibraryService, getUserService } from "@/services";
 import { getStoreService } from "@/services/store-service";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -13,7 +13,7 @@ const Index = () => {
   const user = useLiveQuery(userService.getCurrentUser);
   const lastPlayedGame = useLiveQuery(gameService.getLastGamePlayed, [user]);
   const [storeItems, setStoreItems] = useState<Story[] | null>(null);
-  const libraryStories = useLiveQuery(userService.getLibraryData);
+  const libraryStories = useLiveQuery(getLibraryService().getLibrary);
 
   useEffect(() => {
     getStoreService().getFirstItems(10).then(setStoreItems);
@@ -31,10 +31,7 @@ const Index = () => {
     <Home
       lastPlayedGame={lastPlayedGame}
       storeItems={storeItems}
-      libraryStories={[
-        ...(libraryStories.storiesFromStore ?? []),
-        ...(libraryStories.userStories ?? []),
-      ]}
+      libraryStories={libraryStories.games}
     />
   );
 };

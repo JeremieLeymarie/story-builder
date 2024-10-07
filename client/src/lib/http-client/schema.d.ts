@@ -189,26 +189,55 @@ export interface components {
         };
         /** FullStory */
         FullStory: {
-            /** Key */
+            /**
+             * Key
+             * @description The unique key of the story
+             */
             key: string;
-            author: components["schemas"]["StoryAuthor"] | null;
-            /** Title */
-            title: string;
-            /** Description */
-            description: string;
-            /** Image */
-            image: string;
+            /** @description The status of the story */
             status: components["schemas"]["StoryStatus"];
-            /** Genres */
+            /** @description The author of the story */
+            author: components["schemas"]["StoryAuthor"] | null;
+            /**
+             * Title
+             * @description The title of the story
+             */
+            title: string;
+            /**
+             * Description
+             * @description The description of the story
+             */
+            description: string;
+            /**
+             * Image
+             * @description The URL used for the story thumbnail
+             */
+            image: string;
+            /**
+             * Genres
+             * @description The genres of story
+             */
             genres: components["schemas"]["StoryGenre"][];
-            /** Publicationdate */
-            publicationDate?: string | null;
-            /** Creationdate */
+            /**
+             * Creationdate
+             * @description The date at which the story was created
+             */
             creationDate: string;
-            /** Firstscenekey */
+            /**
+             * Firstscenekey
+             * @description The first scene of the story
+             */
             firstSceneKey: string;
-            /** Lastsyncat */
-            lastSyncAt?: string | null;
+            /**
+             * Originalstorykey
+             * @description The key of the first
+             */
+            originalStoryKey?: string | null;
+            /**
+             * Publicationdate
+             * @description The date at which the story
+             */
+            publicationDate?: string | null;
             /** Scenes */
             scenes: components["schemas"]["Scene-Output"][];
         };
@@ -260,26 +289,55 @@ export interface components {
         };
         /** Story */
         Story: {
-            /** Key */
+            /**
+             * Key
+             * @description The unique key of the story
+             */
             key: string;
-            author: components["schemas"]["StoryAuthor"] | null;
-            /** Title */
-            title: string;
-            /** Description */
-            description: string;
-            /** Image */
-            image: string;
+            /** @description The status of the story */
             status: components["schemas"]["StoryStatus"];
-            /** Genres */
+            /** @description The author of the story */
+            author: components["schemas"]["StoryAuthor"] | null;
+            /**
+             * Title
+             * @description The title of the story
+             */
+            title: string;
+            /**
+             * Description
+             * @description The description of the story
+             */
+            description: string;
+            /**
+             * Image
+             * @description The URL used for the story thumbnail
+             */
+            image: string;
+            /**
+             * Genres
+             * @description The genres of story
+             */
             genres: components["schemas"]["StoryGenre"][];
-            /** Publicationdate */
-            publicationDate?: string | null;
-            /** Creationdate */
+            /**
+             * Creationdate
+             * @description The date at which the story was created
+             */
             creationDate: string;
-            /** Firstscenekey */
+            /**
+             * Firstscenekey
+             * @description The first scene of the story
+             */
             firstSceneKey: string;
-            /** Lastsyncat */
-            lastSyncAt?: string | null;
+            /**
+             * Originalstorykey
+             * @description The key of the first
+             */
+            originalStoryKey?: string | null;
+            /**
+             * Publicationdate
+             * @description The date at which the story
+             */
+            publicationDate?: string | null;
         };
         /** StoryAuthor */
         StoryAuthor: {
@@ -319,7 +377,7 @@ export interface components {
          * StoryStatus
          * @enum {string}
          */
-        StoryStatus: "draft" | "saved" | "published";
+        StoryStatus: "draft" | "published" | "imported";
         /** SynchronizationPayload */
         SynchronizationPayload: {
             /** Playergames */

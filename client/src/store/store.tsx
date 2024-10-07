@@ -3,6 +3,7 @@ import { ConfirmDownloadDialog } from "./confirm-download-dialog";
 import { StoryCard } from "@/design-system/components/story-card";
 import { Title } from "@/design-system/components";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
+import { Fragment } from "react/jsx-runtime";
 
 type StoreHomeProps = {
   storiesByGenre: Record<StoryGenre, Story[]>;
@@ -16,7 +17,7 @@ export const Store = ({ storiesByGenre }: StoreHomeProps) => {
         Embark on new adventures! Download new (free) stories from the store
       </p>
       {Object.entries(storiesByGenre).map(([genre, stories]) => (
-        <>
+        <Fragment key={genre}>
           <Title variant="section" className="capitalize">
             {genre}
           </Title>
@@ -34,7 +35,7 @@ export const Store = ({ storiesByGenre }: StoreHomeProps) => {
               })}
             </div>
           </ScrollArea>
-        </>
+        </Fragment>
       ))}
     </div>
   );

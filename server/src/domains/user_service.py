@@ -2,12 +2,12 @@ from crypt import crypt
 
 from hmac import compare_digest as compare_hash
 
-from data_types.user import FullUser, User
 from repositories.user_repository_port import UserRepositoryPort
+from domains.type_def import FullUser, User
 from utils.errors import BadAuthException, InvalidActionException
 
 
-class UserDomain:
+class UserService:
 
     def __init__(self, user_repository: UserRepositoryPort) -> None:
         self.user_repository = user_repository

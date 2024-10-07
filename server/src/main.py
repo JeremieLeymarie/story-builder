@@ -2,23 +2,21 @@ from http import HTTPStatus
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRoute
-from data_types.requests import (
-    CreateUserRequest,
-    FullStoriesRequest,
-    LoginUserRequest,
-    FullStoryBuilderRequest,
-)
-from domains.user_domain import UserDomain
-from domains.store_domain import StoreDomain
+from domains.type_def import FullStory, FullUser, Story, StoryProgress, User
+from domains.user_service import UserService
+from domains.store_service import StoreService
+from domains.synchronization_service import SynchronizationService
 from repositories.story_repository import StoryRepository
 from repositories.user_repository import UserRepository
-from domains.synchronization_domain import SynchronizationDomain
-from data_types.user import FullUser, User
 from repositories.story_progress_repository import StoryProgressRepository
-from data_types.game import StoryProgress
-from data_types.response import APIResponse
-from data_types.synchronization import SynchronizationPayload
-from data_types.builder import FullStory, Story
+from request_types import (
+    APIResponse,
+    CreateUserRequest,
+    FullStoriesRequest,
+    FullStoryBuilderRequest,
+    LoginUserRequest,
+    SynchronizationPayload,
+)
 from utils.error_adapter import raise_http_error
 
 
@@ -47,7 +45,7 @@ app.add_middleware(
 @app.post("/api/user/login", status_code=HTTPStatus.OK, response_model=User)
 async def user_login(data: LoginUserRequest):
     try:
-        result = UserDomain(user_repository=UserRepository()).authentify(
+        result = UserService(user_repository=UserRepository()).authentify(
             password=data.password, username_or_email=data.usernameOrEmail
         )
         return result
@@ -58,7 +56,7 @@ async def user_login(data: LoginUserRequest):
 @app.post("/api/user/register", status_code=HTTPStatus.CREATED, response_model=User)
 async def create_user(data: CreateUserRequest):
     try:
-        result = UserDomain(user_repository=UserRepository()).create(
+        result = UserService(user_repository=UserRepository()).create(
             FullUser(
                 email=data.email,
                 username=data.username,
@@ -82,7 +80,7 @@ async def create_user(data: CreateUserRequest):
 )
 async def get_store_items():
     try:
-        result = StoreDomain(story_repository=StoryRepository()).load()
+        result = StoreService(story_repository=StoryRepository()).load()
         return result
     except Exception as err:
         raise raise_http_error(err)
@@ -93,7 +91,7 @@ async def get_store_items():
 )
 async def download_from_store(key: str):
     try:
-        result = StoreDomain(story_repository=StoryRepository()).download(key=key)
+        result = StoreService(story_repository=StoryRepository()).download(key=key)
         return result
     except Exception as err:
         raise raise_http_error(err)
@@ -102,7 +100,7 @@ async def download_from_store(key: str):
 @app.put("/api/store/publish", status_code=HTTPStatus.OK, response_model=FullStory)
 async def publish_in_store(body: FullStoryBuilderRequest):
     try:
-        story = StoreDomain(story_repository=StoryRepository()).publish(
+        story = StoreService(story_repository=StoryRepository()).publish(
             story=body.story, scenes=body.scenes
         )
         return story
@@ -120,7 +118,7 @@ async def publish_in_store(body: FullStoryBuilderRequest):
 )
 async def get_synchronization_data(user_key: str):
     try:
-        synchronization_data = SynchronizationDomain(
+        synchronization_data = SynchronizationService(
             story_progress_repository=StoryProgressRepository(),
             story_repository=StoryRepository(),
         ).get_synchronization_data(user_key)
@@ -132,7 +130,7 @@ async def get_synchronization_data(user_key: str):
 @app.put("/api/save/progresses", status_code=HTTPStatus.OK, response_model=APIResponse)
 async def synchronize_progresses(payload: list[StoryProgress]):
     try:
-        SynchronizationDomain(
+        SynchronizationService(
             story_progress_repository=StoryProgressRepository(),
             story_repository=StoryRepository(),
         ).save_progresses(payload)
@@ -144,7 +142,7 @@ async def synchronize_progresses(payload: list[StoryProgress]):
 @app.put("/api/save/builder", status_code=HTTPStatus.OK, response_model=APIResponse)
 async def save_builder_state(body: FullStoriesRequest):
     try:
-        SynchronizationDomain(
+        SynchronizationService(
             story_repository=StoryRepository(),
             story_progress_repository=StoryProgressRepository(),
         ).save_builder_stories(body.stories, body.scenes)

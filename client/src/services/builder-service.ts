@@ -4,8 +4,6 @@ import { RemoteRepositoryPort } from "@/repositories/remote-repository-port";
 import { WithoutKey } from "@/types";
 import { getLocalRepository } from "@/repositories/indexed-db-repository";
 import { getRemoteAPIRepository } from "@/repositories/remote-api-repository";
-import { fullStorySchema } from "./schemas";
-import Dexie from "dexie";
 
 // TODO: revise error management? Maybe throw errors instead of string/boolean/null returns
 export const _getBuilderService = ({
@@ -112,11 +110,7 @@ export const _getBuilderService = ({
     },
 
     publishStory: async (scenes: Scene[], story: Story) => {
-      // TODO: this is weird, the frontend handles the publication date and the API the status change. Only one should be responsible for updating the data
-      const response = await remoteRepository.publishStory(scenes, {
-        ...story,
-        publicationDate: new Date(),
-      });
+      const response = await remoteRepository.publishStory(scenes, story);
 
       if (response.data) {
         await localRepository.updateStory(response.data.story);
@@ -125,72 +119,31 @@ export const _getBuilderService = ({
       return !!response.data;
     },
 
-    editStory: async (story: Story) => {
-      const user = await localRepository.getUser();
-      await localRepository.updateStory({
-        ...story,
-        ...(user && { author: { key: user.key, username: user.username } }),
-      });
-    },
-
-    // TODO: this should not keep the author in the data??
-    importFromJSON: async (fileContent: string) => {
-      // TODO: refacto this try/catch mess
-      try {
-        const contentJson = JSON.parse(fileContent);
-
-        const resZod = fullStorySchema.safeParse(contentJson);
-
-        if (!resZod.success)
-          return { error: resZod.error.issues[0]?.message || "Invalid format" };
-
-        try {
-          await localRepository.unitOfWork(
-            async () => {
-              await localRepository.createStory(resZod.data.story);
-              await localRepository.createScenes(resZod.data.scenes);
-            },
-            { mode: "readwrite", entities: ["story", "scene"] },
-          );
-        } catch (error) {
-          if (
-            error instanceof Dexie.DexieError &&
-            error.name === "ConstraintError"
-          ) {
-            return { error: "Story or scene already exists" };
-          }
-          return { error: "Something went wrong." };
-        }
-      } catch (_) {
-        return { error: "Invalid JSON format" };
-      }
-      return { error: null };
-    },
+    // TODO: update all user stories on login
 
     addScene: async (scene: WithoutKey<Scene>) => {
       return await localRepository.createScene(scene);
     },
 
     updateStory: async (story: Story) => {
-      const user = await localRepository.getUser();
-      await localRepository.updateStory({
-        ...story,
-        ...(user && { author: { key: user.key, username: user.username } }),
-      });
+      await localRepository.updateStory(story);
     },
 
-    updateScene: async (scene: Partial<Scene> & Pick<Scene, "key">) => {
-      await localRepository.updatePartialScene(scene.key, scene);
+    updateScene: async ({
+      key,
+      ...scene
+    }: Partial<Scene> & Pick<Scene, "key">) => {
+      await localRepository.updatePartialScene(key, scene);
     },
 
     changeFirstScene: async (storyKey: string, newFirstSceneKey: string) => {
-      const isSceneKeyValid = await localRepository.getScene(newFirstSceneKey);
+      const isSceneKeyValid =
+        !!(await localRepository.getScene(newFirstSceneKey));
 
-      if (isSceneKeyValid)
-        return await localRepository.updateFirstScene(
-          storyKey,
-          newFirstSceneKey,
-        );
+      if (isSceneKeyValid) {
+        await localRepository.updateFirstScene(storyKey, newFirstSceneKey);
+        return true;
+      }
 
       return false;
     },
@@ -224,21 +177,6 @@ export const _getBuilderService = ({
           entities: ["scene", "story"],
         },
       );
-    },
-
-    getBuilderData: async (storyKey: string) => {
-      const story = await localRepository.getStory(storyKey);
-      const scenes = await localRepository.getScenes(storyKey);
-
-      return { story, scenes };
-    },
-
-    getBuilderStories: async () => {
-      const user = await localRepository.getUser();
-
-      const stories = await localRepository.getStoriesByAuthor(user?.key);
-
-      return stories;
     },
   };
 };

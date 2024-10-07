@@ -1,7 +1,7 @@
 import { BuilderStories } from "@/builder/components/builder-stories";
 import { BackdropLoader } from "@/design-system/components";
 import { ErrorMessage } from "@/design-system/components/error-message";
-import { getBuilderService } from "@/services/builder";
+import { getBuilderService } from "@/services";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 

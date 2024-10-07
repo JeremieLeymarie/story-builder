@@ -5,7 +5,7 @@ import { useToolbar } from "../hooks/use-toolbar";
 import { StoryPublisher } from "./story-publisher";
 import { ExportModal } from "./export-modal";
 import { Scene, Story } from "@/lib/storage/domain";
-import { getBuilderService } from "@/services/builder";
+import { getBuilderService } from "@/services";
 
 type Props = {
   story: Story;

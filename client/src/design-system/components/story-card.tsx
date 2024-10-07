@@ -31,8 +31,8 @@ export const StoryCard = ({
           style={
             {
               display: "-webkit-box",
-              "-webkit-line-clamp": "4",
-              "-webkit-box-orient": "vertical ",
+              WebkitLineClamp: "4",
+              WebkitBoxOrient: "vertical",
             } as CSSProperties
           }
         >

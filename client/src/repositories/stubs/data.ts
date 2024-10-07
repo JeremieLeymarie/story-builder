@@ -1,7 +1,7 @@
-import { Scene, Story, User } from "@/lib/storage/domain";
-import { WithoutKey } from "@/types";
+import { Scene, Story, StoryProgress, User } from "@/lib/storage/domain";
 
-export const BASE_SCENE: WithoutKey<Scene> = {
+export const BASIC_SCENE: Scene = {
+  key: "vroum",
   actions: [{ text: "action A" }, { text: "action B" }],
   builderParams: { position: { x: 0, y: 0 } },
   content: "pas content",
@@ -9,7 +9,8 @@ export const BASE_SCENE: WithoutKey<Scene> = {
   title: "flûte",
 };
 
-export const BASE_STORY: WithoutKey<Story> = {
+export const BASIC_STORY: Story = {
+  key: "zioup",
   title: "Tidididoudoum tidididoudoum",
   description: "Sacré histoire...",
   image: "http://ton-image.fr",
@@ -19,7 +20,17 @@ export const BASE_STORY: WithoutKey<Story> = {
   creationDate: new Date(),
 };
 
-export const BASE_USER: WithoutKey<User> = {
+export const BASIC_USER: User = {
+  key: "pipou",
   email: "bob@mail.com",
   username: "bob_bidou",
+};
+
+export const BASIC_STORY_PROGRESS: StoryProgress = {
+  key: "kiche",
+  storyKey: "ding",
+  userKey: "pipou",
+  history: ["vroum"],
+  currentSceneKey: "vroum",
+  lastPlayedAt: new Date(),
 };

@@ -22,10 +22,10 @@ export type User = {
   email: string;
 };
 
-export const STORY_STATUS = ["draft", "saved", "published"] as const;
+export const STORY_STATUS = ["draft", "published", "imported"] as const;
 export type StoryStatus = (typeof STORY_STATUS)[number];
 
-export type Story = {
+type StoryBase = {
   key: string;
   author?: {
     key: string;
@@ -34,13 +34,23 @@ export type Story = {
   title: string;
   description: string;
   image: string;
-  status: StoryStatus;
   firstSceneKey: string;
   genres: StoryGenre[];
-  publicationDate?: Date;
   creationDate: Date;
-  lastSyncAt?: Date;
 };
+
+type ImportedStory = StoryBase & {
+  originalStoryKey?: string;
+  status: "imported";
+};
+
+type PublishedStory = StoryBase & {
+  status: "published";
+  publicationDate: Date;
+};
+type DraftStory = StoryBase & { status: "draft" };
+
+export type Story = ImportedStory | PublishedStory | DraftStory;
 
 export type Action = {
   text: string;
@@ -70,6 +80,3 @@ export type StoryProgress = {
 
 export const ENTITIES = ["story", "scene", "user", "story-progress"] as const;
 export type Entity = (typeof ENTITIES)[number];
-
-export const SYNCABLE_ENTITIES = ["story", "user", "story-progress"] as const;
-export type SyncableEntity = (typeof SYNCABLE_ENTITIES)[number];

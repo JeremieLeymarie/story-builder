@@ -75,36 +75,6 @@ const _getUserService = ({
     getCurrentUser: async () => {
       return await localRepository.getUser();
     },
-
-    getLibraryData: async () => {
-      const user = await localRepository.getUser();
-      const stories = await localRepository.getStories(user?.key);
-
-      const userStories =
-        stories?.filter((story) => story.author?.key === user?.key) ?? null;
-      const storiesFromStore =
-        stories?.filter((story) => story.author?.key !== user?.key) ?? null;
-
-      // TODO: add this to test
-      const finishedGameKeys = await localRepository.getFinishedGameKeys();
-
-      return { userStories, storiesFromStore, finishedGameKeys };
-    },
-
-    getLibraryDetailData: async (storyKey: string) => {
-      const story = await localRepository.getStory(storyKey);
-      const progress = await localRepository.getStoryProgress(storyKey);
-
-      if (!progress) {
-        return { story, progress, lastScene: null };
-      }
-
-      const lastScene = await localRepository.getScene(
-        progress?.currentSceneKey,
-      );
-
-      return { story, progress, lastScene };
-    },
   };
 };
 

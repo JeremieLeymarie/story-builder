@@ -1,195 +1,178 @@
-import { LocalRepositoryPort, RemoteRepositoryPort } from "@/repositories";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   getLocalRepositoryStub,
-  getRemoteRepositoryStub,
+  MockLocalRepository,
 } from "@/repositories/stubs";
 import { _getGameService } from "../game-service";
-import { StoryProgress, User } from "@/lib/storage/domain";
-import dayjs from "dayjs";
-import { BASE_SCENE, BASE_STORY } from "./data";
-import { _getBuilderService } from "../builder";
+import {
+  BASIC_SCENE,
+  BASIC_STORY,
+  BASIC_STORY_PROGRESS,
+  BASIC_USER,
+} from "../../repositories/stubs/data";
 
 describe("game-service", () => {
   let gameService: ReturnType<typeof _getGameService>;
-  let localRepository: LocalRepositoryPort;
-  let remoteRepository: RemoteRepositoryPort;
-  let progress: StoryProgress;
-  let user: User;
-  let builderService: ReturnType<typeof _getBuilderService>;
-
-  const _setUp = async () => {
-    localRepository = getLocalRepositoryStub();
-    remoteRepository = getRemoteRepositoryStub();
-
-    progress = await localRepository.createStoryProgress({
-      history: ["zut"],
-      currentSceneKey: "zut",
-      storyKey: "plouf",
-      lastPlayedAt: new Date(),
-      userKey: undefined,
-    });
-
-    user = await localRepository.createUser({
-      username: "bob_bidou",
-      email: "bob@mail.com",
-    });
-  };
+  let localRepository: MockLocalRepository;
 
   beforeAll(() => {
     vi.useFakeTimers();
+    vi.setSystemTime(new Date());
   });
 
   beforeEach(async () => {
-    await _setUp();
+    localRepository = getLocalRepositoryStub();
 
     gameService = _getGameService({
       localRepository,
     });
-
-    builderService = _getBuilderService({ localRepository, remoteRepository });
   });
 
   describe("saveProgress", () => {
     it("should save the story progress in the local database", async () => {
-      const now = dayjs(new Date()).add(42, "days").toDate();
-      vi.setSystemTime(now);
-
-      const scene = await localRepository.createScene(BASE_SCENE);
-
-      const p = await gameService.saveProgress(progress, {
-        currentSceneKey: scene.key,
-        sceneActions: [],
+      await gameService.saveProgress(BASIC_STORY_PROGRESS, {
+        currentSceneKey: "tutu",
+        sceneActions: [{ text: "bzz bzz" }],
       });
 
-      expect(p).toStrictEqual({
-        key: p?.key,
-        history: ["zut", scene.key],
-        currentSceneKey: scene.key,
-        storyKey: "plouf",
-        userKey: user.key,
-        lastPlayedAt: now,
-        finished: true,
+      expect(localRepository.getUser).toHaveBeenCalled();
+      expect(localRepository.getScene).toHaveBeenCalledWith("tutu");
+      expect(localRepository.updateStoryProgress).toHaveBeenCalledWith({
+        ...BASIC_STORY_PROGRESS,
+        currentSceneKey: "tutu",
+        history: [...BASIC_STORY_PROGRESS.history, "tutu"],
+        lastPlayedAt: new Date(),
+        userKey: BASIC_USER.key,
       });
     });
 
     it("should also work when the user is not logged in", async () => {
-      await localRepository.deleteUser(user.key);
-      const now = dayjs(new Date()).add(42, "days").toDate();
-      vi.setSystemTime(now);
+      localRepository.getUser.mockResolvedValueOnce(null);
 
-      const scene = await localRepository.createScene(BASE_SCENE);
-
-      const p = await gameService.saveProgress(progress, {
-        currentSceneKey: scene.key,
-        sceneActions: [],
+      await gameService.saveProgress(BASIC_STORY_PROGRESS, {
+        currentSceneKey: "tutu",
+        sceneActions: [{ text: "bzz bzz" }],
       });
 
-      expect(p).toStrictEqual({
-        key: p?.key,
-        history: ["zut", scene.key],
-        currentSceneKey: scene.key,
-        storyKey: "plouf",
-        userKey: user.key,
-        lastPlayedAt: now,
-        finished: true,
+      expect(localRepository.getUser).toHaveBeenCalled();
+      expect(localRepository.getScene).toHaveBeenCalledWith("tutu");
+      expect(localRepository.updateStoryProgress).toHaveBeenCalledWith({
+        ...BASIC_STORY_PROGRESS,
+        currentSceneKey: "tutu",
+        history: [...BASIC_STORY_PROGRESS.history, "tutu"],
+        lastPlayedAt: new Date(),
+        userKey: undefined,
       });
     });
 
-    it("should not do anything when the scene key is invalid", async () => {
-      const p = await gameService.saveProgress(progress, {
-        currentSceneKey: "tututu",
+    it("should not add to history the same key twice in a row", async () => {
+      await gameService.saveProgress(BASIC_STORY_PROGRESS, {
+        currentSceneKey: BASIC_STORY_PROGRESS.history.at(-1)!,
+        sceneActions: [{ text: "bzz bzz" }],
+      });
+
+      expect(localRepository.updateStoryProgress).toHaveBeenCalledWith({
+        ...BASIC_STORY_PROGRESS,
+        lastPlayedAt: new Date(),
+      });
+    });
+
+    it("should mark as finished if the story ends on this scene", async () => {
+      await gameService.saveProgress(BASIC_STORY_PROGRESS, {
+        currentSceneKey: "bim",
         sceneActions: [],
       });
 
-      expect(p).toBeNull();
+      expect(localRepository.updateStoryProgress).toHaveBeenCalledWith({
+        ...BASIC_STORY_PROGRESS,
+        currentSceneKey: "bim",
+        history: [...BASIC_STORY_PROGRESS.history, "bim"],
+        lastPlayedAt: new Date(),
+        userKey: BASIC_USER.key,
+        finished: true,
+      });
     });
   });
 
   describe("getOrCreateStoryProgress", () => {
     it("should return existing progress if one already exists", async () => {
-      const story = {
-        ...BASE_STORY,
-        key: "plouf",
-      };
-      // Create story linked to progress
-      await localRepository.updateOrCreateStories([story]);
+      const createdProgress =
+        await gameService.getOrCreateStoryProgress(BASIC_STORY);
 
-      const createdProgress = await gameService.getOrCreateStoryProgress(story);
+      expect(localRepository.getUser).toHaveBeenCalled();
+      expect(localRepository.getStoryProgress).toHaveBeenCalledWith(
+        BASIC_STORY.key,
+      );
+      expect(localRepository.createStoryProgress).not.toHaveBeenCalled();
 
-      expect(createdProgress).toStrictEqual(progress);
+      expect(createdProgress).toStrictEqual(BASIC_STORY_PROGRESS);
     });
 
     it("should create a story progress in the local database", async () => {
-      const now = dayjs(new Date()).add(42, "days").toDate();
-      vi.setSystemTime(now);
+      localRepository.getStoryProgress.mockResolvedValueOnce(null);
 
-      const story = await localRepository.createStory(BASE_STORY);
-      if (!story) throw new Error("Could not create story");
+      const createdProgress =
+        await gameService.getOrCreateStoryProgress(BASIC_STORY);
 
-      const createdProgress = await gameService.getOrCreateStoryProgress(story);
-
-      expect(createdProgress).toStrictEqual({
-        key: createdProgress?.key,
-        history: [story.firstSceneKey],
-        currentSceneKey: story.firstSceneKey,
-        lastPlayedAt: now,
-        storyKey: story.key,
-        userKey: user.key,
+      expect(localRepository.getUser).toHaveBeenCalled();
+      expect(localRepository.getStoryProgress).toHaveBeenCalledWith(
+        BASIC_STORY.key,
+      );
+      expect(localRepository.createStoryProgress).toHaveBeenCalledWith({
+        history: [BASIC_STORY.firstSceneKey],
+        currentSceneKey: BASIC_STORY.firstSceneKey,
+        lastPlayedAt: new Date(),
+        userKey: BASIC_USER.key,
+        storyKey: BASIC_STORY.key,
       });
+
+      expect(createdProgress).toStrictEqual(BASIC_STORY_PROGRESS);
     });
   });
 
   describe("getLastGamePlayed", () => {
     it("should return the last story played", async () => {
-      vi.advanceTimersByTime(10000);
+      await gameService.getLastGamePlayed();
 
-      const story = await localRepository.createStory(BASE_STORY);
-
-      if (!story) throw new Error("Could not create story");
-
-      await localRepository.createStoryProgress({
-        currentSceneKey: "tutu",
-        history: ["tutu"],
-        lastPlayedAt: new Date(),
-        storyKey: story.key,
-        userKey: undefined,
-      });
-
-      const result = await gameService.getLastGamePlayed();
-
-      expect(result).toStrictEqual(story);
+      expect(localRepository.getMostRecentStoryProgress).toHaveBeenCalledWith(
+        BASIC_USER.key,
+      );
+      expect(localRepository.getStory).toHaveBeenCalledWith(
+        BASIC_STORY_PROGRESS.storyKey,
+      );
     });
   });
 
   describe("getSceneData", () => {
     it("should return the specified scene", async () => {
-      const createdScene = await localRepository.createScene(BASE_SCENE);
+      await gameService.getSceneData("plouf");
 
-      const scene = await gameService.getSceneData(createdScene.key);
-
-      expect(scene).toStrictEqual(createdScene);
+      expect(localRepository.getScene).toHaveBeenCalledWith("plouf");
     });
   });
 
   describe("getFirstSceneData", () => {
     it("should retrieve first scene data", async () => {
-      const createdData =
-        await builderService.createStoryWithFirstScene(BASE_STORY);
+      const { story, scene } = await gameService.getFirstSceneData("brouhaha");
 
-      if (!createdData?.story) throw new Error("Could not create story");
-
-      const { story, scene } = await gameService.getFirstSceneData(
-        createdData.story.key,
+      expect(localRepository.getStory).toHaveBeenCalledWith("brouhaha");
+      expect(localRepository.getScene).toHaveBeenCalledWith(
+        BASIC_STORY.firstSceneKey,
       );
-
-      expect(story).toStrictEqual(createdData.story);
-      expect(scene).toStrictEqual(createdData.scene);
+      expect(story).toStrictEqual(BASIC_STORY);
+      expect(scene).toStrictEqual(BASIC_SCENE);
     });
 
     it("should return null story and null scenes if storyKey is invalid", async () => {
+      localRepository.getStory.mockResolvedValueOnce(null);
+
+      gameService = _getGameService({ localRepository });
+
       const { story, scene } =
         await gameService.getFirstSceneData("pipoupipou");
+
+      expect(localRepository.getStory).toHaveBeenCalledWith("pipoupipou");
+      expect(localRepository.getScene).not.toHaveBeenCalled();
 
       expect(story).toBeNull();
       expect(scene).toBeNull();
@@ -198,66 +181,45 @@ describe("game-service", () => {
 
   describe("getStoryProgress", () => {
     it("should retrieve story progress", async () => {
-      const p = await gameService.getStoryProgress(progress.storyKey);
+      const p = await gameService.getStoryProgress("viooooooum");
 
-      expect(p).toStrictEqual(progress);
+      expect(localRepository.getStoryProgress).toHaveBeenCalledWith(
+        "viooooooum",
+      );
+
+      expect(p).toStrictEqual(BASIC_STORY_PROGRESS);
     });
   });
 
   describe("getStoryProgresses", () => {
     it("should retrieve progresses", async () => {
-      const otherProgress = await localRepository.createStoryProgress({
-        currentSceneKey: "titi",
-        history: ["titi"],
-        storyKey: "zou",
-        lastPlayedAt: new Date(),
-        userKey: undefined,
-      });
+      const p = await gameService.getStoryProgresses();
 
-      const progresses = await localRepository.getStoryProgresses();
+      expect(localRepository.getUser).toHaveBeenCalled();
+      expect(localRepository.getStoryProgresses).toHaveBeenCalledWith(
+        BASIC_USER.key,
+      );
 
-      expect(progresses).toStrictEqual([progress, otherProgress]);
+      expect(p).toStrictEqual([BASIC_STORY_PROGRESS]);
     });
 
     describe("loadGamesState", () => {
       it("should load state in the local database", async () => {
-        const createdData =
-          await builderService.createStoryWithFirstScene(BASE_STORY);
-
-        if (!createdData?.story) throw new Error("Could not create story");
-
         await gameService.loadGamesState({
-          progresses: [{ ...progress, history: ["plif", "plaf"] }],
-          libraryStories: {
-            stories: [
-              { ...createdData.story, description: "oulala" },
-              { ...BASE_STORY, title: "tatata", key: "prong" },
-            ],
-            scenes: [{ ...createdData.scene, title: "pichichi" }],
-          },
+          progresses: [BASIC_STORY_PROGRESS],
+          libraryStories: { stories: [BASIC_STORY], scenes: [BASIC_SCENE] },
         });
 
-        const storyA = await localRepository.getStory(createdData.story.key);
-        const storyB = await localRepository.getStory("prong");
-        const scenes = await localRepository.getScenes(createdData.story.key);
-        const p = await localRepository.getStoryProgress(progress.storyKey);
-
-        expect(storyA).toStrictEqual({
-          ...createdData.story,
-          description: "oulala",
-        });
-        expect(storyB).toStrictEqual({
-          ...BASE_STORY,
-          title: "tatata",
-          key: "prong",
-        });
-        expect(scenes).toStrictEqual([
-          { ...createdData.scene, title: "pichichi" },
+        expect(localRepository.unitOfWork).toHaveBeenCalled();
+        expect(
+          localRepository.updateOrCreateStoryProgresses,
+        ).toHaveBeenCalledWith([BASIC_STORY_PROGRESS]);
+        expect(localRepository.updateOrCreateStories).toHaveBeenCalledWith([
+          BASIC_STORY,
         ]);
-        expect(p).toStrictEqual({
-          ...progress,
-          history: ["plif", "plaf"],
-        });
+        expect(localRepository.updateOrCreateScenes).toHaveBeenCalledWith([
+          BASIC_SCENE,
+        ]);
       });
     });
   });

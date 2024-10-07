@@ -1,11 +1,11 @@
+from datetime import datetime
 from typing import cast
-from data_types.builder import FullStory, Scene, Story, StoryStatus
-from data_types.requests import FullStoryBuilderRequest
 from repositories.story_repository_port import StoryRepositoryPort
+from domains.type_def import FullStory, Scene, Story, StoryStatus
 from utils.errors import InvalidStoryFormatException
 
 
-class StoreDomain:
+class StoreService:
 
     def __init__(self, story_repository: StoryRepositoryPort) -> None:
         self.story_repository = story_repository
@@ -32,6 +32,7 @@ class StoreDomain:
         self._validate_story(story=story)
 
         story.status = StoryStatus.PUBLISHED
+        story.publicationDate = datetime.now()
 
         story = self.story_repository.save(story=story)
         return story
