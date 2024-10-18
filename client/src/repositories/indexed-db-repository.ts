@@ -230,6 +230,10 @@ const indexedDBRepository: LocalRepositoryPort = {
       typeof work
     >;
   },
+
+  deleteScenes: async (sceneKeys) => {
+    await db.scenes.bulkDelete(sceneKeys);
+  },
 };
 
 export const getLocalRepository = () => {

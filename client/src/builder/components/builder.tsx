@@ -23,6 +23,7 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
     onEdgesChange,
     onNodeMove,
     onNodesChange,
+    onNodesDelete,
     onEdgesDelete,
   } = useBuilder({ scenes, story });
 
@@ -38,6 +39,7 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
         onConnect={onConnect}
         onNodeDragStop={onNodeMove}
         onEdgesDelete={onEdgesDelete}
+        onNodesDelete={onNodesDelete}
         minZoom={0.05}
         onInit={(instance) => instance.fitView()}
         defaultEdgeOptions={{ zIndex: 10000 }}

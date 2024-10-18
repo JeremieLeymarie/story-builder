@@ -54,6 +54,8 @@ export const getLocalRepositoryStub = (): MockLocalRepository => {
 
     getScenes: mock([BASIC_SCENE]),
 
+    deleteScenes: mock(),
+
     createStoryProgress: mock(BASIC_STORY_PROGRESS),
 
     updateOrCreateStoryProgresses: mock(["key"]),

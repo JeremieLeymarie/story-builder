@@ -178,6 +178,10 @@ export const _getBuilderService = ({
         },
       );
     },
+
+    deleteScenes: async (sceneKeys: string[]) => {
+      await localRepository.deleteScenes(sceneKeys);
+    },
   };
 };
 

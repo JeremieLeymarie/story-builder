@@ -38,12 +38,19 @@ export const useBuilder = ({
     [builderService],
   );
 
+  const onNodesDelete = useCallback(
+    (nodes: BuilderNode[]) => {
+      builderService.deleteScenes(nodes.map(({ data: { key } }) => key));
+    },
+    [builderService],
+  );
   return {
     onNodeMove,
     nodes: nodes.map((node) => ({ ...node, selectable: true })),
     edges,
     onNodesChange,
     onEdgesChange,
+    onNodesDelete,
     ...edgesProps,
   };
 };

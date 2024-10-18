@@ -390,4 +390,17 @@ describe("builder-service", () => {
       ]);
     });
   });
+
+  describe("deleteScenes", () => {
+    it("should delete scenes", async () => {
+      await builderService.deleteScenes(["ti", "ta", "tu"]);
+
+      expect(localRepository.deleteScenes).toHaveBeenCalledWith([
+        "ti",
+        "ta",
+        "tu",
+      ]);
+      expect(localRepository.deleteScenes).toHaveBeenCalledOnce();
+    });
+  });
 });
