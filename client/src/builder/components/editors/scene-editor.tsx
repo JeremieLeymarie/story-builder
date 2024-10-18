@@ -79,7 +79,7 @@ export const SceneEditor = ({
 
   useEffect(() => {
     // Update the form when the default values change, which are 'cached' otherwise
-    form.reset(defaultValues);
+    if (defaultValues) form.reset(defaultValues);
   }, [defaultValues, form]);
 
   const isEditing = !!defaultValues;
