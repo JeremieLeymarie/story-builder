@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Button,
   Form,
@@ -71,10 +71,16 @@ export const SceneEditor = ({
     resolver: zodResolver(schema),
     defaultValues,
   });
+
   const { fields, append, remove } = useFieldArray({
     name: "actions",
     control: form.control,
   });
+
+  useEffect(() => {
+    // Update the form when the default values change, which are 'cached' otherwise
+    form.reset(defaultValues);
+  }, [defaultValues, form]);
 
   const isEditing = !!defaultValues;
 
@@ -98,7 +104,7 @@ export const SceneEditor = ({
 
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
-      <DialogTrigger className={cn(triggerClassName, "cursor-pointer")} asChild>
+      <DialogTrigger className={cn("cursor-pointer", triggerClassName)} asChild>
         {trigger}
       </DialogTrigger>
       <DialogContent className="max-w-[75vw] lg:max-w-[800px]">

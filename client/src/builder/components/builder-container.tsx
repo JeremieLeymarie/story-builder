@@ -1,10 +1,16 @@
 import { ReactFlowProvider } from "@xyflow/react";
 import { Builder, BuilderProps } from "./builder";
+import { BuilderContextProvider } from "../hooks/use-builder-store";
 
-export const BuilderContainer = (props: BuilderProps) => {
+export const BuilderContainer = ({
+  refresh,
+  ...props
+}: BuilderProps & { refresh: () => void }) => {
   return (
-    <ReactFlowProvider>
-      <Builder {...props} />
-    </ReactFlowProvider>
+    <BuilderContextProvider value={{ refresh }}>
+      <ReactFlowProvider>
+        <Builder {...props} />
+      </ReactFlowProvider>
+    </BuilderContextProvider>
   );
 };

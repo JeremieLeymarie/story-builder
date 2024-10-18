@@ -12,6 +12,7 @@ import { SceneNodeType } from "../../types";
 import { cn } from "@/lib/style";
 import { toast } from "@/design-system/primitives";
 import { getBuilderService } from "@/services";
+import { useBuilderContext } from "@/builder/hooks/use-builder-store";
 
 export type SceneNodeProps = NodeProps<SceneNodeType>;
 
@@ -23,6 +24,7 @@ export const SceneNode = ({
 }: SceneNodeProps) => {
   const builderService = getBuilderService();
   const isEditable = data.isEditable !== undefined ? data.isEditable : true;
+  const { refresh } = useBuilderContext();
 
   return (
     <Card
@@ -40,15 +42,16 @@ export const SceneNode = ({
               <SceneEditor
                 defaultValues={data}
                 trigger={<EditIcon />}
-                onSave={(values) =>
+                onSave={(values) => {
                   builderService.updateScene({
                     ...data,
                     ...values,
                     builderParams: {
                       position: { x: positionAbsoluteX, y: positionAbsoluteY },
                     },
-                  })
-                }
+                  });
+                  refresh();
+                }}
                 setFirstScene={() =>
                   builderService
                     .changeFirstScene(data.storyKey, data.key)

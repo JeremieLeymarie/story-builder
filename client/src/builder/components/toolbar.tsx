@@ -6,6 +6,7 @@ import { StoryPublisher } from "./story-publisher";
 import { ExportModal } from "./export-modal";
 import { Scene, Story } from "@/lib/storage/domain";
 import { getBuilderService } from "@/services";
+import { useBuilderContext } from "../hooks/use-builder-store";
 
 type Props = {
   story: Story;
@@ -13,6 +14,7 @@ type Props = {
 };
 export const Toolbar = ({ story, scenes }: Props) => {
   const { testStory } = useToolbar({ storyKey: story.key });
+  const { refresh } = useBuilderContext();
 
   // Maybe we could use Navigation Menu for this component at some point
   return (
@@ -28,13 +30,14 @@ export const Toolbar = ({ story, scenes }: Props) => {
             </Button>
           }
           triggerClassName="w-full"
-          onSave={(values) =>
+          onSave={(values) => {
             getBuilderService().addScene({
               ...values,
               storyKey: story.key,
               builderParams: { position: { x: 0, y: 0 } },
-            })
-          }
+            });
+            refresh();
+          }}
         />
         <Button variant="outline" className="w-full" onClick={testStory}>
           <TestTubesIcon size="16px" /> &nbsp; Test

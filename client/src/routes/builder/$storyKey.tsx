@@ -7,7 +7,7 @@ import { createFileRoute } from "@tanstack/react-router";
 const Page = () => {
   const { storyKey } = Route.useParams();
   const builderService = getBuilderService();
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryFn: () => builderService.getBuilderStoryData(storyKey),
     queryKey: ["builder-story-data"],
   });
@@ -24,7 +24,7 @@ const Page = () => {
 
   return (
     <div className="h-full w-full">
-      <BuilderContainer scenes={scenes} story={story} />
+      <BuilderContainer scenes={scenes} story={story} refresh={refetch} />
     </div>
   );
 };
