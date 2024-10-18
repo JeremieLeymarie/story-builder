@@ -12,6 +12,7 @@ import {
   useEdgesState,
   useNodesState,
 } from "@xyflow/react";
+import { BuilderContextProvider } from "@/builder/hooks/use-builder-store";
 
 const nodeTypes = { scene: SceneNode };
 
@@ -105,21 +106,23 @@ export const BuilderShowcase = () => {
         </div>
       </div>
       <div className="h-full w-7/12 bg-white max-lg:h-[400px] max-lg:w-full">
-        <ReactFlow
-          nodeTypes={nodeTypes}
-          nodes={nodes}
-          onNodesChange={onNodesChange}
-          edges={edges}
-          onEdgesChange={onEdgesChange}
-          minZoom={0.05}
-          onInit={(instance) => instance.fitView()}
-          zoomOnScroll={false}
-          panOnScroll={false}
-          defaultEdgeOptions={{ zIndex: 10000 }}
-          preventScrolling={false}
-        >
-          <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
-        </ReactFlow>
+        <BuilderContextProvider value={{ refresh: () => {} }}>
+          <ReactFlow
+            nodeTypes={nodeTypes}
+            nodes={nodes}
+            onNodesChange={onNodesChange}
+            edges={edges}
+            onEdgesChange={onEdgesChange}
+            minZoom={0.05}
+            onInit={(instance) => instance.fitView()}
+            zoomOnScroll={false}
+            panOnScroll={false}
+            defaultEdgeOptions={{ zIndex: 10000 }}
+            preventScrolling={false}
+          >
+            <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+          </ReactFlow>
+        </BuilderContextProvider>
       </div>
     </div>
   );
