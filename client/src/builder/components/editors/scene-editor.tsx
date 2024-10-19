@@ -50,9 +50,9 @@ type Props = {
   defaultValues?: {
     title?: string;
     content?: string;
-    actions: Action[];
-    isFirstScene: boolean;
-    key: string;
+    actions?: Action[];
+    isFirstScene?: boolean;
+    key?: string;
   };
   trigger: ReactNode;
   onSave: (input: Schema) => void;
