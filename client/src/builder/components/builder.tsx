@@ -10,6 +10,7 @@ import { SceneNode } from "../nodes/scene/scene";
 import { Toolbar } from "./toolbar";
 import { useBuilder } from "../hooks/use-builder";
 import { Scene, Story } from "@/lib/storage/domain";
+import { useBuilderContext } from "../hooks/use-builder-store";
 
 const nodeTypes = { scene: SceneNode };
 
@@ -26,6 +27,7 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
     onNodesDelete,
     onEdgesDelete,
   } = useBuilder({ scenes, story });
+  const { reactFlowRef } = useBuilderContext();
 
   return (
     <div className="flex h-full w-full border">
@@ -47,6 +49,7 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
         nodesFocusable
         selectionOnDrag
         selectNodesOnDrag
+        ref={reactFlowRef}
       >
         <Controls />
         <MiniMap />

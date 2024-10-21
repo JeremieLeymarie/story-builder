@@ -7,6 +7,8 @@ import { ExportModal } from "./export-modal";
 import { Scene, Story } from "@/lib/storage/domain";
 import { getBuilderService } from "@/services";
 import { useBuilderContext } from "../hooks/use-builder-store";
+import { useReactFlow } from "@xyflow/react";
+import { useCallback } from "react";
 
 type Props = {
   story: Story;
@@ -15,6 +17,22 @@ type Props = {
 export const Toolbar = ({ story, scenes }: Props) => {
   const { testStory } = useToolbar({ storyKey: story.key });
   const { refresh } = useBuilderContext();
+  const reactFlowInstance = useReactFlow();
+
+  const { reactFlowRef } = useBuilderContext();
+
+  const getCenterPosition = useCallback(() => {
+    if (!reactFlowRef.current) return { x: 0, y: 0 };
+
+    const rect = reactFlowRef.current.getBoundingClientRect();
+    const position = {
+      x: rect.x + rect.width / 2,
+      y: rect.y + rect.height / 2,
+    };
+    return reactFlowInstance.screenToFlowPosition(position);
+  }, [reactFlowInstance, reactFlowRef]);
+
+  getCenterPosition();
 
   // Maybe we could use Navigation Menu for this component at some point
   return (
@@ -34,7 +52,7 @@ export const Toolbar = ({ story, scenes }: Props) => {
             getBuilderService().addScene({
               ...values,
               storyKey: story.key,
-              builderParams: { position: { x: 0, y: 0 } },
+              builderParams: { position: getCenterPosition() },
             });
             refresh();
           }}

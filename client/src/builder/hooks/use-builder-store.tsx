@@ -1,8 +1,15 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, PropsWithChildren, useContext } from "react";
+import {
+  createContext,
+  PropsWithChildren,
+  RefObject,
+  useContext,
+  useRef,
+} from "react";
 
 type BuilderContext = {
   refresh: () => void;
+  reactFlowRef: RefObject<HTMLDivElement>;
 };
 
 export const BuilderContext = createContext<BuilderContext | null>(null);
@@ -10,9 +17,18 @@ export const BuilderContext = createContext<BuilderContext | null>(null);
 export const BuilderContextProvider = ({
   value,
   children,
-}: PropsWithChildren<{ value: BuilderContext }>) => {
+}: PropsWithChildren<{ value: Pick<BuilderContext, "refresh"> }>) => {
+  const reactFlowRef = useRef<HTMLDivElement>(null);
+
   return (
-    <BuilderContext.Provider value={value}>{children}</BuilderContext.Provider>
+    <BuilderContext.Provider
+      value={{
+        ...value,
+        reactFlowRef,
+      }}
+    >
+      {children}
+    </BuilderContext.Provider>
   );
 };
 
