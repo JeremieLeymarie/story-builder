@@ -50,9 +50,9 @@ type Props = {
   defaultValues?: {
     title?: string;
     content?: string;
-    actions?: Action[];
-    isFirstScene?: boolean;
-    key?: string;
+    actions: Action[];
+    isFirstScene: boolean;
+    key: string;
   };
   trigger: ReactNode;
   onSave: (input: Schema) => void;
@@ -69,7 +69,7 @@ export const SceneEditor = ({
 }: Props) => {
   const form = useForm<Schema>({
     resolver: zodResolver(schema),
-    defaultValues,
+    defaultValues: defaultValues ?? { actions: [] },
   });
 
   const { fields, append, remove } = useFieldArray({

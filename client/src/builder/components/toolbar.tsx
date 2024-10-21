@@ -38,7 +38,6 @@ export const Toolbar = ({ story, scenes }: Props) => {
             });
             refresh();
           }}
-          defaultValues={{ actions: [] }}
         />
         <Button variant="outline" className="w-full" onClick={testStory}>
           <TestTubesIcon size="16px" /> &nbsp; Test
