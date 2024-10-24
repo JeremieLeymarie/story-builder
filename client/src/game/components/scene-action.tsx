@@ -8,13 +8,25 @@ export const SceneAction = ({
   storyKey,
 }: {
   action: Action;
-  progressKey: string;
+  progressKey: string | null;
   storyKey: string;
 }) => {
   if (!sceneKey) {
     // Only show actions that lead somewhere
     return null;
   }
+
+  // This corresponds to test mode
+  if (!progressKey)
+    return (
+      <Link
+        key={`${text}`}
+        to="/game/test/$gameKey/$sceneKey"
+        params={{ gameKey: storyKey, sceneKey }}
+      >
+        <Button className="w-[full]">{text}</Button>
+      </Link>
+    );
 
   return (
     <Link

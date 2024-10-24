@@ -49,21 +49,29 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
         {stories.map((story) => {
           const { key, ...storyWithoutKey } = story;
           return (
-            <StoryCard
-              {...storyWithoutKey}
+            <Link
               key={key}
-              storyKey={key}
-              button={
-                <Link to="/builder/$storyKey" params={{ storyKey: story.key }}>
-                  <Button
-                    className={`absolute bottom-4 right-4 opacity-0 transition duration-300 ease-in-out group-hover:opacity-100`}
+              to="/builder/$storyKey"
+              params={{ storyKey: story.key }}
+            >
+              <StoryCard
+                {...storyWithoutKey}
+                storyKey={key}
+                button={
+                  <Link
+                    to="/builder/$storyKey"
+                    params={{ storyKey: story.key }}
                   >
-                    Edit &nbsp;{" "}
-                    <MoveRightIcon size="15px" className="animate-bounce" />
-                  </Button>
-                </Link>
-              }
-            />
+                    <Button
+                      className={`absolute bottom-4 right-4 opacity-0 transition duration-300 ease-in-out group-hover:opacity-100`}
+                    >
+                      Edit &nbsp;{" "}
+                      <MoveRightIcon size="15px" className="animate-bounce" />
+                    </Button>
+                  </Link>
+                }
+              />
+            </Link>
           );
         })}
       </div>

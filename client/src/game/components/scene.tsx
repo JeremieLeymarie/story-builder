@@ -9,7 +9,7 @@ import { Link } from "@tanstack/react-router";
 type GameSceneProps = {
   scene: Scene;
   isLastScene: boolean;
-  progress: StoryProgress;
+  progress: StoryProgress | null;
 };
 
 export const GameScene = ({
@@ -32,7 +32,7 @@ export const GameScene = ({
                   key={action.text}
                   action={action}
                   storyKey={storyKey}
-                  progressKey={progress.key}
+                  progressKey={progress?.key ?? null}
                 />
               ))}
             </div>
