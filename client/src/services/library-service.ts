@@ -20,11 +20,17 @@ export const _getLibraryService = ({
   const _createBlankStoryProgress = async ({ story }: { story: Story }) => {
     const user = await localRepository.getUser();
 
+    if (!story.firstSceneKey) {
+      throw new Error(
+        `Error: story should have a first scene. Story: ${story.key}`,
+      );
+    }
+
     const progress = await localRepository.createStoryProgress({
+      storyKey: story.key,
       history: [story.firstSceneKey],
       currentSceneKey: story.firstSceneKey,
       lastPlayedAt: new Date(),
-      storyKey: story.key,
       userKey: user?.key ?? undefined,
     });
 
