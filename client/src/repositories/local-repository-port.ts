@@ -47,6 +47,7 @@ export type LocalRepositoryPort = {
   updateStoryProgress: (
     progress: StoryProgress,
   ) => Promise<StoryProgress | null>;
+  getStoryProgress: (storyKey: string) => Promise<StoryProgress | null>;
   getStoryProgresses: (storyKey: string) => Promise<StoryProgress[]>;
   getStoryProgressesOrderedByDate: (
     userKey: string | undefined,

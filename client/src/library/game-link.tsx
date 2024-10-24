@@ -15,10 +15,14 @@ export const GameLink = ({
     );
   }
 
+  /** TODO: we could remove some redundancies by only using the storyProgress key in the URL
+   * instead of game + scene + story progress
+   **/
   return (
     <Link
       to="/game/$gameKey/$sceneKey"
       params={{ gameKey, sceneKey: progress.currentSceneKey }}
+      search={{ storyProgressKey: progress.key }}
     >
       {children}
     </Link>

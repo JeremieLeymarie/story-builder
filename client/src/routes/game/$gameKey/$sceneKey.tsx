@@ -5,9 +5,12 @@ import { getGameService } from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
+import { z } from "zod";
+import { zodSearchValidator } from "@tanstack/router-zod-adapter";
 
 export const Component = () => {
   const { sceneKey, gameKey } = Route.useParams();
+  const { storyProgressKey } = Route.useSearch();
   const gameService = getGameService();
   const scene = useLiveQuery(
     () => gameService.getSceneData(sceneKey),
@@ -15,7 +18,7 @@ export const Component = () => {
   );
 
   const { data: storyProgress } = useQuery({
-    queryFn: () => gameService.getStoryProgress(gameKey),
+    queryFn: () => gameService.getStoryProgress(storyProgressKey),
     queryKey: ["story-progress"],
   });
 
@@ -30,16 +33,20 @@ export const Component = () => {
     return <ErrorMessage />;
   }
 
-  const { key, ...sceneWithoutKey } = scene;
   return (
     <GameScene
-      {...sceneWithoutKey}
-      sceneKey={key}
-      isLastScene={!sceneWithoutKey.actions.length}
+      scene={scene}
+      isLastScene={!scene.actions.length}
+      progress={storyProgress}
     />
   );
 };
 
+const searchParams = z.object({
+  storyProgressKey: z.string(),
+});
+
 export const Route = createFileRoute("/game/$gameKey/$sceneKey")({
+  validateSearch: zodSearchValidator({ schema: searchParams }),
   component: Component,
 });

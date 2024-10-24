@@ -2,20 +2,19 @@ import { SceneAction } from "./scene-action";
 import { Button } from "@/design-system/primitives";
 import { BookUpIcon, LibraryBigIcon } from "lucide-react";
 
-import { Scene } from "@/lib/storage/domain";
+import { Scene, StoryProgress } from "@/lib/storage/domain";
 import { Divider } from "@/design-system/components/divider";
 import { Link } from "@tanstack/react-router";
 
-type GameSceneProps = Omit<Scene, "key"> & {
-  sceneKey: string;
+type GameSceneProps = {
+  scene: Scene;
   isLastScene: boolean;
+  progress: StoryProgress;
 };
 
 export const GameScene = ({
-  title,
-  actions,
-  content,
-  storyKey,
+  progress,
+  scene: { title, actions, content, storyKey },
   isLastScene,
 }: GameSceneProps) => {
   return (
@@ -31,8 +30,9 @@ export const GameScene = ({
               {actions.map((action) => (
                 <SceneAction
                   key={action.text}
-                  {...action}
+                  action={action}
                   storyKey={storyKey}
+                  progressKey={progress.key}
                 />
               ))}
             </div>

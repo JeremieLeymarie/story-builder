@@ -64,6 +64,8 @@ export const getLocalRepositoryStub = (): MockLocalRepository => {
 
     updateStoryProgress: mock(BASIC_STORY_PROGRESS),
 
+    getStoryProgress: mock(BASIC_STORY_PROGRESS),
+
     getStoryProgresses: mock([BASIC_STORY_PROGRESS]),
 
     getStoryProgressesOrderedByDate: mock([BASIC_STORY_PROGRESS]),

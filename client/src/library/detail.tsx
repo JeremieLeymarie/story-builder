@@ -1,4 +1,4 @@
-import { GameDetail } from "./game-detail";
+import { SavesDetail } from "./saves-detail";
 import { Button } from "@/design-system/primitives";
 import { MoveRightIcon } from "lucide-react";
 import { GameLink } from "./game-link";
@@ -51,7 +51,7 @@ export const LibraryGameDetail = ({
         <p className="max-md:text-md text-lg text-white">{story.description}</p>
       </div>
       {currentProgress ? (
-        <GameDetail
+        <SavesDetail
           currentProgress={currentProgress}
           otherProgresses={otherProgresses}
         />
