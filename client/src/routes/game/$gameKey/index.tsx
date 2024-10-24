@@ -8,17 +8,17 @@ import { useEffect, useState } from "react";
 
 export const Component = () => {
   const { gameKey } = Route.useParams();
-  const { getOrCreateStoryProgress, getFirstSceneData } = getGameService();
+  const { createStoryProgress, getFirstSceneData } = getGameService();
 
   const { story, scene } = useLiveQuery(() => getFirstSceneData(gameKey)) ?? {};
   const [storyProgress, setStoryProgress] = useState<StoryProgress | null>();
 
   useEffect(() => {
     if (story)
-      getOrCreateStoryProgress(story).then((progress) =>
+      createStoryProgress(story).then((progress) =>
         setStoryProgress(progress ?? null),
       );
-  }, [getOrCreateStoryProgress, story]);
+  }, [createStoryProgress, story]);
 
   if (
     story === undefined ||
@@ -32,9 +32,9 @@ export const Component = () => {
     return <ErrorMessage />;
   }
 
-  const { key, ...sceneWithoutKey } = scene;
-
-  return <GameScene {...sceneWithoutKey} sceneKey={key} isLastScene={false} />;
+  return (
+    <GameScene scene={scene} isLastScene={false} progress={storyProgress} />
+  );
 };
 
 export const Route = createFileRoute("/game/$gameKey/")({

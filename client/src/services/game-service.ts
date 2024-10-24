@@ -35,10 +35,8 @@ export const _getGameService = ({
       return updatedProgress;
     },
 
-    getOrCreateStoryProgress: async (story: Story) => {
+    createStoryProgress: async (story: Story) => {
       const user = await localRepository.getUser();
-      const progress = await localRepository.getStoryProgresses(story.key);
-      if (progress) return progress;
 
       if (!story.firstSceneKey) {
         throw new Error(
@@ -85,7 +83,7 @@ export const _getGameService = ({
     },
 
     getStoryProgress: async (storyKey: string) => {
-      return await localRepository.getStoryProgresses(storyKey);
+      return await localRepository.getStoryProgress(storyKey);
     },
 
     getStoryProgresses: async () => {

@@ -199,6 +199,10 @@ const indexedDBRepository: LocalRepositoryPort = {
 
   // STORY PROGRESS
 
+  getStoryProgress: async (key: string) => {
+    return (await db.storyProgresses.get(key)) ?? null;
+  },
+
   getStoryProgresses: async (storyKey) => {
     const progress = await db.storyProgresses
       .filter((progress) => progress.storyKey === storyKey)
