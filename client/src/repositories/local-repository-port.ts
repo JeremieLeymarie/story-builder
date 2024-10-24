@@ -33,7 +33,8 @@ export type LocalRepositoryPort = {
   createScenes: (scenes: (WithoutKey<Scene> | Scene)[]) => Promise<string[]>;
   updatePartialScene: (key: string, scene: Partial<Scene>) => Promise<boolean>;
   getScene: (key: string) => Promise<Scene | null>;
-  getScenes: (storyKeys: string | string[]) => Promise<Scene[]>;
+  getScenes: (keys: string[]) => Promise<Scene[]>;
+  getScenesByStoryKey: (storyKeys: string | string[]) => Promise<Scene[]>;
   deleteScenes: (sceneKeys: string[]) => Promise<void>;
 
   createStoryProgress: (
@@ -47,7 +48,14 @@ export type LocalRepositoryPort = {
     progress: StoryProgress,
   ) => Promise<StoryProgress | null>;
   getStoryProgress: (storyKey: string) => Promise<StoryProgress | null>;
-  getStoryProgresses: (userKey: string | undefined) => Promise<StoryProgress[]>;
+  getStoryProgresses: (storyKey: string) => Promise<StoryProgress[]>;
+  getStoryProgressesOrderedByDate: (
+    userKey: string | undefined,
+    storyKey: string,
+  ) => Promise<StoryProgress[]>;
+  getUserStoryProgresses: (
+    userKey: string | undefined,
+  ) => Promise<StoryProgress[]>;
   getMostRecentStoryProgress: (
     userKey: string | undefined,
   ) => Promise<StoryProgress | null>;

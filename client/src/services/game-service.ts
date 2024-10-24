@@ -35,28 +35,6 @@ export const _getGameService = ({
       return updatedProgress;
     },
 
-    getOrCreateStoryProgress: async (story: Story) => {
-      const user = await localRepository.getUser();
-      const progress = await localRepository.getStoryProgress(story.key);
-      if (progress) return progress;
-
-      if (!story.firstSceneKey) {
-        throw new Error(
-          `Error: story should have a first scene. Story: ${story.key}`,
-        );
-      }
-
-      const createdProgress = await localRepository.createStoryProgress({
-        storyKey: story.key,
-        history: [story.firstSceneKey],
-        currentSceneKey: story.firstSceneKey,
-        lastPlayedAt: new Date(),
-        userKey: user?.key ?? undefined,
-      });
-
-      return createdProgress;
-    },
-
     getLastGamePlayed: async () => {
       const user = await localRepository.getUser();
       const progress = await localRepository.getMostRecentStoryProgress(
@@ -74,6 +52,19 @@ export const _getGameService = ({
       return await localRepository.getScene(sceneKey);
     },
 
+    // // TODO: test this
+    // getSceneDataFromStoryProgress: async (storyProgressKey: string) => {
+    //   const progress = await localRepository.getStoryProgress(storyProgressKey);
+
+    //   if (!progress) {
+    //     throw new Error(`Invalid story progress key: ${storyProgressKey}`);
+    //   }
+
+    //   const scene = await localRepository.getScene(progress.currentSceneKey);
+
+    //   return { scene, storyProgress: progress };
+    // },
+
     getFirstSceneData: async (storyKey: string) => {
       const story = await localRepository.getStory(storyKey);
 
@@ -90,7 +81,9 @@ export const _getGameService = ({
 
     getStoryProgresses: async () => {
       const user = await localRepository.getUser();
-      const progresses = await localRepository.getStoryProgresses(user?.key);
+      const progresses = await localRepository.getUserStoryProgresses(
+        user?.key,
+      );
 
       return progresses;
     },

@@ -34,6 +34,7 @@
     "@tanstack/react-router": "^1.35.3",
     "@tanstack/router-devtools": "^1.35.3",
     "@tanstack/router-vite-plugin": "^1.35.4",
+    "@tanstack/router-zod-adapter": "^1.76.1",
     "@xyflow/react": "^12.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

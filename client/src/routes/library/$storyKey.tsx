@@ -6,18 +6,18 @@ import { useLiveQuery } from "dexie-react-hooks";
 
 const Page = () => {
   const { storyKey } = Route.useParams();
-  const { story, progress, lastScene } =
-    useLiveQuery(() => getLibraryService().getLibraryDetail(storyKey)) ?? {};
+  const { story, currentProgress, otherProgresses } =
+    useLiveQuery(() => getLibraryService().getGameDetail(storyKey)) ?? {};
 
   if (
     story === undefined ||
-    progress === undefined ||
-    lastScene === undefined
+    currentProgress === undefined ||
+    otherProgresses === undefined
   ) {
     return <BackdropLoader />;
   }
 
-  if (story === null) {
+  if (story === null || currentProgress === null) {
     return <ErrorMessage text="This page does not exist." />;
   }
 
@@ -25,8 +25,8 @@ const Page = () => {
     <div className="h-full w-full">
       <LibraryGameDetail
         story={story}
-        progress={progress}
-        currentScene={lastScene}
+        currentProgress={currentProgress}
+        otherProgresses={otherProgresses}
       />
     </div>
   );

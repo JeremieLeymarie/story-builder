@@ -18,7 +18,6 @@ import { Route as LibraryIndexImport } from './routes/library/index'
 import { Route as LibraryStoryKeyImport } from './routes/library/$storyKey'
 import { Route as BuilderStoriesImport } from './routes/builder/stories'
 import { Route as BuilderStoryKeyImport } from './routes/builder/$storyKey'
-import { Route as GameGameKeyIndexImport } from './routes/game/$gameKey/index'
 import { Route as GameGameKeySceneKeyImport } from './routes/game/$gameKey/$sceneKey'
 
 // Create/Update Routes
@@ -55,11 +54,6 @@ const BuilderStoriesRoute = BuilderStoriesImport.update({
 
 const BuilderStoryKeyRoute = BuilderStoryKeyImport.update({
   path: '/builder/$storyKey',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const GameGameKeyIndexRoute = GameGameKeyIndexImport.update({
-  path: '/game/$gameKey/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -128,13 +122,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GameGameKeySceneKeyImport
       parentRoute: typeof rootRoute
     }
-    '/game/$gameKey/': {
-      id: '/game/$gameKey/'
-      path: '/game/$gameKey'
-      fullPath: '/game/$gameKey'
-      preLoaderRoute: typeof GameGameKeyIndexImport
-      parentRoute: typeof rootRoute
-    }
   }
 }
 
@@ -149,7 +136,6 @@ export const routeTree = rootRoute.addChildren({
   LibraryStoryKeyRoute,
   LibraryIndexRoute,
   GameGameKeySceneKeyRoute,
-  GameGameKeyIndexRoute,
 })
 
 /* prettier-ignore-end */
@@ -167,8 +153,7 @@ export const routeTree = rootRoute.addChildren({
         "/builder/stories",
         "/library/$storyKey",
         "/library/",
-        "/game/$gameKey/$sceneKey",
-        "/game/$gameKey/"
+        "/game/$gameKey/$sceneKey"
       ]
     },
     "/": {
@@ -194,9 +179,6 @@ export const routeTree = rootRoute.addChildren({
     },
     "/game/$gameKey/$sceneKey": {
       "filePath": "game/$gameKey/$sceneKey.tsx"
-    },
-    "/game/$gameKey/": {
-      "filePath": "game/$gameKey/index.tsx"
     }
   }
 }

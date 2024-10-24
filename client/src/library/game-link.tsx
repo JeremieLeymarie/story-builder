@@ -6,19 +6,12 @@ export const GameLink = ({
   progress,
   gameKey,
   children,
-}: PropsWithChildren<{ progress: StoryProgress | null; gameKey: string }>) => {
-  if (!progress) {
-    return (
-      <Link to="/game/$gameKey" params={{ gameKey }}>
-        {children}
-      </Link>
-    );
-  }
-
+}: PropsWithChildren<{ progress: StoryProgress; gameKey: string }>) => {
   return (
     <Link
       to="/game/$gameKey/$sceneKey"
       params={{ gameKey, sceneKey: progress.currentSceneKey }}
+      search={{ storyProgressKey: progress.key }}
     >
       {children}
     </Link>
