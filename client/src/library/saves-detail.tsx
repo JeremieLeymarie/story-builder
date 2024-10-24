@@ -10,9 +10,11 @@ import { cn } from "@/lib/style";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
 
 export const SavesDetail = ({
+  startNewGame,
   currentProgress,
   otherProgresses,
 }: {
+  startNewGame: () => void;
   currentProgress: ExtendedProgress;
   otherProgresses: ExtendedProgress[];
 }) => {
@@ -36,7 +38,7 @@ export const SavesDetail = ({
               <div
                 key={progress.key}
                 className={cn(
-                  "my-3 flex w-full cursor-pointer items-center justify-between gap-12 rounded-md border border-primary bg-white bg-opacity-50 px-4 py-2 shadow",
+                  "my-3 flex w-full min-w-[300px] cursor-pointer items-center justify-between gap-12 rounded-md border border-primary bg-white bg-opacity-50 px-4 py-2 shadow",
                   selectedProgressIndex === index && "bg-primary",
                 )}
               >
@@ -57,11 +59,14 @@ export const SavesDetail = ({
             ))}
           </ScrollArea>
 
-          <GameLink progress={null} gameKey={currentProgress.storyKey}>
-            <Button variant="secondary" className="gap-2" size="sm">
-              <PlusIcon /> New game
-            </Button>
-          </GameLink>
+          <Button
+            variant="secondary"
+            className="gap-2"
+            size="sm"
+            onClick={startNewGame}
+          >
+            <PlusIcon /> New game
+          </Button>
         </div>
       </div>
       <div>

@@ -17,16 +17,18 @@ export const _getLibraryService = ({
   localRepository: LocalRepositoryPort;
   remoteRepository: RemoteRepositoryPort;
 }) => {
-  const _addToLibrary = async ({ story }: { story: Story }) => {
+  const _createBlankStoryProgress = async ({ story }: { story: Story }) => {
     const user = await localRepository.getUser();
 
-    await localRepository.createStoryProgress({
+    const progress = await localRepository.createStoryProgress({
       history: [story.firstSceneKey],
       currentSceneKey: story.firstSceneKey,
       lastPlayedAt: new Date(),
       storyKey: story.key,
       userKey: user?.key ?? undefined,
     });
+
+    return progress;
   };
 
   return {
@@ -43,7 +45,7 @@ export const _getLibraryService = ({
           await localRepository.createScenes(data.scenes);
         }
 
-        await _addToLibrary({ story: data.story });
+        await _createBlankStoryProgress({ story: data.story });
 
         return true;
       }
@@ -128,7 +130,7 @@ export const _getLibraryService = ({
           .filter((scene) => !!scene),
       );
 
-      await _addToLibrary({ story });
+      await _createBlankStoryProgress({ story });
 
       return { error: null };
     },
@@ -171,8 +173,15 @@ export const _getLibraryService = ({
       // The first element in the orderered progresses represent the last played game
       const [currentProgress, ...otherProgresses] = progressesWithLastScene;
 
-      return { story, currentProgress, otherProgresses };
+      return {
+        story,
+        currentProgress: currentProgress ?? null,
+        otherProgresses,
+      };
     },
+
+    // TODO: unit tests
+    createBlankStoryProgress: _createBlankStoryProgress,
   };
 };
 

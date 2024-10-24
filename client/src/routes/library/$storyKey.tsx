@@ -17,7 +17,7 @@ const Page = () => {
     return <BackdropLoader />;
   }
 
-  if (story === null) {
+  if (story === null || currentProgress === null) {
     return <ErrorMessage text="This page does not exist." />;
   }
 
