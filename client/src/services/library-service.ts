@@ -136,7 +136,7 @@ export const _getLibraryService = ({
     getLibrary: async () => {
       const user = await localRepository.getUser();
       const storyKeys = (
-        await localRepository.getStoryProgresses(user?.key)
+        await localRepository.getUserStoryProgresses(user?.key)
       ).map(({ storyKey }) => storyKey);
 
       const games = await localRepository.getStoriesByKeys(storyKeys);
@@ -149,19 +149,29 @@ export const _getLibraryService = ({
       };
     },
 
-    getLibraryDetail: async (storyKey: string) => {
+    getGameDetail: async (storyKey: string) => {
       const story = await localRepository.getStory(storyKey);
-      const progress = await localRepository.getStoryProgress(storyKey);
+      const user = await localRepository.getUser();
 
-      if (!progress) {
-        return { story, progress, lastScene: null };
-      }
-
-      const lastScene = await localRepository.getScene(
-        progress?.currentSceneKey,
+      const progresses = await localRepository.getStoryProgressesOrderedByDate(
+        user?.key,
+        storyKey,
       );
 
-      return { story, progress, lastScene };
+      // Get more data about the last scene of every story progress (scene title, etc...)
+      const lastSceneKeys = progresses.map((p) => p.currentSceneKey);
+
+      const lastScenes = await localRepository.getScenes(lastSceneKeys);
+
+      const progressesWithLastScene = progresses.map((p) => ({
+        ...p,
+        lastScene: lastScenes.find((scene) => scene.key === p.currentSceneKey),
+      }));
+
+      // The first element in the orderered progresses represent the last played game
+      const [currentProgress, ...otherProgresses] = progressesWithLastScene;
+
+      return { story, currentProgress, otherProgresses };
     },
   };
 };

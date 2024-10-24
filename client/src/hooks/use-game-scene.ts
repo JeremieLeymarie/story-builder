@@ -20,7 +20,7 @@ export const useGameScene = ({
   );
 
   const getStoryProgress = useCallback(
-    () => repo.getStoryProgress(gameKey),
+    () => repo.getStoryProgresses(gameKey),
     [gameKey, repo],
   );
 

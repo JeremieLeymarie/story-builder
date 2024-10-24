@@ -12,6 +12,7 @@ import {
   BASIC_STORY_PROGRESS,
   BASIC_USER,
 } from "@/repositories/stubs/data";
+import dayjs from "dayjs";
 
 describe("library-service", () => {
   let libraryService: ReturnType<typeof _getLibraryService>;
@@ -169,7 +170,7 @@ describe("library-service", () => {
       const data = await libraryService.getLibrary();
 
       expect(localRepository.getUser).toHaveBeenCalled();
-      expect(localRepository.getStoryProgresses).toHaveBeenCalledWith(
+      expect(localRepository.getUserStoryProgresses).toHaveBeenCalledWith(
         BASIC_USER.key,
       );
       expect(localRepository.getStoriesByKeys).toHaveBeenCalledWith([
@@ -184,36 +185,108 @@ describe("library-service", () => {
     });
   });
 
-  describe("getLibraryDetail", () => {
-    it("should retrieve details about a story", async () => {
-      const data = await libraryService.getLibraryDetail("pouf");
+  describe("getGameDetail", () => {
+    const CURRENT = {
+      key: "most-recent",
+      storyKey: "ding",
+      userKey: "pipou",
+      history: ["most-recent-vroum"],
+      currentSceneKey: "most-recent-vroum",
+      lastPlayedAt: dayjs(new Date()).add(10, "days").toDate(),
+    };
 
-      expect(localRepository.getStory).toHaveBeenCalledWith("pouf");
-      expect(localRepository.getStoryProgress).toHaveBeenCalledWith("pouf");
-      expect(localRepository.getScene).toHaveBeenCalledWith(
-        BASIC_STORY_PROGRESS.currentSceneKey,
-      );
+    const OTHER = {
+      key: "older",
+      storyKey: "ding",
+      userKey: "pipou",
+      history: ["older-vroum"],
+      currentSceneKey: "older-vroum",
+      lastPlayedAt: new Date(),
+    };
 
-      expect(data).toStrictEqual({
-        story: BASIC_STORY,
-        progress: BASIC_STORY_PROGRESS,
-        lastScene: BASIC_SCENE,
-      });
+    const FINISHED = {
+      key: "finished",
+      storyKey: "ding",
+      userKey: "pipou",
+      history: ["finished-vroum"],
+      currentSceneKey: "finished-vroum",
+      lastPlayedAt: new Date(),
+      finished: true,
+    };
+
+    const CURRENT_SCENE = {
+      key: "most-recent-vroum",
+      actions: [{ text: "action A" }, { text: "action B" }],
+      builderParams: { position: { x: 0, y: 0 } },
+      content: "pas content",
+      storyKey: "zut",
+      title: "flûte",
+    };
+
+    const OTHER_SCENE = {
+      key: "older-vroum",
+      actions: [{ text: "action A" }, { text: "action B" }],
+      builderParams: { position: { x: 0, y: 0 } },
+      content: "pas content",
+      storyKey: "zut",
+      title: "flûte",
+    };
+    const FINISHED_SCENE = {
+      key: "finished-vroum",
+      actions: [{ text: "action A" }, { text: "action B" }],
+      builderParams: { position: { x: 0, y: 0 } },
+      content: "pas content",
+      storyKey: "zut",
+      title: "flûte",
+    };
+
+    const STORY = {
+      key: "ding",
+      title: "Tidididoudoum tidididoudoum",
+      description: "Sacré histoire...",
+      image: "http://ton-image.fr",
+      status: "draft" as const,
+      firstSceneKey: "zut",
+      genres: ["adventure" as const, "children" as const],
+      creationDate: new Date(),
+    };
+
+    beforeEach(() => {
+      localRepository.getScenes.mockResolvedValueOnce([
+        CURRENT_SCENE,
+        OTHER_SCENE,
+        FINISHED_SCENE,
+      ]);
+
+      localRepository.getStoryProgressesOrderedByDate.mockResolvedValueOnce([
+        CURRENT,
+        OTHER,
+        FINISHED,
+      ]);
+
+      localRepository.getStory.mockResolvedValueOnce(STORY);
     });
 
-    it("should return only story if there is no linked progress", async () => {
-      localRepository.getStoryProgress.mockResolvedValueOnce(null);
+    it("should retrieve details about a story", async () => {
+      const data = await libraryService.getGameDetail("ding");
 
-      const data = await libraryService.getLibraryDetail("pouf");
-
-      expect(localRepository.getScene).not.toHaveBeenCalledWith(
-        BASIC_STORY_PROGRESS.currentSceneKey,
-      );
+      expect(localRepository.getStory).toHaveBeenCalledWith("ding");
+      expect(
+        localRepository.getStoryProgressesOrderedByDate,
+      ).toHaveBeenCalledWith(BASIC_USER.key, "ding");
+      expect(localRepository.getScenes).toHaveBeenCalledWith([
+        "most-recent-vroum",
+        "older-vroum",
+        "finished-vroum",
+      ]);
 
       expect(data).toStrictEqual({
-        story: BASIC_STORY,
-        progress: null,
-        lastScene: null,
+        story: STORY,
+        currentProgress: { ...CURRENT, lastScene: CURRENT_SCENE },
+        otherProgresses: [
+          { ...OTHER, lastScene: OTHER_SCENE },
+          { ...FINISHED, lastScene: FINISHED_SCENE },
+        ],
       });
     });
   });

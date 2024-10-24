@@ -100,7 +100,7 @@ describe("game-service", () => {
         await gameService.getOrCreateStoryProgress(BASIC_STORY);
 
       expect(localRepository.getUser).toHaveBeenCalled();
-      expect(localRepository.getStoryProgress).toHaveBeenCalledWith(
+      expect(localRepository.getStoryProgresses).toHaveBeenCalledWith(
         BASIC_STORY.key,
       );
       expect(localRepository.createStoryProgress).not.toHaveBeenCalled();
@@ -109,13 +109,13 @@ describe("game-service", () => {
     });
 
     it("should create a story progress in the local database", async () => {
-      localRepository.getStoryProgress.mockResolvedValueOnce(null);
+      localRepository.getStoryProgresses.mockResolvedValueOnce(null);
 
       const createdProgress =
         await gameService.getOrCreateStoryProgress(BASIC_STORY);
 
       expect(localRepository.getUser).toHaveBeenCalled();
-      expect(localRepository.getStoryProgress).toHaveBeenCalledWith(
+      expect(localRepository.getStoryProgresses).toHaveBeenCalledWith(
         BASIC_STORY.key,
       );
       expect(localRepository.createStoryProgress).toHaveBeenCalledWith({
@@ -183,7 +183,7 @@ describe("game-service", () => {
     it("should retrieve story progress", async () => {
       const p = await gameService.getStoryProgress("viooooooum");
 
-      expect(localRepository.getStoryProgress).toHaveBeenCalledWith(
+      expect(localRepository.getStoryProgresses).toHaveBeenCalledWith(
         "viooooooum",
       );
 
@@ -196,7 +196,7 @@ describe("game-service", () => {
       const p = await gameService.getStoryProgresses();
 
       expect(localRepository.getUser).toHaveBeenCalled();
-      expect(localRepository.getStoryProgresses).toHaveBeenCalledWith(
+      expect(localRepository.getUserStoryProgresses).toHaveBeenCalledWith(
         BASIC_USER.key,
       );
 
