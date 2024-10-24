@@ -6,10 +6,13 @@ import { StoryGenreBadge, Title } from "@/design-system/components";
 import { formatDate } from "@/lib/date";
 import { Story } from "@/lib/storage/domain";
 import { ExtendedProgress } from "./types";
+import { useCallback } from "react";
+import { getLibraryService } from "@/services";
+import { useRouter } from "@tanstack/react-router";
 
 type Props = {
   story: Story;
-  currentProgress: ExtendedProgress | null;
+  currentProgress: ExtendedProgress;
   otherProgresses: ExtendedProgress[];
 };
 
@@ -18,6 +21,20 @@ export const LibraryGameDetail = ({
   currentProgress,
   otherProgresses,
 }: Props) => {
+  const { navigate } = useRouter();
+
+  const startNewGame = useCallback(() => {
+    getLibraryService()
+      .createBlankStoryProgress({ story })
+      .then((progress) =>
+        navigate({
+          to: "/game/$gameKey/$sceneKey",
+          params: { gameKey: story.key, sceneKey: story.firstSceneKey },
+          search: { storyProgressKey: progress.key },
+        }),
+      );
+  }, [navigate, story]);
+
   return (
     <div
       className="flex h-full w-full flex-col items-center justify-start px-32 pt-32 lg:flex-row lg:justify-center lg:gap-28 lg:pt-0"
@@ -50,14 +67,15 @@ export const LibraryGameDetail = ({
         )}
         <p className="max-md:text-md text-lg text-white">{story.description}</p>
       </div>
-      {currentProgress ? (
+      {currentProgress.currentSceneKey !== story.firstSceneKey ? (
         <SavesDetail
+          startNewGame={startNewGame}
           currentProgress={currentProgress}
           otherProgresses={otherProgresses}
         />
       ) : (
         <div className="mt-8 flex items-center justify-center">
-          <GameLink progress={null} gameKey={story.key}>
+          <GameLink progress={currentProgress} gameKey={story.key}>
             <Button className="text-xl shadow-3xl shadow-primary max-md:text-lg">
               Start game &nbsp;
               <MoveRightIcon />

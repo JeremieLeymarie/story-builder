@@ -6,18 +6,7 @@ export const GameLink = ({
   progress,
   gameKey,
   children,
-}: PropsWithChildren<{ progress: StoryProgress | null; gameKey: string }>) => {
-  if (!progress) {
-    return (
-      <Link to="/game/$gameKey" params={{ gameKey }}>
-        {children}
-      </Link>
-    );
-  }
-
-  /** TODO: we could remove some redundancies by only using the storyProgress key in the URL
-   * instead of game + scene + story progress
-   **/
+}: PropsWithChildren<{ progress: StoryProgress; gameKey: string }>) => {
   return (
     <Link
       to="/game/$gameKey/$sceneKey"
