@@ -19,6 +19,7 @@ import { Route as LibraryStoryKeyImport } from './routes/library/$storyKey'
 import { Route as BuilderStoriesImport } from './routes/builder/stories'
 import { Route as BuilderStoryKeyImport } from './routes/builder/$storyKey'
 import { Route as GameGameKeySceneKeyImport } from './routes/game/$gameKey/$sceneKey'
+import { Route as GameTestGameKeySceneKeyImport } from './routes/game/test/$gameKey/$sceneKey'
 
 // Create/Update Routes
 
@@ -59,6 +60,11 @@ const BuilderStoryKeyRoute = BuilderStoryKeyImport.update({
 
 const GameGameKeySceneKeyRoute = GameGameKeySceneKeyImport.update({
   path: '/game/$gameKey/$sceneKey',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const GameTestGameKeySceneKeyRoute = GameTestGameKeySceneKeyImport.update({
+  path: '/game/test/$gameKey/$sceneKey',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -122,6 +128,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GameGameKeySceneKeyImport
       parentRoute: typeof rootRoute
     }
+    '/game/test/$gameKey/$sceneKey': {
+      id: '/game/test/$gameKey/$sceneKey'
+      path: '/game/test/$gameKey/$sceneKey'
+      fullPath: '/game/test/$gameKey/$sceneKey'
+      preLoaderRoute: typeof GameTestGameKeySceneKeyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -136,6 +149,7 @@ export const routeTree = rootRoute.addChildren({
   LibraryStoryKeyRoute,
   LibraryIndexRoute,
   GameGameKeySceneKeyRoute,
+  GameTestGameKeySceneKeyRoute,
 })
 
 /* prettier-ignore-end */
@@ -153,7 +167,8 @@ export const routeTree = rootRoute.addChildren({
         "/builder/stories",
         "/library/$storyKey",
         "/library/",
-        "/game/$gameKey/$sceneKey"
+        "/game/$gameKey/$sceneKey",
+        "/game/test/$gameKey/$sceneKey"
       ]
     },
     "/": {
@@ -179,6 +194,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/game/$gameKey/$sceneKey": {
       "filePath": "game/$gameKey/$sceneKey.tsx"
+    },
+    "/game/test/$gameKey/$sceneKey": {
+      "filePath": "game/test/$gameKey/$sceneKey.tsx"
     }
   }
 }
