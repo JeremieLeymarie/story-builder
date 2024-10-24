@@ -4,7 +4,7 @@ type ErrorMessageProps = { text?: string };
 
 export const ErrorMessage = ({ text }: ErrorMessageProps) => {
   return (
-    <Card className="p-8">
+    <Card className="m-8">
       <CardHeader className="text-red-400">
         <CardTitle>Error</CardTitle>
         <CardDescription>

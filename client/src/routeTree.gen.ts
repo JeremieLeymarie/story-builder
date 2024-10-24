@@ -20,6 +20,7 @@ import { Route as BuilderStoriesImport } from './routes/builder/stories'
 import { Route as BuilderStoryKeyImport } from './routes/builder/$storyKey'
 import { Route as GameGameKeyIndexImport } from './routes/game/$gameKey/index'
 import { Route as GameGameKeySceneKeyImport } from './routes/game/$gameKey/$sceneKey'
+import { Route as GameTestGameKeySceneKeyImport } from './routes/game/test/$gameKey/$sceneKey'
 
 // Create/Update Routes
 
@@ -65,6 +66,11 @@ const GameGameKeyIndexRoute = GameGameKeyIndexImport.update({
 
 const GameGameKeySceneKeyRoute = GameGameKeySceneKeyImport.update({
   path: '/game/$gameKey/$sceneKey',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const GameTestGameKeySceneKeyRoute = GameTestGameKeySceneKeyImport.update({
+  path: '/game/test/$gameKey/$sceneKey',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -135,6 +141,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GameGameKeyIndexImport
       parentRoute: typeof rootRoute
     }
+    '/game/test/$gameKey/$sceneKey': {
+      id: '/game/test/$gameKey/$sceneKey'
+      path: '/game/test/$gameKey/$sceneKey'
+      fullPath: '/game/test/$gameKey/$sceneKey'
+      preLoaderRoute: typeof GameTestGameKeySceneKeyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -150,6 +163,7 @@ export const routeTree = rootRoute.addChildren({
   LibraryIndexRoute,
   GameGameKeySceneKeyRoute,
   GameGameKeyIndexRoute,
+  GameTestGameKeySceneKeyRoute,
 })
 
 /* prettier-ignore-end */
@@ -168,7 +182,8 @@ export const routeTree = rootRoute.addChildren({
         "/library/$storyKey",
         "/library/",
         "/game/$gameKey/$sceneKey",
-        "/game/$gameKey/"
+        "/game/$gameKey/",
+        "/game/test/$gameKey/$sceneKey"
       ]
     },
     "/": {
@@ -197,6 +212,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/game/$gameKey/": {
       "filePath": "game/$gameKey/index.tsx"
+    },
+    "/game/test/$gameKey/$sceneKey": {
+      "filePath": "game/test/$gameKey/$sceneKey.tsx"
     }
   }
 }

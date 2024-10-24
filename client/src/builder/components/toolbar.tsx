@@ -57,7 +57,11 @@ export const Toolbar = ({ story, scenes }: Props) => {
             refresh();
           }}
         />
-        <Button variant="outline" className="w-full" onClick={testStory}>
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => testStory(story.firstSceneKey)}
+        >
           <TestTubesIcon size="16px" /> &nbsp; Test
         </Button>
         <StoryPublisher story={story} scenes={scenes} />
