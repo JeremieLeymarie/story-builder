@@ -54,6 +54,8 @@ export const getLocalRepositoryStub = (): MockLocalRepository => {
 
     getScenes: mock([BASIC_SCENE]),
 
+    getScenesByStoryKey: mock([BASIC_SCENE]),
+
     deleteScenes: mock(),
 
     createStoryProgress: mock(BASIC_STORY_PROGRESS),
@@ -62,9 +64,11 @@ export const getLocalRepositoryStub = (): MockLocalRepository => {
 
     updateStoryProgress: mock(BASIC_STORY_PROGRESS),
 
-    getStoryProgress: mock(BASIC_STORY_PROGRESS),
-
     getStoryProgresses: mock([BASIC_STORY_PROGRESS]),
+
+    getStoryProgressesOrderedByDate: mock([BASIC_STORY_PROGRESS]),
+
+    getUserStoryProgresses: mock([BASIC_STORY_PROGRESS]),
 
     getUser: mock(BASIC_USER),
 

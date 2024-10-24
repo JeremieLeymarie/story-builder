@@ -128,7 +128,11 @@ const indexedDBRepository: LocalRepositoryPort = {
     return (await db.scenes.get(key)) ?? null;
   },
 
-  getScenes: async (storyKeys) => {
+  getScenes: async (keys) => {
+    return (await db.scenes.bulkGet(keys)).filter((s) => !!s);
+  },
+
+  getScenesByStoryKey: async (storyKeys) => {
     const predicate = Array.isArray(storyKeys)
       ? (scene: Scene) => storyKeys.includes(scene.storyKey)
       : (scene: Scene) => storyKeys === scene.storyKey;
@@ -195,15 +199,26 @@ const indexedDBRepository: LocalRepositoryPort = {
 
   // STORY PROGRESS
 
-  getStoryProgress: async (storyKey) => {
+  getStoryProgresses: async (storyKey) => {
     const progress = await db.storyProgresses
       .filter((progress) => progress.storyKey === storyKey)
-      .first();
+      .toArray();
 
-    return progress ?? null;
+    return progress;
   },
 
-  getStoryProgresses: async (userKey) => {
+  getStoryProgressesOrderedByDate: async (userKey, storyKey) => {
+    const progress = await db.storyProgresses
+      .filter(
+        (progress) =>
+          progress.storyKey === storyKey && progress.userKey === userKey,
+      )
+      .sortBy("lastPlayedAt");
+
+    return progress.reverse();
+  },
+
+  getUserStoryProgresses: async (userKey) => {
     return await db.storyProgresses
       .filter((progress) => progress.userKey === userKey)
       .toArray();

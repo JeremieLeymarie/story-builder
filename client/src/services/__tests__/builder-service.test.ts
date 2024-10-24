@@ -341,7 +341,9 @@ describe("builder-service", () => {
       const builderData = await builderService.getBuilderStoryData("bouteille");
 
       expect(localRepository.getStory).toHaveBeenCalledWith("bouteille");
-      expect(localRepository.getScenes).toHaveBeenCalledWith("bouteille");
+      expect(localRepository.getScenesByStoryKey).toHaveBeenCalledWith(
+        "bouteille",
+      );
       expect(builderData).toStrictEqual({
         story: BASIC_STORY,
         scenes: [BASIC_SCENE],
@@ -369,7 +371,7 @@ describe("builder-service", () => {
     it("should get all stories and scenes", async () => {
       const result = await builderService.getFullBuilderState();
 
-      expect(localRepository.getScenes).toHaveBeenCalled();
+      expect(localRepository.getScenesByStoryKey).toHaveBeenCalled();
       expect(result).toStrictEqual({
         stories: [BASIC_STORY, BASIC_STORY],
         scenes: [BASIC_SCENE],
