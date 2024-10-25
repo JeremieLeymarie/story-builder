@@ -4,8 +4,8 @@ import { formatDate, timeFrom } from "@/lib/date";
 import { Title } from "@/design-system/components";
 import { ExtendedProgress } from "./types";
 import { cn } from "@/lib/style";
-import { ScrollArea } from "@/design-system/primitives/scroll-area";
 import { GameLink } from "./game-link";
+import { useMemo, useState } from "react";
 
 export const SavesDetail = ({
   startNewGame,
@@ -16,18 +16,25 @@ export const SavesDetail = ({
   currentProgress: ExtendedProgress;
   otherProgresses: ExtendedProgress[];
 }) => {
-  const progresses = [currentProgress, ...otherProgresses];
+  const PROGRESSES_BY_PAGE = 3;
+  const [endProgressIndex, setEndProgressIndex] = useState(PROGRESSES_BY_PAGE);
+
+  const progresses = useMemo(
+    () => [currentProgress, ...otherProgresses],
+    [currentProgress, otherProgresses],
+  );
+
+  const slicedProgresses = useMemo(
+    () => progresses.slice(0, endProgressIndex),
+    [endProgressIndex, progresses],
+  );
 
   return (
     <div className="mt-12 space-y-6 p-12">
       <div className="space-y-2">
-        <Title variant="section">Your progress:</Title>
-        <p className="text-sm text-muted-foreground">
-          Last played {timeFrom(currentProgress.lastPlayedAt)}
-        </p>
-        <p className="mb-2 font-semibold text-white">Your saves:</p>
-        <ScrollArea className="max-h-[200px]">
-          {progresses.map((progress, index) => (
+        <Title variant="section">Your saves:</Title>
+        <div className="h-full">
+          {slicedProgresses.map((progress, index) => (
             <GameLink
               key={progress.key}
               progress={progress}
@@ -41,11 +48,17 @@ export const SavesDetail = ({
                 )}
               >
                 <div>
-                  <p
-                    className={cn("uppercase", index === 0 && "font-semibold")}
-                  >
-                    {progress.lastScene?.title}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p
+                      className={cn(
+                        "uppercase",
+                        index === 0 && "font-semibold",
+                      )}
+                    >
+                      {progress.lastScene?.title}
+                    </p>
+                    <p className="text-xs">{timeFrom(progress.lastPlayedAt)}</p>
+                  </div>
                   <p className="text-xs text-muted-foreground">
                     {formatDate(progress.lastPlayedAt)}
                   </p>
@@ -60,7 +73,19 @@ export const SavesDetail = ({
               </div>
             </GameLink>
           ))}
-        </ScrollArea>
+        </div>
+        {endProgressIndex < progresses.length && (
+          <div className="flex justify-center">
+            <p
+              className="cursor-pointer text-sm text-muted-foreground hover:text-black"
+              onClick={() =>
+                setEndProgressIndex((prev) => prev + PROGRESSES_BY_PAGE)
+              }
+            >
+              - Load more -
+            </p>
+          </div>
+        )}
 
         <Button
           variant="secondary"
