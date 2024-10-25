@@ -1,6 +1,6 @@
 import { SavesDetail } from "./saves-detail";
 import { Button } from "@/design-system/primitives";
-import { MoveRightIcon, SwordIcon } from "lucide-react";
+import { SwordIcon } from "lucide-react";
 import { GameLink } from "./game-link";
 import { StoryGenreBadge, Title } from "@/design-system/components";
 import { formatDate } from "@/lib/date";
@@ -36,16 +36,16 @@ export const LibraryGameDetail = ({
   }, [navigate, story]);
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-start lg:flex-row lg:justify-center">
-      <div
-        className="flex h-full w-6/12 items-center justify-center border-r-4 border-primary"
-        style={{
-          background: `url('${story.image}')`,
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
+    <div
+      className="flex h-full w-full flex-col items-center justify-start lg:flex-row lg:justify-center"
+      style={{
+        background: `url('${story.image}')`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div className="flex h-full w-6/12 items-center justify-center border-primary">
         <div className="space-y-4 max-lg:space-y-2 max-lg:pb-8 lg:max-w-[50%]">
           <Title>{story.title}</Title>
           {story.genres.length && (
@@ -82,23 +82,12 @@ export const LibraryGameDetail = ({
           </div>
         </div>
       </div>
-      <div className="h-full w-6/12">
-        {currentProgress.currentSceneKey !== story.firstSceneKey ? (
-          <SavesDetail
-            startNewGame={startNewGame}
-            currentProgress={currentProgress}
-            otherProgresses={otherProgresses}
-          />
-        ) : (
-          <div className="mt-8 flex items-center justify-center">
-            <GameLink progress={currentProgress} gameKey={story.key}>
-              <Button className="text-xl shadow-3xl shadow-primary max-md:text-lg">
-                Start game &nbsp;
-                <MoveRightIcon />
-              </Button>
-            </GameLink>
-          </div>
-        )}
+      <div className="h-full w-6/12 bg-black bg-opacity-65">
+        <SavesDetail
+          startNewGame={startNewGame}
+          currentProgress={currentProgress}
+          otherProgresses={otherProgresses}
+        />
       </div>
     </div>
   );

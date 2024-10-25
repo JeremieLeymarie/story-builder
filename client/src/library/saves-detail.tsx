@@ -29,7 +29,7 @@ export const SavesDetail = ({
         <p className="text-sm text-muted-foreground">
           Last played {timeFrom(currentProgress.lastPlayedAt)}
         </p>
-        <p className="mb-2 font-semibold">Your backup slots:</p>
+        <p className="mb-2 font-semibold text-white">Your saves:</p>
         <ScrollArea className="max-h-[200px]">
           {progresses.map((progress, index) => (
             <GameLink
@@ -39,13 +39,13 @@ export const SavesDetail = ({
             >
               <div
                 className={cn(
-                  "group my-3 flex min-w-[300px] cursor-pointer items-center justify-between gap-12 rounded-md border border-primary bg-white bg-opacity-75 px-4 py-3 shadow",
-                  0 === index && "bg-primary",
+                  "group my-3 flex min-w-[300px] cursor-pointer items-center justify-between gap-12 rounded-md border border-primary bg-white bg-opacity-95 px-4 py-3 shadow",
+                  index === 0 && "bg-primary",
                 )}
               >
                 <div>
                   <p
-                    className={cn("uppercase", 0 === index && "font-semibold")}
+                    className={cn("uppercase", index === 0 && "font-semibold")}
                   >
                     {progress.lastScene?.title}
                   </p>
