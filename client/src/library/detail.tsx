@@ -6,7 +6,7 @@ import { StoryGenreBadge, Title } from "@/design-system/components";
 import { formatDate } from "@/lib/date";
 import { Story } from "@/lib/storage/domain";
 import { ExtendedProgress } from "./types";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { getLibraryService } from "@/services";
 import { useRouter } from "@tanstack/react-router";
 
@@ -22,6 +22,14 @@ export const LibraryGameDetail = ({
   otherProgresses,
 }: Props) => {
   const { navigate } = useRouter();
+
+  const areAllSavesFinished = useMemo(
+    () =>
+      [currentProgress, ...otherProgresses].every(
+        (progress) => progress.finished,
+      ),
+    [currentProgress, otherProgresses],
+  );
 
   const startNewGame = useCallback(() => {
     getLibraryService()
@@ -70,15 +78,25 @@ export const LibraryGameDetail = ({
             {story.description}
           </p>
           <div className="flex w-full justify-center">
-            <GameLink
-              progress={currentProgress}
-              gameKey={currentProgress.storyKey}
-            >
-              <Button className="gap-2 text-xl max-md:text-lg">
+            {areAllSavesFinished ? (
+              <Button
+                className="gap-2 text-xl max-md:text-lg"
+                onClick={startNewGame}
+              >
                 <SwordIcon />
-                Play
+                Start a new game
               </Button>
-            </GameLink>
+            ) : (
+              <GameLink
+                progress={currentProgress}
+                gameKey={currentProgress.storyKey}
+              >
+                <Button className="gap-2 text-xl max-md:text-lg">
+                  <SwordIcon />
+                  Play
+                </Button>
+              </GameLink>
+            )}
           </div>
         </div>
       </div>
