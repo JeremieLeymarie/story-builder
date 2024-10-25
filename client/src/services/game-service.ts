@@ -52,19 +52,6 @@ export const _getGameService = ({
       return await localRepository.getScene(sceneKey);
     },
 
-    // // TODO: test this
-    // getSceneDataFromStoryProgress: async (storyProgressKey: string) => {
-    //   const progress = await localRepository.getStoryProgress(storyProgressKey);
-
-    //   if (!progress) {
-    //     throw new Error(`Invalid story progress key: ${storyProgressKey}`);
-    //   }
-
-    //   const scene = await localRepository.getScene(progress.currentSceneKey);
-
-    //   return { scene, storyProgress: progress };
-    // },
-
     getFirstSceneData: async (storyKey: string) => {
       const story = await localRepository.getStory(storyKey);
 
