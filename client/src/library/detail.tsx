@@ -43,17 +43,18 @@ export const LibraryGameDetail = ({
       );
   }, [navigate, story]);
 
+  // TODO: avoid duplicating bg
   return (
-    <div
-      className="flex h-full w-full flex-col items-center justify-start lg:flex-row lg:justify-center"
-      style={{
-        background: `url('${story.image}')`,
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-      <div className="flex h-full w-6/12 items-center justify-center border-primary">
+    <div className="flex h-full w-full flex-col items-center justify-start">
+      <div
+        className="flex h-full min-h-[500px] w-full items-center justify-center border-b-4 border-primary px-12 pt-16"
+        style={{
+          background: `url('${story.image}')`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
         <div className="space-y-4 max-lg:space-y-2 max-lg:pb-8 lg:max-w-[50%]">
           <Title>{story.title}</Title>
           {story.genres.length && (
@@ -100,12 +101,14 @@ export const LibraryGameDetail = ({
           </div>
         </div>
       </div>
-      <div className="h-full w-6/12 bg-black bg-opacity-65">
-        <SavesDetail
-          startNewGame={startNewGame}
-          currentProgress={currentProgress}
-          otherProgresses={otherProgresses}
-        />
+      <div className="flex h-full w-full justify-center bg-white bg-opacity-75 lg:w-6/12">
+        <div className="w-8/12 max-w-[600px] lg:w-full">
+          <SavesDetail
+            startNewGame={startNewGame}
+            currentProgress={currentProgress}
+            otherProgresses={otherProgresses}
+          />
+        </div>
       </div>
     </div>
   );
