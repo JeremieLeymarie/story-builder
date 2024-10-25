@@ -11,6 +11,7 @@ import { Toolbar } from "./toolbar";
 import { useBuilder } from "../hooks/use-builder";
 import { Scene, Story } from "@/lib/storage/domain";
 import { useBuilderContext } from "../hooks/use-builder-store";
+import { getUserOS } from "@/lib/get-os";
 
 const nodeTypes = { scene: SceneNode };
 
@@ -43,13 +44,14 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
         onEdgesDelete={onEdgesDelete}
         onNodesDelete={onNodesDelete}
         minZoom={0.05}
-        onInit={(instance) => instance.fitView()}
         defaultEdgeOptions={{ zIndex: 10000 }}
         selectionMode={SelectionMode.Full}
         nodesFocusable
         selectionOnDrag
         selectNodesOnDrag
         ref={reactFlowRef}
+        fitView
+        multiSelectionKeyCode={getUserOS() === "Mac" ? "Meta" : "ControlLeft"}
       >
         <Controls />
         <MiniMap />

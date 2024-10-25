@@ -114,7 +114,6 @@ export const BuilderShowcase = () => {
             edges={edges}
             onEdgesChange={onEdgesChange}
             minZoom={0.05}
-            onInit={(instance) => instance.fitView()}
             zoomOnScroll={false}
             panOnScroll={false}
             defaultEdgeOptions={{ zIndex: 10000 }}
