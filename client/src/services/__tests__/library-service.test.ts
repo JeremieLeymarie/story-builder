@@ -291,7 +291,7 @@ describe("library-service", () => {
     });
   });
 
-  describe("createStoryProgress", () => {
+  describe("createBlankStoryProgress", () => {
     it("should create a story progress in the local database", async () => {
       localRepository.getStoryProgress.mockResolvedValueOnce(null);
 

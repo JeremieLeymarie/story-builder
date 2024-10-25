@@ -186,7 +186,6 @@ export const _getLibraryService = ({
       };
     },
 
-    // TODO: unit tests
     createBlankStoryProgress: _createBlankStoryProgress,
   };
 };
