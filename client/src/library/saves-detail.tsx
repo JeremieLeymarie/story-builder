@@ -2,7 +2,6 @@ import { Button } from "@/design-system/primitives";
 import { PlusIcon } from "lucide-react";
 import { formatDate, timeFrom } from "@/lib/date";
 import { Title } from "@/design-system/components";
-import { DetailCompleted } from "./detail-completed";
 import { ExtendedProgress } from "./types";
 import { cn } from "@/lib/style";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
@@ -19,9 +18,6 @@ export const SavesDetail = ({
 }) => {
   const progresses = [currentProgress, ...otherProgresses];
 
-  if (currentProgress.finished) {
-    return <DetailCompleted progress={currentProgress} />;
-  }
   return (
     <div className="mt-12 space-y-6 p-12">
       <div className="space-y-2">
@@ -41,6 +37,7 @@ export const SavesDetail = ({
                 className={cn(
                   "group my-3 flex min-w-[300px] cursor-pointer items-center justify-between gap-12 rounded-md border border-primary bg-white bg-opacity-95 px-4 py-3 shadow",
                   index === 0 && "bg-primary",
+                  progress.finished && "grayscale",
                 )}
               >
                 <div>
@@ -53,9 +50,13 @@ export const SavesDetail = ({
                     {formatDate(progress.lastPlayedAt)}
                   </p>
                 </div>
-                <div className="invisible text-muted-foreground group-hover:visible">
-                  Play from here
-                </div>
+                {!progress.finished ? (
+                  <p className="invisible text-muted-foreground group-hover:visible">
+                    Play from here
+                  </p>
+                ) : (
+                  <p>COMPLETED</p>
+                )}
               </div>
             </GameLink>
           ))}

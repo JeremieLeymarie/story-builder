@@ -14,16 +14,14 @@ import { ImportModal } from "@/builder/components/import-modal";
 
 type Library = {
   stories: Story[];
-  finishedGameKeys: string[];
 };
 
 /** Component that displays the current user's library
  *
  * @param {Story[]} stories Stories published in the store
- * @param {string[]} finishedGameKeys Keys of finished games
  * @returns
  */
-export const Library = ({ stories, finishedGameKeys }: Library) => {
+export const Library = ({ stories }: Library) => {
   return (
     <div className="flex flex-col items-center space-y-8 p-8 px-16 sm:items-start sm:px-32">
       <div className="flex flex-col items-center space-y-8 sm:items-start">
@@ -41,7 +39,6 @@ export const Library = ({ stories, finishedGameKeys }: Library) => {
           {stories.length > 0 &&
             stories.map((storyWithKey) => {
               const { key, ...story } = storyWithKey;
-              const isCompleted = finishedGameKeys.includes(key);
 
               return (
                 <Link
@@ -53,22 +50,12 @@ export const Library = ({ stories, finishedGameKeys }: Library) => {
                     {...story}
                     storyKey={key}
                     button={
-                      isCompleted ? (
-                        <Button
-                          className={`absolute bottom-4 right-4`}
-                          disabled={false}
-                          variant="secondary"
-                        >
-                          COMPLETED
-                        </Button>
-                      ) : (
-                        <Button
-                          className={`absolute bottom-4 right-4 opacity-0 transition duration-300 ease-in-out group-hover:opacity-100`}
-                        >
-                          <SwordIcon size="18px" />
-                          &nbsp;Play
-                        </Button>
-                      )
+                      <Button
+                        className={`absolute bottom-4 right-4 opacity-0 transition duration-300 ease-in-out group-hover:opacity-100`}
+                      >
+                        <SwordIcon size="18px" />
+                        &nbsp;Play
+                      </Button>
                     }
                   />
                 </Link>
