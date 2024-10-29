@@ -29,7 +29,9 @@ const Component = () => {
         </div>
         <Toaster />
       </ThemeProvider>
-      {process.env.NODE_ENV && <ReactQueryDevtools initialIsOpen={false} />}
+      {process.env.NODE_ENV === "development" && (
+        <ReactQueryDevtools initialIsOpen={false} />
+      )}
     </QueryClientProvider>
   );
 };
