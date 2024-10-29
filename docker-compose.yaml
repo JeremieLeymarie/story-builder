@@ -19,7 +19,7 @@ services:
     ports:
       - 8000:8000
     environment:
-      - MONGO_URI=mongodb://admin:password@127.0.0.1:27018/
+      - MONGO_URI=mongodb://admin:password@mongodb:27017/
     networks:
       - net
 
