@@ -30,7 +30,7 @@ services:
     ports:
       - 4173:4173
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
     networks:
       - net
 
