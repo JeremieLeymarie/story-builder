@@ -9,7 +9,34 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=password
     volumes:
       - mongo-data:/data/db
+    networks:
+      - net
+
+  story-api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    environment:
+      - MONGO_URI=mongodb://admin:password@127.0.0.1:27018/
+    networks:
+      - net
+
+  story-client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - 4173:4173
+    environment:
+      - NODE_ENV=development
+    networks:
+      - net
 
 volumes:
   mongo-data:
     driver: local
+
+networks:
+  net:
