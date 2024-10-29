@@ -23,6 +23,3 @@ dev-dist
 *.njsproj
 *.sln
 *.sw?
-
-# bun
-bun.lockb

@@ -27,7 +27,6 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
-    platform: linux/arm64/v8
     ports:
       - 4173:4173
     environment:
