@@ -13,4 +13,4 @@ RUN bun install --frozen-lockfile --network-concurrency=20
 COPY . /app
 RUN bun run build
 
-CMD bun run preview
+CMD bunx vite preview --host 0.0.0.0
