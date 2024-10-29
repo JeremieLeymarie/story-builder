@@ -1,5 +1,6 @@
 FROM oven/bun:1.1-alpine
 
+# This is needed by the image processing library sharp
 RUN apk add --update --no-cache vips-cpp && \
     apk update && apk upgrade
 
