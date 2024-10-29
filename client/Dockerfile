@@ -1,10 +1,11 @@
-FROM oven/bun:alpine as build
+FROM node:23-alpine3.19 as build
 
 USER root
 COPY ./package.json ./
 
-RUN bun install
+RUN npm install
 COPY . ./
-RUN bun run build
+RUN npm run generate-pwa-assets
+RUN npm run build
 
-CMD bun run preview
+CMD npm run preview
