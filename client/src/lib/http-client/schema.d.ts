@@ -194,8 +194,8 @@ export interface components {
              * @description The unique key of the story
              */
             key: string;
-            /** @description The status of the story */
-            status: components["schemas"]["StoryStatus"];
+            /** @description The type of the story */
+            type: components["schemas"]["StoryType"];
             /** @description The author of the story */
             author: components["schemas"]["StoryAuthor"] | null;
             /**
@@ -294,8 +294,8 @@ export interface components {
              * @description The unique key of the story
              */
             key: string;
-            /** @description The status of the story */
-            status: components["schemas"]["StoryStatus"];
+            /** @description The type of the story */
+            type: components["schemas"]["StoryType"];
             /** @description The author of the story */
             author: components["schemas"]["StoryAuthor"] | null;
             /**
@@ -374,10 +374,10 @@ export interface components {
             lastSyncAt?: string | null;
         };
         /**
-         * StoryStatus
+         * StoryType
          * @enum {string}
          */
-        StoryStatus: "draft" | "published" | "imported";
+        StoryType: "builder" | "published" | "imported";
         /** SynchronizationPayload */
         SynchronizationPayload: {
             /** Playergames */

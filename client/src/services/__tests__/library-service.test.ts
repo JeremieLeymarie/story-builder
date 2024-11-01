@@ -27,6 +27,8 @@ describe("library-service", () => {
       localRepository,
       remoteRepository,
     });
+
+    vi.useFakeTimers();
   });
 
   describe("downloadStory", () => {
@@ -83,7 +85,7 @@ describe("library-service", () => {
       description: "A wonderful epic tale through the world of Penthetir. ",
       image:
         "https://b2-backblaze-stackpath.b-cdn.net/2178699/c5jpvq_12e7c09178a6a75a5979d117f779bb07ff07f8f9.jpg",
-      status: "draft" as const,
+      type: "builder" as const,
       genres: ["adventure" as const, "fantasy" as const],
       creationDate: new Date(),
       firstSceneKey: "skibidi",
@@ -120,7 +122,7 @@ describe("library-service", () => {
       const result = await libraryService.importFromJSON(fileContent);
 
       expect(localRepository.createStory).toHaveBeenCalledWith({
-        status: "imported",
+        type: "imported",
         originalStoryKey: "bloup",
         title: "The Great Journey To The Green River",
         description: "A wonderful epic tale through the world of Penthetir. ",
@@ -245,7 +247,7 @@ describe("library-service", () => {
       title: "Tidididoudoum tidididoudoum",
       description: "Sacré histoire...",
       image: "http://ton-image.fr",
-      status: "draft" as const,
+      type: "builder" as const,
       firstSceneKey: "zut",
       genres: ["adventure" as const, "children" as const],
       creationDate: new Date(),

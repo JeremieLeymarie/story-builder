@@ -24,46 +24,55 @@ import { Route as GameTestGameKeySceneKeyImport } from './routes/game/test/$game
 // Create/Update Routes
 
 const StoreRoute = StoreImport.update({
+  id: '/store',
   path: '/store',
   getParentRoute: () => rootRoute,
 } as any)
 
 const AboutRoute = AboutImport.update({
+  id: '/about',
   path: '/about',
   getParentRoute: () => rootRoute,
 } as any)
 
 const IndexRoute = IndexImport.update({
+  id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
 } as any)
 
 const LibraryIndexRoute = LibraryIndexImport.update({
+  id: '/library/',
   path: '/library/',
   getParentRoute: () => rootRoute,
 } as any)
 
 const LibraryStoryKeyRoute = LibraryStoryKeyImport.update({
+  id: '/library/$storyKey',
   path: '/library/$storyKey',
   getParentRoute: () => rootRoute,
 } as any)
 
 const BuilderStoriesRoute = BuilderStoriesImport.update({
+  id: '/builder/stories',
   path: '/builder/stories',
   getParentRoute: () => rootRoute,
 } as any)
 
 const BuilderStoryKeyRoute = BuilderStoryKeyImport.update({
+  id: '/builder/$storyKey',
   path: '/builder/$storyKey',
   getParentRoute: () => rootRoute,
 } as any)
 
 const GameGameKeySceneKeyRoute = GameGameKeySceneKeyImport.update({
+  id: '/game/$gameKey/$sceneKey',
   path: '/game/$gameKey/$sceneKey',
   getParentRoute: () => rootRoute,
 } as any)
 
 const GameTestGameKeySceneKeyRoute = GameTestGameKeySceneKeyImport.update({
+  id: '/game/test/$gameKey/$sceneKey',
   path: '/game/test/$gameKey/$sceneKey',
   getParentRoute: () => rootRoute,
 } as any)
@@ -140,17 +149,107 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({
-  IndexRoute,
-  AboutRoute,
-  StoreRoute,
-  BuilderStoryKeyRoute,
-  BuilderStoriesRoute,
-  LibraryStoryKeyRoute,
-  LibraryIndexRoute,
-  GameGameKeySceneKeyRoute,
-  GameTestGameKeySceneKeyRoute,
-})
+export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/store': typeof StoreRoute
+  '/builder/$storyKey': typeof BuilderStoryKeyRoute
+  '/builder/stories': typeof BuilderStoriesRoute
+  '/library/$storyKey': typeof LibraryStoryKeyRoute
+  '/library': typeof LibraryIndexRoute
+  '/game/$gameKey/$sceneKey': typeof GameGameKeySceneKeyRoute
+  '/game/test/$gameKey/$sceneKey': typeof GameTestGameKeySceneKeyRoute
+}
+
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/store': typeof StoreRoute
+  '/builder/$storyKey': typeof BuilderStoryKeyRoute
+  '/builder/stories': typeof BuilderStoriesRoute
+  '/library/$storyKey': typeof LibraryStoryKeyRoute
+  '/library': typeof LibraryIndexRoute
+  '/game/$gameKey/$sceneKey': typeof GameGameKeySceneKeyRoute
+  '/game/test/$gameKey/$sceneKey': typeof GameTestGameKeySceneKeyRoute
+}
+
+export interface FileRoutesById {
+  __root__: typeof rootRoute
+  '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/store': typeof StoreRoute
+  '/builder/$storyKey': typeof BuilderStoryKeyRoute
+  '/builder/stories': typeof BuilderStoriesRoute
+  '/library/$storyKey': typeof LibraryStoryKeyRoute
+  '/library/': typeof LibraryIndexRoute
+  '/game/$gameKey/$sceneKey': typeof GameGameKeySceneKeyRoute
+  '/game/test/$gameKey/$sceneKey': typeof GameTestGameKeySceneKeyRoute
+}
+
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/store'
+    | '/builder/$storyKey'
+    | '/builder/stories'
+    | '/library/$storyKey'
+    | '/library'
+    | '/game/$gameKey/$sceneKey'
+    | '/game/test/$gameKey/$sceneKey'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/about'
+    | '/store'
+    | '/builder/$storyKey'
+    | '/builder/stories'
+    | '/library/$storyKey'
+    | '/library'
+    | '/game/$gameKey/$sceneKey'
+    | '/game/test/$gameKey/$sceneKey'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/store'
+    | '/builder/$storyKey'
+    | '/builder/stories'
+    | '/library/$storyKey'
+    | '/library/'
+    | '/game/$gameKey/$sceneKey'
+    | '/game/test/$gameKey/$sceneKey'
+  fileRoutesById: FileRoutesById
+}
+
+export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  StoreRoute: typeof StoreRoute
+  BuilderStoryKeyRoute: typeof BuilderStoryKeyRoute
+  BuilderStoriesRoute: typeof BuilderStoriesRoute
+  LibraryStoryKeyRoute: typeof LibraryStoryKeyRoute
+  LibraryIndexRoute: typeof LibraryIndexRoute
+  GameGameKeySceneKeyRoute: typeof GameGameKeySceneKeyRoute
+  GameTestGameKeySceneKeyRoute: typeof GameTestGameKeySceneKeyRoute
+}
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  StoreRoute: StoreRoute,
+  BuilderStoryKeyRoute: BuilderStoryKeyRoute,
+  BuilderStoriesRoute: BuilderStoriesRoute,
+  LibraryStoryKeyRoute: LibraryStoryKeyRoute,
+  LibraryIndexRoute: LibraryIndexRoute,
+  GameGameKeySceneKeyRoute: GameGameKeySceneKeyRoute,
+  GameTestGameKeySceneKeyRoute: GameTestGameKeySceneKeyRoute,
+}
+
+export const routeTree = rootRoute
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
 /* prettier-ignore-end */
 

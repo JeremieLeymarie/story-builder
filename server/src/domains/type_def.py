@@ -46,8 +46,8 @@ class Scene(BaseModel):
     builderParams: BuilderParams
 
 
-class StoryStatus(enum.Enum):
-    DRAFT = "draft"
+class StoryType(enum.Enum):
+    BUILDER = "builder"
     PUBLISHED = "published"
     IMPORTED = "imported"
 
@@ -74,10 +74,10 @@ class StoryAuthor(BaseModel):
     username: str
 
 
-# TODO: Figure out a way to use pydantic's discriminated unions (on status)
+# TODO: Figure out a way to use pydantic's discriminated unions (on type)
 class Story(BaseModel, use_enum_values=True):
     key: str = Field(description="The unique key of the story")
-    status: StoryStatus = Field(description="The status of the story")
+    type: StoryType = Field(description="The type of the story")
     author: Optional[StoryAuthor] = Field(description="The author of the story")
     title: str = Field(description="The title of the story")
     description: str = Field(description="The description of the story")
