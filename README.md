@@ -20,6 +20,7 @@ You need on your system:
 - Docker
 - Python 3
 - pre-commit
+- uv
 
 #### Pre-commit
 
@@ -53,28 +54,25 @@ bun run dev
 
 ### Server
 
+Dependencies and python versions are managed via the `uv`
 In the `server` folder
-
-#### Activate virtual env
-
-```bash
-python3.12 -m venv venv
-```
-
-```bash
-source venv/bin/activate
-```
-
-#### Install the modules
-
-```bash
-pip3 install -r requirements.txt
-```
 
 #### Run the API
 
 ```bash
-fastapi dev src/main.py
+uv run fastapi dev
+```
+
+### Run the linter
+
+```bash
+uv run ruff check
+```
+
+### Run the type checker
+
+```bash
+uv run mypy .
 ```
 
 ### Adding routes to the API

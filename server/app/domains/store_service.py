@@ -21,7 +21,7 @@ class StoreService:
         return data
 
     def _validate_story(self, *, story: FullStory) -> None:
-        if story.author == None:
+        if story.author is None:
             raise InvalidStoryFormatException(key="author_id")
 
         # TODO: check that story ends properly
