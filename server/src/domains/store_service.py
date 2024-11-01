@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import cast
 from repositories.story_repository_port import StoryRepositoryPort
-from domains.type_def import FullStory, Scene, Story, StoryStatus
+from domains.type_def import FullStory, Scene, Story, StoryType
 from utils.errors import InvalidStoryFormatException
 
 
@@ -12,7 +12,7 @@ class StoreService:
 
     def load(self) -> list[Story]:
         data = self.story_repository.get_all(
-            with_scenes=False, status=StoryStatus.PUBLISHED
+            with_scenes=False, type=StoryType.PUBLISHED
         )
         return cast(list[Story], data)
 
@@ -31,7 +31,7 @@ class StoreService:
         story = FullStory(scenes=scenes, **story.model_dump())
         self._validate_story(story=story)
 
-        story.status = StoryStatus.PUBLISHED
+        story.type = StoryType.PUBLISHED
         story.publicationDate = datetime.now()
 
         story = self.story_repository.save(story=story)

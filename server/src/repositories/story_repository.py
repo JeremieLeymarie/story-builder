@@ -1,7 +1,7 @@
 from pymongo import ReturnDocument, UpdateOne
 from repositories.story_repository_port import StoryRepositoryPort
 from repositories.mongo_repository import MongoRecord, MongoRepository
-from domains.type_def import FullStory, Story, StoryStatus
+from domains.type_def import FullStory, Story, StoryType
 
 STORY_COLLECTION = "stories"
 
@@ -37,12 +37,12 @@ class StoryRepository(MongoRepository, StoryRepositoryPort):
         return stories
 
     def get_all(
-        self, *, with_scenes: bool = True, status: StoryStatus | None = None
+        self, *, with_scenes: bool = True, type: StoryType | None = None
     ) -> list[Story] | list[FullStory]:
         filter = {}
 
-        if status is not None:
-            filter["status"] = status.value
+        if type is not None:
+            filter["type"] = type.value
 
         documents: list[MongoRecord[dict]] = self.db.stories.find(
             filter, {"scenes": 1 if with_scenes else 0}

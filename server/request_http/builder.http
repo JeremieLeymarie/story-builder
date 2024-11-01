@@ -9,7 +9,7 @@ content-type: application/json
     "title" : "A story",
     "description" : "A story description",
     "image" : "http://image.fr",
-    "status" : "draft"
+    "type" : "builder"
   },
   "scenes" : [
     {

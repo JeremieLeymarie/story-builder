@@ -22,8 +22,8 @@ export type User = {
   email: string;
 };
 
-export const STORY_STATUS = ["draft", "published", "imported"] as const;
-export type StoryStatus = (typeof STORY_STATUS)[number];
+export const STORY_TYPE = ["builder", "published", "imported"] as const;
+export type StoryStatus = (typeof STORY_TYPE)[number];
 
 type StoryBase = {
   key: string;
@@ -41,16 +41,18 @@ type StoryBase = {
 
 type ImportedStory = StoryBase & {
   originalStoryKey?: string;
-  status: "imported";
+  type: "imported";
 };
 
 type PublishedStory = StoryBase & {
-  status: "published";
+  type: "published";
   publicationDate: Date;
 };
-type DraftStory = StoryBase & { status: "draft" };
+type BuilderStory = StoryBase & { type: "builder" };
 
-export type Story = ImportedStory | PublishedStory | DraftStory;
+// PublishedStory is going to be deleted in the near future, when the store is killed
+// It could also reappear later, to represent a way to share a story via a link to download it instead of the JSON import
+export type Story = ImportedStory | PublishedStory | BuilderStory;
 
 export type Action = {
   text: string;

@@ -14,7 +14,7 @@ export const BASIC_STORY: Story = {
   title: "Tidididoudoum tidididoudoum",
   description: "Sacré histoire...",
   image: "http://ton-image.fr",
-  status: "draft",
+  type: "builder",
   firstSceneKey: "zut",
   genres: ["adventure", "children"],
   creationDate: new Date(),

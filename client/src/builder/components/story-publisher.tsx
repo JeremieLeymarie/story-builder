@@ -27,12 +27,12 @@ export const StoryPublisher = ({
           variant="outline"
           className="w-full"
           onClick={handlePublishClick}
-          disabled={story.status === "published"}
+          disabled={story.type === "published"}
         >
           <StoreIcon size="16px" />
           &nbsp; Publish
         </Button>
-        {story.status === "published" && (
+        {story.type === "published" && (
           <p className="p-2 text-sm text-muted-foreground">
             Your story is already published in the store
           </p>

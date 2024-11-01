@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from domains.type_def import FullStory, Story, StoryStatus
+from domains.type_def import FullStory, Story, StoryType
 
 
 class StoryRepositoryPort(Protocol):
@@ -30,14 +30,14 @@ class StoryRepositoryPort(Protocol):
         self,
         *,
         with_scenes: bool = True,
-        status: StoryStatus | None = None,
+        type: StoryType | None = None,
     ) -> list[Story] | list[FullStory]:
         """Retrieve all stories from database
 
 
         Args:
             with_scenes (bool, optional): whether or not to retrieve the scenes. Defaults to True.
-            status (StoryStatus, optional): filter by status type
+            type (StoryType, optional): filter by type type
 
         Returns:
             list[FullStory] | list[Story]: a list of stories, with or without the scenes

@@ -40,20 +40,20 @@ const baseStorySchemaFields = {
   creationDate: z.string().transform((val) => new Date(val)),
 };
 
-const storySchema = z.discriminatedUnion("status", [
+const storySchema = z.discriminatedUnion("type", [
   z.object({
     ...baseStorySchemaFields,
-    status: z.literal("published"),
+    type: z.literal("published"),
     publicationDate: z.string().transform((val) => new Date(val)),
   }),
   z.object({
     ...baseStorySchemaFields,
-    status: z.literal("imported"),
+    type: z.literal("imported"),
     originalStoryKey: z.string(),
   }),
   z.object({
     ...baseStorySchemaFields,
-    status: z.literal("draft"),
+    type: z.literal("builder"),
   }),
 ]);
 

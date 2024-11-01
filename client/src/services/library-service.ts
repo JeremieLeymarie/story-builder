@@ -88,7 +88,7 @@ export const _getLibraryService = ({
 
       const story = await localRepository.createStory({
         ...importedStory,
-        status: "imported",
+        type: "imported",
         originalStoryKey: importedStoryKey,
       });
 

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { STORY_GENRES, STORY_STATUS } from "@/lib/storage/domain";
+import { STORY_GENRES, STORY_TYPE } from "@/lib/storage/domain";
 
 export const fullStorySchema = z.object({
   story: z.object(
@@ -17,7 +17,7 @@ export const fullStorySchema = z.object({
       genres: z.array(z.enum(STORY_GENRES)),
       authorId: z.string().optional(),
       image: z.string().url({ message: "Image has to be a valid URL" }),
-      status: z.enum(STORY_STATUS, {
+      type: z.enum(STORY_TYPE, {
         message: "Status has to be a valid Status",
       }),
       title: z.string({ message: "Title is required" }),

@@ -186,7 +186,7 @@ describe("builder-service", () => {
           image: "http://image.com",
           genres: ["adventure", "children"],
           creationDate: new Date(),
-          status: "draft",
+          type: "builder",
         },
         firstScene: {
           builderParams: { position: { x: 0, y: 0 } },
@@ -220,7 +220,7 @@ describe("builder-service", () => {
           image: "http://image.com",
           genres: ["adventure", "children"],
           creationDate: new Date(),
-          status: "draft",
+          type: "builder",
           author: { username: BASIC_USER.username, key: BASIC_USER.key },
         },
         firstScene: {
@@ -357,9 +357,19 @@ describe("builder-service", () => {
 
       expect(localRepository.getUser).toHaveBeenCalled();
       expect(localRepository.getStoriesByAuthor).toHaveBeenCalledTimes(2);
+      localRepository.getStoriesByAuthor.mockResolvedValueOnce([
+        BASIC_STORY,
+        { ...BASIC_STORY, type: "imported" },
+        { ...BASIC_STORY, type: "published", publicationDate: new Date() },
+      ]);
       expect(localRepository.getStoriesByAuthor).toHaveBeenCalledWith(
         BASIC_USER.key,
       );
+      localRepository.getStoriesByAuthor.mockResolvedValueOnce([
+        BASIC_STORY,
+        { ...BASIC_STORY, type: "imported" },
+        { ...BASIC_STORY, type: "published", publicationDate: new Date() },
+      ]);
       expect(localRepository.getStoriesByAuthor).toHaveBeenCalledWith(
         undefined,
       );

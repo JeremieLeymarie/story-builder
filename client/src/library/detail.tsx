@@ -69,7 +69,7 @@ export const LibraryGameDetail = ({
               Story by: {story.author?.username}
             </p>
           )}
-          {story.status === "published" && !!story.publicationDate && (
+          {story.type === "published" && !!story.publicationDate && (
             <p className="max-md:text-md text-lg text-white">
               Published on&nbsp;
               {formatDate(story.publicationDate)}

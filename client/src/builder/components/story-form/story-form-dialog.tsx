@@ -34,7 +34,7 @@ export const StoryFormDialog = (
 
 export type OnSubmitStoryFormProps = Omit<
   WithoutKey<Story>,
-  "firstSceneKey" | "author" | "status" | "publicationDate" | "creationDate"
+  "firstSceneKey" | "author" | "type" | "publicationDate" | "creationDate"
 > & { firstSceneKey?: string };
 type StoryFormProps = {
   onSubmit: (props: OnSubmitStoryFormProps) => void;

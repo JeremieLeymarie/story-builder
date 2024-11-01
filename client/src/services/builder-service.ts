@@ -23,7 +23,10 @@ export const _getBuilderService = ({
     const storiesWithoutAuthor =
       await localRepository.getStoriesByAuthor(undefined);
 
-    return [...(storiesWithAuthor ?? []), ...(storiesWithoutAuthor ?? [])];
+    return [
+      ...(storiesWithAuthor ?? []),
+      ...(storiesWithoutAuthor ?? []),
+    ].filter((story) => story.type === "builder");
   };
 
   return {
@@ -79,7 +82,7 @@ export const _getBuilderService = ({
     createStoryWithFirstScene: async (
       storyData: Omit<
         WithoutKey<Story>,
-        "status" | "creationDate" | "user" | "firstSceneKey"
+        "type" | "creationDate" | "user" | "firstSceneKey"
       >,
     ) => {
       const user = await localRepository.getUser();
@@ -87,7 +90,7 @@ export const _getBuilderService = ({
       const result = await localRepository.createStoryWithFirstScene({
         story: {
           ...storyData,
-          status: "draft",
+          type: "builder",
           creationDate: new Date(),
           ...(user && { author: { username: user.username, key: user.key } }),
         },
