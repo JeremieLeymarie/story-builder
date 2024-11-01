@@ -10,6 +10,7 @@ const Page = () => {
   const { data, isLoading, refetch } = useQuery({
     queryFn: () => builderService.getBuilderStoryData(storyKey),
     queryKey: ["builder-story-data"],
+    refetchOnWindowFocus: false,
   });
 
   if (isLoading || !data) {
