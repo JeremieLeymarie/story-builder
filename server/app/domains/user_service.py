@@ -1,6 +1,4 @@
-from crypt import crypt
-
-from hmac import compare_digest as compare_hash
+import bcrypt
 
 from repositories.user_repository_port import UserRepositoryPort
 from domains.type_def import FullUser, User
@@ -19,12 +17,15 @@ class UserService:
         if user_exists:
             raise InvalidActionException("Email or username is taken")
 
+        password_bytes = user.password.encode('utf-8')
+        hashed_bytes = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
+        hashed_password = hashed_bytes.decode("utf-8")
         created_user = self.user_repository.save(
             FullUser(
                 key=user.key,
                 username=user.username,
                 email=user.email,
-                password=crypt(user.password),
+                password=hashed_password,
             )
         )
 
@@ -38,9 +39,8 @@ class UserService:
         if not full_user:
             raise BadAuthException("User not found")
 
-        password_match = compare_hash(
-            crypt(password, full_user.password), full_user.password
-        )
+        password_bytes = password.encode('utf-8')
+        password_match = bcrypt.checkpw(password_bytes, full_user.password.encode('utf-8'))
 
         if not password_match:
             raise BadAuthException("Invalid password")
