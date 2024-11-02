@@ -3,8 +3,9 @@ name = "server"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 dependencies = [
+    "bcrypt>=4.2.0",
     "fastapi[standard]>=0.115.4",
     "mypy>=1.13.0",
     "pre-commit>=4.0.1",
