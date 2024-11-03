@@ -4,7 +4,7 @@ import { ErrorMessage } from "@/design-system/components/error-message";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useIsOnline } from "@/hooks/use-is-online";
-import { BackdropLoader } from "@/design-system/components";
+import { Loader } from "@/design-system/components";
 import { Story, StoryGenre } from "@/lib/storage/domain";
 import { getStoreService } from "@/services/store-service";
 
@@ -17,7 +17,7 @@ const StoreComponent = () => {
     getStoreService().getItemsByGenre().then(setStories);
   }, []);
 
-  if (stories === undefined) return <BackdropLoader />;
+  if (stories === undefined) return <Loader />;
 
   return stories ? (
     <Store storiesByGenre={stories.storiesByGenre} />

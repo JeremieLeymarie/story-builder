@@ -1,6 +1,6 @@
 import { BuilderContainer } from "@/builder/components/builder-container";
 import { getBuilderService } from "@/services";
-import { BackdropLoader, ErrorMessage } from "@/design-system/components";
+import { Loader, ErrorMessage } from "@/design-system/components";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -14,7 +14,7 @@ const Page = () => {
   });
 
   if (isLoading || !data) {
-    return <BackdropLoader />;
+    return <Loader />;
   }
 
   const { scenes, story } = data;
