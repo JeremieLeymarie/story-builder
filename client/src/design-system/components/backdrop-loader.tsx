@@ -1,6 +1,6 @@
 import { cn } from "@/lib/style";
 
-export const BackdropLoader = ({
+export const Loader = ({
   className,
   text,
 }: {

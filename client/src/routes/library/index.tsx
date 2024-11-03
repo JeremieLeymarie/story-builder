@@ -1,4 +1,4 @@
-import { BackdropLoader, ErrorMessage } from "@/design-system/components";
+import { Loader, ErrorMessage } from "@/design-system/components";
 import { Library } from "@/library/library";
 import { getLibraryService } from "@/services";
 import { createFileRoute } from "@tanstack/react-router";
@@ -8,7 +8,7 @@ const Component = () => {
   const { games } = useLiveQuery(getLibraryService().getLibrary) ?? {};
 
   if (games === undefined) {
-    return <BackdropLoader />;
+    return <Loader />;
   }
 
   return games ? (
