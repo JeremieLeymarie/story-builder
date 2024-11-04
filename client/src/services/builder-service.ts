@@ -1,17 +1,13 @@
 import { Scene, Story } from "@/lib/storage/domain";
 import { LocalRepositoryPort } from "@/repositories/local-repository-port";
-import { RemoteRepositoryPort } from "@/repositories/remote-repository-port";
 import { WithoutKey } from "@/types";
 import { getLocalRepository } from "@/repositories/indexed-db-repository";
-import { getRemoteAPIRepository } from "@/repositories/remote-api-repository";
 
 // TODO: revise error management? Maybe throw errors instead of string/boolean/null returns
 export const _getBuilderService = ({
   localRepository,
-  remoteRepository,
 }: {
   localRepository: LocalRepositoryPort;
-  remoteRepository: RemoteRepositoryPort;
 }) => {
   const getUserBuilderStories = async () => {
     const user = await localRepository.getUser();
@@ -112,16 +108,6 @@ export const _getBuilderService = ({
       return result;
     },
 
-    publishStory: async (scenes: Scene[], story: Story) => {
-      const response = await remoteRepository.publishStory(scenes, story);
-
-      if (response.data) {
-        await localRepository.updateStory(response.data.story);
-      }
-
-      return !!response.data;
-    },
-
     // TODO: update all user stories on login
 
     addScene: async (scene: WithoutKey<Scene>) => {
@@ -208,6 +194,5 @@ export const _getBuilderService = ({
 export const getBuilderService = () => {
   return _getBuilderService({
     localRepository: getLocalRepository(),
-    remoteRepository: getRemoteAPIRepository(),
   });
 };

@@ -4,10 +4,6 @@ import {
   MockLocalRepository,
 } from "@/repositories/stubs/local-repository-stub";
 import {
-  getRemoteRepositoryStub,
-  MockRemoteRepository,
-} from "@/repositories/stubs/remote-repository-stub";
-import {
   BASIC_SCENE,
   BASIC_USER,
   BASIC_STORY,
@@ -17,7 +13,6 @@ import { _getBuilderService } from "../builder-service";
 describe("builder-service", () => {
   let builderService: ReturnType<typeof _getBuilderService>;
   let localRepository: MockLocalRepository;
-  let remoteRepository: MockRemoteRepository;
 
   beforeAll(() => {
     vi.useFakeTimers();
@@ -25,11 +20,9 @@ describe("builder-service", () => {
 
   beforeEach(() => {
     localRepository = getLocalRepositoryStub();
-    remoteRepository = getRemoteRepositoryStub();
 
     builderService = _getBuilderService({
       localRepository,
-      remoteRepository,
     });
   });
 
@@ -237,40 +230,6 @@ describe("builder-service", () => {
           ],
         },
       });
-    });
-  });
-
-  describe("publishStory", () => {
-    it("should publish the story", async () => {
-      const success = await builderService.publishStory(
-        [BASIC_SCENE],
-        BASIC_STORY,
-      );
-
-      expect(remoteRepository.publishStory).toHaveBeenCalledWith(
-        [BASIC_SCENE],
-        BASIC_STORY,
-      );
-      expect(localRepository.updateStory).toHaveBeenCalled();
-
-      expect(success).toBeTruthy();
-    });
-
-    it("should not update local repository if remote update failed", async () => {
-      remoteRepository.publishStory.mockResolvedValueOnce({ error: "Error" });
-
-      const success = await builderService.publishStory(
-        [BASIC_SCENE],
-        BASIC_STORY,
-      );
-
-      expect(remoteRepository.publishStory).toHaveBeenCalledWith(
-        [BASIC_SCENE],
-        BASIC_STORY,
-      );
-      expect(localRepository.updateStory).not.toHaveBeenCalled();
-
-      expect(success).toBeFalsy();
     });
   });
 

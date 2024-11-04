@@ -44,11 +44,6 @@ export const Navbar = ({
             Your games
           </NavButton>
         </Link>
-        <Link to="/store" className="block">
-          <NavButton isCurrentState={pathname.includes("store")}>
-            Store
-          </NavButton>
-        </Link>
         <Link to="/builder/stories" className="block">
           <NavButton isCurrentState={pathname.includes("builder")}>
             Builder

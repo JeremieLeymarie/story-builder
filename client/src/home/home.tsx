@@ -3,15 +3,13 @@ import { Story } from "@/lib/storage/domain";
 import { BuilderShowcase } from "./builder-showcase";
 import { LibrarySection } from "./library-section";
 import { Divider } from "@/design-system/components";
-import { StoreSection } from "./store-section";
 
 type Props = {
   lastPlayedGame?: Story | null;
-  storeItems: Story[] | null;
   libraryStories: Story[];
 };
 
-export const Home = ({ lastPlayedGame, storeItems, libraryStories }: Props) => {
+export const Home = ({ lastPlayedGame, libraryStories }: Props) => {
   return (
     <div className="h-full w-full">
       {!!lastPlayedGame && (
@@ -21,12 +19,6 @@ export const Home = ({ lastPlayedGame, storeItems, libraryStories }: Props) => {
         </>
       )}
       {libraryStories.length > 3 && <LibrarySection stories={libraryStories} />}
-      {storeItems && storeItems.length > 3 && (
-        <>
-          <StoreSection stories={storeItems} />
-          <Divider />
-        </>
-      )}
       <BuilderShowcase />
       <Divider />
 

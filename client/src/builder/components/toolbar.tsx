@@ -2,7 +2,6 @@ import { Button } from "@/design-system/primitives";
 import { BookOpenTextIcon, TestTubesIcon } from "lucide-react";
 import { SceneEditor } from "./editors/scene-editor";
 import { useToolbar } from "../hooks/use-toolbar";
-import { StoryPublisher } from "./story-publisher";
 import { ExportModal } from "./export-modal";
 import { Scene, Story } from "@/lib/storage/domain";
 import { getBuilderService } from "@/services";
@@ -65,7 +64,6 @@ export const Toolbar = ({ story, scenes }: Props) => {
         >
           <TestTubesIcon size="16px" /> &nbsp; Test
         </Button>
-        <StoryPublisher story={story} scenes={scenes} />
         <ExportModal story={story} scenes={scenes} />
         <DeleteModal deleteStory={deleteStory} />
       </div>

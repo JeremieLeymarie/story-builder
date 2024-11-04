@@ -1,6 +1,6 @@
 import { SceneAction } from "./scene-action";
 import { Button } from "@/design-system/primitives";
-import { BookUpIcon, LibraryBigIcon } from "lucide-react";
+import { LibraryBigIcon } from "lucide-react";
 
 import { Scene, StoryProgress } from "@/lib/storage/domain";
 import { Divider } from "@/design-system/components/divider";
@@ -43,21 +43,14 @@ export const GameScene = ({
             <Divider className="w-[200px]" />
             <p className="w-6/12 text-center italic text-muted-foreground">
               This was the last scene of this story... Yes, we know, endings are
-              always difficult. That's why there is an (almost) infinite number
-              of stories waiting to be played in the
-              <span className="font-semibold"> free</span> store!
+              always difficult. But you can still go back to your library and
+              find more stories to play!
             </p>
             <div className="flex gap-2">
               <Link to="/library">
                 <Button>
                   <LibraryBigIcon size="18px" />
                   &nbsp;Library
-                </Button>
-              </Link>
-              <Link to="/store">
-                <Button>
-                  <BookUpIcon size="18px" />
-                  &nbsp; Store
                 </Button>
               </Link>
             </div>

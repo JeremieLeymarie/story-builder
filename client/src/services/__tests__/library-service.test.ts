@@ -1,8 +1,6 @@
 import {
   getLocalRepositoryStub,
-  getRemoteRepositoryStub,
   MockLocalRepository,
-  MockRemoteRepository,
 } from "@/repositories/stubs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { _getLibraryService } from "../library-service";
@@ -17,65 +15,15 @@ import dayjs from "dayjs";
 describe("library-service", () => {
   let libraryService: ReturnType<typeof _getLibraryService>;
   let localRepository: MockLocalRepository;
-  let remoteRepository: MockRemoteRepository;
 
   beforeEach(() => {
     localRepository = getLocalRepositoryStub();
-    remoteRepository = getRemoteRepositoryStub();
 
     libraryService = _getLibraryService({
       localRepository,
-      remoteRepository,
     });
 
     vi.useFakeTimers();
-  });
-
-  describe("downloadStory", () => {
-    it("should gracefully fail when offline", async () => {
-      vi.spyOn(window.navigator, "onLine", "get").mockReturnValue(false);
-
-      const result = await libraryService.downloadStory("tiptoptap");
-
-      expect(result).toBeFalsy();
-    });
-
-    it("should download story from store", async () => {
-      const result = await libraryService.downloadStory("tiptoptap");
-
-      expect(remoteRepository.downloadStory).toHaveBeenCalledWith("tiptoptap");
-      expect(localRepository.getStory).toHaveBeenCalledWith(BASIC_STORY.key);
-      expect(localRepository.createStory).not.toHaveBeenCalled();
-      expect(localRepository.createScenes).not.toHaveBeenCalled();
-      expect(localRepository.createStoryProgress).toHaveBeenCalled();
-
-      expect(result).toBeTruthy();
-    });
-
-    it("should create story if it doesn't exist", async () => {
-      localRepository.getStory.mockReturnValueOnce(Promise.resolve(null));
-
-      const result = await libraryService.downloadStory("tiptoptap");
-
-      expect(localRepository.createStory).toHaveBeenCalledWith(BASIC_STORY);
-      expect(localRepository.createScenes).toHaveBeenCalledWith([BASIC_SCENE]);
-      expect(localRepository.createStoryProgress).toHaveBeenCalled();
-
-      expect(result).toBeTruthy();
-    });
-
-    it("should fail if story is invalid", async () => {
-      const getStorySpy = vi.spyOn(localRepository, "getStory");
-      const downloadStorySpy = vi.spyOn(remoteRepository, "downloadStory");
-
-      downloadStorySpy.mockResolvedValueOnce({ error: "Error" });
-
-      const result = await libraryService.downloadStory("tiptoptap");
-
-      expect(getStorySpy).not.toHaveBeenCalledWith();
-
-      expect(result).toBeFalsy();
-    });
   });
 
   describe("importFromJSON", () => {
