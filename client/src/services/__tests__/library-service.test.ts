@@ -5,7 +5,6 @@ import {
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { _getLibraryService } from "../library-service";
 import {
-  BASIC_SCENE,
   BASIC_STORY,
   BASIC_STORY_PROGRESS,
   BASIC_USER,
