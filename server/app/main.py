@@ -2,9 +2,8 @@ from http import HTTPStatus
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRoute
-from domains.type_def import FullStory, FullUser, Story, StoryProgress, User
+from domains.type_def import FullUser, StoryProgress, User
 from domains.user_service import UserService
-from domains.store_service import StoreService
 from domains.synchronization_service import SynchronizationService
 from repositories.story_repository import StoryRepository
 from repositories.user_repository import UserRepository
@@ -13,7 +12,6 @@ from request_types import (
     APIResponse,
     CreateUserRequest,
     FullStoriesRequest,
-    FullStoryBuilderRequest,
     LoginUserRequest,
     SynchronizationPayload,
 )
@@ -71,44 +69,6 @@ async def create_user(data: CreateUserRequest):
     except Exception as err:
         raise raise_http_error(err)
 
-
-# STORE ENDPOINTS
-
-
-@app.get(
-    "/api/store/load",
-    status_code=HTTPStatus.OK,
-    response_model=list[Story],
-    responses={},
-)
-async def get_store_items():
-    try:
-        result = StoreService(story_repository=StoryRepository()).load()
-        return result
-    except Exception as err:
-        raise raise_http_error(err)
-
-
-@app.get(
-    "/api/store/download/{key}", status_code=HTTPStatus.OK, response_model=FullStory
-)
-async def download_from_store(key: str):
-    try:
-        result = StoreService(story_repository=StoryRepository()).download(key=key)
-        return result
-    except Exception as err:
-        raise raise_http_error(err)
-
-
-@app.put("/api/store/publish", status_code=HTTPStatus.OK, response_model=FullStory)
-async def publish_in_store(body: FullStoryBuilderRequest):
-    try:
-        story = StoreService(story_repository=StoryRepository()).publish(
-            story=body.story, scenes=body.scenes
-        )
-        return story
-    except Exception as err:
-        raise raise_http_error(err)
 
 
 # SYNCHRONIZATION ENDPOINTS
