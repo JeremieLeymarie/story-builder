@@ -23,6 +23,7 @@ import { Route as GameTestGameKeySceneKeyImport } from './routes/game/test/$game
 // Create/Update Routes
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 const StoreRoute = StoreImport.update({
   id: '/store',
@@ -31,6 +32,8 @@ const StoreRoute = StoreImport.update({
 } as any)
 
 >>>>>>> 6c8b761 (:sparkles: Use story type instead of status to determine if a story is in the builder or in the library)
+=======
+>>>>>>> 12d5460 (:fire: Remove store from client)
 const AboutRoute = AboutImport.update({
   id: '/about',
   path: '/about',
@@ -148,9 +151,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   '/store': typeof StoreRoute
 >>>>>>> 6c8b761 (:sparkles: Use story type instead of status to determine if a story is in the builder or in the library)
+=======
+>>>>>>> 12d5460 (:fire: Remove store from client)
   '/builder/$storyKey': typeof BuilderStoryKeyRoute
   '/builder/stories': typeof BuilderStoriesRoute
   '/library/$storyKey': typeof LibraryStoryKeyRoute
@@ -163,9 +169,12 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   '/store': typeof StoreRoute
 >>>>>>> 6c8b761 (:sparkles: Use story type instead of status to determine if a story is in the builder or in the library)
+=======
+>>>>>>> 12d5460 (:fire: Remove store from client)
   '/builder/$storyKey': typeof BuilderStoryKeyRoute
   '/builder/stories': typeof BuilderStoriesRoute
   '/library/$storyKey': typeof LibraryStoryKeyRoute
@@ -179,9 +188,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   '/store': typeof StoreRoute
 >>>>>>> 6c8b761 (:sparkles: Use story type instead of status to determine if a story is in the builder or in the library)
+=======
+>>>>>>> 12d5460 (:fire: Remove store from client)
   '/builder/$storyKey': typeof BuilderStoryKeyRoute
   '/builder/stories': typeof BuilderStoriesRoute
   '/library/$storyKey': typeof LibraryStoryKeyRoute
@@ -196,9 +208,12 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     | '/store'
 >>>>>>> 6c8b761 (:sparkles: Use story type instead of status to determine if a story is in the builder or in the library)
+=======
+>>>>>>> 12d5460 (:fire: Remove store from client)
     | '/builder/$storyKey'
     | '/builder/stories'
     | '/library/$storyKey'
@@ -210,9 +225,12 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     | '/store'
 >>>>>>> 6c8b761 (:sparkles: Use story type instead of status to determine if a story is in the builder or in the library)
+=======
+>>>>>>> 12d5460 (:fire: Remove store from client)
     | '/builder/$storyKey'
     | '/builder/stories'
     | '/library/$storyKey'
@@ -224,9 +242,12 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     | '/store'
 >>>>>>> 6c8b761 (:sparkles: Use story type instead of status to determine if a story is in the builder or in the library)
+=======
+>>>>>>> 12d5460 (:fire: Remove store from client)
     | '/builder/$storyKey'
     | '/builder/stories'
     | '/library/$storyKey'
@@ -240,9 +261,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   StoreRoute: typeof StoreRoute
 >>>>>>> 6c8b761 (:sparkles: Use story type instead of status to determine if a story is in the builder or in the library)
+=======
+>>>>>>> 12d5460 (:fire: Remove store from client)
   BuilderStoryKeyRoute: typeof BuilderStoryKeyRoute
   BuilderStoriesRoute: typeof BuilderStoriesRoute
   LibraryStoryKeyRoute: typeof LibraryStoryKeyRoute
@@ -255,9 +279,12 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   StoreRoute: StoreRoute,
 >>>>>>> 6c8b761 (:sparkles: Use story type instead of status to determine if a story is in the builder or in the library)
+=======
+>>>>>>> 12d5460 (:fire: Remove store from client)
   BuilderStoryKeyRoute: BuilderStoryKeyRoute,
   BuilderStoriesRoute: BuilderStoriesRoute,
   LibraryStoryKeyRoute: LibraryStoryKeyRoute,
