@@ -24,15 +24,9 @@ export type MockRemoteRepository = {
 
 export const getRemoteRepositoryStub = (): MockRemoteRepository => {
   return {
-    publishStory: P({ story: BASIC_STORY, scenes: [BASIC_SCENE] }),
-
     login: P(BASIC_USER),
 
     register: P({ ...BASIC_USER, password: "secret" }),
-
-    getStoreItems: P([BASIC_STORY]),
-
-    downloadStory: P({ story: BASIC_STORY, scenes: [BASIC_SCENE] }),
 
     saveStoryProgresses: P([BASIC_STORY_PROGRESS]),
 

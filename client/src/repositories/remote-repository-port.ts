@@ -10,11 +10,6 @@ export type RemoteRepositoryResponse<TData = unknown> =
 type StandardAPIResponse = { message?: string | null; success: boolean };
 
 export type RemoteRepositoryPort = {
-  publishStory: (
-    scenes: Scene[],
-    story: Story,
-  ) => Promise<RemoteRepositoryResponse<{ story: Story; scenes: Scene[] }>>;
-
   login: (
     usernameOrEmail: string,
     password: string,
@@ -23,12 +18,6 @@ export type RemoteRepositoryPort = {
   register: (
     user: User & { password: string },
   ) => Promise<RemoteRepositoryResponse<User>>;
-
-  getStoreItems: () => Promise<RemoteRepositoryResponse<Story[]>>;
-
-  downloadStory: (
-    storyKey: string,
-  ) => Promise<RemoteRepositoryResponse<{ story: Story; scenes: Scene[] }>>;
 
   saveStoryProgresses: (
     storyProgresses: StoryProgress[],

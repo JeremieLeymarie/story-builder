@@ -1,21 +1,13 @@
 import { Scene, Story } from "@/lib/storage/domain";
-import {
-  getLocalRepository,
-  getRemoteAPIRepository,
-  LocalRepositoryPort,
-  RemoteRepositoryPort,
-} from "@/repositories";
+import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 import { fullStorySchema } from "./common/schemas";
-import { isOnline } from "./common/sync";
 
 // TODO: uniformize responses
 // TODO: test all of this
 export const _getLibraryService = ({
   localRepository,
-  remoteRepository,
 }: {
   localRepository: LocalRepositoryPort;
-  remoteRepository: RemoteRepositoryPort;
 }) => {
   const _createBlankStoryProgress = async ({ story }: { story: Story }) => {
     const user = await localRepository.getUser();
@@ -38,27 +30,6 @@ export const _getLibraryService = ({
   };
 
   return {
-    downloadStory: async (storyKey: string) => {
-      // TODO: what happens if story already exists (from other user for example)
-      if (!isOnline()) return false;
-      const { data } = await remoteRepository.downloadStory(storyKey);
-
-      if (data) {
-        const story = await localRepository.getStory(data.story.key);
-
-        if (!story) {
-          await localRepository.createStory(data.story);
-          await localRepository.createScenes(data.scenes);
-        }
-
-        await _createBlankStoryProgress({ story: data.story });
-
-        return true;
-      }
-
-      return false;
-    },
-
     importFromJSON: async (fileContent: string) => {
       // TODO: what happens if story already exists (from other user for example)
       let parsed: unknown;
@@ -212,5 +183,4 @@ export const _getLibraryService = ({
 export const getLibraryService = () =>
   _getLibraryService({
     localRepository: getLocalRepository(),
-    remoteRepository: getRemoteAPIRepository(),
   });

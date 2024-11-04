@@ -1,6 +1,6 @@
 import { RemoteRepositoryPort } from "./remote-repository-port";
-import { client } from "@/lib/http-client/client";
 import { adapter } from "@/lib/http-client/adapters";
+import { client } from "@/lib/http-client/client";
 import { components } from "@/lib/http-client/schema";
 import { User } from "@/lib/storage/domain";
 
@@ -23,19 +23,8 @@ const _getRemoteAPIRepository = (
   _client: typeof client,
 ): RemoteRepositoryPort => {
   return {
-    publishStory: async (scenes, story) => {
-      const response = await _client.PUT("/api/store/publish", {
-        body: { scenes, story: adapter.fromClient.story(story) },
-      });
-
-      if (response.data) {
-        return { data: adapter.fromAPI.fullStory(response.data) };
-      }
-      return { error: parseError(response.error) };
-    },
-
     login: async (usernameOrEmail, password) => {
-      const response = await client.POST("/api/user/login", {
+      const response = await _client.POST("/api/user/login", {
         body: { usernameOrEmail, password },
       });
 
@@ -45,7 +34,7 @@ const _getRemoteAPIRepository = (
     },
 
     register: async (user: User & { password: string }) => {
-      const response = await client.POST("/api/user/register", {
+      const response = await _client.POST("/api/user/register", {
         body: { ...user },
       });
 
@@ -54,27 +43,8 @@ const _getRemoteAPIRepository = (
       return { error: parseError(response.error) };
     },
 
-    getStoreItems: async () => {
-      const response = await client.GET("/api/store/load");
-
-      if (response.data)
-        return { data: adapter.fromAPI.stories(response.data) };
-
-      return { error: response.error };
-    },
-
-    downloadStory: async (key) => {
-      const { data, error } = await client.GET("/api/store/download/{key}", {
-        params: { path: { key } },
-      });
-
-      if (data) return { data: adapter.fromAPI.fullStory(data) };
-
-      return { error: parseError(error) };
-    },
-
     saveStoryProgresses: async (progresses, userKey) => {
-      const { data, error } = await client.PUT("/api/save/progresses", {
+      const { data, error } = await _client.PUT("/api/save/progresses", {
         body: adapter.fromClient.storyProgresses(progresses, userKey),
       });
 
@@ -84,7 +54,7 @@ const _getRemoteAPIRepository = (
     },
 
     saveStories: async (stories, scenes) => {
-      const { data, error } = await client.PUT("/api/save/builder", {
+      const { data, error } = await _client.PUT("/api/save/builder", {
         body: { stories: adapter.fromClient.stories(stories), scenes },
       });
 
@@ -95,7 +65,7 @@ const _getRemoteAPIRepository = (
     },
 
     getSynchronizationData: async (userKey: string) => {
-      const { data, error } = await client.GET("/api/load/{user_key}", {
+      const { data, error } = await _client.GET("/api/load/{user_key}", {
         params: { path: { user_key: userKey } },
       });
 

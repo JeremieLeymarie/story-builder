@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/design-system/primitives";
 import { Link } from "@tanstack/react-router";
-import { MoveRightIcon, SwordIcon } from "lucide-react";
+import { SwordIcon } from "lucide-react";
 import { StoryCard, Title } from "@/design-system/components";
 import { Story } from "@/lib/storage/domain";
 import { ImportModal } from "@/builder/components/import-modal";
@@ -18,7 +18,7 @@ type Library = {
 
 /** Component that displays the current user's library
  *
- * @param {Story[]} stories Stories published in the store
+ * @param {Story[]} stories Stories of the library
  * @returns
  */
 export const Library = ({ stories }: Library) => {
@@ -64,17 +64,9 @@ export const Library = ({ stories }: Library) => {
         </div>
 
         {stories.length === 0 && (
-          <div>
-            <p className="text-sm text-muted-foreground">
-              You don't have any games in your library...
-            </p>
-            <Link to="/store">
-              <Button variant="link" className="text-md p-0">
-                Go to the store to find free adventure to play &nbsp;
-                <MoveRightIcon size="15px" className="animate-bounce" />
-              </Button>
-            </Link>
-          </div>
+          <p className="text-sm text-muted-foreground">
+            You don't have any games in your library...
+          </p>
         )}
       </div>
     </div>

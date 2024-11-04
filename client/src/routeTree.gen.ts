@@ -11,7 +11,6 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as StoreImport } from './routes/store'
 import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
 import { Route as LibraryIndexImport } from './routes/library/index'
@@ -22,12 +21,6 @@ import { Route as GameGameKeySceneKeyImport } from './routes/game/$gameKey/$scen
 import { Route as GameTestGameKeySceneKeyImport } from './routes/game/test/$gameKey/$sceneKey'
 
 // Create/Update Routes
-
-const StoreRoute = StoreImport.update({
-  id: '/store',
-  path: '/store',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const AboutRoute = AboutImport.update({
   id: '/about',
@@ -95,13 +88,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
-    '/store': {
-      id: '/store'
-      path: '/store'
-      fullPath: '/store'
-      preLoaderRoute: typeof StoreImport
-      parentRoute: typeof rootRoute
-    }
     '/builder/$storyKey': {
       id: '/builder/$storyKey'
       path: '/builder/$storyKey'
@@ -152,7 +138,6 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/store': typeof StoreRoute
   '/builder/$storyKey': typeof BuilderStoryKeyRoute
   '/builder/stories': typeof BuilderStoriesRoute
   '/library/$storyKey': typeof LibraryStoryKeyRoute
@@ -164,7 +149,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/store': typeof StoreRoute
   '/builder/$storyKey': typeof BuilderStoryKeyRoute
   '/builder/stories': typeof BuilderStoriesRoute
   '/library/$storyKey': typeof LibraryStoryKeyRoute
@@ -177,7 +161,6 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/store': typeof StoreRoute
   '/builder/$storyKey': typeof BuilderStoryKeyRoute
   '/builder/stories': typeof BuilderStoriesRoute
   '/library/$storyKey': typeof LibraryStoryKeyRoute
@@ -191,7 +174,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
-    | '/store'
     | '/builder/$storyKey'
     | '/builder/stories'
     | '/library/$storyKey'
@@ -202,7 +184,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
-    | '/store'
     | '/builder/$storyKey'
     | '/builder/stories'
     | '/library/$storyKey'
@@ -213,7 +194,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
-    | '/store'
     | '/builder/$storyKey'
     | '/builder/stories'
     | '/library/$storyKey'
@@ -226,7 +206,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  StoreRoute: typeof StoreRoute
   BuilderStoryKeyRoute: typeof BuilderStoryKeyRoute
   BuilderStoriesRoute: typeof BuilderStoriesRoute
   LibraryStoryKeyRoute: typeof LibraryStoryKeyRoute
@@ -238,7 +217,6 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  StoreRoute: StoreRoute,
   BuilderStoryKeyRoute: BuilderStoryKeyRoute,
   BuilderStoriesRoute: BuilderStoriesRoute,
   LibraryStoryKeyRoute: LibraryStoryKeyRoute,
@@ -261,7 +239,6 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/about",
-        "/store",
         "/builder/$storyKey",
         "/builder/stories",
         "/library/$storyKey",
@@ -275,9 +252,6 @@ export const routeTree = rootRoute
     },
     "/about": {
       "filePath": "about.tsx"
-    },
-    "/store": {
-      "filePath": "store.tsx"
     },
     "/builder/$storyKey": {
       "filePath": "builder/$storyKey.tsx"
