@@ -189,6 +189,23 @@ export const _getLibraryService = ({
     },
 
     createBlankStoryProgress: _createBlankStoryProgress,
+
+    deleteGame: async (storyKey: string) => {
+      const scenesKeys = (
+        await localRepository.getScenesByStoryKey(storyKey)
+      ).map(({ key }) => key);
+
+      await localRepository.unitOfWork(
+        async () => {
+          await localRepository.deleteScenes(scenesKeys);
+          await localRepository.deleteStory(storyKey);
+        },
+        {
+          mode: "readwrite",
+          entities: ["scene", "story"],
+        },
+      );
+    },
   };
 };
 
