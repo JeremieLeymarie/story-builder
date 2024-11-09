@@ -9,13 +9,14 @@ import { getBuilderService } from "@/services";
 import { useBuilderContext } from "../hooks/use-builder-store";
 import { useReactFlow } from "@xyflow/react";
 import { useCallback } from "react";
+import { DeleteModal } from "./delete-modal";
 
 type Props = {
   story: Story;
   scenes: Scene[];
 };
 export const Toolbar = ({ story, scenes }: Props) => {
-  const { testStory } = useToolbar({ storyKey: story.key });
+  const { testStory, deleteStory } = useToolbar({ storyKey: story.key });
   const { refresh } = useBuilderContext();
   const reactFlowInstance = useReactFlow();
 
@@ -66,6 +67,7 @@ export const Toolbar = ({ story, scenes }: Props) => {
         </Button>
         <StoryPublisher story={story} scenes={scenes} />
         <ExportModal story={story} scenes={scenes} />
+        <DeleteModal deleteStory={deleteStory} />
       </div>
     </div>
   );
