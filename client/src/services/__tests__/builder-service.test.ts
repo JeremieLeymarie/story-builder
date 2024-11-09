@@ -418,10 +418,20 @@ describe("builder-service", () => {
 
   describe("deleteStory", () => {
     it("should delete story", async () => {
+      localRepository.getScenesByStoryKey.mockResolvedValueOnce([
+        { ...BASIC_SCENE, key: "pshit" },
+        { ...BASIC_SCENE, key: "zioum" },
+      ]);
+
       await builderService.deleteStory("tutu");
 
       expect(localRepository.deleteStory).toHaveBeenCalledWith("tutu");
+      expect(localRepository.deleteScenes).toHaveBeenCalledWith([
+        "pshit",
+        "zioum",
+      ]);
       expect(localRepository.deleteStory).toHaveBeenCalledOnce();
+      expect(localRepository.deleteScenes).toHaveBeenCalledOnce();
     });
   });
 });
