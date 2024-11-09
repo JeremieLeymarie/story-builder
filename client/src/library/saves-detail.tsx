@@ -30,7 +30,7 @@ export const SavesDetail = ({
   );
 
   return (
-    <div className="mt-12 space-y-6 p-12">
+    <div className="space-y-6">
       <div className="space-y-2">
         <Title variant="section">Your saves:</Title>
         <div className="h-full">

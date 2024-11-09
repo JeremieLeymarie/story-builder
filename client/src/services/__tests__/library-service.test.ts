@@ -89,6 +89,10 @@ describe("library-service", () => {
       genres: ["adventure" as const, "fantasy" as const],
       creationDate: new Date(),
       firstSceneKey: "skibidi",
+      author: {
+        username: "author",
+        key: "author-key",
+      },
     };
     const importedScenes = [
       {
@@ -131,6 +135,10 @@ describe("library-service", () => {
         genres: ["adventure" as const, "fantasy" as const],
         creationDate: importedStory.creationDate,
         firstSceneKey: "skibidi",
+        author: {
+          username: "author",
+          key: "author-key",
+        },
       });
       expect(localRepository.createScene).toHaveBeenCalledOnce();
       expect(localRepository.updateScenes).toHaveBeenCalledOnce();
