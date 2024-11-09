@@ -25,6 +25,7 @@ export type LocalRepositoryPort = {
     key: string;
     username: string;
   }) => Promise<void>;
+  deleteStory: (storyKey: string) => Promise<void>;
   getFinishedGameKeys: () => Promise<string[]>;
 
   createScene: (scene: WithoutKey<Scene>) => Promise<Scene>;

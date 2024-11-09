@@ -415,4 +415,13 @@ describe("builder-service", () => {
       expect(localRepository.deleteScenes).toHaveBeenCalledOnce();
     });
   });
+
+  describe("deleteStory", () => {
+    it("should delete story", async () => {
+      await builderService.deleteStory("tutu");
+
+      expect(localRepository.deleteStory).toHaveBeenCalledWith("tutu");
+      expect(localRepository.deleteStory).toHaveBeenCalledOnce();
+    });
+  });
 });

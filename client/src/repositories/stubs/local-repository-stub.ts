@@ -58,6 +58,8 @@ export const getLocalRepositoryStub = (): MockLocalRepository => {
 
     deleteScenes: mock(),
 
+    deleteStory: mock(),
+
     createStoryProgress: mock(BASIC_STORY_PROGRESS),
 
     updateOrCreateStoryProgresses: mock(["key"]),

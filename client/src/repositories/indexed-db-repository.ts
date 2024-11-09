@@ -87,6 +87,10 @@ const indexedDBRepository: LocalRepositoryPort = {
     return story;
   },
 
+  deleteStory: async (storyKey) => {
+    await db.stories.delete(storyKey);
+  },
+
   // SCENES
 
   updateFirstScene: async (storyKey, sceneKey) => {
