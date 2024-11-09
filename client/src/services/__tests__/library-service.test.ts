@@ -321,4 +321,23 @@ describe("library-service", () => {
       expect(createdProgress).toStrictEqual(BASIC_STORY_PROGRESS);
     });
   });
+
+  describe("deleteGame", () => {
+    it("should delete the story", async () => {
+      localRepository.getScenesByStoryKey.mockResolvedValueOnce([
+        { ...BASIC_SCENE, key: "pshit" },
+        { ...BASIC_SCENE, key: "zioum" },
+      ]);
+
+      await libraryService.deleteGame("tutu");
+
+      expect(localRepository.deleteStory).toHaveBeenCalledWith("tutu");
+      expect(localRepository.deleteScenes).toHaveBeenCalledWith([
+        "pshit",
+        "zioum",
+      ]);
+      expect(localRepository.deleteStory).toHaveBeenCalledOnce();
+      expect(localRepository.deleteScenes).toHaveBeenCalledOnce();
+    });
+  });
 });

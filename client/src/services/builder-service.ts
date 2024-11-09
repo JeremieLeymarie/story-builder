@@ -191,8 +191,6 @@ export const _getBuilderService = ({
         await localRepository.getScenesByStoryKey(storyKey)
       ).map(({ key }) => key);
 
-      console.log(scenesKeys);
-
       await localRepository.unitOfWork(
         async () => {
           await localRepository.deleteScenes(scenesKeys);

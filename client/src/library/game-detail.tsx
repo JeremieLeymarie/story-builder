@@ -6,8 +6,7 @@ import { GameInfo } from "./game-info";
 import { getLibraryService } from "@/services";
 import { useRouter } from "@tanstack/react-router";
 import { useCallback } from "react";
-import { Button } from "@/design-system/primitives";
-import { Trash2Icon } from "lucide-react";
+import { DeleteGameButton } from "./delete-game-button";
 
 type Props = {
   story: Story;
@@ -22,6 +21,11 @@ export const LibraryGameDetail = ({
 }: Props) => {
   const { navigate } = useRouter();
 
+  const deleteGame = useCallback(async () => {
+    await getLibraryService().deleteGame(story.key);
+    navigate({ to: "/library" });
+  }, [navigate, story.key]);
+
   const startNewGame = useCallback(() => {
     getLibraryService()
       .createBlankStoryProgress({ story })
@@ -34,8 +38,6 @@ export const LibraryGameDetail = ({
       );
   }, [navigate, story]);
 
-  console.log(story);
-
   return (
     <div className="flex h-full w-full flex-col items-center justify-start">
       <GameBanner story={story} />
@@ -47,10 +49,7 @@ export const LibraryGameDetail = ({
             otherProgresses={otherProgresses}
             startNewGame={startNewGame}
           />
-          <Button variant="destructive" className="gap-2" size="sm">
-            <Trash2Icon size="16px" />
-            Delete
-          </Button>
+          <DeleteGameButton deleteGame={deleteGame} />
         </div>
         <div className="md:w-6/12">
           <SavesDetail
