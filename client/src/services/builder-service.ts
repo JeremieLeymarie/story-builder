@@ -184,7 +184,22 @@ export const _getBuilderService = ({
     },
 
     deleteStory: async (storyKey: string) => {
-      await localRepository.deleteStory(storyKey);
+      const scenesKeys = (
+        await localRepository.getScenesByStoryKey(storyKey)
+      ).map(({ key }) => key);
+
+      console.log(scenesKeys);
+
+      await localRepository.unitOfWork(
+        async () => {
+          await localRepository.deleteScenes(scenesKeys);
+          await localRepository.deleteStory(storyKey);
+        },
+        {
+          mode: "readwrite",
+          entities: ["scene", "story"],
+        },
+      );
     },
   };
 };
