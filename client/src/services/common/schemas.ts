@@ -15,7 +15,10 @@ export const fullStorySchema = z.object({
         .transform((val) => new Date(val))
         .optional(),
       genres: z.array(z.enum(STORY_GENRES)),
-      authorId: z.string().optional(),
+      author: z.object({
+        username: z.string(),
+        key: z.string(),
+      }),
       image: z.string().url({ message: "Image has to be a valid URL" }),
       type: z.enum(STORY_TYPE, {
         message: "Status has to be a valid Status",

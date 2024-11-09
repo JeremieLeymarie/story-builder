@@ -92,6 +92,8 @@ export const _getLibraryService = ({
         originalStoryKey: importedStoryKey,
       });
 
+      console.log({ story });
+
       if (!story) {
         return { error: "Could not create story" };
       }
