@@ -14,13 +14,11 @@ class CreateUserRequest(BaseModel):
     email: str
     password: str
     key: str
-    token: str
 
 
 class LoginUserRequest(BaseModel):
     usernameOrEmail: str
     password: str
-    token: str
 
 
 class FullStoryBuilderRequest(BaseModel):

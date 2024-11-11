@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import Depends, FastAPI, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRoute
-from domains.type_def import FullUser, StoryProgress, User
+from domains.type_def import AuthUser, FullUser, StoryProgress, User
 from domains.auth_service import AuthService
 from domains.synchronization_service import SynchronizationService
 from repositories.story_repository import StoryRepository
@@ -40,7 +40,6 @@ async def check_auth(authorization: Annotated[str, Header()]):
 
 app = FastAPI(
     generate_unique_id_function=custom_generate_unique_id,
-    dependencies=[Depends(check_auth)],
 )
 
 
@@ -63,8 +62,10 @@ app.add_middleware(
 # USER ENDPOINTS
 
 
-@app.post("/api/user/login", status_code=HTTPStatus.OK, response_model=User)
-async def user_login(data: LoginUserRequest):
+@app.post("/api/user/login", status_code=HTTPStatus.OK, response_model=AuthUser)
+async def user_login(
+    data: LoginUserRequest,
+):
     try:
         result = AuthService(user_repository=UserRepository()).login(
             password=data.password, username_or_email=data.usernameOrEmail
@@ -74,7 +75,7 @@ async def user_login(data: LoginUserRequest):
         raise raise_http_error(err)
 
 
-@app.post("/api/user/register", status_code=HTTPStatus.CREATED, response_model=User)
+@app.post("/api/user/register", status_code=HTTPStatus.CREATED, response_model=AuthUser)
 async def create_user(data: CreateUserRequest):
     try:
         result = AuthService(user_repository=UserRepository()).create(
@@ -97,6 +98,7 @@ async def create_user(data: CreateUserRequest):
     "/api/load/{user_key}",
     status_code=HTTPStatus.OK,
     response_model=SynchronizationPayload,
+    dependencies=[Depends(check_auth)],
 )
 async def get_synchronization_data(user_key: str):
     try:
@@ -109,7 +111,12 @@ async def get_synchronization_data(user_key: str):
         raise raise_http_error(err)
 
 
-@app.put("/api/save/progresses", status_code=HTTPStatus.OK, response_model=APIResponse)
+@app.put(
+    "/api/save/progresses",
+    status_code=HTTPStatus.OK,
+    response_model=APIResponse,
+    dependencies=[Depends(check_auth)],
+)
 async def synchronize_progresses(payload: list[StoryProgress]):
     try:
         SynchronizationService(
@@ -121,7 +128,12 @@ async def synchronize_progresses(payload: list[StoryProgress]):
         raise raise_http_error(err)
 
 
-@app.put("/api/save/builder", status_code=HTTPStatus.OK, response_model=APIResponse)
+@app.put(
+    "/api/save/builder",
+    status_code=HTTPStatus.OK,
+    response_model=APIResponse,
+    dependencies=[Depends(check_auth)],
+)
 async def save_builder_state(body: FullStoriesRequest):
     try:
         SynchronizationService(

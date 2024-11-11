@@ -128,6 +128,8 @@ export interface components {
             password: string;
             /** Key */
             key: string;
+            /** Token */
+            token: string;
         };
         /** FullStoriesRequest */
         FullStoriesRequest: {
@@ -201,6 +203,8 @@ export interface components {
             usernameOrEmail: string;
             /** Password */
             password: string;
+            /** Token */
+            token: string;
         };
         /** Scene */
         "Scene-Input": {
@@ -360,7 +364,9 @@ export interface operations {
     "API-user_login": {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                authorization: string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -393,7 +399,9 @@ export interface operations {
     "API-create_user": {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                authorization: string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -426,7 +434,9 @@ export interface operations {
     "API-get_synchronization_data": {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                authorization: string;
+            };
             path: {
                 user_key: string;
             };
@@ -457,7 +467,9 @@ export interface operations {
     "API-synchronize_progresses": {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                authorization: string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -490,7 +502,9 @@ export interface operations {
     "API-save_builder_state": {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                authorization: string;
+            };
             path?: never;
             cookie?: never;
         };
