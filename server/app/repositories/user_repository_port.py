@@ -37,3 +37,13 @@ class UserRepositoryPort(Protocol):
         Returns:
             FullUser | None: the user found or None
         """
+
+    def get(self, key: str) -> FullUser | None:
+        """Retrieve use by key
+
+        Args:
+            key (str): the key of the use
+
+        Returns:
+            FullUser | None: the user found or none
+        """
