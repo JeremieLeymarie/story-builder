@@ -2,12 +2,14 @@ import os
 import bcrypt
 
 from repositories.user_repository_port import UserRepositoryPort
-from domains.type_def import AuthUser, FullUser
+from domains.type_def import AuthUser, FullUser, User
 from utils.errors import BadAuthException, InvalidActionException
+from context import current_user
+
 import jwt
 
 
-class UserService:
+class AuthService:
 
     def __init__(self, user_repository: UserRepositoryPort) -> None:
         self.user_repository = user_repository
@@ -35,7 +37,7 @@ class UserService:
 
         return AuthUser.from_full_user(full_user=created_user, token=token)
 
-    def authentify(self, username_or_email: str, password: str) -> AuthUser:
+    def login(self, username_or_email: str, password: str) -> AuthUser:
         full_user = self.user_repository.get_by_username_or_email(
             username_or_email=username_or_email
         )
@@ -53,6 +55,20 @@ class UserService:
 
         token = self._generate_token(full_user)
         return AuthUser.from_full_user(full_user=full_user, token=token)
+
+    def check_auth(self, token: str) -> None:
+        payload = jwt.decode(token, os.getenv("JWT_SECRET"), algorithm="HS256")
+
+        if not payload.get("key"):
+            raise BadAuthException("Invalid token")
+
+        full_user = self.user_repository.get(key=payload.get("key"))
+
+        if not full_user:
+            raise BadAuthException("Invalid token")
+
+        # Set user in context
+        current_user.set(User.from_full_user(full_user))
 
     def _generate_token(self, user: FullUser) -> str:
         return jwt.encode({"key": user.key}, os.getenv("JWT_SECRET"), algorithm="HS256")

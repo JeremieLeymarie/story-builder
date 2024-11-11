@@ -40,3 +40,8 @@ class UserRepository(MongoRepository, UserRepositoryPort):
         )
 
         return FullUser(**self.remove_mongo_id(record)) if record else None
+
+    def get(self, key: str) -> FullUser | None:
+        record = self.db[USER_COLLECTION].find_one({"key": key})
+
+        return FullUser(**self.remove_mongo_id(record)) if record else None
