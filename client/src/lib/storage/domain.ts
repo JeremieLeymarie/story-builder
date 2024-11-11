@@ -20,6 +20,7 @@ export type User = {
   key: string;
   username: string;
   email: string;
+  token?: string;
 };
 
 export const STORY_TYPE = ["builder", "published", "imported"] as const;

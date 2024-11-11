@@ -6,6 +6,7 @@ import {
   getRemoteAPIRepository,
 } from "@/repositories";
 import { WithoutKey } from "@/types";
+import { nanoid } from "nanoid";
 
 const _getUserService = ({
   localRepository,
@@ -47,19 +48,20 @@ const _getUserService = ({
     register: async (user: WithoutKey<User> & { password: string }) => {
       const { password, ...userData } = user;
 
-      const createdUser = await _createLocalUser(userData);
-      localRepository.addAuthorToStories({
-        key: createdUser.key,
-        username: createdUser.username,
-      });
+      const newUser = { ...userData, key: nanoid() };
 
       const response = await remoteRepository.register({
-        ...createdUser,
+        ...newUser,
         password,
       });
 
-      if (response.error) {
-        localRepository.deleteUser(createdUser.key);
+      if (response.data) {
+        const createdUser = await _createLocalUser(userData);
+        // Side effect: once a user is logged in, update all of his or her existing stories' authorKey
+        localRepository.addAuthorToStories({
+          key: createdUser.key,
+          username: createdUser.username,
+        });
       }
 
       return response;
