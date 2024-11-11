@@ -10,6 +10,7 @@ dependencies = [
     "mypy>=1.13.0",
     "pre-commit>=4.0.1",
     "pydantic>=2.9.2",
+    "pyjwt>=2.9.0",
     "pymongo>=4.10.1",
     "python-dotenv>=1.0.1",
     "ruff>=0.7.2",
