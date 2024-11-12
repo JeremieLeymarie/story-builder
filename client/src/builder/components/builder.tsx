@@ -43,7 +43,7 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
         onNodeDragStop={onNodeMove}
         onEdgesDelete={onEdgesDelete}
         onNodesDelete={onNodesDelete}
-        minZoom={0.05}
+        minZoom={0.2}
         defaultEdgeOptions={{ zIndex: 10000 }}
         selectionMode={SelectionMode.Full}
         nodesFocusable
