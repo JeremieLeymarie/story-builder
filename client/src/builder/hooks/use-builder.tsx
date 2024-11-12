@@ -29,7 +29,8 @@ export const useBuilder = ({
 
   useEffect(() => {
     setNodes(sceneNodes);
-  }, [sceneNodes, setNodes]);
+    setEdges(sceneEdges);
+  }, [sceneEdges, sceneNodes, setEdges, setNodes]);
 
   const onNodeMove = useCallback(
     (_: MouseEvent, node: BuilderNode) => {
