@@ -1,6 +1,8 @@
 import Dexie, { type EntityTable } from "dexie";
 import { nanoid } from "nanoid";
 import { User, Story, Scene, StoryProgress } from "../domain";
+import { DEMO_SCENES, DEMO_STORY } from "./seed";
+import { getLibraryService } from "@/services";
 
 // TODO: move this file in a more appropriate location
 
@@ -18,6 +20,20 @@ db.version(1).stores({
   scenes: "&key, storyKey, title, content, actions, builderParams",
   storyProgresses:
     "&key, storyKey, userKey, currentSceneKey, character, inventory, history, lastPlayedAt",
+});
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+db.on("populate", async (_transaction) => {
+  // TODO: use transaction instead of db directly
+
+  // Add story to builder
+  await db.stories.add(DEMO_STORY);
+  await db.scenes.bulkAdd(DEMO_SCENES);
+
+  // Add story to library
+  await getLibraryService().importFromJSON(
+    JSON.stringify({ story: DEMO_STORY, scenes: DEMO_SCENES }),
+  );
 });
 
 // Register nanoid middleware
