@@ -7,7 +7,6 @@ import { getUserService } from "@/services";
 import { useSync } from "@/navbar/hooks/use-sync";
 import { Loader } from "@/design-system/components";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const queryClient = new QueryClient();
 
@@ -30,9 +29,6 @@ const Component = () => {
         </div>
         <Toaster />
       </ThemeProvider>
-      {process.env.NODE_ENV === "development" && (
-        <ReactQueryDevtools initialIsOpen={false} />
-      )}
     </QueryClientProvider>
   );
 };
