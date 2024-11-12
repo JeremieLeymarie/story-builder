@@ -23,7 +23,7 @@ export type User = {
 };
 
 export const STORY_TYPE = ["builder", "published", "imported"] as const;
-export type StoryStatus = (typeof STORY_TYPE)[number];
+export type StoryType = (typeof STORY_TYPE)[number];
 
 type StoryBase = {
   key: string;

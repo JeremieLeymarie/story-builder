@@ -1,3 +1,4 @@
+import { FullStorySchema } from "@/services/common/schemas";
 import { Scene, Story } from "../domain";
 
 export const DEMO_STORY: Story = {
@@ -6,7 +7,7 @@ export const DEMO_STORY: Story = {
     "Once upon time on a mountain lived a wizard. His sole purpose was to guard the gem of destiny which encompassed all the laws of this world. The legend said that it's wielder would be able to bend reality to his will. The legendary mage Dalt Wisney used it 4500 years ago to create the first feerical age. ",
   image: "https://wallpapers.com/images/featured/fantasy-05e34f7bfyhne5vg.jpg",
   genres: ["adventure", "fantasy"],
-  status: "draft",
+  type: "builder",
   creationDate: new Date(),
   firstSceneKey: "27of_GQ4ZnaMU5BeQ5qPx",
   key: "mcDZQvTdmUCJ7laL8yyLq",
@@ -271,7 +272,14 @@ export const DEMO_SCENES: Scene[] = [
   },
 ];
 
-export const DEMO_IMPORTED_JSON = JSON.stringify({
-  story: { ...DEMO_STORY, name: "[DEMO] The Enchanted Mountain (imported)" },
+const IMPORTED_STORY: FullStorySchema = {
+  story: {
+    ...DEMO_STORY,
+    title: "[DEMO] The Enchanted Mountain (imported)",
+    type: "imported",
+    author: { username: "gorgious", key: "5XX9VcZt1sVrm2mtylB7g" },
+  },
   scenes: DEMO_SCENES,
-});
+};
+
+export const DEMO_IMPORTED_JSON = JSON.stringify(IMPORTED_STORY);
