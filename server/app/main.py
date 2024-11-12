@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import Depends, FastAPI, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRoute
-from domains.type_def import AuthUser, FullUser, StoryProgress, User
+from domains.type_def import AuthUser, FullUser, StoryProgress
 from domains.auth_service import AuthService
 from domains.synchronization_service import SynchronizationService
 from repositories.story_repository import StoryRepository

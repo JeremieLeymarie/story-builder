@@ -43,11 +43,6 @@ const baseStorySchemaFields = {
 const storySchema = z.discriminatedUnion("type", [
   z.object({
     ...baseStorySchemaFields,
-    type: z.literal("published"),
-    publicationDate: z.string().transform((val) => new Date(val)),
-  }),
-  z.object({
-    ...baseStorySchemaFields,
     type: z.literal("imported"),
     originalStoryKey: z.string(),
   }),
@@ -126,10 +121,6 @@ const fromClientStoryAdapter = (
   return {
     ...story,
     author: story.author ?? null,
-    publicationDate:
-      "publicationDate" in story && story.publicationDate
-        ? story.publicationDate.toISOString()
-        : null,
     creationDate: story.creationDate.toISOString(),
   };
 };

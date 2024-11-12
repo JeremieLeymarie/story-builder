@@ -107,6 +107,17 @@ export interface components {
             /** Scenekey */
             sceneKey?: string | null;
         };
+        /** AuthUser */
+        AuthUser: {
+            /** Key */
+            key: string;
+            /** Email */
+            email: string;
+            /** Username */
+            username: string;
+            /** Token */
+            token: string;
+        };
         /** BuilderParams */
         BuilderParams: {
             position: components["schemas"]["BuilderPosition"];
@@ -128,8 +139,6 @@ export interface components {
             password: string;
             /** Key */
             key: string;
-            /** Token */
-            token: string;
         };
         /** FullStoriesRequest */
         FullStoriesRequest: {
@@ -203,8 +212,6 @@ export interface components {
             usernameOrEmail: string;
             /** Password */
             password: string;
-            /** Token */
-            token: string;
         };
         /** Scene */
         "Scene-Input": {
@@ -334,15 +341,6 @@ export interface components {
             /** Storyprogresses */
             storyProgresses: components["schemas"]["StoryProgress"][];
         };
-        /** User */
-        User: {
-            /** Key */
-            key: string;
-            /** Email */
-            email: string;
-            /** Username */
-            username: string;
-        };
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -364,9 +362,7 @@ export interface operations {
     "API-user_login": {
         parameters: {
             query?: never;
-            header: {
-                authorization: string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -382,7 +378,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["User"];
+                    "application/json": components["schemas"]["AuthUser"];
                 };
             };
             /** @description Validation Error */
@@ -399,9 +395,7 @@ export interface operations {
     "API-create_user": {
         parameters: {
             query?: never;
-            header: {
-                authorization: string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -417,7 +411,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["User"];
+                    "application/json": components["schemas"]["AuthUser"];
                 };
             };
             /** @description Validation Error */
