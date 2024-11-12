@@ -3,8 +3,6 @@ from repositories.story_repository_port import StoryRepositoryPort
 from domains.type_def import FullStory, Scene, Story, StoryProgress
 from request_types import SynchronizationPayload
 
-from context import current_user
-
 
 class SynchronizationService:
     def __init__(
@@ -16,8 +14,6 @@ class SynchronizationService:
         self.story_repo = story_repository
 
     def get_synchronization_data(self, user_key: str) -> SynchronizationPayload:
-        print(current_user)
-
         progresses = self.story_progress_repo.get_from_user(user_key=user_key)
         story_keys = [progress.key for progress in progresses]
 
@@ -48,4 +44,5 @@ class SynchronizationService:
             )
             for story in stories
         ]
-        return self.story_repo.save_all(stories=full_stories)
+
+        return self.story_repo.save_all(stories=full_stories) if full_stories else []

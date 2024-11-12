@@ -18,6 +18,8 @@ const parseError = (
     : (error.detail?.[0]?.msg ?? UNKNOWN_ERROR);
 };
 
+const formatTokenHeader = (token?: string) => `Bearer ${token}`;
+
 // TODO: handle other errors that validation errors
 const _getRemoteAPIRepository = (
   _client: typeof client,
@@ -43,9 +45,10 @@ const _getRemoteAPIRepository = (
       return { error: parseError(response.error) };
     },
 
-    saveStoryProgresses: async (progresses, userKey) => {
+    saveStoryProgresses: async (progresses, user) => {
       const { data, error } = await _client.PUT("/api/save/progresses", {
-        body: adapter.fromClient.storyProgresses(progresses, userKey),
+        body: adapter.fromClient.storyProgresses(progresses, user.key),
+        params: { header: { authorization: formatTokenHeader(user.token) } },
       });
 
       if (data) return { data: progresses };
@@ -53,9 +56,10 @@ const _getRemoteAPIRepository = (
       return { error: parseError(error) };
     },
 
-    saveStories: async (stories, scenes) => {
+    saveStories: async (stories, scenes, user) => {
       const { data, error } = await _client.PUT("/api/save/builder", {
         body: { stories: adapter.fromClient.stories(stories), scenes },
+        params: { header: { authorization: formatTokenHeader(user.token) } },
       });
 
       if (data) {
@@ -64,9 +68,12 @@ const _getRemoteAPIRepository = (
       return { error: parseError(error) };
     },
 
-    getSynchronizationData: async (userKey: string) => {
+    getSynchronizationData: async (user) => {
       const { data, error } = await _client.GET("/api/load/{user_key}", {
-        params: { path: { user_key: userKey } },
+        params: {
+          path: { user_key: user.key },
+          header: { authorization: formatTokenHeader(user.token) },
+        },
       });
 
       if (data)

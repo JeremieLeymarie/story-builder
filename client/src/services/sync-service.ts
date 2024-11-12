@@ -27,13 +27,20 @@ const _getSyncService = ({
     // Load remote data into local data
     load: async () => {
       const user = await localRepository.getUser();
+
+      if (!user) {
+        throw new Error(
+          "Impossible action: user must be logged in to load external state",
+        );
+      }
+
       const { canSync, error } = checkCanPerformSync(user);
 
       if (!canSync) {
         return { success: false, error };
       }
 
-      const response = await remoteRepository.getSynchronizationData(user!.key);
+      const response = await remoteRepository.getSynchronizationData(user);
 
       if (!response.data) {
         return { success: false, error: response.error };
@@ -69,10 +76,11 @@ const _getSyncService = ({
       }
 
       const [progressResponse, builderResponse] = await Promise.all([
-        remoteRepository.saveStoryProgresses(progresses, user.key),
+        remoteRepository.saveStoryProgresses(progresses, user),
         remoteRepository.saveStories(
           builderStories.stories ?? [],
           builderStories.scenes,
+          user,
         ),
       ]);
 
