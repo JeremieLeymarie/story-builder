@@ -270,3 +270,8 @@ export const DEMO_SCENES: Scene[] = [
     key: "mysJlUr2Q9wfrmH2YF7jq",
   },
 ];
+
+export const DEMO_IMPORTED_JSON = JSON.stringify({
+  story: { ...DEMO_STORY, name: "[DEMO] The Enchanted Mountain (imported)" },
+  scenes: DEMO_SCENES,
+});
