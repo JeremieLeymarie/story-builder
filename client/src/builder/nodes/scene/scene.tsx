@@ -13,6 +13,7 @@ import { cn } from "@/lib/style";
 import { toast } from "@/design-system/primitives";
 import { getBuilderService } from "@/services";
 import { useBuilderContext } from "@/builder/hooks/use-builder-store";
+import { useState } from "react";
 
 export type SceneNodeProps = NodeProps<SceneNodeType>;
 
@@ -25,6 +26,7 @@ export const SceneNode = ({
   const builderService = getBuilderService();
   const isEditable = data.isEditable !== undefined ? data.isEditable : true;
   const { refresh } = useBuilderContext();
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
 
   return (
     <Card
@@ -33,6 +35,9 @@ export const SceneNode = ({
         data.isFirstScene && "bg-primary/60",
         selected && "border border-black",
       )}
+      onDoubleClick={() => {
+        setIsEditorOpen(true);
+      }}
     >
       <CardHeader>
         <div className="flex justify-between gap-1">
@@ -42,6 +47,8 @@ export const SceneNode = ({
               <SceneEditor
                 defaultValues={data}
                 trigger={<EditIcon />}
+                open={isEditorOpen}
+                setOpen={setIsEditorOpen}
                 onSave={(values) => {
                   builderService.updateScene({
                     ...data,

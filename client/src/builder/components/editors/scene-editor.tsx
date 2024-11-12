@@ -54,7 +54,9 @@ type Props = {
     isFirstScene: boolean;
     key: string;
   };
-  trigger: ReactNode;
+  trigger?: ReactNode;
+  open?: boolean;
+  setOpen?: (open: boolean) => void;
   onSave: (input: Schema) => void;
   setFirstScene?: () => void;
   triggerClassName?: string;
@@ -66,6 +68,8 @@ export const SceneEditor = ({
   onSave,
   triggerClassName,
   setFirstScene,
+  open,
+  setOpen,
 }: Props) => {
   const form = useForm<Schema>({
     resolver: zodResolver(schema),
@@ -77,22 +81,17 @@ export const SceneEditor = ({
     control: form.control,
   });
 
+  const [internalOpen, setInternalOpen] = useState(false);
+
+  const isOpen = open !== undefined ? open : internalOpen;
+  const handleOpen = setOpen !== undefined ? setOpen : setInternalOpen;
+
   useEffect(() => {
     // Update the form when the default values change, which are 'cached' otherwise
     if (defaultValues) form.reset(defaultValues);
   }, [defaultValues, form]);
 
   const isEditing = !!defaultValues;
-
-  const [open, _setOpen] = useState(false);
-
-  const handleOpen = useCallback(
-    (open: boolean) => {
-      _setOpen(open);
-      if (!open) form.reset();
-    },
-    [form],
-  );
 
   const submit = useCallback(
     (values: Schema) => {
@@ -103,10 +102,23 @@ export const SceneEditor = ({
   );
 
   return (
-    <Dialog open={open} onOpenChange={handleOpen}>
-      <DialogTrigger className={cn("cursor-pointer", triggerClassName)} asChild>
-        {trigger}
-      </DialogTrigger>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          form.reset();
+        }
+        handleOpen(open);
+      }}
+    >
+      {!!trigger && (
+        <DialogTrigger
+          className={cn("cursor-pointer", triggerClassName)}
+          asChild
+        >
+          {trigger}
+        </DialogTrigger>
+      )}
       <DialogContent className="max-w-[75vw] lg:max-w-[800px]">
         <DialogHeader className="pb-6">
           {isEditing ? (
