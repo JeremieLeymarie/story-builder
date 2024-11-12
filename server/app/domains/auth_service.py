@@ -57,7 +57,7 @@ class AuthService:
         return AuthUser.from_full_user(full_user=full_user, token=token)
 
     def check_auth(self, token: str) -> None:
-        payload = jwt.decode(token, os.getenv("JWT_SECRET"), algorithm="HS256")
+        payload = jwt.decode(token, os.getenv("JWT_SECRET"), algorithms=["HS256"])
 
         if not payload.get("key"):
             raise BadAuthException("Invalid token")

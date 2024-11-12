@@ -319,7 +319,7 @@ describe("builder-service", () => {
       localRepository.getStoriesByAuthor.mockResolvedValueOnce([
         BASIC_STORY,
         { ...BASIC_STORY, type: "imported" },
-        { ...BASIC_STORY, type: "published", publicationDate: new Date() },
+        { ...BASIC_STORY, type: "builder" },
       ]);
       expect(localRepository.getStoriesByAuthor).toHaveBeenCalledWith(
         BASIC_USER.key,
@@ -327,7 +327,7 @@ describe("builder-service", () => {
       localRepository.getStoriesByAuthor.mockResolvedValueOnce([
         BASIC_STORY,
         { ...BASIC_STORY, type: "imported" },
-        { ...BASIC_STORY, type: "published", publicationDate: new Date() },
+        { ...BASIC_STORY, type: "builder" },
       ]);
       expect(localRepository.getStoriesByAuthor).toHaveBeenCalledWith(
         undefined,
