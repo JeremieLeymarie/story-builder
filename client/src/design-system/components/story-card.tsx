@@ -23,7 +23,7 @@ export const StoryCard = ({
       className="group relative h-[225px] w-[275px] shadow-md"
     >
       <CardHeader>
-        <CardTitle className="rounded-sm bg-gray-50 bg-opacity-75 p-2">
+        <CardTitle className="max-w-[275px] overflow-hidden text-ellipsis whitespace-nowrap rounded-sm bg-gray-50 bg-opacity-75 p-2">
           {title}
         </CardTitle>
         <CardDescription

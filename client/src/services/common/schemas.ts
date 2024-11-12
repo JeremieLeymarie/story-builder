@@ -21,7 +21,7 @@ export const fullStorySchema = z.object({
       }),
       image: z.string().url({ message: "Image has to be a valid URL" }),
       type: z.enum(STORY_TYPE, {
-        message: "Status has to be a valid Status",
+        message: "Type has to be a valid StoryType",
       }),
       title: z.string({ message: "Title is required" }),
     },
@@ -49,3 +49,5 @@ export const fullStorySchema = z.object({
     { message: "Scenes are required" },
   ),
 });
+
+export type FullStorySchema = z.infer<typeof fullStorySchema>;

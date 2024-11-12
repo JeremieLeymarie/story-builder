@@ -118,6 +118,7 @@ export const BuilderShowcase = () => {
             panOnScroll={false}
             defaultEdgeOptions={{ zIndex: 10000 }}
             preventScrolling={false}
+            fitView
           >
             <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
           </ReactFlow>

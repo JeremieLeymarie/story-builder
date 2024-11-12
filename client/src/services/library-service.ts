@@ -31,7 +31,6 @@ export const _getLibraryService = ({
 
   return {
     importFromJSON: async (fileContent: string) => {
-      // TODO: what happens if story already exists (from other user for example)
       let parsed: unknown;
 
       try {
@@ -39,9 +38,7 @@ export const _getLibraryService = ({
       } catch (_) {
         return { error: "Invalid JSON format" };
       }
-
       const zodParsed = fullStorySchema.safeParse(parsed);
-
       if (!zodParsed.success)
         return {
           error: zodParsed.error.issues[0]?.message || "Invalid format",
@@ -62,8 +59,6 @@ export const _getLibraryService = ({
         type: "imported",
         originalStoryKey: importedStoryKey,
       });
-
-      console.log({ story });
 
       if (!story) {
         return { error: "Could not create story" };
