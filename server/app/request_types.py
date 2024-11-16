@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from domains.type_def import FullStory, Scene, Story, StoryProgress
 
 
-class APIResponse(BaseModel):
+class GenericAPIResponse(BaseModel):
     success: bool
     message: Optional[str] = None
 
@@ -31,7 +31,7 @@ class FullStoriesRequest(BaseModel):
     scenes: list[Scene]
 
 
-class SynchronizationPayload(BaseModel):
+class SynchronizationResponse(BaseModel):
     playerGames: list[FullStory]
     builderGames: Optional[list[FullStory]]
     storyProgresses: list[StoryProgress]

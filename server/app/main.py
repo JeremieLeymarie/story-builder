@@ -5,17 +5,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRoute
 from domains.type_def import AuthUser, FullUser, StoryProgress
 from domains.auth_service import AuthService
-from domains.synchronization_service import SynchronizationService
-from repositories.story_repository import StoryRepository
 from repositories.user_repository import UserRepository
-from repositories.story_progress_repository import StoryProgressRepository
 from request_types import (
-    APIResponse,
+    GenericAPIResponse,
     CreateUserRequest,
     FullStoriesRequest,
     LoginUserRequest,
-    SynchronizationPayload,
 )
+from endpoints.synchronization.get import (
+    SynchronizationDataHandler,
+    SynchronizationResponse,
+)
+from endpoints.synchronization.progress import ProgressSynchronizationHandler
+from endpoints.synchronization.builder import BuilderStateSynchronization
 from utils.errors import BadAuthException
 from utils.error_adapter import raise_http_error
 
@@ -97,49 +99,28 @@ async def create_user(data: CreateUserRequest):
 @app.get(
     "/api/load/{user_key}",
     status_code=HTTPStatus.OK,
-    response_model=SynchronizationPayload,
+    response_model=SynchronizationResponse,
     dependencies=[Depends(check_auth)],
 )
-async def get_synchronization_data(user_key: str):
-    try:
-        synchronization_data = SynchronizationService(
-            story_progress_repository=StoryProgressRepository(),
-            story_repository=StoryRepository(),
-        ).get_synchronization_data(user_key)
-        return synchronization_data
-    except Exception as err:
-        raise raise_http_error(err)
+async def get_synchronization_data():
+    SynchronizationDataHandler().handle()
 
 
 @app.put(
     "/api/save/progresses",
     status_code=HTTPStatus.OK,
-    response_model=APIResponse,
+    response_model=GenericAPIResponse,
     dependencies=[Depends(check_auth)],
 )
-async def synchronize_progresses(payload: list[StoryProgress]):
-    try:
-        SynchronizationService(
-            story_progress_repository=StoryProgressRepository(),
-            story_repository=StoryRepository(),
-        ).save_progresses(payload)
-        return {"success": True}
-    except Exception as err:
-        raise raise_http_error(err)
+async def synchronize_progress(payload: list[StoryProgress]):
+    ProgressSynchronizationHandler.handle(payload)
 
 
 @app.put(
     "/api/save/builder",
     status_code=HTTPStatus.OK,
-    response_model=APIResponse,
+    response_model=GenericAPIResponse,
     dependencies=[Depends(check_auth)],
 )
 async def save_builder_state(body: FullStoriesRequest):
-    try:
-        SynchronizationService(
-            story_repository=StoryRepository(),
-            story_progress_repository=StoryProgressRepository(),
-        ).save_builder_stories(body.stories, body.scenes)
-        return {"success": True}
-    except Exception as err:
-        raise raise_http_error(err)
+    BuilderStateSynchronization.handle(body)
