@@ -14,3 +14,7 @@ class InvalidStoryFormatException(Exception):
             return
 
         super().__init__()
+
+
+class UnauthorizedException(Exception):
+    resource: str | None = None

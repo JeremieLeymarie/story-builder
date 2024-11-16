@@ -1,7 +1,8 @@
 from repositories.story_progress_repository_port import StoryProgressRepositoryPort
 from repositories.story_repository_port import StoryRepositoryPort
 from domains.type_def import FullStory, Scene, Story, StoryProgress
-from request_types import SynchronizationPayload
+from context import current_user
+from request_types import SynchronizationResponse
 
 
 class SynchronizationService:
@@ -13,14 +14,16 @@ class SynchronizationService:
         self.story_progress_repo = story_progress_repository
         self.story_repo = story_repository
 
-    def get_synchronization_data(self, user_key: str) -> SynchronizationPayload:
+    def get_synchronization_data(self) -> SynchronizationResponse:
+        user_key = current_user.get().key
+
         progresses = self.story_progress_repo.get_from_user(user_key=user_key)
         story_keys = [progress.key for progress in progresses]
 
         player_games = self.story_repo.get_by_keys(keys=story_keys)
         builder_games = self.story_repo.get_by_author_key(author_key=user_key)
 
-        return SynchronizationPayload(
+        return SynchronizationResponse(
             playerGames=player_games,
             builderGames=builder_games,
             storyProgresses=progresses,
@@ -29,6 +32,7 @@ class SynchronizationService:
     def save_progresses(
         self, story_progresses: list[StoryProgress]
     ) -> list[StoryProgress]:
+
         return self.story_progress_repo.save_all(story_progresses=story_progresses)
 
     def save_builder_stories(
