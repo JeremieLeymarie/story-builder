@@ -1,3 +1,5 @@
 build:
   docker:
     web: server/Dockerfile
+run:
+  web: .venv/bin/fastapi run app/main.py --port $PORT --host 0.0.0.0
