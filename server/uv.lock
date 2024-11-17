@@ -539,7 +539,7 @@ requires-dist = [
     { name = "pre-commit", specifier = ">=4.0.1" },
     { name = "pydantic", specifier = ">=2.9.2" },
     { name = "pyjwt", specifier = ">=2.9.0" },
-    { name = "pymongo", specifier = ">=4.10.1" },
+    { name = "pymongo", extras = ["srv"], specifier = ">=4.10.1" },
     { name = "python-dotenv", specifier = ">=1.0.1" },
     { name = "ruff", specifier = ">=0.7.2" },
 ]
