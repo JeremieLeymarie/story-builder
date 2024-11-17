@@ -32,6 +32,8 @@ class SynchronizationService:
     def save_progresses(
         self, story_progresses: list[StoryProgress]
     ) -> list[StoryProgress]:
+        if not story_progresses:
+            return []
 
         return self.story_progress_repo.save_all(story_progresses=story_progresses)
 
