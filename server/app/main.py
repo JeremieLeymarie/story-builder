@@ -103,7 +103,7 @@ async def create_user(data: CreateUserRequest):
     dependencies=[Depends(check_auth)],
 )
 async def get_synchronization_data():
-    SynchronizationDataHandler().handle()
+    return SynchronizationDataHandler().handle()
 
 
 @app.put(
@@ -113,7 +113,7 @@ async def get_synchronization_data():
     dependencies=[Depends(check_auth)],
 )
 async def synchronize_progress(payload: list[StoryProgress]):
-    ProgressSynchronizationHandler.handle(payload)
+    return ProgressSynchronizationHandler().handle(payload)
 
 
 @app.put(
@@ -123,4 +123,4 @@ async def synchronize_progress(payload: list[StoryProgress]):
     dependencies=[Depends(check_auth)],
 )
 async def save_builder_state(body: FullStoriesRequest):
-    BuilderStateSynchronization.handle(body)
+    return BuilderStateSynchronization().handle(body)

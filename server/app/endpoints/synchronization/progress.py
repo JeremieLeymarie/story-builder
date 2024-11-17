@@ -20,7 +20,6 @@ class ProgressSynchronizationHandler:
     def handle(self, payload: list[StoryProgress]) -> GenericAPIResponse:
         try:
             self.check_rights(payload)
-
             SynchronizationService(
                 story_progress_repository=StoryProgressRepository(),
                 story_repository=StoryRepository(),
@@ -28,4 +27,5 @@ class ProgressSynchronizationHandler:
 
             return GenericAPIResponse(success=True)
         except Exception as err:
+            print("d")
             raise raise_http_error(err)
