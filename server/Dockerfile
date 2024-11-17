@@ -11,4 +11,5 @@ WORKDIR /app
 RUN uv sync --frozen --no-cache
 
 # Run the application.
+# TODO: use env var for PORT
 CMD ["/app/.venv/bin/fastapi", "run", "app/main.py", "--port", "8000", "--host", "0.0.0.0"]
