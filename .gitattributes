@@ -1,1 +1,6 @@
+
+### GENERATED FILES ###
 client/src/routeTree.gen.ts linguist-generated=true
+client/src/lib/http-client/schema.d.ts linguist-generated=true
+
+server/uv.lock linguist-generated=true
