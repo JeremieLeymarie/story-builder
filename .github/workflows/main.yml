@@ -58,3 +58,29 @@ jobs:
 
       - name: Run linter
         run: uv run ruff check
+
+  deploy-api:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./server
+
+    needs:
+      - client
+      - server
+    if: github.ref == 'refs/heads/91-change-api-cloud-provider'
+    steps:
+      - name: Deploy API
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{secrets.SSH_USERNAME}}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            rm -rf story-builder
+            git clone https://github.com/JeremieLeymarie/story-builder.git
+            cd story-builder
+            docker compose down
+            docker compose up story-api -d
