@@ -1,4 +1,4 @@
-import { ErrorMessage, Loader } from "@/design-system/components";
+import { ErrorMessage, BackdropLoader } from "@/design-system/components";
 import { GameScene } from "@/game/components/scene";
 import { getGameService } from "@/services";
 import { createFileRoute } from "@tanstack/react-router";
@@ -13,7 +13,7 @@ export const Component = () => {
   );
 
   if (scene === undefined) {
-    return <Loader />;
+    return <BackdropLoader />;
   }
 
   if (scene === null) {

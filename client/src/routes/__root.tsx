@@ -5,10 +5,17 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { Navbar } from "@/navbar/navbar";
 import { getUserService } from "@/services";
 import { useSync } from "@/navbar/hooks/use-sync";
-import { Loader } from "@/design-system/components";
+import { BackdropLoader } from "@/design-system/components";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { networkMode: "offlineFirst" },
+    mutations: {
+      networkMode: "offlineFirst",
+    },
+  },
+});
 
 const Component = () => {
   const user = useLiveQuery(getUserService().getCurrentUser);
@@ -21,7 +28,7 @@ const Component = () => {
           <Navbar user={user} loadRemoteData={load} saveLocalData={save} />
           <div className="relative w-full flex-1">
             {state.loading ? (
-              <Loader text="Loading application data..." />
+              <BackdropLoader text="Loading application data..." />
             ) : (
               <Outlet />
             )}
