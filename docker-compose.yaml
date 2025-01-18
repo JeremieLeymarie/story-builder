@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   mongodb:
     image: mongo:latest
@@ -17,9 +16,11 @@ services:
       context: ./server
       dockerfile: Dockerfile
     ports:
-      - 8000:8000
+      - $PORT:$PORT
     environment:
-      - MONGO_URI=mongodb://admin:password@mongodb:27017/
+      - MONGO_URI=$MONGO_URI
+      - JWT_SECRET=$JWT_SECRET
+      - PORT=$PORT
     networks:
       - net
 
