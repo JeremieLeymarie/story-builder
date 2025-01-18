@@ -1,4 +1,4 @@
-import { ErrorMessage, Loader } from "@/design-system/components";
+import { ErrorMessage, BackdropLoader } from "@/design-system/components";
 import { GameScene } from "@/game/components/scene";
 import { useUpdateStoryProgress } from "@/game/hooks/use-update-story-progress";
 import { getGameService } from "@/services";
@@ -25,7 +25,7 @@ export const Component = () => {
   useUpdateStoryProgress({ scene, storyProgress });
 
   if (scene === undefined || storyProgress === undefined) {
-    return <Loader />;
+    return <BackdropLoader />;
   }
 
   if (scene === null || storyProgress === null) {
