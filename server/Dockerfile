@@ -12,4 +12,4 @@ RUN uv sync --frozen --no-cache
 
 
 # Run the application.
-CMD ["/app/.venv/bin/fastapi", "run", "app/main.py", "--port", $PORT, "--host", "0.0.0.0"]
+CMD uv run fastapi run --port $PORT --host 0.0.0.0
