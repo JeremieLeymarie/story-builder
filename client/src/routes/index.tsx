@@ -1,4 +1,4 @@
-import { Loader } from "@/design-system/components";
+import { BackdropLoader } from "@/design-system/components";
 import { Home } from "@/home/home";
 import { getGameService, getLibraryService, getUserService } from "@/services";
 import { createFileRoute } from "@tanstack/react-router";
@@ -16,7 +16,7 @@ const Index = () => {
     lastPlayedGame === undefined ||
     libraryStories === undefined
   ) {
-    return <Loader />;
+    return <BackdropLoader />;
   }
 
   return (

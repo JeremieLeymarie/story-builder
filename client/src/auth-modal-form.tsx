@@ -20,6 +20,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { User } from "./lib/storage/domain";
 import { getUserService } from "./services/user-service";
+import { useMutation } from "@tanstack/react-query";
+import { SimpleLoader } from "./design-system/components/simple-loader";
+import { useIsWaitingForTooLong } from "./hooks/use-is-waiting-for-too-long";
 
 export const AuthModalForm = ({
   open,
@@ -92,7 +95,7 @@ const signUpSchema = z.object({
   password: z
     .string()
     .min(3, { message: "Password must be at least 3 characters long." })
-    .max(15, { message: "Password cannot be more than 15 characters long." }),
+    .max(150, { message: "Password cannot be more than 150 characters long." }),
 });
 
 type SignUpSchema = z.infer<typeof signUpSchema>;
@@ -109,19 +112,34 @@ const SignUpForm = ({
     defaultValues: {},
   });
 
-  const submit = async (data: SignUpSchema) => {
-    const response = await getUserService().register(data);
+  const {
+    mutateAsync: submit,
+    isPending,
+    submittedAt,
+  } = useMutation({
+    mutationFn: async (data: SignUpSchema) => {
+      const response = await getUserService().register(data);
 
-    if (response.data) {
-      onSuccess(response.data);
-    } else {
-      onError("Error when trying to register user: invalid input");
-    }
-  };
+      if (response.data) {
+        onSuccess(response.data);
+      } else {
+        onError("Error when trying to register user: invalid input");
+      }
+    },
+    onError: () => onError("Error when trying to register user: invalid input"),
+  });
+
+  const isPendingForTooLong = useIsWaitingForTooLong({
+    startTimestamp: submittedAt,
+    tooLong: 3,
+  });
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(submit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit((data) => submit(data))}
+        className="space-y-4"
+      >
         <FormField
           control={form.control}
           name="username"
@@ -166,7 +184,23 @@ const SignUpForm = ({
             </FormItem>
           )}
         />
-        <Button>Sign up</Button>
+        <div className="space-y-2">
+          {isPending && isPendingForTooLong && (
+            <div className="flex items-center rounded border-0 bg-muted p-2">
+              <p className="animate-pulse text-sm text-muted-foreground">
+                Please wait a little longer, the first request to our server can
+                take a some time...
+              </p>
+            </div>
+          )}
+          <Button disabled={isPending}>
+            {isPending ? (
+              <SimpleLoader className="h-[25px] text-muted-foreground" />
+            ) : (
+              "Sign up"
+            )}
+          </Button>
+        </div>
       </form>
     </Form>
   );
@@ -193,22 +227,37 @@ const SignInForm = ({
     defaultValues: {},
   });
 
-  const submit = async (body: SignInSchema) => {
-    const response = await getUserService().login(
-      body.usernameOrEmail,
-      body.password,
-    );
+  const {
+    mutateAsync: submit,
+    isPending,
+    submittedAt,
+  } = useMutation({
+    mutationFn: async (data: SignInSchema) => {
+      const response = await getUserService().login(
+        data.usernameOrEmail,
+        data.password,
+      );
 
-    if (response.data) {
-      onSuccess(response.data);
-    } else {
-      onError("Error when trying to login: invalid input");
-    }
-  };
+      if (response.data) {
+        onSuccess(response.data);
+      } else {
+        onError("Error when trying to login: invalid input");
+      }
+    },
+    onError: () => onError("Error when trying to register user: invalid input"),
+  });
+
+  const isPendingForTooLong = useIsWaitingForTooLong({
+    startTimestamp: submittedAt,
+    tooLong: 3,
+  });
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(submit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit((data) => submit(data))}
+        className="space-y-4"
+      >
         <FormField
           control={form.control}
           name="usernameOrEmail"
@@ -235,7 +284,23 @@ const SignInForm = ({
             </FormItem>
           )}
         />
-        <Button>Sign in</Button>
+        <div className="space-y-2">
+          {isPending && isPendingForTooLong && (
+            <div className="flex items-center rounded border-0 bg-muted p-2">
+              <p className="animate-pulse text-sm text-muted-foreground">
+                Please wait a little longer, the first request to our server can
+                take a some time...
+              </p>
+            </div>
+          )}
+          <Button disabled={isPending}>
+            {isPending ? (
+              <SimpleLoader className="h-[25px] text-muted-foreground" />
+            ) : (
+              "Sign in"
+            )}
+          </Button>
+        </div>
       </form>
     </Form>
   );
