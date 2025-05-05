@@ -4,7 +4,7 @@ import { User, Story, Scene, StoryProgress } from "../domain";
 import { DEMO_IMPORTED_JSON, DEMO_SCENES, DEMO_STORY } from "./seed";
 import { getLibraryService } from "@/services";
 
-// TODO: move this file in a more appropriate location
+// TODO: move this file to a more appropriate location
 
 export const db = new Dexie("story-builder") as Dexie & {
   user: EntityTable<User, "key">;

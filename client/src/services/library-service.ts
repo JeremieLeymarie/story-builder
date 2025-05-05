@@ -54,6 +54,7 @@ export const _getLibraryService = ({
 
       const { key: importedStoryKey, ...importedStory } = zodParsed.data.story;
 
+      // Create story
       const story = await localRepository.createStory({
         ...importedStory,
         type: "imported",
@@ -67,6 +68,7 @@ export const _getLibraryService = ({
       const oldScenesToNewScenes: Record<string, string> = {};
 
       // This could be a performance issue
+      // Create scenes without actions
       for (const scene of zodParsed.data.scenes) {
         const { key: oldSceneKey, ...sceneData } = scene;
         const { key } = await localRepository.createScene({
@@ -77,6 +79,7 @@ export const _getLibraryService = ({
         oldScenesToNewScenes[oldSceneKey] = key;
       }
 
+      // Update scenes
       await localRepository.updateScenes(
         zodParsed.data.scenes
           .map((scene) => {
