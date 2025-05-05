@@ -47,8 +47,6 @@ type ImportedStory = StoryBase & {
 
 type BuilderStory = StoryBase & { type: "builder" };
 
-// PublishedStory is going to be deleted in the near future, when the store is killed
-// It could also reappear later, to represent a way to share a story via a link to download it instead of the JSON import
 export type Story = ImportedStory | BuilderStory;
 
 export type Action = {
