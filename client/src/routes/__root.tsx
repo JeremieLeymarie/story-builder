@@ -7,6 +7,7 @@ import { getUserService } from "@/services";
 import { useSync } from "@/navbar/hooks/use-sync";
 import { BackdropLoader } from "@/design-system/components";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useRegisterServiceWorker } from "@/hooks/use-register-service-worker";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,6 +21,8 @@ const queryClient = new QueryClient({
 const Component = () => {
   const user = useLiveQuery(getUserService().getCurrentUser);
   const { state, load, save } = useSync();
+
+  useRegisterServiceWorker();
 
   return (
     <QueryClientProvider client={queryClient}>

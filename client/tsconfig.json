@@ -21,6 +21,9 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
 
+    /* Vite-PWA options */
+    "types": ["vite-plugin-pwa/react"],
+
     /* ShadCn UI options*/
     "baseUrl": ".",
     "paths": {
