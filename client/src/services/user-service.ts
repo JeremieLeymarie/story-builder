@@ -56,7 +56,7 @@ const _getUserService = ({
       });
 
       if (response.data) {
-        const createdUser = await _createLocalUser(userData);
+        const createdUser = await _createLocalUser(response.data);
         // Side effect: once a user is logged in, update all of his or her existing stories' authorKey
         localRepository.addAuthorToStories({
           key: createdUser.key,

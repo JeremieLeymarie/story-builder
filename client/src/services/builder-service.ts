@@ -146,7 +146,7 @@ export const _getBuilderService = ({
 
     getUserBuilderStories,
 
-    getFullBuilderState: async () => {
+    getAllBuilderData: async () => {
       const stories = await getUserBuilderStories();
       const scenes = await localRepository.getScenesByStoryKey(
         stories?.map((story) => story.key) ?? [],

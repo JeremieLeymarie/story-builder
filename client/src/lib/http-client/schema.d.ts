@@ -63,8 +63,25 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Synchronize Progresses */
-        put: operations["API-synchronize_progresses"];
+        /** Synchronize Progress */
+        put: operations["API-synchronize_progress"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/save/library": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Save Library State */
+        put: operations["API-save_library_state"];
         post?: never;
         delete?: never;
         options?: never;
@@ -93,13 +110,6 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /** APIResponse */
-        APIResponse: {
-            /** Success */
-            success: boolean;
-            /** Message */
-            message?: string | null;
-        };
         /** Action */
         Action: {
             /** Text */
@@ -154,6 +164,11 @@ export interface components {
              * @description The unique key of the story
              */
             key: string;
+            /**
+             * Userkey
+             * @description The key of the user the story belongs to
+             */
+            userKey: string;
             /** @description The type of the story */
             type: components["schemas"]["StoryType"];
             /** @description The author of the story */
@@ -190,7 +205,7 @@ export interface components {
             firstSceneKey: string;
             /**
              * Originalstorykey
-             * @description The key of the first
+             * @description The key of the original story
              */
             originalStoryKey?: string | null;
             /**
@@ -200,6 +215,13 @@ export interface components {
             publicationDate?: string | null;
             /** Scenes */
             scenes: components["schemas"]["Scene-Output"][];
+        };
+        /** GenericAPIResponse */
+        GenericAPIResponse: {
+            /** Success */
+            success: boolean;
+            /** Message */
+            message?: string | null;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -248,6 +270,11 @@ export interface components {
              * @description The unique key of the story
              */
             key: string;
+            /**
+             * Userkey
+             * @description The key of the user the story belongs to
+             */
+            userKey: string;
             /** @description The type of the story */
             type: components["schemas"]["StoryType"];
             /** @description The author of the story */
@@ -284,7 +311,7 @@ export interface components {
             firstSceneKey: string;
             /**
              * Originalstorykey
-             * @description The key of the first
+             * @description The key of the original story
              */
             originalStoryKey?: string | null;
             /**
@@ -331,13 +358,13 @@ export interface components {
          * StoryType
          * @enum {string}
          */
-        StoryType: "builder" | "published" | "imported";
-        /** SynchronizationPayload */
-        SynchronizationPayload: {
+        StoryType: "builder" | "imported";
+        /** SynchronizationLoadResponse */
+        SynchronizationLoadResponse: {
             /** Playergames */
             playerGames: components["schemas"]["FullStory"][];
-            /** Buildergames */
-            builderGames: components["schemas"]["FullStory"][] | null;
+            /** Builderstories */
+            builderStories: components["schemas"]["FullStory"][];
             /** Storyprogresses */
             storyProgresses: components["schemas"]["StoryProgress"][];
         };
@@ -431,9 +458,7 @@ export interface operations {
             header: {
                 authorization: string;
             };
-            path: {
-                user_key: string;
-            };
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -444,7 +469,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SynchronizationPayload"];
+                    "application/json": components["schemas"]["SynchronizationLoadResponse"];
                 };
             };
             /** @description Validation Error */
@@ -458,7 +483,7 @@ export interface operations {
             };
         };
     };
-    "API-synchronize_progresses": {
+    "API-synchronize_progress": {
         parameters: {
             query?: never;
             header: {
@@ -479,7 +504,42 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["APIResponse"];
+                    "application/json": components["schemas"]["GenericAPIResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    "API-save_library_state": {
+        parameters: {
+            query?: never;
+            header: {
+                authorization: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FullStoriesRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GenericAPIResponse"];
                 };
             };
             /** @description Validation Error */
@@ -514,7 +574,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["APIResponse"];
+                    "application/json": components["schemas"]["GenericAPIResponse"];
                 };
             };
             /** @description Validation Error */

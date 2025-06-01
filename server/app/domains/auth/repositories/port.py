@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from domains.type_def import FullUser
+from domains.auth.type_defs import FullUser
 
 
 class UserRepositoryPort(Protocol):

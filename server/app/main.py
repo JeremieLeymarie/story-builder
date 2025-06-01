@@ -3,21 +3,24 @@ from typing import Annotated
 from fastapi import Depends, FastAPI, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRoute
-from domains.type_def import AuthUser, FullUser, StoryProgress
-from domains.auth_service import AuthService
-from repositories.user_repository import UserRepository
-from request_types import (
-    GenericAPIResponse,
-    CreateUserRequest,
+
+from domains.auth.auth_service import AuthService
+from domains.auth.repositories.user_repository import UserRepository
+from domains.auth.type_defs import AuthUser, FullUser
+from endpoints.synchronization.builder import BuilderStateSynchronization
+from endpoints.synchronization.load import SynchronizationDataHandler
+from endpoints.synchronization.library import LibraryStateSynchronization
+from endpoints.synchronization.progress import ProgressSynchronizationHandler
+from endpoints.synchronization.type_defs import (
     FullStoriesRequest,
+    StoryProgress,
+    SynchronizationLoadResponse,
+)
+from request_types import (
+    CreateUserRequest,
+    GenericAPIResponse,
     LoginUserRequest,
 )
-from endpoints.synchronization.get import (
-    SynchronizationDataHandler,
-    SynchronizationResponse,
-)
-from endpoints.synchronization.progress import ProgressSynchronizationHandler
-from endpoints.synchronization.builder import BuilderStateSynchronization
 from utils.errors import BadAuthException
 from utils.error_adapter import raise_http_error
 
@@ -35,7 +38,7 @@ async def check_auth(authorization: Annotated[str, Header()]):
         raise_http_error(BadAuthException("Invalid authorization bearer format"))
 
     try:
-        AuthService(user_repository=UserRepository()).check_auth(token)
+        AuthService(user_repository=UserRepository()).check_auth(token)  # noqa: F821
     except BadAuthException as err:
         raise_http_error(err)
 
@@ -100,7 +103,7 @@ async def create_user(data: CreateUserRequest):
 @app.get(
     "/api/load/{user_key}",
     status_code=HTTPStatus.OK,
-    response_model=SynchronizationResponse,
+    response_model=SynchronizationLoadResponse,
     dependencies=[Depends(check_auth)],
 )
 async def get_synchronization_data():
@@ -115,6 +118,16 @@ async def get_synchronization_data():
 )
 async def synchronize_progress(payload: list[StoryProgress]):
     return ProgressSynchronizationHandler().handle(payload)
+
+
+@app.put(
+    "/api/save/library",
+    status_code=HTTPStatus.OK,
+    response_model=GenericAPIResponse,
+    dependencies=[Depends(check_auth)],
+)
+async def save_library_state(body: FullStoriesRequest):
+    return LibraryStateSynchronization().handle(body)
 
 
 @app.put(

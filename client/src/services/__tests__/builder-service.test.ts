@@ -338,7 +338,7 @@ describe("builder-service", () => {
 
   describe("getFullBuilderState", () => {
     it("should get all stories and scenes", async () => {
-      const result = await builderService.getFullBuilderState();
+      const result = await builderService.getAllBuilderData();
 
       expect(localRepository.getScenesByStoryKey).toHaveBeenCalled();
       expect(result).toStrictEqual({

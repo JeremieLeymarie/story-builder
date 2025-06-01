@@ -1,8 +1,8 @@
 import os
 import bcrypt
 
-from repositories.user_repository_port import UserRepositoryPort
-from domains.type_def import AuthUser, FullUser, User
+from domains.auth.repositories.port import UserRepositoryPort
+from domains.auth.type_defs import AuthUser, FullUser, User
 from utils.errors import BadAuthException, InvalidActionException
 from context import current_user
 

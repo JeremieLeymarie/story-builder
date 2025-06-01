@@ -1,13 +1,13 @@
 from pymongo import ReturnDocument
-from repositories.user_repository_port import UserRepositoryPort
-from repositories.mongo_repository import MongoRecord, MongoRepository
-from domains.type_def import FullUser
+from domains.auth.type_defs import FullUser
+from domains.auth.repositories.port import UserRepositoryPort
+from utils.mongo.base_repository import BaseMongoRepository, MongoRecord
 
 USER_COLLECTION = "users"
 
 
 # TODO: extend from MongoRepository
-class UserRepository(MongoRepository, UserRepositoryPort):
+class UserRepository(BaseMongoRepository, UserRepositoryPort):
 
     def user_exists(self, *, username: str, email: str) -> bool:
         return (
