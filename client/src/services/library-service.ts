@@ -29,6 +29,22 @@ export const _getLibraryService = ({
     return progress;
   };
 
+  const _getLibrary = async () => {
+    const user = await localRepository.getUser();
+    const storyKeys = (
+      await localRepository.getUserStoryProgresses(user?.key)
+    ).map(({ storyKey }) => storyKey);
+
+    const games = await localRepository.getStoriesByKeys(storyKeys);
+
+    const finishedGameKeys = await localRepository.getFinishedGameKeys();
+
+    return {
+      games,
+      finishedGameKeys,
+    };
+  };
+
   return {
     importFromJSON: async (fileContent: string) => {
       let parsed: unknown;
@@ -112,20 +128,16 @@ export const _getLibraryService = ({
       return { error: null };
     },
 
-    getLibrary: async () => {
-      const user = await localRepository.getUser();
-      const storyKeys = (
-        await localRepository.getUserStoryProgresses(user?.key)
-      ).map(({ storyKey }) => storyKey);
+    getLibrary: _getLibrary,
 
-      const games = await localRepository.getStoriesByKeys(storyKeys);
+    getAllLibraryData: async () => {
+      const { games: stories } = await _getLibrary();
 
-      const finishedGameKeys = await localRepository.getFinishedGameKeys();
+      const scenes = await localRepository.getScenesByStoryKey(
+        stories?.map((story) => story.key) ?? [],
+      );
 
-      return {
-        games,
-        finishedGameKeys,
-      };
+      return { stories, scenes };
     },
 
     getGameDetail: async (storyKey: string) => {

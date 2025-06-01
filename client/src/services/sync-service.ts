@@ -8,12 +8,14 @@ import { checkCanPerformSync, isOnline } from "./common/sync";
 import { getGameService } from "./game-service";
 import { getUserService } from "./user-service";
 import { getBuilderService } from "./builder-service";
+import { getLibraryService } from "./library-service";
 
 const _getSyncService = ({
   remoteRepository,
   localRepository,
   builderService,
   gameService,
+  libraryService,
   userService,
 }: {
   remoteRepository: RemoteRepositoryPort;
@@ -21,6 +23,7 @@ const _getSyncService = ({
   // TODO: use ports
   builderService: ReturnType<typeof getBuilderService>;
   gameService: ReturnType<typeof getGameService>;
+  libraryService: ReturnType<typeof getLibraryService>;
   userService: ReturnType<typeof getUserService>;
 }) => {
   return {
@@ -63,10 +66,12 @@ const _getSyncService = ({
 
     // Save local data into remote data
     save: async () => {
-      const builderStories = await builderService.getFullBuilderState();
+      const builderStories = await builderService.getAllBuilderData();
+      const libraryStories = await libraryService.getAllLibraryData();
       const progresses = await gameService.getStoryProgresses();
       const user = await userService.getCurrentUser();
 
+      console.log({ libraryStories });
       if (!user) {
         return { success: false, cause: "User not logged in" };
       }
@@ -77,9 +82,14 @@ const _getSyncService = ({
 
       const [progressResponse, builderResponse] = await Promise.all([
         remoteRepository.saveStoryProgresses(progresses, user),
-        remoteRepository.saveStories(
+        remoteRepository.saveBuilderStories(
           builderStories.stories ?? [],
           builderStories.scenes,
+          user,
+        ),
+        remoteRepository.saveLibraryStories(
+          libraryStories.stories ?? [],
+          libraryStories.scenes,
           user,
         ),
       ]);
@@ -102,4 +112,5 @@ export const getSyncService = () =>
     builderService: getBuilderService(),
     gameService: getGameService(),
     userService: getUserService(),
+    libraryService: getLibraryService(),
   });

@@ -1,0 +1,4 @@
+{
+  "python.analysis.extraPaths": ["${workspaceFolder}/server/app"],
+  "mypy-type-checker.cwd": "${workspaceFolder}/server/app"
+}
