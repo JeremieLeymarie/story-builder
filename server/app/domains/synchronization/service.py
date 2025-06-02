@@ -36,15 +36,14 @@ class SynchronizationService:
         self.repository = repository
 
     def get_synchronization_data(self, user_key: str) -> SynchronizationData:
-
         progresses = self.repository.get_story_progresses(user_key)
-
         all_stories = self.repository.get_stories(user_key)
+
         builder_stories = [
-            story for story in all_stories if story.type is StoryType.BUILDER
+            story for story in all_stories if story.type == StoryType.BUILDER.value
         ]
         player_games = [
-            story for story in all_stories if story.type is StoryType.IMPORTED
+            story for story in all_stories if story.type == StoryType.IMPORTED.value
         ]
         return SynchronizationData(
             story_progresses=list(progresses),

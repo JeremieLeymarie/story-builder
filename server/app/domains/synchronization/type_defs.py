@@ -41,7 +41,7 @@ class SynchronizationStory(BaseModel, use_enum_values=True):
     description: str
     image: str
     genres: list[StoryGenre]
-    creation_date: str
+    creation_date: datetime
     first_scene_key: str
 
     original_story_key: str | None
@@ -58,4 +58,4 @@ class SynchronizationStoryProgress(BaseModel):
     last_played_at: datetime
     finished: bool | None = None
     story_key: str
-    last_sync_at: str | None = None
+    last_sync_at: datetime | None = None
