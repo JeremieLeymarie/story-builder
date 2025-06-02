@@ -53,7 +53,7 @@ class MongoStory(TypedDict):
     description: str
     image: str
     genres: list[StoryGenre]
-    creationDate: str
+    creationDate: datetime
     firstSceneKey: str
 
     originalStoryKey: Optional[str]
@@ -70,7 +70,7 @@ class MongoStoryProgress(TypedDict):
     lastPlayedAt: datetime
     finished: bool | None
     storyKey: str
-    lastSyncAt: str | None
+    lastSyncAt: datetime | None
 
 
 T = TypeVar("T")
