@@ -89,7 +89,9 @@ class Story(BaseAPIModel, use_enum_values=True):
     description: str = Field(description="The description of the story")
     image: str = Field(description="The URL used for the story thumbnail")
     genres: list[StoryGenre] = Field(description="The genres of story")
-    creation_date: str = Field(description="The date at which the story was created")
+    creation_date: datetime = Field(
+        description="The date at which the story was created"
+    )
     first_scene_key: str = Field(description="The first scene of the story")
 
     original_story_key: str | None = Field(
@@ -175,7 +177,7 @@ class StoryProgress(BaseAPIModel):
     last_played_at: datetime
     finished: bool | None = None
     story_key: str
-    last_sync_at: str | None = None
+    last_sync_at: datetime | None = None
 
     @classmethod
     def from_domain(cls, domain: SynchronizationStoryProgress) -> Self:

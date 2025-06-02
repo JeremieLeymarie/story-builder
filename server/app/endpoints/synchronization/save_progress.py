@@ -26,7 +26,10 @@ class ProgressSynchronizationHandler:
     def handle(self, story_progresses: list[StoryProgress]) -> GenericAPIResponse:
         try:
             self.check_rights(story_progresses)
-            self.sync_svc.save_progresses([sp.to_domain() for sp in story_progresses])
+            self.sync_svc.save_progresses(
+                [sp.to_domain() for sp in story_progresses],
+                user_key=current_user.get().key,
+            )
 
             return GenericAPIResponse(success=True)
         except Exception as err:
