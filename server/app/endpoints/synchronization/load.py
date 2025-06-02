@@ -6,6 +6,7 @@ from endpoints.synchronization.synchronization_service import (
 )
 from endpoints.synchronization.type_defs import SynchronizationLoadResponse
 from utils.error_adapter import raise_http_error
+from context import current_user
 
 
 class SynchronizationDataHandler:
@@ -15,7 +16,7 @@ class SynchronizationDataHandler:
 
     def handle(self) -> SynchronizationLoadResponse:
         try:
-            sync_data = self.sync_svc.get_synchronization_data()
+            sync_data = self.sync_svc.get_synchronization_data(current_user.get().key)
             return SynchronizationLoadResponse.from_domain(
                 builder_stories=sync_data.builder_stories,
                 player_games=sync_data.games,

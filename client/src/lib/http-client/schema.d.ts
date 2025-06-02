@@ -38,7 +38,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/load/{user_key}": {
+    "/api/load": {
         parameters: {
             query?: never;
             header?: never;

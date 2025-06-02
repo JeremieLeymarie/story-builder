@@ -24,6 +24,7 @@ class BuilderStateSynchronization:
     def handle(self, payload: FullStoriesRequest) -> GenericAPIResponse:
         try:
             self.check_rights(stories=payload.stories)
+            user_key = current_user.get().key
 
             full_stories = list[FullStory]()
             for story in payload.stories:
@@ -39,7 +40,8 @@ class BuilderStateSynchronization:
                 )
 
             self.sync_svc.save_stories(
-                [full_story.to_domain() for full_story in full_stories]
+                [full_story.to_domain() for full_story in full_stories],
+                user_key=user_key,
             )
             return GenericAPIResponse(success=True)
         except Exception as err:

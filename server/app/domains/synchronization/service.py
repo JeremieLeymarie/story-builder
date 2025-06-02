@@ -5,7 +5,6 @@ from domains.synchronization.type_defs import (
     SynchronizationStory,
     SynchronizationStoryProgress,
 )
-from context import current_user
 from utils.result import Result
 from utils.type_defs import StoryType
 
@@ -18,13 +17,15 @@ class SynchronizationData:
 
 
 class SynchronizationServicePort(Protocol):
-    def get_synchronization_data(self) -> SynchronizationData: ...
+    def get_synchronization_data(self, user_key: str) -> SynchronizationData: ...
 
     def save_progresses(
-        self, story_progresses: list[SynchronizationStoryProgress]
+        self, story_progresses: list[SynchronizationStoryProgress], *, user_key: str
     ) -> Result: ...
 
-    def save_stories(self, stories: list[SynchronizationStory]) -> Result: ...
+    def save_stories(
+        self, stories: list[SynchronizationStory], *, user_key: str
+    ) -> Result: ...
 
 
 class SynchronizationService:
@@ -34,8 +35,7 @@ class SynchronizationService:
     ):
         self.repository = repository
 
-    def get_synchronization_data(self) -> SynchronizationData:
-        user_key = current_user.get().key
+    def get_synchronization_data(self, user_key: str) -> SynchronizationData:
 
         progresses = self.repository.get_story_progresses(user_key)
 
@@ -53,19 +53,19 @@ class SynchronizationService:
         )
 
     def save_progresses(
-        self, story_progresses: list[SynchronizationStoryProgress]
+        self, story_progresses: list[SynchronizationStoryProgress], *, user_key: str
     ) -> Result:
         if not story_progresses:
             return Result(success=True)
 
         return self.repository.save_story_progresses(
-            story_progresses, user_key=current_user.get().key
+            story_progresses, user_key=user_key
         )
 
-    def save_stories(self, stories: list[SynchronizationStory]) -> Result:
+    def save_stories(
+        self, stories: list[SynchronizationStory], *, user_key: str
+    ) -> Result:
         if not stories:
             return Result(success=True)
 
-        return self.repository.save_stories(
-            stories=stories, user_key=current_user.get().key
-        )
+        return self.repository.save_stories(stories=stories, user_key=user_key)

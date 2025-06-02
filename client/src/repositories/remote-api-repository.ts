@@ -58,7 +58,10 @@ const _getRemoteAPIRepository = (
 
     saveBuilderStories: async (stories, scenes, user) => {
       const { data, error } = await _client.PUT("/api/save/builder", {
-        body: { stories: adapter.fromClient.stories(stories), scenes },
+        body: {
+          stories: adapter.fromClient.stories(stories, user.key),
+          scenes,
+        },
         params: { header: { authorization: formatTokenHeader(user.token) } },
       });
 
@@ -70,7 +73,10 @@ const _getRemoteAPIRepository = (
 
     saveLibraryStories: async (stories, scenes, user) => {
       const { data, error } = await _client.PUT("/api/save/library", {
-        body: { stories: adapter.fromClient.stories(stories), scenes },
+        body: {
+          stories: adapter.fromClient.stories(stories, user.key),
+          scenes,
+        },
         params: { header: { authorization: formatTokenHeader(user.token) } },
       });
 
@@ -81,9 +87,8 @@ const _getRemoteAPIRepository = (
     },
 
     getSynchronizationData: async (user) => {
-      const { data, error } = await _client.GET("/api/load/{user_key}", {
+      const { data, error } = await _client.GET("/api/load", {
         params: {
-          path: { user_key: user.key },
           header: { authorization: formatTokenHeader(user.token) },
         },
       });
