@@ -21,7 +21,6 @@ from utils.mongo.base_repository import (
 from utils.result import Result
 
 
-# TODO: test all of this
 class MongoSynchronizationRepository(
     SynchronizationRepositoryPort, BaseMongoRepository
 ):

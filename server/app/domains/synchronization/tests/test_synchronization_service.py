@@ -1,5 +1,8 @@
 from datetime import datetime
 from typing import Iterable
+
+import pytest
+from domains.synchronization.errors import SynchronizationUserKeyNotMatchError
 from domains.synchronization.repositories.port import SynchronizationRepositoryPort
 from domains.synchronization.service import SynchronizationData, SynchronizationService
 from domains.synchronization.type_defs import (
@@ -11,41 +14,35 @@ from utils.result import Result
 from utils.type_defs import StoryGenre, StoryType
 
 
-class TestSynchronizationService:
+class BaseMockSynchronizationRepository(SynchronizationRepositoryPort):
+    def get_stories(self, user_key: str) -> Iterable[SynchronizationStory]:
+        raise NotImplementedError
 
-    def _get_mock_sync_repository(
+    def get_story_progresses(
+        self, user_key: str
+    ) -> Iterable[SynchronizationStoryProgress]:
+        raise NotImplementedError
+
+    def save_story_progresses(
         self,
-        mock_stories: Iterable[SynchronizationStory] = [],
-        mock_story_progresses: Iterable[SynchronizationStoryProgress] = [],
-    ) -> SynchronizationRepositoryPort:
-        class MockSynchronizationRepository(SynchronizationRepositoryPort):
-            def get_stories(self, user_key: str) -> Iterable[SynchronizationStory]:
-                return mock_stories
+        story_progresses: Iterable[SynchronizationStoryProgress],
+        *,
+        user_key: str,
+    ) -> Result:
+        raise NotImplementedError
 
-            def get_story_progresses(
-                self, user_key: str
-            ) -> Iterable[SynchronizationStoryProgress]:
-                return mock_story_progresses
+    def save_stories(
+        self, stories: Iterable[SynchronizationStory], *, user_key: str
+    ) -> Result:
+        raise NotImplementedError
 
-            def save_story_progresses(
-                self,
-                story_progresses: Iterable[SynchronizationStoryProgress],
-                *,
-                user_key: str,
-            ) -> Result:
-                return Result(success=True)
 
-            def save_stories(
-                self, stories: Iterable[SynchronizationStory], *, user_key: str
-            ) -> Result:
-                return Result(success=True)
-
-        return MockSynchronizationRepository()
-
+class TestSynchronizationService:
     def test_get_synchronization_data(self) -> None:
-        svc = SynchronizationService(
-            repository=self._get_mock_sync_repository(
-                mock_stories=[
+
+        class MockSyncRepository(BaseMockSynchronizationRepository):
+            def get_stories(self, user_key):
+                return [
                     SynchronizationStory(
                         key="zgloub",
                         user_key="me",
@@ -80,8 +77,10 @@ class TestSynchronizationService:
                         publication_date=None,
                         scenes=[],
                     ),
-                ],
-                mock_story_progresses=[
+                ]
+
+            def get_story_progresses(self, user_key):
+                return [
                     SynchronizationStoryProgress(
                         key="plouf",
                         user_key="me",
@@ -92,9 +91,9 @@ class TestSynchronizationService:
                         story_key="shplouf",
                         last_sync_at=datetime(2025, 6, 2),
                     )
-                ],
-            )
-        )
+                ]
+
+        svc = SynchronizationService(repository=MockSyncRepository())
 
         sync_data = svc.get_synchronization_data("me")
 
@@ -148,3 +147,140 @@ class TestSynchronizationService:
                 )
             ],
         )
+
+    FAKE_STORY_PROGRESS = SynchronizationStoryProgress(
+        key="key",
+        current_scene_key="current-scene-key",
+        finished=True,
+        history=["scene-1", "scene-2"],
+        last_played_at=datetime(1999, 11, 26),
+        last_sync_at=datetime(1999, 12, 8),
+        story_key="story-key",
+        user_key="me",
+    )
+
+    def test_save_progresses_no_progresses(self) -> None:
+        called_count = 0
+
+        class MockSyncRepository(BaseMockSynchronizationRepository):
+            def save_story_progresses(self, story_progresses, *, user_key):
+                nonlocal called_count
+                called_count += 1
+
+        svc = SynchronizationService(repository=MockSyncRepository())
+        result = svc.save_progresses([], user_key="me")
+
+        assert result == Result(success=True)
+        assert called_count == 0
+
+    def test_save_progresses_repository_fail(self) -> None:
+        class MockSyncRepository(BaseMockSynchronizationRepository):
+            def save_story_progresses(self, story_progresses, *, user_key):
+                return Result(success=False)
+
+        svc = SynchronizationService(repository=MockSyncRepository())
+        result = svc.save_progresses(
+            [self.FAKE_STORY_PROGRESS],
+            user_key="me",
+        )
+
+        assert result == Result(success=False)
+
+    def test_save_progresses_wrong_user_key(self) -> None:
+        class MockSyncRepository(BaseMockSynchronizationRepository):
+            def save_story_progresses(self, story_progresses, *, user_key):
+                raise ValueError("This should not be called")
+
+        svc = SynchronizationService(repository=MockSyncRepository())
+        sp = self.FAKE_STORY_PROGRESS.model_copy()
+        sp.user_key = "not-me"
+
+        with pytest.raises(SynchronizationUserKeyNotMatchError):
+            svc.save_progresses(
+                [sp],
+                user_key="me",
+            )
+
+    def test_save_progresses(self) -> None:
+        class MockSyncRepository(BaseMockSynchronizationRepository):
+            def save_story_progresses(self, story_progresses, *, user_key):
+                return Result(success=True)
+
+        svc = SynchronizationService(repository=MockSyncRepository())
+        result = svc.save_progresses(
+            [self.FAKE_STORY_PROGRESS],
+            user_key="me",
+        )
+
+        assert result == Result(success=True)
+
+    FAKE_STORY = SynchronizationStory(
+        author=SynchronizationStoryAuthor(key="author-key", username="username"),
+        creation_date=datetime(2025, 6, 2),
+        description="description",
+        first_scene_key="first-scene-key",
+        genres=[StoryGenre.ADVENTURE, StoryGenre.ROMANCE],
+        image="http://image.com",
+        key="key",
+        original_story_key="og-story-key",
+        publication_date=datetime(2025, 6, 2),
+        scenes=[],
+        title="Title",
+        type=StoryType.BUILDER,
+        user_key="me",
+    )
+
+    def test_save_stories_no_stories(self) -> None:
+        called_count = 0
+
+        class MockSyncRepository(BaseMockSynchronizationRepository):
+            def save_stories(self, stories, *, user_key):
+                nonlocal called_count
+                called_count += 1
+
+        svc = SynchronizationService(repository=MockSyncRepository())
+        result = svc.save_stories([], user_key="me")
+
+        assert result == Result(success=True)
+        assert called_count == 0
+
+    def test_save_stories_repository_fail(self) -> None:
+        class MockSyncRepository(BaseMockSynchronizationRepository):
+            def save_stories(self, stories, *, user_key):
+                return Result(success=False)
+
+        svc = SynchronizationService(repository=MockSyncRepository())
+        result = svc.save_stories(
+            [self.FAKE_STORY],
+            user_key="me",
+        )
+
+        assert result == Result(success=False)
+
+    def test_save_stories_wrong_user_key(self) -> None:
+        class MockSyncRepository(BaseMockSynchronizationRepository):
+            def save_stories(self, stories, *, user_key):
+                raise ValueError("This should not be called")
+
+        svc = SynchronizationService(repository=MockSyncRepository())
+        sp = self.FAKE_STORY.model_copy()
+        sp.user_key = "not-me"
+
+        with pytest.raises(SynchronizationUserKeyNotMatchError):
+            svc.save_stories(
+                [sp],
+                user_key="me",
+            )
+
+    def test_save_stories(self) -> None:
+        class MockSyncRepository(BaseMockSynchronizationRepository):
+            def save_stories(self, stories, *, user_key):
+                return Result(success=True)
+
+        svc = SynchronizationService(repository=MockSyncRepository())
+        result = svc.save_stories(
+            [self.FAKE_STORY],
+            user_key="me",
+        )
+
+        assert result == Result(success=True)
