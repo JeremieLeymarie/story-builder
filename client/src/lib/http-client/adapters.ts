@@ -117,9 +117,11 @@ const fromAPIStoryProgressesAdapter = (
 
 const fromClientStoryAdapter = (
   story: Story,
+  userKey: string,
 ): components["schemas"]["Story"] => {
   return {
     ...story,
+    userKey,
     author: story.author ?? null,
     creationDate: story.creationDate.toISOString(),
   };
@@ -127,14 +129,17 @@ const fromClientStoryAdapter = (
 
 const fromClientStoriesAdapter = (
   stories: Story[],
-): components["schemas"]["Story"][] => stories.map(fromClientStoryAdapter);
+  userKey: string,
+): components["schemas"]["Story"][] =>
+  stories.map((s) => fromClientStoryAdapter(s, userKey));
 
 const fromClientFullStoryAdapter = (
   story: Story,
   scenes: Scene[],
+  userKey: string,
 ): components["schemas"]["FullStory"] => {
   return {
-    ...fromClientStoryAdapter(story),
+    ...fromClientStoryAdapter(story, userKey),
     scenes,
   };
 };

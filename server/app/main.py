@@ -7,10 +7,10 @@ from fastapi.routing import APIRoute
 from domains.auth.auth_service import AuthService
 from domains.auth.repositories.user_repository import UserRepository
 from domains.auth.type_defs import AuthUser, FullUser
-from endpoints.synchronization.builder import BuilderStateSynchronization
+from endpoints.synchronization.save_builder import BuilderStateSynchronization
 from endpoints.synchronization.load import SynchronizationDataHandler
-from endpoints.synchronization.library import LibraryStateSynchronization
-from endpoints.synchronization.progress import ProgressSynchronizationHandler
+from endpoints.synchronization.save_library import LibraryStateSynchronization
+from endpoints.synchronization.save_progress import ProgressSynchronizationHandler
 from endpoints.synchronization.type_defs import (
     FullStoriesRequest,
     StoryProgress,
@@ -101,7 +101,7 @@ async def create_user(data: CreateUserRequest):
 
 
 @app.get(
-    "/api/load/{user_key}",
+    "/api/load",
     status_code=HTTPStatus.OK,
     response_model=SynchronizationLoadResponse,
     dependencies=[Depends(check_auth)],
