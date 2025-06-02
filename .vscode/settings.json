@@ -3,7 +3,12 @@
   "mypy-type-checker.cwd": "${workspaceFolder}/server/app",
 
   "python.testing.cwd": "${workspaceFolder}/server/app",
-  "python.testing.pytestArgs": ["${workspaceFolder}/server/app"],
+  "python.testing.pytestArgs": [
+    "${workspaceFolder}/server/app",
+    "-vv",
+    "-c",
+    "${workspaceFolder}/server/pytest.ini"
+  ],
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true
 }

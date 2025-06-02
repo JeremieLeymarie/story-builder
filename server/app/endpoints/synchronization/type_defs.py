@@ -80,7 +80,7 @@ class StoryAuthor(BaseAPIModel):
     username: str
 
 
-class Story(BaseAPIModel, use_enum_values=True):
+class Story(BaseAPIModel):
     key: str = Field(description="The unique key of the story")
     user_key: str = Field(description="The key of the user the story belongs to")
     type: StoryType = Field(description="The type of the story")

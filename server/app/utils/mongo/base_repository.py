@@ -1,15 +1,19 @@
 from abc import ABC
 from warnings import deprecated
+from bson import ObjectId
 from pymongo.collection import Collection
 
 from datetime import datetime
-from typing import Any, Generic, Optional, TypeVar, TypedDict
+from typing import Any, Generic, NotRequired, TypeVar, TypedDict
 
-from utils.mongo.db import SBMongoDatabase
-from utils.type_defs import StoryGenre, StoryType
+from utils.mongo.db import MongoDatabaseManager
 
 
-class MongoUser(TypedDict):
+class WithId(TypedDict):
+    _id: NotRequired[ObjectId]
+
+
+class MongoUser(WithId):
     key: str
     email: str
     username: str
@@ -44,25 +48,25 @@ class MongoStoryAuthor(TypedDict):
     username: str
 
 
-class MongoStory(TypedDict):
+class MongoStory(WithId):
     key: str
     userKey: str
-    type: StoryType
-    author: Optional[MongoStoryAuthor]
+    type: str
+    author: MongoStoryAuthor | None
     title: str
     description: str
     image: str
-    genres: list[StoryGenre]
+    genres: list[str]
     creationDate: datetime
     firstSceneKey: str
 
-    originalStoryKey: Optional[str]
-    publicationDate: Optional[datetime]
+    originalStoryKey: str | None
+    publicationDate: datetime | None
 
     scenes: list[MongoScene]
 
 
-class MongoStoryProgress(TypedDict):
+class MongoStoryProgress(WithId):
     key: str
     userKey: str
     history: list[str]
@@ -82,9 +86,9 @@ class MongoRecord(Generic[T], TypedDict):
 
 class BaseMongoRepository(ABC):
     def __init__(self) -> None:
-        db = SBMongoDatabase()
-        self._client = db.get_client()
-        self.db = db.get_db()
+        db_manager = MongoDatabaseManager()
+        self._client = db_manager.get_client()
+        self.db = db_manager.get_db()
         self.story_progresses: Collection[MongoStoryProgress] = self.db.storyProgresses
         self.stories: Collection[MongoStory] = self.db.stories
         self.users: Collection[MongoUser] = self.db.users
@@ -94,3 +98,6 @@ class BaseMongoRepository(ABC):
         copy = dict(record)
         del copy["_id"]
         return copy
+
+
+class TestMongoRepository(BaseMongoRepository): ...

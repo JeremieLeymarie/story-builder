@@ -1,4 +1,4 @@
-from typing import Iterable, Protocol
+from typing import Protocol
 from utils.result import Result
 from domains.synchronization.type_defs import (
     SynchronizationStory,
@@ -8,18 +8,18 @@ from domains.synchronization.type_defs import (
 
 class SynchronizationRepositoryPort(Protocol):
     def save_stories(
-        self, stories: Iterable[SynchronizationStory], *, user_key: str
+        self, stories: list[SynchronizationStory], *, user_key: str
     ) -> Result: ...
 
     def save_story_progresses(
         self,
-        story_progresses: Iterable[SynchronizationStoryProgress],
+        story_progresses: list[SynchronizationStoryProgress],
         *,
         user_key: str,
     ) -> Result: ...
 
-    def get_stories(self, user_key: str) -> Iterable[SynchronizationStory]: ...
+    def get_stories(self, user_key: str) -> list[SynchronizationStory]: ...
 
     def get_story_progresses(
         self, user_key: str
-    ) -> Iterable[SynchronizationStoryProgress]: ...
+    ) -> list[SynchronizationStoryProgress]: ...

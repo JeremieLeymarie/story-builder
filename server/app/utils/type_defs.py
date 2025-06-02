@@ -1,12 +1,12 @@
 import enum
 
 
-class StoryType(enum.Enum):
+class StoryType(str, enum.Enum):
     BUILDER = "builder"
     IMPORTED = "imported"
 
 
-class StoryGenre(enum.Enum):
+class StoryGenre(str, enum.Enum):
     ADVENTURE = "adventure"
     CHILDREN = "children"
     DETECTIVE = "detective"

@@ -16,6 +16,7 @@ from utils.mongo.base_repository import (
     MongoStoryAuthor,
     MongoStoryProgress,
 )
+from utils.type_defs import StoryGenre, StoryType
 
 # From domain to mongo
 
@@ -50,16 +51,61 @@ def make_mongo_scene(domain: SynchronizationScene) -> MongoScene:
     )
 
 
-def make_mongo_story(domain: SynchronizationStory, user_key: str) -> MongoStory:
+def make_story_type(type: str) -> StoryType:
+    match (type):
+        case "builder":
+            return StoryType.BUILDER
+        case "imported":
+            return StoryType.IMPORTED
+        case _:
+            raise ValueError(f"Unsupported story type: {type}")
+
+
+# TODO: do something smarter
+def make_story_genre(genre: str) -> StoryGenre:
+    match (genre):
+        case "adventure":
+            return StoryGenre.ADVENTURE
+        case "children":
+            return StoryGenre.CHILDREN
+        case "detective":
+            return StoryGenre.DETECTIVE
+        case "dystopia":
+            return StoryGenre.DYSTOPIA
+        case "fantasy":
+            return StoryGenre.FANTASY
+        case "historical":
+            return StoryGenre.HISTORICAL
+        case "horror":
+            return StoryGenre.HORROR
+        case "humor":
+            return StoryGenre.HUMOR
+        case "mystery":
+            return StoryGenre.MYSTERY
+        case "romance":
+            return StoryGenre.ROMANCE
+        case "science-fiction":
+            return StoryGenre.SCIENCE_FICTION
+        case "thriller":
+            return StoryGenre.THRILLER
+        case "suspense":
+            return StoryGenre.SUSPENSE
+        case "western":
+            return StoryGenre.WESTERN
+        case _:
+            raise ValueError(f"Unsupported story type: {type}")
+
+
+def make_mongo_story(domain: SynchronizationStory) -> MongoStory:
     return MongoStory(
         key=domain.key,
-        userKey=user_key,
+        userKey=domain.user_key,
         type=domain.type,
         author=make_mongo_author(domain.author) if domain.author else None,
         title=domain.title,
         description=domain.description,
         image=domain.image,
-        genres=domain.genres,
+        genres=[genre for genre in domain.genres],
         creationDate=domain.creation_date,
         firstSceneKey=domain.first_scene_key,
         originalStoryKey=domain.original_story_key,
@@ -125,14 +171,14 @@ def make_synchronization_story(story: MongoStory) -> SynchronizationStory:
     return SynchronizationStory(
         key=story["key"],
         user_key=story["userKey"],
-        type=story["type"],
+        type=make_story_type(story["type"]),
         author=(
             make_synchronization_author(story["author"]) if story["author"] else None
         ),
         title=story["title"],
         description=story["description"],
         image=story["image"],
-        genres=story["genres"],
+        genres=[make_story_genre(genre) for genre in story["genres"]],
         creation_date=story["creationDate"],
         first_scene_key=story["firstSceneKey"],
         original_story_key=story.get("originalStoryKey"),
