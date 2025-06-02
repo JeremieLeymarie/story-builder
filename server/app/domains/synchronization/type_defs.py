@@ -32,7 +32,7 @@ class SynchronizationStoryAuthor(BaseModel):
     username: str
 
 
-class SynchronizationStory(BaseModel, use_enum_values=True):
+class SynchronizationStory(BaseModel):
     key: str
     user_key: str
     type: StoryType

@@ -7,13 +7,14 @@ from utils.meta import Singleton
 load_dotenv()
 
 
-class SBMongoDatabase(metaclass=Singleton):
-    def __init__(self):
-        MONGO_URI = os.getenv("MONGO_URI")
-        if not MONGO_URI:
+# TODO: test this
+class MongoDatabaseManager(metaclass=Singleton):
+    def __init__(self, mongo_uri: str | None = None):
+        mongo_uri = mongo_uri or os.getenv("MONGO_URI")
+        if not mongo_uri:
             raise ValueError("Invalid Mongo URI")
 
-        self.client = MongoClient(MONGO_URI)
+        self.client: MongoClient = MongoClient(mongo_uri)
 
     def get_db(self) -> Database:
         db_name = os.getenv("DATABASE_NAME")
