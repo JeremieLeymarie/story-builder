@@ -6,7 +6,7 @@ from endpoints.synchronization.synchronization_service import (
 )
 from endpoints.synchronization.type_defs import StoryProgress
 from request_types import GenericAPIResponse
-from utils.errors import UnauthorizedException
+from utils.errors import UnauthorizedError
 from utils.error_adapter import get_http_error
 from context import current_user
 
@@ -21,7 +21,7 @@ class ProgressSynchronizationHandler:
 
         for progress in progresses:
             if progress.user_key != current_user_key:
-                raise UnauthorizedException()
+                raise UnauthorizedError()
 
     def handle(self, story_progresses: list[StoryProgress]) -> GenericAPIResponse:
         try:

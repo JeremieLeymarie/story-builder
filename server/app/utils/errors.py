@@ -1,12 +1,12 @@
-class BadAuthException(Exception):
+class BadAuthError(Exception):
     pass
 
 
-class InvalidActionException(Exception):
+class InvalidActionError(Exception):
     pass
 
 
-class InvalidStoryFormatException(Exception):
+class InvalidStoryFormatError(Exception):
     def __init__(self, key: str | None = None):
 
         if key is not None:
@@ -16,5 +16,5 @@ class InvalidStoryFormatException(Exception):
         super().__init__()
 
 
-class UnauthorizedException(Exception):
+class UnauthorizedError(Exception):
     resource: str | None = None

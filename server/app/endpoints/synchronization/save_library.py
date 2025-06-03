@@ -1,3 +1,4 @@
+from domains.synchronization.errors import SynchronizationUserKeyNotMatchError
 from domains.synchronization.service import (
     SynchronizationServicePort,
 )
@@ -8,6 +9,8 @@ from endpoints.synchronization.type_defs import FullStoriesRequest, FullStory
 from request_types import GenericAPIResponse
 from utils.error_adapter import get_http_error
 from context import current_user
+from utils.errors import InvalidActionError, UnauthorizedError
+from utils.type_defs import StoryType
 
 
 class LibraryStateSynchronization:
@@ -16,6 +19,17 @@ class LibraryStateSynchronization:
         return get_sync_service_in_api_context()
 
     def handle(self, payload: FullStoriesRequest) -> GenericAPIResponse:
+        library_stories = [
+            story for story in payload.stories if story.type == StoryType.IMPORTED
+        ]
+
+        if len(library_stories) != len(payload.stories):
+            raise get_http_error(
+                InvalidActionError(
+                    "Cannot save stories: some of the stories are not from the library"
+                )
+            )
+
         try:
             user_key = current_user.get().key
             full_stories = list[FullStory]()
@@ -37,6 +51,7 @@ class LibraryStateSynchronization:
             )
 
             return GenericAPIResponse(success=True)
-
+        except SynchronizationUserKeyNotMatchError:
+            raise get_http_error(UnauthorizedError())
         except Exception as err:
             raise get_http_error(err)

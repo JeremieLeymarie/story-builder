@@ -6,8 +6,9 @@ from endpoints.synchronization.synchronization_service import (
 from endpoints.synchronization.type_defs import FullStoriesRequest, FullStory, Story
 from request_types import GenericAPIResponse
 from utils.error_adapter import get_http_error
-from utils.errors import UnauthorizedException
+from utils.errors import InvalidActionError, UnauthorizedError
 from context import current_user
+from utils.type_defs import StoryType
 
 
 class BuilderStateSynchronization:
@@ -20,9 +21,20 @@ class BuilderStateSynchronization:
 
         for story in stories:
             if story.author is not None and story.author.key != current_user_key:
-                raise UnauthorizedException()
+                raise UnauthorizedError()
 
     def handle(self, payload: FullStoriesRequest) -> GenericAPIResponse:
+        builder_stories = [
+            story for story in payload.stories if story.type == StoryType.BUILDER
+        ]
+
+        if len(builder_stories) != len(payload.stories):
+            raise get_http_error(
+                InvalidActionError(
+                    "Cannot save stories: some of the stories are not from the builder"
+                )
+            )
+
         try:
             self.check_rights(stories=payload.stories)
             user_key = current_user.get().key
@@ -46,6 +58,6 @@ class BuilderStateSynchronization:
             )
             return GenericAPIResponse(success=True)
         except SynchronizationUserKeyNotMatchError:
-            raise get_http_error(UnauthorizedException())
+            raise get_http_error(UnauthorizedError())
         except Exception as err:
             raise get_http_error(err)
