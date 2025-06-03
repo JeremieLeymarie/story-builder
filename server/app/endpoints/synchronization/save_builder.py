@@ -1,3 +1,4 @@
+from domains.synchronization.errors import SynchronizationUserKeyNotMatchError
 from domains.synchronization.service import SynchronizationServicePort
 from endpoints.synchronization.synchronization_service import (
     get_sync_service_in_api_context,
@@ -44,5 +45,7 @@ class BuilderStateSynchronization:
                 user_key=user_key,
             )
             return GenericAPIResponse(success=True)
+        except SynchronizationUserKeyNotMatchError:
+            raise get_http_error(UnauthorizedException())
         except Exception as err:
             raise get_http_error(err)
