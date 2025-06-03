@@ -15,8 +15,8 @@ from utils.type_defs import StoryGenre, StoryType
 URL = "/api/load"
 
 
-def test_forbidden(api_test_infra_no_token) -> None:
-    response = api_test_infra_no_token.client.get(URL)
+def test_unauthorized(api_test_infra_no_auth) -> None:
+    response = api_test_infra_no_auth.client.get(URL)
 
     assert response.status_code == HTTPStatus.UNAUTHORIZED
     assert response.json() == {"detail": "Invalid token"}

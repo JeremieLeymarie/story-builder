@@ -23,7 +23,7 @@ def reset_db() -> None:
 
 
 @pytest.fixture(scope="module")
-def api_test_infra_no_token() -> ApiTestInfra:
+def api_test_infra_no_auth() -> ApiTestInfra:
     client = TestClient(app)
     client.headers["Authorization"] = "Bearer toktok"
 
