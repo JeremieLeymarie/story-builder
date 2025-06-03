@@ -5,7 +5,7 @@ import logging
 from utils.errors import BadAuthException, InvalidActionException, UnauthorizedException
 
 
-def raise_http_error(error: Exception) -> HTTPException:
+def get_http_error(error: Exception) -> HTTPException:
     logging.error(error)
 
     match error:

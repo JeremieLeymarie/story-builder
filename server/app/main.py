@@ -8,7 +8,7 @@ from domains.auth.auth_service import AuthService
 from domains.auth.repositories.user_repository import UserRepository
 from domains.auth.type_defs import AuthUser, FullUser
 from endpoints.synchronization.save_builder import BuilderStateSynchronization
-from endpoints.synchronization.load import SynchronizationDataHandler
+from endpoints.synchronization.load import SynchronizationLoadHandler
 from endpoints.synchronization.save_library import LibraryStateSynchronization
 from endpoints.synchronization.save_progress import ProgressSynchronizationHandler
 from endpoints.synchronization.type_defs import (
@@ -22,7 +22,7 @@ from request_types import (
     LoginUserRequest,
 )
 from utils.errors import BadAuthException
-from utils.error_adapter import raise_http_error
+from utils.error_adapter import get_http_error
 
 
 def custom_generate_unique_id(route: APIRoute):
@@ -31,16 +31,16 @@ def custom_generate_unique_id(route: APIRoute):
 
 async def check_auth(authorization: Annotated[str, Header()]):
     if not authorization:
-        raise_http_error(BadAuthException("No authorization token"))
+        raise get_http_error(BadAuthException("No authorization token"))
     try:
         token = authorization.split(" ")[1]
     except Exception:
-        raise_http_error(BadAuthException("Invalid authorization bearer format"))
+        raise get_http_error(BadAuthException("Invalid authorization bearer format"))
 
     try:
         AuthService(user_repository=UserRepository()).check_auth(token)  # noqa: F821
     except BadAuthException as err:
-        raise_http_error(err)
+        raise get_http_error(err)
 
 
 app = FastAPI(
@@ -78,7 +78,7 @@ async def user_login(
         )
         return result
     except Exception as err:
-        raise raise_http_error(err)
+        raise get_http_error(err)
 
 
 @app.post("/api/user/register", status_code=HTTPStatus.CREATED, response_model=AuthUser)
@@ -94,7 +94,7 @@ async def create_user(data: CreateUserRequest):
         )
         return result
     except Exception as err:
-        raise raise_http_error(err)
+        raise get_http_error(err)
 
 
 # SYNCHRONIZATION ENDPOINTS
@@ -107,7 +107,7 @@ async def create_user(data: CreateUserRequest):
     dependencies=[Depends(check_auth)],
 )
 async def get_synchronization_data():
-    return SynchronizationDataHandler().handle()
+    return SynchronizationLoadHandler().handle()
 
 
 @app.put(

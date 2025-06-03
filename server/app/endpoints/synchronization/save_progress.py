@@ -7,7 +7,7 @@ from endpoints.synchronization.synchronization_service import (
 from endpoints.synchronization.type_defs import StoryProgress
 from request_types import GenericAPIResponse
 from utils.errors import UnauthorizedException
-from utils.error_adapter import raise_http_error
+from utils.error_adapter import get_http_error
 from context import current_user
 
 
@@ -33,4 +33,4 @@ class ProgressSynchronizationHandler:
 
             return GenericAPIResponse(success=True)
         except Exception as err:
-            raise raise_http_error(err)
+            raise get_http_error(err)
