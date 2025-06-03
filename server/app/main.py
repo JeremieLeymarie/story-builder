@@ -21,7 +21,7 @@ from request_types import (
     GenericAPIResponse,
     LoginUserRequest,
 )
-from utils.errors import BadAuthException
+from utils.errors import BadAuthError
 from utils.error_adapter import get_http_error
 
 
@@ -31,15 +31,15 @@ def custom_generate_unique_id(route: APIRoute):
 
 async def check_auth(authorization: Annotated[str, Header()]):
     if not authorization:
-        raise get_http_error(BadAuthException("No authorization token"))
+        raise get_http_error(BadAuthError("No authorization token"))
     try:
         token = authorization.split(" ")[1]
     except Exception:
-        raise get_http_error(BadAuthException("Invalid authorization bearer format"))
+        raise get_http_error(BadAuthError("Invalid authorization bearer format"))
 
     try:
         AuthService(user_repository=UserRepository()).check_auth(token)  # noqa: F821
-    except BadAuthException as err:
+    except BadAuthError as err:
         raise get_http_error(err)
 
 

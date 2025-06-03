@@ -2,18 +2,18 @@ from http import HTTPStatus
 from fastapi import HTTPException
 import logging
 
-from utils.errors import BadAuthException, InvalidActionException, UnauthorizedException
+from utils.errors import BadAuthError, InvalidActionError, UnauthorizedError
 
 
 def get_http_error(error: Exception) -> HTTPException:
     logging.error(error)
 
     match error:
-        case InvalidActionException():
+        case InvalidActionError():
             return HTTPException(HTTPStatus.FORBIDDEN, str(error))
-        case BadAuthException():
+        case BadAuthError():
             return HTTPException(HTTPStatus.UNAUTHORIZED, str(error))
-        case UnauthorizedException():
+        case UnauthorizedError():
             return HTTPException(HTTPStatus.UNAUTHORIZED)
         case _:
             return HTTPException(

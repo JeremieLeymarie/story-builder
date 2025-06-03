@@ -3,7 +3,7 @@ import bcrypt
 
 from domains.auth.repositories.port import UserRepositoryPort
 from domains.auth.type_defs import AuthUser, FullUser, User
-from utils.errors import BadAuthException, InvalidActionException
+from utils.errors import BadAuthError, InvalidActionError
 from context import current_user
 
 import jwt
@@ -19,7 +19,7 @@ class AuthService:
             username=user.username, email=user.email
         )
         if user_exists:
-            raise InvalidActionException("Email or username is taken")
+            raise InvalidActionError("Email or username is taken")
 
         password_bytes = user.password.encode("utf-8")
         hashed_bytes = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
@@ -43,7 +43,7 @@ class AuthService:
         )
 
         if not full_user:
-            raise BadAuthException("User not found")
+            raise BadAuthError("User not found")
 
         password_bytes = password.encode("utf-8")
         password_match = bcrypt.checkpw(
@@ -51,7 +51,7 @@ class AuthService:
         )
 
         if not password_match:
-            raise BadAuthException("Invalid password")
+            raise BadAuthError("Invalid password")
 
         token = self._generate_token(full_user)
         return AuthUser.from_full_user(full_user=full_user, token=token)
@@ -61,17 +61,17 @@ class AuthService:
             payload = jwt.decode(token, os.getenv("JWT_SECRET"), algorithms=["HS256"])
 
             if not payload.get("key"):
-                raise BadAuthException("Invalid token")
+                raise BadAuthError("Invalid token")
 
             full_user = self.user_repository.get(key=payload.get("key"))
 
             if not full_user:
-                raise BadAuthException("Invalid token")
+                raise BadAuthError("Invalid token")
 
             # Set user in context
             current_user.set(User.from_full_user(full_user))
         except Exception:
-            raise BadAuthException("Invalid token")
+            raise BadAuthError("Invalid token")
 
     def _generate_token(self, user: FullUser) -> str:
         return jwt.encode({"key": user.key}, os.getenv("JWT_SECRET"), algorithm="HS256")
