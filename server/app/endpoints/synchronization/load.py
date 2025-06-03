@@ -5,11 +5,11 @@ from endpoints.synchronization.synchronization_service import (
     get_sync_service_in_api_context,
 )
 from endpoints.synchronization.type_defs import SynchronizationLoadResponse
-from utils.error_adapter import raise_http_error
+from utils.error_adapter import get_http_error
 from context import current_user
 
 
-class SynchronizationDataHandler:
+class SynchronizationLoadHandler:
     @property
     def sync_svc(self) -> SynchronizationServicePort:
         return get_sync_service_in_api_context()
@@ -23,4 +23,4 @@ class SynchronizationDataHandler:
                 story_progresses=sync_data.story_progresses,
             )
         except Exception as err:
-            raise raise_http_error(err)
+            raise get_http_error(err)
