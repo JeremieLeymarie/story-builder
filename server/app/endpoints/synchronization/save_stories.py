@@ -1,44 +1,28 @@
-from domains.synchronization.errors import SynchronizationUserKeyNotMatchError
-from domains.synchronization.service import SynchronizationServicePort
+from domains.synchronization.errors import (
+    BuilderStoryAuthorNotMatchError,
+    UserKeyNotMatchError,
+)
+from domains.synchronization.service import (
+    SynchronizationServicePort,
+)
 from endpoints.synchronization.synchronization_service import (
     get_sync_service_in_api_context,
 )
-from endpoints.synchronization.type_defs import FullStoriesRequest, FullStory, Story
+from endpoints.synchronization.type_defs import FullStoriesRequest, FullStory
 from request_types import GenericAPIResponse
 from utils.error_adapter import get_http_error
-from utils.errors import InvalidActionError, UnauthorizedError
 from context import current_user
-from utils.type_defs import StoryType
+from utils.errors import UnauthorizedError
 
 
-class BuilderStateSynchronization:
+class StorySynchronizationHandler:
     @property
     def sync_svc(self) -> SynchronizationServicePort:
         return get_sync_service_in_api_context()
 
-    def check_rights(self, stories: list[Story]) -> None:
-        current_user_key = current_user.get().key
-
-        for story in stories:
-            if story.author is not None and story.author.key != current_user_key:
-                raise UnauthorizedError()
-
     def handle(self, payload: FullStoriesRequest) -> GenericAPIResponse:
-        builder_stories = [
-            story for story in payload.stories if story.type == StoryType.BUILDER
-        ]
-
-        if len(builder_stories) != len(payload.stories):
-            raise get_http_error(
-                InvalidActionError(
-                    "Cannot save stories: some of the stories are not from the builder"
-                )
-            )
-
         try:
-            self.check_rights(stories=payload.stories)
             user_key = current_user.get().key
-
             full_stories = list[FullStory]()
             for story in payload.stories:
                 full_stories.append(
@@ -56,8 +40,9 @@ class BuilderStateSynchronization:
                 [full_story.to_domain() for full_story in full_stories],
                 user_key=user_key,
             )
+
             return GenericAPIResponse(success=True)
-        except SynchronizationUserKeyNotMatchError:
+        except (UserKeyNotMatchError, BuilderStoryAuthorNotMatchError):
             raise get_http_error(UnauthorizedError())
         except Exception as err:
             raise get_http_error(err)

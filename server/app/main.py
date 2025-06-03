@@ -7,9 +7,8 @@ from fastapi.routing import APIRoute
 from domains.auth.auth_service import AuthService
 from domains.auth.repositories.user_repository import UserRepository
 from domains.auth.type_defs import AuthUser, FullUser
-from endpoints.synchronization.save_builder import BuilderStateSynchronization
 from endpoints.synchronization.load import SynchronizationLoadHandler
-from endpoints.synchronization.save_library import LibraryStateSynchronization
+from endpoints.synchronization.save_stories import StorySynchronizationHandler
 from endpoints.synchronization.save_progress import ProgressSynchronizationHandler
 from endpoints.synchronization.type_defs import (
     FullStoriesRequest,
@@ -121,20 +120,10 @@ async def synchronize_progress(payload: list[StoryProgress]):
 
 
 @app.put(
-    "/api/save/library",
+    "/api/save/stories",
     status_code=HTTPStatus.OK,
     response_model=GenericAPIResponse,
     dependencies=[Depends(check_auth)],
 )
-async def save_library_state(body: FullStoriesRequest):
-    return LibraryStateSynchronization().handle(body)
-
-
-@app.put(
-    "/api/save/builder",
-    status_code=HTTPStatus.OK,
-    response_model=GenericAPIResponse,
-    dependencies=[Depends(check_auth)],
-)
-async def save_builder_state(body: FullStoriesRequest):
-    return BuilderStateSynchronization().handle(body)
+async def save_stories(body: FullStoriesRequest):
+    return StorySynchronizationHandler().handle(body)

@@ -12,7 +12,7 @@ from utils.mongo.base_repository import (
 )
 
 
-URL = "/api/save/builder"
+URL = "/api/save/stories"
 
 
 def test_unauthorized(api_test_infra_no_auth) -> None:
@@ -23,7 +23,7 @@ def test_unauthorized(api_test_infra_no_auth) -> None:
 
 
 def test_no_rights_wrong_user_key(api_test_infra_authenticated) -> None:
-    client, repo, auth_user = api_test_infra_authenticated
+    client, *_ = api_test_infra_authenticated
 
     response = client.put(
         URL,
@@ -42,7 +42,21 @@ def test_no_rights_wrong_user_key(api_test_infra_authenticated) -> None:
                     "publicationDate": datetime(2025, 6, 2).isoformat(),
                     "type": "builder",
                     "userKey": "not-me",
-                }
+                },
+                {
+                    "title": "A Story in my library",
+                    "description": "description",
+                    "author": {"key": "not-me", "username": "peter-peter"},
+                    "creationDate": datetime(2025, 6, 2).isoformat(),
+                    "firstSceneKey": "first-scene-key",
+                    "genres": ["adventure", "romance"],
+                    "image": "http://image.com",
+                    "key": "key",
+                    "originalStoryKey": "zgghorub",
+                    "publicationDate": datetime(2025, 6, 2).isoformat(),
+                    "type": "imported",
+                    "userKey": "me",
+                },
             ],
             "scenes": [],
         },
@@ -53,7 +67,7 @@ def test_no_rights_wrong_user_key(api_test_infra_authenticated) -> None:
 
 
 def test_no_rights_is_not_author(api_test_infra_authenticated) -> None:
-    client, repo, auth_user = api_test_infra_authenticated
+    client, *_ = api_test_infra_authenticated
 
     response = client.put(
         URL,
@@ -72,23 +86,7 @@ def test_no_rights_is_not_author(api_test_infra_authenticated) -> None:
                     "publicationDate": datetime(2025, 6, 2).isoformat(),
                     "type": "builder",
                     "userKey": "me",
-                }
-            ],
-            "scenes": [],
-        },
-    )
-
-    assert response.status_code == HTTPStatus.UNAUTHORIZED
-    assert response.json() == {"detail": "Unauthorized"}
-
-
-def test_with_library_stories(api_test_infra_authenticated) -> None:
-    client, repo, auth_user = api_test_infra_authenticated
-
-    response = client.put(
-        URL,
-        json={
-            "stories": [
+                },
                 {
                     "title": "A Story in my library",
                     "description": "description",
@@ -102,16 +100,14 @@ def test_with_library_stories(api_test_infra_authenticated) -> None:
                     "publicationDate": datetime(2025, 6, 2).isoformat(),
                     "type": "imported",
                     "userKey": "me",
-                }
+                },
             ],
             "scenes": [],
         },
     )
 
-    assert response.status_code == HTTPStatus.FORBIDDEN
-    assert response.json() == {
-        "detail": "Cannot save stories: some of the stories are not from the builder"
-    }
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
+    assert response.json() == {"detail": "Unauthorized"}
 
 
 def test_empty_body(api_test_infra_authenticated) -> None:
@@ -126,7 +122,7 @@ def test_empty_body(api_test_infra_authenticated) -> None:
 
 
 def test_save_builder_state(api_test_infra_authenticated) -> None:
-    client, repo, auth_user = api_test_infra_authenticated
+    client, repo, _ = api_test_infra_authenticated
 
     response = client.put(
         URL,
@@ -140,12 +136,26 @@ def test_save_builder_state(api_test_infra_authenticated) -> None:
                     "firstSceneKey": "first-scene-key",
                     "genres": ["adventure", "romance"],
                     "image": "http://image.com",
-                    "key": "key",
+                    "key": "builder-key",
                     "originalStoryKey": None,
                     "publicationDate": datetime(2025, 6, 2).isoformat(),
                     "type": "builder",
                     "userKey": "me",
-                }
+                },
+                {
+                    "title": "A Story in my library",
+                    "description": "description",
+                    "author": {"key": "not-me", "username": "peter-peter"},
+                    "creationDate": datetime(2025, 6, 2).isoformat(),
+                    "firstSceneKey": "first-scene-key",
+                    "genres": ["adventure", "romance"],
+                    "image": "http://image.com",
+                    "key": "imported-key",
+                    "originalStoryKey": "zgghorub",
+                    "publicationDate": datetime(2025, 6, 2).isoformat(),
+                    "type": "imported",
+                    "userKey": "me",
+                },
             ],
             "scenes": [
                 {
@@ -153,7 +163,15 @@ def test_save_builder_state(api_test_infra_authenticated) -> None:
                     "builderParams": {"position": {"x": 400.0, "y": 200.0}},
                     "content": "Content",
                     "key": "scene-1",
-                    "storyKey": "key",
+                    "storyKey": "builder-key",
+                    "title": "Scene title",
+                },
+                {
+                    "actions": [{"sceneKey": "scene-1", "text": "Action Text"}],
+                    "builderParams": {"position": {"x": 400.0, "y": 200.0}},
+                    "content": "Content",
+                    "key": "scene-1",
+                    "storyKey": "imported-key",
                     "title": "Scene title",
                 },
                 {
@@ -172,7 +190,7 @@ def test_save_builder_state(api_test_infra_authenticated) -> None:
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {"success": True, "message": None}
-    assert len(stories_in_db) == 1
+    assert len(stories_in_db) == 2
     assert stories_in_db == [
         MongoStory(
             _id=ANY,
@@ -183,7 +201,7 @@ def test_save_builder_state(api_test_infra_authenticated) -> None:
             firstSceneKey="first-scene-key",
             genres=["adventure", "romance"],
             image="http://image.com",
-            key="key",
+            key="builder-key",
             originalStoryKey=None,
             publicationDate=datetime(2025, 6, 2),
             type="builder",
@@ -196,9 +214,36 @@ def test_save_builder_state(api_test_infra_authenticated) -> None:
                     ),
                     content="Content",
                     key="scene-1",
-                    storyKey="key",
+                    storyKey="builder-key",
                     title="Scene title",
                 ),
             ],
-        )
+        ),
+        MongoStory(
+            _id=ANY,
+            title="A Story in my library",
+            description="description",
+            author=MongoStoryAuthor(key="not-me", username="peter-peter"),
+            creationDate=datetime(2025, 6, 2),
+            firstSceneKey="first-scene-key",
+            genres=["adventure", "romance"],
+            image="http://image.com",
+            key="imported-key",
+            originalStoryKey="zgghorub",
+            publicationDate=datetime(2025, 6, 2),
+            type="imported",
+            userKey="me",
+            scenes=[
+                MongoScene(
+                    actions=[MongoSceneAction(sceneKey="scene-1", text="Action Text")],
+                    builderParams=MongoBuilderParams(
+                        position=MongoBuilderPosition(x=400.0, y=200.0)
+                    ),
+                    content="Content",
+                    key="scene-1",
+                    storyKey="imported-key",
+                    title="Scene title",
+                ),
+            ],
+        ),
     ]

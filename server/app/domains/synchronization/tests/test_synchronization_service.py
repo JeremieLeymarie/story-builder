@@ -1,7 +1,10 @@
 from datetime import datetime
 
 import pytest
-from domains.synchronization.errors import SynchronizationUserKeyNotMatchError
+from domains.synchronization.errors import (
+    BuilderStoryAuthorNotMatchError,
+    UserKeyNotMatchError,
+)
 from domains.synchronization.repositories.port import SynchronizationRepositoryPort
 from domains.synchronization.service import SynchronizationData, SynchronizationService
 from domains.synchronization.type_defs import (
@@ -190,7 +193,7 @@ def test_save_progresses_wrong_user_key() -> None:
     sp = FAKE_STORY_PROGRESS.model_copy()
     sp.user_key = "not-me"
 
-    with pytest.raises(SynchronizationUserKeyNotMatchError):
+    with pytest.raises(UserKeyNotMatchError):
         svc.save_progresses(
             [sp],
             user_key="me",
@@ -212,7 +215,7 @@ def test_save_progresses() -> None:
 
 
 FAKE_STORY = SynchronizationStory(
-    author=SynchronizationStoryAuthor(key="author-key", username="username"),
+    author=SynchronizationStoryAuthor(key="me", username="bob_bidou"),
     creation_date=datetime(2025, 6, 2),
     description="description",
     first_scene_key="first-scene-key",
@@ -266,7 +269,23 @@ def test_save_stories_wrong_user_key() -> None:
     sp = FAKE_STORY.model_copy()
     sp.user_key = "not-me"
 
-    with pytest.raises(SynchronizationUserKeyNotMatchError):
+    with pytest.raises(UserKeyNotMatchError):
+        svc.save_stories(
+            [sp],
+            user_key="me",
+        )
+
+
+def test_save_stories_not_author() -> None:
+    class MockSyncRepository(BaseMockSynchronizationRepository):
+        def save_stories(self, stories, *, user_key):
+            raise ValueError("This should not be called")
+
+    svc = SynchronizationService(repository=MockSyncRepository())
+    sp = FAKE_STORY.model_copy()
+    sp.author = SynchronizationStoryAuthor(key="not-me", username="bob_bidou")
+
+    with pytest.raises(BuilderStoryAuthorNotMatchError):
         svc.save_stories(
             [sp],
             user_key="me",

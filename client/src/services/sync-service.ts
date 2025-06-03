@@ -82,14 +82,9 @@ const _getSyncService = ({
 
       const [progressResponse, builderResponse] = await Promise.all([
         remoteRepository.saveStoryProgresses(progresses, user),
-        remoteRepository.saveBuilderStories(
-          builderStories.stories ?? [],
-          builderStories.scenes,
-          user,
-        ),
-        remoteRepository.saveLibraryStories(
-          libraryStories.stories ?? [],
-          libraryStories.scenes,
+        remoteRepository.saveStories(
+          [...builderStories.stories, ...libraryStories.stories],
+          [...builderStories.scenes, ...libraryStories.scenes],
           user,
         ),
       ]);
