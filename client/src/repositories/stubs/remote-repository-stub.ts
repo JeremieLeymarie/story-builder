@@ -30,9 +30,7 @@ export const getRemoteRepositoryStub = (): MockRemoteRepository => {
 
     saveStoryProgresses: P([BASIC_STORY_PROGRESS]),
 
-    saveBuilderStories: P({ success: true }),
-
-    saveLibraryStories: P({ success: true }),
+    saveStories: P({ success: true }),
 
     getSynchronizationData: P({
       playerGames: { stories: [BASIC_STORY], scenes: [BASIC_SCENE] },

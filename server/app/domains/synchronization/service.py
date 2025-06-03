@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 from typing import Protocol
-from domains.synchronization.errors import SynchronizationUserKeyNotMatchError
+from domains.synchronization.errors import (
+    BuilderStoryAuthorNotMatchError,
+    UserKeyNotMatchError,
+)
 from domains.synchronization.repositories.port import SynchronizationRepositoryPort
 from domains.synchronization.type_defs import (
     SynchronizationStory,
@@ -60,9 +63,7 @@ class SynchronizationService:
 
         for sp in story_progresses:
             if sp.user_key != user_key:
-                raise SynchronizationUserKeyNotMatchError(
-                    user_key=user_key, authed_user_key=user_key
-                )
+                raise UserKeyNotMatchError(user_key=user_key, authed_user_key=user_key)
 
         return self.repository.save_story_progresses(
             story_progresses, user_key=user_key
@@ -76,8 +77,15 @@ class SynchronizationService:
 
         for story in stories:
             if story.user_key != user_key:
-                raise SynchronizationUserKeyNotMatchError(
-                    user_key=user_key, authed_user_key=user_key
+                raise UserKeyNotMatchError(user_key=user_key, authed_user_key=user_key)
+
+            if (
+                story.type == StoryType.BUILDER
+                and story.author is not None
+                and story.author.key != user_key
+            ):
+                raise BuilderStoryAuthorNotMatchError(
+                    author_key=story.author.key, authed_user_key=user_key
                 )
 
         return self.repository.save_stories(stories=stories, user_key=user_key)

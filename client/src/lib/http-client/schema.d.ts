@@ -72,7 +72,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/save/library": {
+    "/api/save/stories": {
         parameters: {
             query?: never;
             header?: never;
@@ -80,25 +80,8 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Save Library State */
-        put: operations["API-save_library_state"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/save/builder": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Save Builder State */
-        put: operations["API-save_builder_state"];
+        /** Save Stories */
+        put: operations["API-save_stories"];
         post?: never;
         delete?: never;
         options?: never;
@@ -195,6 +178,7 @@ export interface components {
             genres: components["schemas"]["StoryGenre"][];
             /**
              * Creationdate
+             * Format: date-time
              * @description The date at which the story was created
              */
             creationDate: string;
@@ -301,6 +285,7 @@ export interface components {
             genres: components["schemas"]["StoryGenre"][];
             /**
              * Creationdate
+             * Format: date-time
              * @description The date at which the story was created
              */
             creationDate: string;
@@ -518,42 +503,7 @@ export interface operations {
             };
         };
     };
-    "API-save_library_state": {
-        parameters: {
-            query?: never;
-            header: {
-                authorization: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["FullStoriesRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GenericAPIResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    "API-save_builder_state": {
+    "API-save_stories": {
         parameters: {
             query?: never;
             header: {

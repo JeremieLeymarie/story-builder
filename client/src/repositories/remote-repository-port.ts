@@ -24,13 +24,7 @@ export type RemoteRepositoryPort = {
     user: User,
   ) => Promise<RemoteRepositoryResponse<StoryProgress[]>>;
 
-  saveBuilderStories: (
-    stories: Story[],
-    scenes: Scene[],
-    user: User,
-  ) => Promise<RemoteRepositoryResponse<StandardAPIResponse>>;
-
-  saveLibraryStories: (
+  saveStories: (
     stories: Story[],
     scenes: Scene[],
     user: User,

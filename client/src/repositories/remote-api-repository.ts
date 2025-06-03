@@ -56,23 +56,8 @@ const _getRemoteAPIRepository = (
       return { error: parseError(error) };
     },
 
-    saveBuilderStories: async (stories, scenes, user) => {
-      const { data, error } = await _client.PUT("/api/save/builder", {
-        body: {
-          stories: adapter.fromClient.stories(stories, user.key),
-          scenes,
-        },
-        params: { header: { authorization: formatTokenHeader(user.token) } },
-      });
-
-      if (data) {
-        return { data };
-      }
-      return { error: parseError(error) };
-    },
-
-    saveLibraryStories: async (stories, scenes, user) => {
-      const { data, error } = await _client.PUT("/api/save/library", {
+    saveStories: async (stories, scenes, user) => {
+      const { data, error } = await _client.PUT("/api/save/stories", {
         body: {
           stories: adapter.fromClient.stories(stories, user.key),
           scenes,
