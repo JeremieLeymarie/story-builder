@@ -11,7 +11,7 @@ export const BackdropLoader = ({
   return (
     <div
       className={cn(
-        "bg-opacity-90 absolute z-50 flex h-full w-full flex-col items-center justify-center gap-6 bg-white",
+        "absolute z-50 flex h-full w-full flex-col items-center justify-center gap-6 bg-white/90",
         className,
       )}
     >

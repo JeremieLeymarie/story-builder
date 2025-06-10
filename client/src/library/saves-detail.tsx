@@ -42,7 +42,7 @@ export const SavesDetail = ({
             >
               <div
                 className={cn(
-                  "group border-primary bg-opacity-95 my-3 flex min-w-[300px] cursor-pointer items-center justify-between gap-12 rounded-md border bg-white px-4 py-3 shadow",
+                  "group border-primary my-3 flex min-w-[300px] cursor-pointer items-center justify-between gap-12 rounded-md border bg-white/95 px-4 py-3 shadow",
                   index === 0 && "bg-primary",
                   progress.finished && "grayscale",
                 )}
