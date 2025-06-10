@@ -25,7 +25,7 @@ export const StoryList = ({
               button={
                 isCompleted ? (
                   <Button
-                    className={`absolute bottom-4 right-4`}
+                    className={`absolute right-4 bottom-4`}
                     disabled={false}
                     variant="secondary"
                   >
@@ -33,7 +33,7 @@ export const StoryList = ({
                   </Button>
                 ) : (
                   <Button
-                    className={`absolute bottom-4 right-4 opacity-0 transition duration-300 ease-in-out group-hover:opacity-100`}
+                    className={`absolute right-4 bottom-4 opacity-0 transition duration-300 ease-in-out group-hover:opacity-100`}
                   >
                     <SwordIcon size="18px" />
                     &nbsp;Play

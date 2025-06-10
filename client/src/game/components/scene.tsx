@@ -25,7 +25,7 @@ export const GameScene = ({
             <h1 className="scroll-m-20 text-3xl font-bold tracking-tight lg:text-4xl">
               {title}
             </h1>
-            <p className="leading-7 [&:not(:first-child)]:mt-6">{content}</p>
+            <p className="leading-7 not-first:mt-6">{content}</p>
             <div className="mt-4 flex w-full flex-wrap gap-3">
               {actions.map((action) => (
                 <SceneAction
@@ -41,7 +41,7 @@ export const GameScene = ({
         {isLastScene && (
           <div className="mt-6 flex flex-col items-center gap-4">
             <Divider className="w-[200px]" />
-            <p className="w-6/12 text-center italic text-muted-foreground">
+            <p className="text-muted-foreground w-6/12 text-center italic">
               This was the last scene of this story... Yes, we know, endings are
               always difficult. But you can still go back to your library and
               find more stories to play!

@@ -63,7 +63,7 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
                     params={{ storyKey: story.key }}
                   >
                     <Button
-                      className={`absolute bottom-4 right-4 opacity-0 transition duration-300 ease-in-out group-hover:opacity-100`}
+                      className={`absolute right-4 bottom-4 opacity-0 transition duration-300 ease-in-out group-hover:opacity-100`}
                     >
                       Edit &nbsp;{" "}
                       <MoveRightIcon size="15px" className="animate-bounce" />

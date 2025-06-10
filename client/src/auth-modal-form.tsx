@@ -58,7 +58,7 @@ export const AuthModalForm = ({
         ) : (
           <SignInForm onSuccess={handleSuccess} onError={onError} />
         )}
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {form === "sign-up" ? (
             <>
               Already have an account?{" "}
@@ -186,8 +186,8 @@ const SignUpForm = ({
         />
         <div className="space-y-2">
           {isPending && isPendingForTooLong && (
-            <div className="flex items-center rounded border-0 bg-muted p-2">
-              <p className="animate-pulse text-sm text-muted-foreground">
+            <div className="bg-muted flex items-center rounded border-0 p-2">
+              <p className="text-muted-foreground animate-pulse text-sm">
                 Please wait a little longer, the first request to our server can
                 take a some time...
               </p>
@@ -195,7 +195,7 @@ const SignUpForm = ({
           )}
           <Button disabled={isPending}>
             {isPending ? (
-              <SimpleLoader className="h-[25px] text-muted-foreground" />
+              <SimpleLoader className="text-muted-foreground h-[25px]" />
             ) : (
               "Sign up"
             )}
@@ -286,8 +286,8 @@ const SignInForm = ({
         />
         <div className="space-y-2">
           {isPending && isPendingForTooLong && (
-            <div className="flex items-center rounded border-0 bg-muted p-2">
-              <p className="animate-pulse text-sm text-muted-foreground">
+            <div className="bg-muted flex items-center rounded border-0 p-2">
+              <p className="text-muted-foreground animate-pulse text-sm">
                 Please wait a little longer, the first request to our server can
                 take a some time...
               </p>
@@ -295,7 +295,7 @@ const SignInForm = ({
           )}
           <Button disabled={isPending}>
             {isPending ? (
-              <SimpleLoader className="h-[25px] text-muted-foreground" />
+              <SimpleLoader className="text-muted-foreground h-[25px]" />
             ) : (
               "Sign in"
             )}

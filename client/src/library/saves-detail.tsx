@@ -42,7 +42,7 @@ export const SavesDetail = ({
             >
               <div
                 className={cn(
-                  "group my-3 flex min-w-[300px] cursor-pointer items-center justify-between gap-12 rounded-md border border-primary bg-white bg-opacity-95 px-4 py-3 shadow",
+                  "group border-primary bg-opacity-95 my-3 flex min-w-[300px] cursor-pointer items-center justify-between gap-12 rounded-md border bg-white px-4 py-3 shadow",
                   index === 0 && "bg-primary",
                   progress.finished && "grayscale",
                 )}
@@ -59,12 +59,12 @@ export const SavesDetail = ({
                     </p>
                     <p className="text-xs">{timeFrom(progress.lastPlayedAt)}</p>
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     {formatDate(progress.lastPlayedAt)}
                   </p>
                 </div>
                 {!progress.finished ? (
-                  <p className="invisible text-muted-foreground group-hover:visible">
+                  <p className="text-muted-foreground invisible group-hover:visible">
                     Play from here
                   </p>
                 ) : (
@@ -77,7 +77,7 @@ export const SavesDetail = ({
         {endProgressIndex < progresses.length && (
           <div className="flex justify-center">
             <p
-              className="cursor-pointer text-sm text-muted-foreground hover:text-black"
+              className="text-muted-foreground cursor-pointer text-sm hover:text-black"
               onClick={() =>
                 setEndProgressIndex((prev) => prev + PROGRESSES_BY_PAGE)
               }

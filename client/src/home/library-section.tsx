@@ -14,7 +14,7 @@ import { MoveRightIcon } from "lucide-react";
 
 export const LibrarySection = ({ stories }: { stories: Story[] }) => {
   return (
-    <div className="flex flex-col items-center bg-accent px-32 py-4 md:items-start">
+    <div className="bg-accent flex flex-col items-center px-32 py-4 md:items-start">
       <Title variant="secondary">Stories from your library:</Title>
       <ScrollArea className="h-[400px] w-fit md:h-fit md:w-full">
         <div className="flex h-full w-fit flex-col gap-4 px-4 py-4 md:flex-row md:px-0">
