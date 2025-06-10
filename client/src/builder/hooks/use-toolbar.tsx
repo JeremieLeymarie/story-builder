@@ -9,7 +9,7 @@ type ToolbarProps = {
 };
 
 export const useToolbar = ({ storyKey }: ToolbarProps) => {
-  const { testStory } = useTestStory({ storyKey });
+  const { testStory } = useTestStory();
   const { navigate } = useRouter();
 
   const deleteStory = useCallback(async () => {

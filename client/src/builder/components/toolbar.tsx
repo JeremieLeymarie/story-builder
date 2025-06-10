@@ -35,10 +35,16 @@ export const Toolbar = ({ story, scenes }: Props) => {
         <Button
           size="sm"
           variant="outline"
-          className="w-full justify-start"
+          className="flex w-full justify-between"
           onClick={() => testStory(story.firstSceneKey)}
         >
-          <TestTubesIcon size="16px" /> &nbsp; Test
+          <div className="flex items-center">
+            <TestTubesIcon size="16px" />
+            &nbsp; Test
+          </div>
+          <div className="text-muted-foreground border-secondary bg-secondary/50 rounded-sm px-2 py-1 text-xs">
+            T
+          </div>
         </Button>
         <ExportModal story={story} scenes={scenes} />
         <DeleteModal deleteStory={deleteStory} />
