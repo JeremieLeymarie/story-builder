@@ -61,7 +61,7 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
       >
         <Controls />
         <MiniMap />
-        <Background variant={BackgroundVariant.Dots} gap={20} size={1} />
+        <Background variant={BackgroundVariant.Dots} gap={25} size={1} />
       </ReactFlow>
 
       <SceneEditor

@@ -11,7 +11,6 @@ export const useAddScene = () => {
 
   const { reactFlowRef } = useBuilderContext();
 
-  // TODO: what to do with this
   const getCenterPosition = () => {
     if (!reactFlowRef.current) return { x: 0, y: 0 };
 
@@ -27,7 +26,7 @@ export const useAddScene = () => {
     builderService.addScene({
       ...scene,
       storyKey,
-      builderParams: { position: { x: 0, y: 0 } }, // TODO: actually compute position
+      builderParams: { position: getCenterPosition() },
     });
     refresh();
   };

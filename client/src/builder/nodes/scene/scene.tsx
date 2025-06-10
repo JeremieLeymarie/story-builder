@@ -41,7 +41,7 @@ export const SceneNode = ({
     >
       <CardHeader>
         <div className="flex justify-between gap-1">
-          <CardTitle>{data.title}</CardTitle>
+          <CardTitle className="text-3xl">{data.title}</CardTitle>
           <div className="invisible group-hover:visible">
             {isEditable && (
               <SceneEditor
