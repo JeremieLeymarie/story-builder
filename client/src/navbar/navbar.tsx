@@ -33,7 +33,7 @@ export const Navbar = ({
   } = useRouterState();
 
   return (
-    <div className="border-b-primary sticky top-0 z-50 flex h-[50px] items-center justify-between border-b-4 bg-white/85 px-4 py-6 backdrop-blur">
+    <div className="border-b-primary sticky top-0 z-50 flex h-[50px] items-center justify-between border-b-4 bg-white/85 px-4 py-6 backdrop-blur-sm">
       <div className="flex gap-2">
         {/* TODO: Implement actual menu */}
         <Link to="/" className="block">

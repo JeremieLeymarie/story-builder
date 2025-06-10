@@ -186,7 +186,7 @@ const SignUpForm = ({
         />
         <div className="space-y-2">
           {isPending && isPendingForTooLong && (
-            <div className="bg-muted flex items-center rounded border-0 p-2">
+            <div className="bg-muted flex items-center rounded-sm border-0 p-2">
               <p className="text-muted-foreground animate-pulse text-sm">
                 Please wait a little longer, the first request to our server can
                 take a some time...
@@ -286,7 +286,7 @@ const SignInForm = ({
         />
         <div className="space-y-2">
           {isPending && isPendingForTooLong && (
-            <div className="bg-muted flex items-center rounded border-0 p-2">
+            <div className="bg-muted flex items-center rounded-sm border-0 p-2">
               <p className="text-muted-foreground animate-pulse text-sm">
                 Please wait a little longer, the first request to our server can
                 take a some time...
