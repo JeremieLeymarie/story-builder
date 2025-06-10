@@ -44,9 +44,9 @@ const schema = z.object({
     }),
   ),
 });
-type Schema = z.infer<typeof schema>;
+export type SceneEditorSchema = z.infer<typeof schema>;
 
-type Props = {
+type SceneEditorProps = {
   defaultValues?: {
     title?: string;
     content?: string;
@@ -57,7 +57,7 @@ type Props = {
   trigger?: ReactNode;
   open?: boolean;
   setOpen?: (open: boolean) => void;
-  onSave: (input: Schema) => void;
+  onSave: (input: SceneEditorSchema) => void;
   setFirstScene?: () => void;
   triggerClassName?: string;
 };
@@ -70,8 +70,8 @@ export const SceneEditor = ({
   setFirstScene,
   open,
   setOpen,
-}: Props) => {
-  const form = useForm<Schema>({
+}: SceneEditorProps) => {
+  const form = useForm<SceneEditorSchema>({
     resolver: zodResolver(schema),
     defaultValues: defaultValues ?? { actions: [] },
   });
@@ -94,7 +94,7 @@ export const SceneEditor = ({
   const isEditing = !!defaultValues;
 
   const submit = useCallback(
-    (values: Schema) => {
+    (values: SceneEditorSchema) => {
       onSave(values);
       handleOpen(false);
     },

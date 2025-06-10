@@ -1,14 +1,10 @@
 import { Button } from "@/design-system/primitives";
 import { BookOpenTextIcon, TestTubesIcon } from "lucide-react";
-import { SceneEditor } from "./editors/scene-editor";
 import { useToolbar } from "../hooks/use-toolbar";
 import { ExportModal } from "./export-modal";
 import { Scene, Story } from "@/lib/storage/domain";
-import { getBuilderService } from "@/services";
-import { useBuilderContext } from "../hooks/use-builder-store";
-import { useReactFlow } from "@xyflow/react";
-import { useCallback } from "react";
 import { DeleteModal } from "./delete-modal";
+import { useAddSceneEditorStore } from "../hooks/use-add-scene-editor-store";
 
 type Props = {
   story: Story;
@@ -16,23 +12,7 @@ type Props = {
 };
 export const Toolbar = ({ story, scenes }: Props) => {
   const { testStory, deleteStory } = useToolbar({ storyKey: story.key });
-  const { refresh } = useBuilderContext();
-  const reactFlowInstance = useReactFlow();
-
-  const { reactFlowRef } = useBuilderContext();
-
-  const getCenterPosition = useCallback(() => {
-    if (!reactFlowRef.current) return { x: 0, y: 0 };
-
-    const rect = reactFlowRef.current.getBoundingClientRect();
-    const position = {
-      x: rect.x + rect.width / 2,
-      y: rect.y + rect.height / 2,
-    };
-    return reactFlowInstance.screenToFlowPosition(position);
-  }, [reactFlowInstance, reactFlowRef]);
-
-  getCenterPosition();
+  const { setOpen: openAddSceneEditor } = useAddSceneEditorStore();
 
   // Maybe we could use Navigation Menu for this component at some point
   return (
@@ -40,23 +20,18 @@ export const Toolbar = ({ story, scenes }: Props) => {
       <p className="text-primary text-2xl font-semibold">Tools</p>
       <hr />
       <div className="mt-2 flex w-full flex-col gap-4">
-        <SceneEditor
-          trigger={
-            <Button className="w-full">
-              <BookOpenTextIcon size="16px" />
-              &nbsp; Add a scene
-            </Button>
-          }
-          triggerClassName="w-full"
-          onSave={(values) => {
-            getBuilderService().addScene({
-              ...values,
-              storyKey: story.key,
-              builderParams: { position: getCenterPosition() },
-            });
-            refresh();
-          }}
-        />
+        <Button
+          className="flex w-full justify-between"
+          onClick={() => openAddSceneEditor(true)}
+        >
+          <div className="flex items-center">
+            <BookOpenTextIcon size="16px" />
+            &nbsp; Add a scene
+          </div>
+          <div className="text-muted-foreground border-secondary bg-secondary/50 rounded-sm px-2 py-1 text-xs">
+            N
+          </div>
+        </Button>
         <Button
           variant="outline"
           className="w-full"

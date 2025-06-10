@@ -12,12 +12,16 @@ import { useBuilder } from "../hooks/use-builder";
 import { Scene, Story } from "@/lib/storage/domain";
 import { useBuilderContext } from "../hooks/use-builder-store";
 import { getUserOS } from "@/lib/get-os";
+import { SceneEditor } from "./editors/scene-editor";
+import { useAddSceneEditorStore } from "../hooks/use-add-scene-editor-store";
+import { useAddScene } from "../hooks/use-add-scene";
 
 const nodeTypes = { scene: SceneNode };
 
 export type BuilderProps = { story: Story; scenes: Scene[] };
 
 export const Builder = ({ story, scenes }: BuilderProps) => {
+  const { reactFlowRef } = useBuilderContext();
   const {
     edges,
     nodes,
@@ -28,7 +32,9 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
     onNodesDelete,
     onEdgesDelete,
   } = useBuilder({ scenes, story });
-  const { reactFlowRef } = useBuilderContext();
+  const { isOpen: isOpenAddSceneEditor, setOpen: setOpenAddSceneEditor } =
+    useAddSceneEditorStore();
+  const { addScene } = useAddScene();
 
   return (
     <div className="flex h-full w-full border">
@@ -57,6 +63,12 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
         <MiniMap />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
       </ReactFlow>
+
+      <SceneEditor
+        open={isOpenAddSceneEditor}
+        setOpen={setOpenAddSceneEditor}
+        onSave={addScene}
+      />
     </div>
   );
 };
