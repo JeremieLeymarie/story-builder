@@ -37,7 +37,7 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
   const { addScene } = useAddScene();
 
   return (
-    <div className="flex h-full w-full border">
+    <div className="relative flex h-full w-full border">
       <Toolbar story={story} scenes={scenes} />
       <ReactFlow
         nodeTypes={nodeTypes}
@@ -61,7 +61,7 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
       >
         <Controls />
         <MiniMap />
-        <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+        <Background variant={BackgroundVariant.Dots} gap={20} size={1} />
       </ReactFlow>
 
       <SceneEditor

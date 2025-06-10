@@ -58,7 +58,7 @@ export const ExportModal = ({
   return (
     <Dialog open={isModalOpen} onOpenChange={handleModalState}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full">
+        <Button variant="outline" className="w-full justify-start" size="sm">
           <DownloadIcon size="16px" />
           &nbsp; Export
         </Button>
