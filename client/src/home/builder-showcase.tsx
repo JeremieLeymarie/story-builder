@@ -106,7 +106,7 @@ export const BuilderShowcase = () => {
         </div>
       </div>
       <div className="h-full w-7/12 bg-white max-lg:h-[400px] max-lg:w-full">
-        <BuilderContextProvider value={{ refresh: () => {} }}>
+        <BuilderContextProvider refresh={() => {}} storyKey="">
           <ReactFlow
             nodeTypes={nodeTypes}
             nodes={nodes}

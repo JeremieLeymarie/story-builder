@@ -4,12 +4,13 @@ import { BuilderContextProvider } from "../hooks/use-builder-store";
 
 export const BuilderContainer = ({
   refresh,
-  ...props
+  story,
+  scenes,
 }: BuilderProps & { refresh: () => void }) => {
   return (
-    <BuilderContextProvider value={{ refresh }}>
+    <BuilderContextProvider refresh={refresh} storyKey={story.key}>
       <ReactFlowProvider>
-        <Builder {...props} />
+        <Builder story={story} scenes={scenes} />
       </ReactFlowProvider>
     </BuilderContextProvider>
   );

@@ -1,10 +1,11 @@
-import { useMemo, useEffect, useCallback, MouseEvent } from "react";
+import { useMemo, useEffect, MouseEvent } from "react";
 import { useNodesState, useEdgesState } from "@xyflow/react";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
 import { useBuilderEdges } from "./use-builder-edges";
 import { Scene, Story } from "@/lib/storage/domain";
 import { BuilderNode } from "../types";
 import { getBuilderService } from "@/services";
+import { useBuilderShortCuts } from "./use-builder-shortcuts";
 
 // For now state is entirely dictated by the local dexie-db, but this could be a performance
 // issue in very large stories
@@ -20,31 +21,27 @@ export const useBuilder = ({
     () => scenesToNodesAndEdgesAdapter({ scenes, story }),
     [scenes, story],
   );
-
   const [nodes, setNodes, onNodesChange] = useNodesState(sceneNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(sceneEdges);
-  const builderService = useMemo(() => getBuilderService(), []);
 
+  const builderService = getBuilderService();
   const edgesProps = useBuilderEdges({ setEdges, sceneNodes });
+
+  useBuilderShortCuts();
 
   useEffect(() => {
     setNodes(sceneNodes);
     setEdges(sceneEdges);
   }, [sceneEdges, sceneNodes, setEdges, setNodes]);
 
-  const onNodeMove = useCallback(
-    (_: MouseEvent, node: BuilderNode) => {
-      builderService.updateSceneBuilderPosition(node.data.key, node.position);
-    },
-    [builderService],
-  );
+  const onNodeMove = (_: MouseEvent, node: BuilderNode) => {
+    builderService.updateSceneBuilderPosition(node.data.key, node.position);
+  };
 
-  const onNodesDelete = useCallback(
-    (nodes: BuilderNode[]) => {
-      builderService.deleteScenes(nodes.map(({ data: { key } }) => key));
-    },
-    [builderService],
-  );
+  const onNodesDelete = (nodes: BuilderNode[]) => {
+    builderService.deleteScenes(nodes.map(({ data: { key } }) => key));
+  };
+
   return {
     onNodeMove,
     nodes: nodes.map((node) => ({ ...node, selectable: true })),

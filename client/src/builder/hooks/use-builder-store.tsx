@@ -10,20 +10,23 @@ import {
 type BuilderContext = {
   refresh: () => void;
   reactFlowRef: RefObject<HTMLDivElement | null>;
+  storyKey: string;
 };
 
 export const BuilderContext = createContext<BuilderContext | null>(null);
 
 export const BuilderContextProvider = ({
-  value,
+  storyKey,
+  refresh,
   children,
-}: PropsWithChildren<{ value: Pick<BuilderContext, "refresh"> }>) => {
+}: PropsWithChildren<Omit<BuilderContext, "reactFlowRef">>) => {
   const reactFlowRef = useRef<HTMLDivElement>(null);
 
   return (
     <BuilderContext.Provider
       value={{
-        ...value,
+        storyKey,
+        refresh,
         reactFlowRef,
       }}
     >

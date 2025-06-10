@@ -38,7 +38,7 @@ export const ConfirmDialog = ({
 }: Props) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      {!!trigger && <DialogTrigger>{trigger}</DialogTrigger>}
+      {!!trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
