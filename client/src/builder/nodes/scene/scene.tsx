@@ -78,7 +78,7 @@ export const SceneNode = ({
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
         {data.actions.map(({ text }, i) => (
-          <div className="relative border border-primary p-2" key={text}>
+          <div className="border-primary relative border p-2" key={text}>
             {text}
             <Handle
               type="source"

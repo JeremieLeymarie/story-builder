@@ -7,7 +7,7 @@ import { MoveRightIcon } from "lucide-react";
 export const LastGameSection = ({ lastGame }: { lastGame: Story }) => {
   return (
     <div
-      className="flex h-[60vh] w-full select-none flex-col items-center justify-center px-8 max-md:h-[55vh]"
+      className="flex h-[60vh] w-full flex-col items-center justify-center px-8 select-none max-md:h-[55vh]"
       style={{
         background: `url('${lastGame.image}')`,
         backgroundRepeat: "no-repeat",
@@ -27,7 +27,7 @@ export const LastGameSection = ({ lastGame }: { lastGame: Story }) => {
             </div>
           )}
           {!!lastGame.author && (
-            <p className="font-bold uppercase text-primary">
+            <p className="text-primary font-bold uppercase">
               Story by: {lastGame.author?.username}
             </p>
           )}
@@ -35,7 +35,7 @@ export const LastGameSection = ({ lastGame }: { lastGame: Story }) => {
 
         <div className="flex h-max w-max flex-col items-center justify-center">
           <Link to="/library/$storyKey" params={{ storyKey: lastGame.key }}>
-            <Button className="text-xl shadow-3xl shadow-primary/50 max-md:text-lg">
+            <Button className="shadow-3xl shadow-primary/50 text-xl max-md:text-lg">
               Resume game &nbsp;
               <MoveRightIcon />
             </Button>

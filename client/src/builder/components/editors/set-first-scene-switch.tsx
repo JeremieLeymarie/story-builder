@@ -14,7 +14,7 @@ export const SetFirstSceneSwitch = ({
   const [isChecked, setIsChecked] = useState(isFirstScene);
 
   return (
-    <div className="w-full rounded-[--radius] border border-primary p-3">
+    <div className="border-primary w-full rounded-(--radius) border p-3">
       <div className="flex w-full items-center gap-2">
         <ConfirmDialog
           title="Are you sure?"

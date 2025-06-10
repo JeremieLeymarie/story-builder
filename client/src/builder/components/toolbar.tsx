@@ -37,7 +37,7 @@ export const Toolbar = ({ story, scenes }: Props) => {
   // Maybe we could use Navigation Menu for this component at some point
   return (
     <div className="w-[275px] border-r p-2">
-      <p className="text-2xl font-semibold text-primary">Tools</p>
+      <p className="text-primary text-2xl font-semibold">Tools</p>
       <hr />
       <div className="mt-2 flex w-full flex-col gap-4">
         <SceneEditor

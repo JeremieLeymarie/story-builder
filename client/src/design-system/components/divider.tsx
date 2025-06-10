@@ -8,7 +8,7 @@ export const Divider = ({
   return (
     <hr
       className={cn(
-        "h-1 w-full border-none bg-primary text-primary",
+        "bg-primary text-primary h-1 w-full border-none",
         className,
       )}
       {...props}

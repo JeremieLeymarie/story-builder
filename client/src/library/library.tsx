@@ -51,7 +51,7 @@ export const Library = ({ stories }: Library) => {
                     storyKey={key}
                     button={
                       <Button
-                        className={`absolute bottom-4 right-4 opacity-0 transition duration-300 ease-in-out group-hover:opacity-100`}
+                        className={`absolute right-4 bottom-4 opacity-0 transition duration-300 ease-in-out group-hover:opacity-100`}
                       >
                         <SwordIcon size="18px" />
                         &nbsp;Play
@@ -64,7 +64,7 @@ export const Library = ({ stories }: Library) => {
         </div>
 
         {stories.length === 0 && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             You don't have any games in your library...
           </p>
         )}

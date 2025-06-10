@@ -31,7 +31,7 @@ export const LoadMenuItem = ({
 
       <ConfirmDialog
         title={
-          <div className="flex items-center gap-2 text-primary">
+          <div className="text-primary flex items-center gap-2">
             <CloudDownloadIcon />
             Load data from cloud backup
           </div>

@@ -84,7 +84,7 @@ export const BuilderShowcase = () => {
   const [edges, , onEdgesChange] = useEdgesState(EDGES);
 
   return (
-    <div className="flex h-[400px] w-full bg-primary max-lg:h-fit max-lg:flex-col">
+    <div className="bg-primary flex h-[400px] w-full max-lg:h-fit max-lg:flex-col">
       <div className="flex h-full w-5/12 items-center max-lg:w-full max-lg:py-8">
         <div className="flex w-full flex-col px-12">
           <Title variant="primary">Create your own stories!</Title>

@@ -4,7 +4,7 @@ import { Story } from "@/lib/storage/domain";
 export const GameBanner = ({ story }: { story: Story }) => {
   return (
     <div
-      className="flex h-[250px] w-full flex-col justify-center gap-4 border-b-4 border-primary px-12"
+      className="border-primary flex h-[250px] w-full flex-col justify-center gap-4 border-b-4 px-12"
       style={{
         background: `url('${story.image}')`,
         backgroundRepeat: "no-repeat",
