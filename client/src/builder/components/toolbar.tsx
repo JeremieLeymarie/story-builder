@@ -16,11 +16,11 @@ export const Toolbar = ({ story, scenes }: Props) => {
 
   // Maybe we could use Navigation Menu for this component at some point
   return (
-    <div className="w-[275px] border-r p-2">
-      <p className="text-primary text-2xl font-semibold">Tools</p>
-      <hr />
-      <div className="mt-2 flex w-full flex-col gap-4">
+    <div className="absolute top-5 left-5 z-50 w-[250px] rounded border bg-white/80 p-4">
+      <p className="text-primary text-2xl font-semibold">TOOLS</p>
+      <div className="mt-2 flex w-full flex-col gap-2">
         <Button
+          size="sm"
           className="flex w-full justify-between"
           onClick={() => openAddSceneEditor(true)}
         >
@@ -33,8 +33,9 @@ export const Toolbar = ({ story, scenes }: Props) => {
           </div>
         </Button>
         <Button
+          size="sm"
           variant="outline"
-          className="w-full"
+          className="w-full justify-start"
           onClick={() => testStory(story.firstSceneKey)}
         >
           <TestTubesIcon size="16px" /> &nbsp; Test
