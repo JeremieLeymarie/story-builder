@@ -18,7 +18,7 @@ import {
 } from "@/design-system/primitives";
 import { WithoutKey } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback, useState } from "react";
+import { useCallback, useState, type JSX } from "react";
 import { useForm } from "react-hook-form";
 import { StoryGenreCombobox } from "./story-genre-combobox";
 import { schema, Schema } from "./schema";

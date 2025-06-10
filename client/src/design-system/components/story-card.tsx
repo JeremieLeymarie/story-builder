@@ -1,6 +1,6 @@
 import { Story } from "@/lib/storage/domain";
 import { Card, CardDescription, CardHeader, CardTitle } from "../primitives";
-import { CSSProperties } from "react";
+import { CSSProperties, type JSX } from "react";
 
 export const StoryCard = ({
   title,

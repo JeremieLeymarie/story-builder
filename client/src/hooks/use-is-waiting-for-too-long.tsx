@@ -17,7 +17,7 @@ export const useIsWaitingForTooLong = ({
     [startTimestamp, tooLong],
   );
   const [isWaitingForTooLong, setIsWaitingForTooLong] = useState(false);
-  const interval = useRef<NodeJS.Timeout>();
+  const interval = useRef<NodeJS.Timeout>(undefined);
 
   useEffect(() => {
     if (startTimestamp !== 0)
