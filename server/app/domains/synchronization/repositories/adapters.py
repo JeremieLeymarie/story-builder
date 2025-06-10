@@ -105,7 +105,7 @@ def make_mongo_story(domain: SynchronizationStory) -> MongoStory:
         title=domain.title,
         description=domain.description,
         image=domain.image,
-        genres=[genre for genre in domain.genres],
+        genres=[genre.value for genre in domain.genres],
         creationDate=domain.creation_date,
         firstSceneKey=domain.first_scene_key,
         originalStoryKey=domain.original_story_key,
