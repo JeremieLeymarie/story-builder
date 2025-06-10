@@ -71,7 +71,6 @@ const _getSyncService = ({
       const progresses = await gameService.getStoryProgresses();
       const user = await userService.getCurrentUser();
 
-      console.log({ libraryStories });
       if (!user) {
         return { success: false, cause: "User not logged in" };
       }

@@ -26,9 +26,6 @@ class MongoSynchronizationRepository(
 ):
     STORY_PROGRESS_COLLECTION = "storyProgresses"
 
-    def __init__(self) -> None:
-        super().__init__()
-
     def save_stories(
         self, stories: list[SynchronizationStory], *, user_key: str
     ) -> Result:
