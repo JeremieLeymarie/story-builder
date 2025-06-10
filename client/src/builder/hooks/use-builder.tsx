@@ -27,7 +27,7 @@ export const useBuilder = ({
   const builderService = getBuilderService();
   const edgesProps = useBuilderEdges({ setEdges, sceneNodes });
 
-  useBuilderShortCuts();
+  useBuilderShortCuts({ firstSceneKey: story.firstSceneKey });
 
   useEffect(() => {
     setNodes(sceneNodes);
