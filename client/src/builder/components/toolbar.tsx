@@ -16,7 +16,7 @@ export const Toolbar = ({ story, scenes }: Props) => {
 
   // Maybe we could use Navigation Menu for this component at some point
   return (
-    <div className="absolute top-5 left-5 z-50 w-[250px] rounded border bg-white/80 p-4">
+    <div className="absolute top-5 left-5 z-50 w-[250px] rounded border bg-white/80 p-4 shadow-sm">
       <p className="text-primary text-2xl font-semibold">TOOLS</p>
       <div className="mt-2 flex w-full flex-col gap-2">
         <Button

@@ -84,8 +84,7 @@ export const SceneNode = ({
               type="source"
               id={`${data.key}-${i}`}
               position={Position.Right}
-              className="absolute h-3 w-3"
-              style={{ right: -7 }}
+              className="absolute !right-[-10px] !h-[15px] !w-[15px]"
             />
           </div>
         ))}
@@ -93,8 +92,7 @@ export const SceneNode = ({
       <Handle
         type="target"
         position={Position.Left}
-        className="h-4 w-4"
-        style={{ left: -7 }}
+        className="!right-[-10px] !h-[15px] !w-[15px]"
       />
     </Card>
   );
