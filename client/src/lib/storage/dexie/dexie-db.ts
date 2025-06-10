@@ -22,7 +22,6 @@ db.version(1).stores({
     "&key, storyKey, userKey, currentSceneKey, character, inventory, history, lastPlayedAt",
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 db.on("populate", async (_transaction) => {
   // Add story to builder
   await db.stories.add(DEMO_STORY);
