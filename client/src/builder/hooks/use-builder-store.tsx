@@ -9,7 +9,7 @@ import {
 
 type BuilderContext = {
   refresh: () => void;
-  reactFlowRef: RefObject<HTMLDivElement>;
+  reactFlowRef: RefObject<HTMLDivElement | null>;
 };
 
 export const BuilderContext = createContext<BuilderContext | null>(null);

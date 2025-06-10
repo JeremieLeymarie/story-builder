@@ -11,6 +11,8 @@ import {
   DialogTrigger,
 } from "../primitives";
 
+import type { JSX } from "react";
+
 type Props = {
   onCancel?: () => void;
   onConfirm?: () => void;
