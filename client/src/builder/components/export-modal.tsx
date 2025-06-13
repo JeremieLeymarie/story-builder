@@ -12,6 +12,20 @@ import { DownloadIcon, CopyIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useToast } from "@/design-system/primitives/use-toast";
 import { Scene, Story } from "@/lib/storage/domain";
+import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
+
+import { create } from "zustand";
+
+type ExportModalStore = {
+  isOpen: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const useExportModalStore = create<ExportModalStore>((set) => ({
+  isOpen: false,
+  setOpen: (isOpen) => set({ isOpen }),
+}));
 
 export const ExportModal = ({
   story,
@@ -21,7 +35,7 @@ export const ExportModal = ({
   scenes: Scene[];
 }) => {
   const { toast } = useToast();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isOpen, setOpen } = useExportModalStore();
   const [url, setUrl] = useState<string>();
   // TODO: check that this is not impacting perfs
   const storyJson = JSON.stringify(
@@ -39,7 +53,7 @@ export const ExportModal = ({
       const url = URL.createObjectURL(blob);
       setUrl(url);
     }
-    setIsModalOpen(open);
+    setOpen(open);
   };
 
   const exportToast = useCallback(async () => {
@@ -56,11 +70,12 @@ export const ExportModal = ({
   }, [toast]);
 
   return (
-    <Dialog open={isModalOpen} onOpenChange={handleModalState}>
+    <Dialog open={isOpen} onOpenChange={handleModalState}>
       <DialogTrigger asChild>
         <Button variant="outline" className="w-full justify-start" size="sm">
           <DownloadIcon size="16px" />
           &nbsp; Export
+          <ButtonShortCutDoc doc="E" />
         </Button>
       </DialogTrigger>
       <DialogContent>
