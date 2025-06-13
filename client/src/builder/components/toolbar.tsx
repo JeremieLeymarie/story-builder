@@ -5,6 +5,7 @@ import { ExportModal } from "./export-modal";
 import { Scene, Story } from "@/lib/storage/domain";
 import { DeleteModal } from "./delete-modal";
 import { useAddSceneEditorStore } from "../hooks/use-add-scene-editor-store";
+import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
 
 type Props = {
   story: Story;
@@ -21,30 +22,22 @@ export const Toolbar = ({ story, scenes }: Props) => {
       <div className="mt-2 flex w-full flex-col gap-2">
         <Button
           size="sm"
-          className="flex w-full justify-between"
+          className="flex w-full justify-start"
           onClick={() => openAddSceneEditor(true)}
         >
-          <div className="flex items-center">
-            <BookOpenTextIcon size="16px" />
-            &nbsp; Add a scene
-          </div>
-          <div className="text-muted-foreground border-secondary bg-secondary/50 rounded-sm px-2 py-1 text-xs">
-            N
-          </div>
+          <BookOpenTextIcon size="16px" />
+          &nbsp; Add a scene
+          <ButtonShortCutDoc doc="N" />
         </Button>
         <Button
           size="sm"
           variant="outline"
-          className="flex w-full justify-between"
+          className="flex w-full justify-start"
           onClick={() => testStory(story.firstSceneKey)}
         >
-          <div className="flex items-center">
-            <TestTubesIcon size="16px" />
-            &nbsp; Test
-          </div>
-          <div className="text-muted-foreground border-secondary bg-secondary/50 rounded-sm px-2 py-1 text-xs">
-            T
-          </div>
+          <TestTubesIcon size="16px" />
+          &nbsp; Test
+          <ButtonShortCutDoc doc="T" />
         </Button>
         <ExportModal story={story} scenes={scenes} />
         <DeleteModal deleteStory={deleteStory} />
