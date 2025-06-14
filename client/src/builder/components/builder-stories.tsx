@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/design-system/primitives";
 import { StoryFormDialog } from "./story-form/story-form-dialog";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { MoveRightIcon, PlusIcon } from "lucide-react";
 import { useBuilderStories } from "../hooks/use-builder-stories";
 import { StoryCard } from "@/design-system/components/story-card";
@@ -19,6 +19,7 @@ type BuilderHomeProps = {
 };
 
 export const BuilderStories = ({ stories }: BuilderHomeProps) => {
+  const navigate = useNavigate();
   const { handleCreateStory } = useBuilderStories();
 
   return (
@@ -47,31 +48,27 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
           </CardContent>
         </Card>
         {stories.map((story) => {
-          const { key, ...storyWithoutKey } = story;
           return (
-            <Link
-              key={key}
-              to="/builder/$storyKey"
-              params={{ storyKey: story.key }}
-            >
-              <StoryCard
-                {...storyWithoutKey}
-                storyKey={key}
-                button={
-                  <Link
-                    to="/builder/$storyKey"
-                    params={{ storyKey: story.key }}
+            <StoryCard
+              onClick={() =>
+                navigate({
+                  to: "/builder/$storyKey",
+                  params: { storyKey: story.key },
+                })
+              }
+              key={story.key}
+              story={story}
+              button={
+                <Link to="/builder/$storyKey" params={{ storyKey: story.key }}>
+                  <Button
+                    className={`absolute right-4 bottom-4 opacity-0 transition duration-300 ease-in-out group-hover:opacity-100`}
                   >
-                    <Button
-                      className={`absolute right-4 bottom-4 opacity-0 transition duration-300 ease-in-out group-hover:opacity-100`}
-                    >
-                      Edit &nbsp;{" "}
-                      <MoveRightIcon size="15px" className="animate-bounce" />
-                    </Button>
-                  </Link>
-                }
-              />
-            </Link>
+                    Edit &nbsp;{" "}
+                    <MoveRightIcon size="15px" className="animate-bounce" />
+                  </Button>
+                </Link>
+              }
+            />
           );
         })}
       </div>

@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/design-system/primitives";
-import { Link } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { SwordIcon } from "lucide-react";
 import { StoryCard, Title } from "@/design-system/components";
 import { Story } from "@/lib/storage/domain";
@@ -22,6 +22,8 @@ type Library = {
  * @returns
  */
 export const Library = ({ stories }: Library) => {
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-col items-center space-y-8 p-8 px-16 sm:items-start sm:px-32">
       <div className="flex flex-col items-center space-y-8 sm:items-start">
@@ -37,28 +39,25 @@ export const Library = ({ stories }: Library) => {
             </CardContent>
           </Card>
           {stories.length > 0 &&
-            stories.map((storyWithKey) => {
-              const { key, ...story } = storyWithKey;
-
+            stories.map((story) => {
               return (
-                <Link
-                  to="/library/$storyKey"
-                  params={{ storyKey: key }}
-                  key={key}
-                >
-                  <StoryCard
-                    {...story}
-                    storyKey={key}
-                    button={
-                      <Button
-                        className={`absolute right-4 bottom-4 opacity-0 transition duration-300 ease-in-out group-hover:opacity-100`}
-                      >
-                        <SwordIcon size="18px" />
-                        &nbsp;Play
-                      </Button>
-                    }
-                  />
-                </Link>
+                <StoryCard
+                  onClick={() =>
+                    navigate({
+                      to: "/library/$storyKey",
+                      params: { storyKey: story.key },
+                    })
+                  }
+                  story={story}
+                  button={
+                    <Button
+                      className={`absolute right-4 bottom-4 opacity-0 transition duration-300 ease-in-out group-hover:opacity-100`}
+                    >
+                      <SwordIcon size="18px" />
+                      &nbsp;Play
+                    </Button>
+                  }
+                />
               );
             })}
         </div>
