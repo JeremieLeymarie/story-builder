@@ -14,7 +14,9 @@ export const useBuilderShortCuts = ({
 
   const handleKeyPress = useCallback(
     (e: KeyboardEvent) => {
-      const isAnyInputFocused = document.activeElement !== document.body;
+      const isAnyInputFocused = ["INPUT", "TEXTAREA"].includes(
+        document.activeElement?.tagName ?? "",
+      );
 
       if (isAnyInputFocused) return;
 
