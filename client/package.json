@@ -42,6 +42,7 @@
     "dayjs": "^1.11.13",
     "dexie": "^4.0.11",
     "dexie-react-hooks": "^1.1.7",
+    "elkjs": "^0.10.0",
     "lucide-react": "^0.513.0",
     "nanoid": "^5.1.5",
     "openapi-fetch": "^0.14.0",

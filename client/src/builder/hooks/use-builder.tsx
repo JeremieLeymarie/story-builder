@@ -1,5 +1,5 @@
 import { useMemo, useEffect, MouseEvent } from "react";
-import { useNodesState, useEdgesState } from "@xyflow/react";
+import { useNodesState, useEdgesState, useReactFlow } from "@xyflow/react";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
 import { useBuilderEdges } from "./use-builder-edges";
 import { Scene, Story } from "@/lib/storage/domain";
@@ -23,6 +23,7 @@ export const useBuilder = ({
   );
   const [nodes, setNodes, onNodesChange] = useNodesState(sceneNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(sceneEdges);
+  const { fitView } = useReactFlow();
 
   const builderService = getBuilderService();
   const edgesProps = useBuilderEdges({ setEdges, sceneNodes });
@@ -32,7 +33,7 @@ export const useBuilder = ({
   useEffect(() => {
     setNodes(sceneNodes);
     setEdges(sceneEdges);
-  }, [sceneEdges, sceneNodes, setEdges, setNodes]);
+  }, [fitView, sceneEdges, sceneNodes, setEdges, setNodes]);
 
   const onNodeMove = (_: MouseEvent, node: BuilderNode) => {
     builderService.updateSceneBuilderPosition(node.data.key, node.position);

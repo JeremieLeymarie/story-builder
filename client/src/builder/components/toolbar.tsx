@@ -1,11 +1,12 @@
 import { Button } from "@/design-system/primitives";
-import { BookOpenTextIcon, TestTubesIcon } from "lucide-react";
+import { BookOpenTextIcon, SparklesIcon, TestTubesIcon } from "lucide-react";
 import { useToolbar } from "../hooks/use-toolbar";
 import { ExportModal } from "./export-modal";
 import { Scene, Story } from "@/lib/storage/domain";
 import { DeleteModal } from "./delete-modal";
 import { useAddSceneEditorStore } from "../hooks/use-add-scene-editor-store";
 import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
+import { useOrganizeNodes } from "../hooks/use-order-nodes";
 
 type Props = {
   story: Story;
@@ -14,12 +15,21 @@ type Props = {
 export const Toolbar = ({ story, scenes }: Props) => {
   const { testStory, deleteStory } = useToolbar({ storyKey: story.key });
   const { setOpen: openAddSceneEditor } = useAddSceneEditorStore();
+  const { organizeNodes } = useOrganizeNodes();
 
   // Maybe we could use Navigation Menu for this component at some point
   return (
     <div className="absolute top-5 left-5 z-50 w-[250px] rounded border bg-white/80 p-4 shadow-sm">
       <p className="text-primary text-2xl font-semibold">TOOLS</p>
       <div className="mt-2 flex w-full flex-col gap-2">
+        <Button
+          size="sm"
+          className="flex w-full justify-start"
+          onClick={organizeNodes}
+        >
+          <SparklesIcon size="16px" />
+          &nbsp; Magic
+        </Button>
         <Button
           size="sm"
           className="flex w-full justify-start"
