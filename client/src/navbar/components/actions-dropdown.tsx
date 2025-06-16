@@ -16,7 +16,6 @@ import { getUserService } from "@/services";
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
 import { Link } from "@tanstack/react-router";
@@ -45,28 +44,26 @@ export const ActionsDropdown = ({
         <DropdownMenuGroup>
           <DropdownMenuLabel className="flex items-center gap-2">
             Actions
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <CircleHelpIcon size="16px" className="hover:text-primary" />
-                </TooltipTrigger>
-                <TooltipContent className="text-muted-foreground max-w-[300px] text-xs font-normal">
-                  Story Builder is designed to be local-first. This means that
-                  by default data is only stored locally. To allow playing and
-                  building on multiple devices or browsers, you can manually
-                  save or load data from the cloud. Learn more about our method{" "}
-                  <Link to="/about" target="_blank">
-                    <Button
-                      variant="link"
-                      className="m-0 h-max w-max p-0 text-xs"
-                    >
-                      here
-                    </Button>
-                  </Link>
-                  .
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <CircleHelpIcon size="16px" className="hover:text-primary" />
+              </TooltipTrigger>
+              <TooltipContent className="text-muted-foreground max-w-[300px] text-xs font-normal">
+                Story Builder is designed to be local-first. This means that by
+                default data is only stored locally. To allow playing and
+                building on multiple devices or browsers, you can manually save
+                or load data from the cloud. Learn more about our method{" "}
+                <Link to="/about" target="_blank">
+                  <Button
+                    variant="link"
+                    className="m-0 h-max w-max p-0 text-xs"
+                  >
+                    here
+                  </Button>
+                </Link>
+                .
+              </TooltipContent>
+            </Tooltip>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
 
