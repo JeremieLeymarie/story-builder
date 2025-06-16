@@ -2,7 +2,6 @@ import {
   ReactFlow,
   Background,
   BackgroundVariant,
-  Controls,
   MiniMap,
   SelectionMode,
 } from "@xyflow/react";
