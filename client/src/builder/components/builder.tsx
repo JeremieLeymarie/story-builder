@@ -15,6 +15,7 @@ import { getUserOS } from "@/lib/get-os";
 import { SceneEditor } from "./editors/scene-editor";
 import { useAddSceneEditorStore } from "../hooks/use-add-scene-editor-store";
 import { useAddScene } from "../hooks/use-add-scene";
+import { ActionsBar } from "./actions-bar";
 
 const nodeTypes = { scene: SceneNode };
 
@@ -59,10 +60,10 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
         fitView
         multiSelectionKeyCode={getUserOS() === "Mac" ? "Meta" : "ControlLeft"}
       >
-        <Controls />
         <MiniMap />
         <Background variant={BackgroundVariant.Dots} gap={25} size={1} />
       </ReactFlow>
+      <ActionsBar />
 
       <SceneEditor
         open={isOpenAddSceneEditor}
