@@ -40,7 +40,6 @@ export const UserDropdown = ({
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
 
-          {/* TODO: implement shortcuts */}
           <LoadMenuItem
             load={loadRemoteData}
             closeMenu={() => setIsOpen(false)}
