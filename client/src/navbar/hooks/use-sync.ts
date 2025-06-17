@@ -1,6 +1,6 @@
-import { toast } from "@/design-system/primitives/use-toast";
 import { getSyncService } from "@/services/sync-service";
 import { useCallback, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 export type SynchronizationState = {
   loading: boolean;
@@ -22,29 +22,17 @@ export const useSync = () => {
 
     if (error) {
       setState({ loading: false, success: false, error });
-      toast({
-        title: "Error",
-        description: `Could not load data from the cloud. ${error}`,
-        variant: "destructive",
-      });
+      toast.error(`Could not load data from the cloud. ${error}`);
     }
     setState({ loading: false, success: true });
-    toast({ title: "Success", description: "Successfully loaded cloud data!" });
+    toast.success("Successfully loaded cloud data!");
   }, [syncService]);
 
   const save = useCallback(async () => {
     const result = await syncService.save();
-    if (result?.success)
-      toast({
-        title: "Success",
-        description: "Successfully saved data to the cloud!",
-      });
+    if (result?.success) toast.success("Successfully saved data to the cloud!");
     else {
-      toast({
-        title: "Error",
-        description: `Could not save data to the cloud. ${result?.cause ?? ""}`,
-        variant: "destructive",
-      });
+      toast.error(`Could not save data to the cloud. ${result?.cause ?? ""}`);
     }
   }, [syncService]);
 

@@ -9,12 +9,12 @@ import {
   Textarea,
 } from "../../design-system/primitives";
 import { DownloadIcon, CopyIcon } from "lucide-react";
-import { useCallback, useState } from "react";
-import { useToast } from "@/design-system/primitives/use-toast";
+import { useState } from "react";
 import { Scene, Story } from "@/lib/storage/domain";
 import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
 
 import { create } from "zustand";
+import { toast } from "sonner";
 
 type ExportModalStore = {
   isOpen: boolean;
@@ -34,7 +34,6 @@ export const ExportModal = ({
   story: Story;
   scenes: Scene[];
 }) => {
-  const { toast } = useToast();
   const { isOpen, setOpen } = useExportModalStore();
   const [url, setUrl] = useState<string>();
   // TODO: check that this is not impacting perfs
@@ -56,18 +55,15 @@ export const ExportModal = ({
     setOpen(open);
   };
 
-  const exportToast = useCallback(async () => {
-    toast({
-      title: "Export complete!",
+  const exportToast = async () => {
+    toast.success("Export complete!", {
       description: "Your game is now in your computer.",
     });
-  }, [toast]);
+  };
 
-  const copyToast = useCallback(async () => {
-    toast({
-      description: "Copied to clipboard !",
-    });
-  }, [toast]);
+  const copyToast = async () => {
+    toast.success("Copied to clipboard !");
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleModalState}>

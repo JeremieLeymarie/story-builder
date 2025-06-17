@@ -10,11 +10,10 @@ import {
 } from "../../design-system/primitives";
 import { BracesIcon } from "lucide-react";
 import { ChangeEvent, useCallback, useState } from "react";
-import { useToast } from "@/design-system/primitives/use-toast";
 import { getLibraryService } from "@/services";
+import { toast } from "sonner";
 
 export const ImportModal = () => {
-  const { toast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fileContent, setFileContent] = useState<string | undefined>();
 
@@ -35,21 +34,16 @@ export const ImportModal = () => {
 
   const importFile = useCallback(async () => {
     if (!fileContent) {
-      return toast({ description: "No content in file." });
+      return toast.error("No content in file.");
     }
 
     const { error } = await getLibraryService().importFromJSON(fileContent);
-    if (error)
-      return toast({
-        title: "Import failed!",
-        description: error,
-      });
+    if (error) return toast.error("Import failed!", { description: error });
 
-    toast({
-      title: "Import complete!",
+    toast.success("Import complete!", {
       description: "Game was successfully downloaded on this device.",
     });
-  }, [toast, fileContent]);
+  }, [fileContent]);
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>

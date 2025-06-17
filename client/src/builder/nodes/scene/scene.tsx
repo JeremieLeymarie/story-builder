@@ -10,10 +10,10 @@ import { SceneEditor } from "../../components/editors/scene-editor";
 import { EditIcon } from "lucide-react";
 import { SceneNodeType } from "../../types";
 import { cn } from "@/lib/style";
-import { toast } from "@/design-system/primitives";
 import { getBuilderService } from "@/services";
 import { useBuilderContext } from "@/builder/hooks/use-builder-store";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export type SceneNodeProps = NodeProps<SceneNodeType>;
 
@@ -63,8 +63,7 @@ export const SceneNode = ({
                   builderService
                     .changeFirstScene(data.storyKey, data.key)
                     .catch(() => {
-                      toast({
-                        title: "Operation failed",
+                      toast.error("Operation failed", {
                         description:
                           "Something went wrong. Could not change the first scene of the story",
                       });

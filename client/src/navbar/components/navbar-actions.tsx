@@ -1,9 +1,10 @@
 import { AuthModalForm } from "@/auth-modal-form";
-import { Button, useToast } from "@/design-system/primitives";
+import { Button } from "@/design-system/primitives";
 import { User } from "@/lib/storage/domain";
 import { useState } from "react";
 import { ActionsDropdown } from "./actions-dropdown";
 import { LogInIcon } from "lucide-react";
+import { toast } from "sonner";
 
 export const NavbarActions = ({
   user,
@@ -15,7 +16,6 @@ export const NavbarActions = ({
   loadRemoteData: () => void;
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { toast } = useToast();
 
   return user ? (
     <ActionsDropdown
@@ -39,17 +39,12 @@ export const NavbarActions = ({
         setOpen={setIsModalOpen}
         onSuccess={() => {
           setIsModalOpen(false);
-          toast({
-            title: "Welcome!",
-            description: "Successfully logged in!",
-          });
+          toast.success("Welcome!", { description: "Successfully logged in!" });
         }}
         onError={() => {
           setIsModalOpen(false);
-          toast({
-            title: "Authentication error",
+          toast.error("Authentication error", {
             description: "Please try again",
-            variant: "destructive",
           });
         }}
       />
