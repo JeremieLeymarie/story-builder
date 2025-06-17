@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+import { Scene, Story } from "@/lib/storage/domain";
 import {
   createContext,
   PropsWithChildren,
@@ -6,28 +7,40 @@ import {
   useContext,
   useRef,
 } from "react";
+import { BuilderNode } from "../types";
+import { Edge } from "@xyflow/react";
+import { scenesToNodesAndEdgesAdapter } from "../adapters";
 
 type BuilderContext = {
   refresh: () => void;
   reactFlowRef: RefObject<HTMLDivElement | null>;
-  storyKey: string;
+  story: Story;
+  scenes: Scene[];
+  nodes: BuilderNode[];
+  edges: Edge[];
 };
 
 export const BuilderContext = createContext<BuilderContext | null>(null);
 
 export const BuilderContextProvider = ({
-  storyKey,
-  refresh,
   children,
-}: PropsWithChildren<Omit<BuilderContext, "reactFlowRef">>) => {
+  scenes,
+  story,
+  refresh,
+}: PropsWithChildren<Pick<BuilderContext, "story" | "scenes" | "refresh">>) => {
   const reactFlowRef = useRef<HTMLDivElement>(null);
+
+  const [nodes, edges] = scenesToNodesAndEdgesAdapter({ scenes, story });
 
   return (
     <BuilderContext.Provider
       value={{
-        storyKey,
-        refresh,
         reactFlowRef,
+        nodes,
+        edges,
+        scenes,
+        story,
+        refresh,
       }}
     >
       {children}

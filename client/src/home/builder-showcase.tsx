@@ -13,6 +13,7 @@ import {
   useNodesState,
 } from "@xyflow/react";
 import { BuilderContextProvider } from "@/builder/hooks/use-builder-store";
+import { Story } from "@/lib/storage/domain";
 
 const nodeTypes = { scene: SceneNode };
 
@@ -79,6 +80,17 @@ const EDGES: Edge[] = [
   },
 ];
 
+const MOCK_STORY: Story = {
+  type: "builder",
+  creationDate: new Date(),
+  description: "",
+  firstSceneKey: "",
+  genres: [],
+  image: "",
+  key: "",
+  title: "",
+};
+
 export const BuilderShowcase = () => {
   const [nodes, , onNodesChange] = useNodesState(NODES);
   const [edges, , onEdgesChange] = useEdgesState(EDGES);
@@ -106,7 +118,11 @@ export const BuilderShowcase = () => {
         </div>
       </div>
       <div className="h-full w-7/12 bg-white max-lg:h-[400px] max-lg:w-full">
-        <BuilderContextProvider refresh={() => {}} storyKey="">
+        <BuilderContextProvider
+          refresh={() => {}}
+          story={MOCK_STORY}
+          scenes={[]}
+        >
           <ReactFlow
             nodeTypes={nodeTypes}
             nodes={nodes}

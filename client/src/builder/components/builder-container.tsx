@@ -1,16 +1,21 @@
 import { ReactFlowProvider } from "@xyflow/react";
-import { Builder, BuilderProps } from "./builder";
+import { Builder } from "./builder";
 import { BuilderContextProvider } from "../hooks/use-builder-store";
+import { Scene, Story } from "@/lib/storage/domain";
 
 export const BuilderContainer = ({
   refresh,
   story,
   scenes,
-}: BuilderProps & { refresh: () => void }) => {
+}: {
+  refresh: () => void;
+  scenes: Scene[];
+  story: Story;
+}) => {
   return (
-    <BuilderContextProvider refresh={refresh} storyKey={story.key}>
+    <BuilderContextProvider refresh={refresh} story={story} scenes={scenes}>
       <ReactFlowProvider>
-        <Builder story={story} scenes={scenes} />
+        <Builder />
       </ReactFlowProvider>
     </BuilderContextProvider>
   );

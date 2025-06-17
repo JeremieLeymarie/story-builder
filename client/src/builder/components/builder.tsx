@@ -8,20 +8,17 @@ import {
 import { SceneNode } from "../nodes/scene/scene";
 import { Toolbar } from "./toolbar";
 import { useBuilder } from "../hooks/use-builder";
-import { Scene, Story } from "@/lib/storage/domain";
 import { useBuilderContext } from "../hooks/use-builder-store";
 import { getUserOS } from "@/lib/get-os";
 import { SceneEditor } from "./editors/scene-editor";
 import { useAddSceneEditorStore } from "../hooks/use-add-scene-editor-store";
 import { useAddScene } from "../hooks/use-add-scene";
 import { ActionsBar } from "./actions-bar";
+import { FIT_VIEW_DURATION } from "../constants";
 
 const nodeTypes = { scene: SceneNode };
 
-export type BuilderProps = { story: Story; scenes: Scene[] };
-
-export const Builder = ({ story, scenes }: BuilderProps) => {
-  const { reactFlowRef } = useBuilderContext();
+export const Builder = () => {
   const {
     edges,
     nodes,
@@ -31,15 +28,16 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
     onNodesChange,
     onNodesDelete,
     onEdgesDelete,
-  } = useBuilder({ scenes, story });
+  } = useBuilder();
   const { isOpen: isOpenAddSceneEditor, setOpen: setOpenAddSceneEditor } =
     useAddSceneEditorStore();
   const { addScene } = useAddScene();
+  const { reactFlowRef } = useBuilderContext();
 
   return (
     <div className="relative flex h-full w-full border">
       <div className="absolute top-5 left-5 flex flex-col gap-4">
-        <Toolbar story={story} scenes={scenes} />
+        <Toolbar />
         <ActionsBar />
       </div>
       <ReactFlow
@@ -61,6 +59,7 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
         ref={reactFlowRef}
         fitView
         multiSelectionKeyCode={getUserOS() === "Mac" ? "Meta" : "ControlLeft"}
+        fitViewOptions={{ duration: FIT_VIEW_DURATION }}
       >
         <MiniMap />
         <Background variant={BackgroundVariant.Dots} gap={25} size={1} />
