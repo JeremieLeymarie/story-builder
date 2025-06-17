@@ -1,8 +1,8 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
 import { OnSubmitStoryFormProps } from "../components/story-form/story-form-dialog";
-import { toast } from "@/design-system/primitives";
 import { getBuilderService } from "@/services";
+import { toast } from "sonner";
 
 export const useBuilderStories = () => {
   const navigate = useNavigate();
@@ -13,10 +13,9 @@ export const useBuilderStories = () => {
         await getBuilderService().createStoryWithFirstScene(storyData);
 
       if (!result) {
-        return toast({
-          title: "Error",
-          description: "Could not create a new story. Please try again later",
-        });
+        return toast.error(
+          "Could not create a new story. Please try again later",
+        );
       }
 
       navigate({

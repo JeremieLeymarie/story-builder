@@ -1,4 +1,3 @@
-import { Toaster } from "@/design-system/primitives/toaster";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -9,6 +8,7 @@ import { BackdropLoader } from "@/design-system/components";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRegisterServiceWorker } from "@/hooks/use-register-service-worker";
 import { TooltipProvider } from "@/design-system/primitives/tooltip";
+import { Toaster } from "@/design-system/primitives/sonner";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,7 +39,7 @@ const Component = () => {
               )}
             </div>
           </div>
-          <Toaster />
+          <Toaster closeButton richColors />
         </ThemeProvider>
       </QueryClientProvider>
     </TooltipProvider>
