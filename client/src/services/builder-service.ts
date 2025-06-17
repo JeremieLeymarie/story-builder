@@ -125,6 +125,11 @@ export const _getBuilderService = ({
       await localRepository.updatePartialScene(key, scene);
     },
 
+    // TODO: unit test
+    bulkUpdateScenes: async ({ scenes }: { scenes: Scene[] }) => {
+      await localRepository.updateOrCreateScenes(scenes);
+    },
+
     changeFirstScene: async (storyKey: string, newFirstSceneKey: string) => {
       const isSceneKeyValid =
         !!(await localRepository.getScene(newFirstSceneKey));
