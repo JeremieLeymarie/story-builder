@@ -33,6 +33,7 @@ export const useBuilder = ({
   useEffect(() => {
     setNodes(sceneNodes);
     setEdges(sceneEdges);
+    fitView();
   }, [fitView, sceneEdges, sceneNodes, setEdges, setNodes]);
 
   const onNodeMove = (_: MouseEvent, node: BuilderNode) => {

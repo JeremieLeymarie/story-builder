@@ -1,6 +1,10 @@
 import { Edge, useReactFlow } from "@xyflow/react";
 import { BuilderNode } from "../types";
 import ELK from "elkjs/lib/elk.bundled.js";
+import { useRef } from "react";
+import { Scene } from "@/lib/storage/domain";
+import { getBuilderService } from "@/services";
+import { useBuilderContext } from "./use-builder-store";
 
 // https://www.eclipse.org/elk/reference/algorithms/org-eclipse-elk-layered.html
 const layoutOptions = {
@@ -14,7 +18,6 @@ const layoutOptions = {
 const elk = new ELK(); // TODO: use with webworker? (https://github.com/kieler/elkjs?tab=readme-ov-file#usage)
 
 const _getNodesLayout = async (nodes: BuilderNode[], edges: Edge[]) => {
-  console.log({ nodes, edges });
   const graph = {
     id: "root",
     layoutOptions,
@@ -64,19 +67,45 @@ const _getNodesLayout = async (nodes: BuilderNode[], edges: Edge[]) => {
   return computedNodes;
 };
 
-export const useOrganizeNodes = () => {
-  const { getNodes, getEdges, setNodes, fitView } = useReactFlow<BuilderNode>();
+export const useAutoLayout = () => {
+  const { getNodes, getEdges } = useReactFlow<BuilderNode>();
+  const stateBeforeChanges = useRef<Scene[]>(null);
+  const { storyKey, refresh } = useBuilderContext();
+  const svc = getBuilderService();
 
+  // TODO: some (or all?) of this logic belongs in builder service
   const organizeNodes = async () => {
+    const { scenes: scenesBefore } = await svc.getBuilderStoryData(storyKey);
+
     const orderedNodes = await _getNodesLayout(
       getNodes() as BuilderNode[],
       getEdges(),
     );
 
-    setNodes(orderedNodes);
-    // TODO: save nodes
-    fitView();
+    stateBeforeChanges.current = JSON.parse(JSON.stringify(scenesBefore)); // Deep copy
+
+    await svc.bulkUpdateScenes({
+      scenes: scenesBefore.map((scene) => {
+        const computedNode = orderedNodes.find((node) => node.id === scene.key);
+
+        if (computedNode) {
+          scene.builderParams.position = computedNode.position;
+        }
+        return scene;
+      }),
+    });
+    refresh();
   };
 
-  return { organizeNodes };
+  const revertChanges = async () => {
+    if (!stateBeforeChanges.current) {
+      throw new Error(
+        "The previous state should always be set when reverting to previous state",
+      );
+    }
+    await svc.bulkUpdateScenes({ scenes: stateBeforeChanges.current });
+    refresh();
+  };
+
+  return { organizeNodes, revertChanges };
 };
