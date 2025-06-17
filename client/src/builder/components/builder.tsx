@@ -15,7 +15,6 @@ import { SceneEditor } from "./editors/scene-editor";
 import { useAddSceneEditorStore } from "../hooks/use-add-scene-editor-store";
 import { useAddScene } from "../hooks/use-add-scene";
 import { ActionsBar } from "./actions-bar";
-import { BuilderMessage } from "./builder-message";
 
 const nodeTypes = { scene: SceneNode };
 
@@ -72,7 +71,6 @@ export const Builder = ({ story, scenes }: BuilderProps) => {
         setOpen={setOpenAddSceneEditor}
         onSave={addScene}
       />
-      <BuilderMessage />
     </div>
   );
 };

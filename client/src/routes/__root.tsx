@@ -39,7 +39,7 @@ const Component = () => {
               )}
             </div>
           </div>
-          <Toaster closeButton richColors />
+          <Toaster closeButton />
         </ThemeProvider>
       </QueryClientProvider>
     </TooltipProvider>

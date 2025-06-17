@@ -6,47 +6,44 @@ import {
 import { useReactFlow } from "@xyflow/react";
 import { MinusIcon, NetworkIcon, PlusIcon, ScanIcon } from "lucide-react";
 import { useAutoLayout } from "../hooks/use-auto-layout";
-import { Button } from "@/design-system/primitives";
-import { useBuilderMessageStore } from "../hooks/use-builder-message-store";
+import { toast } from "sonner";
+import { useState } from "react";
 
 const AutoLayout = () => {
   const { organizeNodes, revertChanges } = useAutoLayout();
-  const { setOpen } = useBuilderMessageStore();
+  const [enabled, setEnabled] = useState(true);
 
-  const cancelChanges = () => {
-    revertChanges();
-    setOpen({ open: false, content: null });
-  };
+  const autoOrganizeLayout = async () => {
+    setEnabled(false);
+    await organizeNodes();
 
-  const keepChanges = () => {
-    setOpen({ open: false, content: null });
+    toast.success("Layout modified", {
+      description: "You can undo the automatic changes",
+      action: {
+        label: "Undo",
+        onClick: () => {
+          revertChanges();
+          setEnabled(true);
+        },
+        actionButtonStyle: { backgroundColor: "var(--color-primary)" },
+      },
+      onDismiss: () => setEnabled(true),
+      onAutoClose: () => setEnabled(true),
+    });
   };
 
   return (
     <>
       <Tooltip>
         <TooltipTrigger
+          disabled={!enabled}
           className="hover:bg-muted cursor-pointer rounded p-1"
-          onClick={() => {
-            organizeNodes();
-            setOpen({
-              open: true,
-              content: (
-                <div className="flex items-center gap-2">
-                  Your layout has changed, do you confirm the changes?
-                  <Button size="sm" variant="secondary" onClick={cancelChanges}>
-                    Cancel
-                  </Button>
-                  <Button size="sm" onClick={keepChanges}>
-                    Keep
-                  </Button>
-                </div>
-              ),
-              onCancel: cancelChanges,
-            });
-          }}
+          onClick={autoOrganizeLayout}
         >
-          <NetworkIcon size="16px" />
+          <NetworkIcon
+            size="16px"
+            color={enabled ? undefined : "var(--color-muted-foreground)"}
+          />
         </TooltipTrigger>
         <TooltipContent>Automatically re-organize the layout</TooltipContent>
       </Tooltip>
