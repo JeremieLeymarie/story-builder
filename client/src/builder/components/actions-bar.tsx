@@ -8,6 +8,7 @@ import { MinusIcon, NetworkIcon, PlusIcon, ScanIcon } from "lucide-react";
 import { useAutoLayout } from "../hooks/use-auto-layout";
 import { toast } from "sonner";
 import { useState } from "react";
+import { FIT_VIEW_DURATION } from "../constants";
 
 const AutoLayout = () => {
   const { organizeNodes, revertChanges } = useAutoLayout();
@@ -77,7 +78,7 @@ export const ActionsBar = () => {
       <Tooltip>
         <TooltipTrigger
           className="hover:bg-muted cursor-pointer rounded p-1"
-          onClick={() => fitView()}
+          onClick={() => fitView({ duration: FIT_VIEW_DURATION })}
         >
           <ScanIcon size="16px" />
         </TooltipTrigger>

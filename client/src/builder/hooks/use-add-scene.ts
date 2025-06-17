@@ -5,7 +5,7 @@ import { useReactFlow } from "@xyflow/react";
 
 export const useAddScene = () => {
   const builderService = getBuilderService();
-  const { refresh, storyKey } = useBuilderContext();
+  const { refresh, story } = useBuilderContext();
 
   const reactFlowInstance = useReactFlow();
 
@@ -25,7 +25,7 @@ export const useAddScene = () => {
   const addScene = (scene: SceneEditorSchema) => {
     builderService.addScene({
       ...scene,
-      storyKey,
+      storyKey: story.key,
       builderParams: { position: getCenterPosition() },
     });
     refresh();

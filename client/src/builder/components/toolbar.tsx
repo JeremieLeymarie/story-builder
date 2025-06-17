@@ -2,16 +2,13 @@ import { Button } from "@/design-system/primitives";
 import { BookOpenTextIcon, TestTubesIcon } from "lucide-react";
 import { useToolbar } from "../hooks/use-toolbar";
 import { ExportModal } from "./export-modal";
-import { Scene, Story } from "@/lib/storage/domain";
 import { DeleteModal } from "./delete-modal";
 import { useAddSceneEditorStore } from "../hooks/use-add-scene-editor-store";
 import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
+import { useBuilderContext } from "../hooks/use-builder-store";
 
-type Props = {
-  story: Story;
-  scenes: Scene[];
-};
-export const Toolbar = ({ story, scenes }: Props) => {
+export const Toolbar = () => {
+  const { story, scenes } = useBuilderContext();
   const { testStory, deleteStory } = useToolbar({ storyKey: story.key });
   const { setOpen: openAddSceneEditor } = useAddSceneEditorStore();
 

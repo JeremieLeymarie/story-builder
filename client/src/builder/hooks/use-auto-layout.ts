@@ -70,12 +70,12 @@ const _getNodesLayout = async (nodes: BuilderNode[], edges: Edge[]) => {
 export const useAutoLayout = () => {
   const { getNodes, getEdges } = useReactFlow<BuilderNode>();
   const stateBeforeChanges = useRef<Scene[]>(null);
-  const { storyKey, refresh } = useBuilderContext();
+  const { story, refresh } = useBuilderContext();
   const svc = getBuilderService();
 
   // TODO: some (or all?) of this logic belongs in builder service
   const organizeNodes = async () => {
-    const { scenes: scenesBefore } = await svc.getBuilderStoryData(storyKey);
+    const { scenes: scenesBefore } = await svc.getBuilderStoryData(story.key);
 
     const orderedNodes = await _getNodesLayout(
       getNodes() as BuilderNode[],

@@ -2,13 +2,13 @@ import { useCallback } from "react";
 import { useBuilderContext } from "./use-builder-store";
 
 export const useTestStory = () => {
-  const { storyKey } = useBuilderContext();
+  const { story } = useBuilderContext();
 
   const testStory = useCallback(
     (sceneKey: string) => {
-      window.open(`/game/test/${storyKey}/${sceneKey}`, "_blank");
+      window.open(`/game/test/${story.key}/${sceneKey}`, "_blank");
     },
-    [storyKey],
+    [story.key],
   );
 
   return { testStory };
