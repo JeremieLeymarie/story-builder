@@ -42,6 +42,7 @@ export const Library = ({ stories }: Library) => {
             stories.map((story) => {
               return (
                 <StoryCard
+                  key={story.key}
                   onClick={() =>
                     navigate({
                       to: "/library/$storyKey",

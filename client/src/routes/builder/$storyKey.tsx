@@ -9,7 +9,7 @@ const Page = () => {
   const builderService = getBuilderService();
   const { data, isLoading, refetch } = useQuery({
     queryFn: () => builderService.getBuilderStoryData(storyKey),
-    queryKey: ["builder-story-data"],
+    queryKey: ["builder-story-data", storyKey],
     refetchOnWindowFocus: false,
   });
 
