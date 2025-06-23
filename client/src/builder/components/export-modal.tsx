@@ -13,19 +13,8 @@ import { useState } from "react";
 import { Scene, Story } from "@/lib/storage/domain";
 import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
 
-import { create } from "zustand";
 import { toast } from "sonner";
-
-type ExportModalStore = {
-  isOpen: boolean;
-  setOpen: (open: boolean) => void;
-};
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const useExportModalStore = create<ExportModalStore>((set) => ({
-  isOpen: false,
-  setOpen: (isOpen) => set({ isOpen }),
-}));
+import { useExportModalStore } from "../hooks/use-export-modal-store";
 
 export const ExportModal = ({
   story,
@@ -52,6 +41,7 @@ export const ExportModal = ({
       const url = URL.createObjectURL(blob);
       setUrl(url);
     }
+
     setOpen(open);
   };
 

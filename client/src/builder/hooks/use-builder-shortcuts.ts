@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { useAddSceneEditorStore } from "./use-add-scene-editor-store";
 import { useTestStory } from "./use-test-story";
-import { useExportModalStore } from "../components/export-modal";
+import { useExportModalStore } from "./use-export-modal-store";
 
 const isAnyInputFocused = () =>
   ["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName ?? "");
