@@ -3,10 +3,10 @@ import { Story } from "@/lib/storage/domain";
 import { ExtendedProgress } from "./types";
 import { GameBanner } from "./game-banner";
 import { GameInfo } from "./game-info";
-import { getLibraryService } from "@/services";
 import { useRouter } from "@tanstack/react-router";
 import { useCallback } from "react";
 import { DeleteGameButton } from "./delete-game-button";
+import { getLibraryService } from "@/domains/game/library-service";
 
 type Props = {
   story: Story;

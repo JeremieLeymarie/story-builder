@@ -10,10 +10,10 @@ import { SceneEditor } from "../../components/editors/scene-editor";
 import { EditIcon } from "lucide-react";
 import { SceneNodeType } from "../../types";
 import { cn } from "@/lib/style";
-import { getBuilderService } from "@/services";
 import { useBuilderContext } from "@/builder/hooks/use-builder-store";
 import { useState } from "react";
 import { toast } from "sonner";
+import { getBuilderService } from "@/get-builder-service";
 
 export type SceneNodeProps = NodeProps<SceneNodeType>;
 

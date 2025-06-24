@@ -1,6 +1,6 @@
+import { fullStorySchema } from "@/common/schemas";
 import { Scene, Story } from "@/lib/storage/domain";
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
-import { fullStorySchema } from "./common/schemas";
 
 // TODO: uniformize responses
 // TODO: test all of this

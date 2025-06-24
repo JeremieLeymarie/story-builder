@@ -1,13 +1,16 @@
 import { Scene, Story } from "@/lib/storage/domain";
 import { LocalRepositoryPort } from "@/repositories/local-repository-port";
 import { WithoutKey } from "@/types";
-import { getLocalRepository } from "@/repositories/indexed-db-repository";
+import { BuilderNode } from "@/builder/types";
+import { Edge } from "@xyflow/react";
+import { LayoutServicePort } from "./layout-service";
 
-// TODO: revise error management? Maybe throw errors instead of string/boolean/null returns
 export const _getBuilderService = ({
   localRepository,
+  layoutService,
 }: {
   localRepository: LocalRepositoryPort;
+  layoutService: LayoutServicePort;
 }) => {
   const getUserBuilderStories = async () => {
     const user = await localRepository.getUser();
@@ -23,6 +26,13 @@ export const _getBuilderService = ({
       ...(storiesWithAuthor ?? []),
       ...(storiesWithoutAuthor ?? []),
     ].filter((story) => story.type === "builder");
+  };
+
+  const getBuilderStoryData = async (storyKey: string) => {
+    const story = await localRepository.getStory(storyKey);
+    const scenes = await localRepository.getScenesByStoryKey(storyKey);
+
+    return { story, scenes };
   };
 
   return {
@@ -125,7 +135,38 @@ export const _getBuilderService = ({
       await localRepository.updatePartialScene(key, scene);
     },
 
-    // TODO: unit test
+    getAutoLayout: async ({
+      nodes,
+      edges,
+      storyKey,
+    }: {
+      nodes: BuilderNode[];
+      edges: Edge[];
+      storyKey: string;
+    }) => {
+      const reorganizedNodes = await layoutService.computeAutoLayout({
+        nodes,
+        edges,
+      });
+
+      const { scenes: scenesBefore } = await getBuilderStoryData(storyKey);
+      const reorganizedScenes = scenesBefore.map((scene) => {
+        const computedNode = reorganizedNodes.find(
+          (node) => node.id === scene.key,
+        );
+
+        if (computedNode) {
+          scene.builderParams.position = computedNode.position;
+        }
+        return scene;
+      });
+
+      return {
+        before: scenesBefore,
+        after: reorganizedScenes,
+      };
+    },
+
     bulkUpdateScenes: async ({ scenes }: { scenes: Scene[] }) => {
       await localRepository.updateOrCreateScenes(scenes);
     },
@@ -142,12 +183,7 @@ export const _getBuilderService = ({
       return false;
     },
 
-    getBuilderStoryData: async (storyKey: string) => {
-      const story = await localRepository.getStory(storyKey);
-      const scenes = await localRepository.getScenesByStoryKey(storyKey);
-
-      return { story, scenes };
-    },
+    getBuilderStoryData,
 
     getUserBuilderStories,
 
@@ -194,10 +230,4 @@ export const _getBuilderService = ({
       );
     },
   };
-};
-
-export const getBuilderService = () => {
-  return _getBuilderService({
-    localRepository: getLocalRepository(),
-  });
 };

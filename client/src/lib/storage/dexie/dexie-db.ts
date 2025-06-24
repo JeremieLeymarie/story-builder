@@ -2,7 +2,7 @@ import Dexie, { type EntityTable } from "dexie";
 import { nanoid } from "nanoid";
 import { User, Story, Scene, StoryProgress } from "../domain";
 import { DEMO_IMPORTED_JSON, DEMO_SCENES, DEMO_STORY } from "./seed";
-import { getLibraryService } from "@/services";
+import { getLibraryService } from "@/domains/game/library-service";
 
 // TODO: move this file to a more appropriate location
 

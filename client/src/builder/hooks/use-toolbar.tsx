@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useTestStory } from "./use-test-story";
-import { getBuilderService } from "@/services";
 import { useRouter } from "@tanstack/react-router";
+import { getBuilderService } from "@/get-builder-service";
 
 type ToolbarProps = {
   storyKey: string;

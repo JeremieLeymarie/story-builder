@@ -12,13 +12,13 @@ import { CircleHelpIcon, LogOutIcon, SettingsIcon } from "lucide-react";
 import { LoadMenuItem } from "./load-menu-item";
 import { useState } from "react";
 import { SaveMenuItem } from "./save-menu-item";
-import { getUserService } from "@/services";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
 import { Link } from "@tanstack/react-router";
+import { getUserService } from "@/domains/user/user-service";
 
 export const ActionsDropdown = ({
   username,

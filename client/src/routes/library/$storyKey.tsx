@@ -1,6 +1,6 @@
 import { ErrorMessage, BackdropLoader } from "@/design-system/components";
+import { getLibraryService } from "@/domains/game/library-service";
 import { LibraryGameDetail } from "@/library/game-detail";
-import { getLibraryService } from "@/services";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 

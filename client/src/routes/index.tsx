@@ -1,6 +1,8 @@
 import { BackdropLoader } from "@/design-system/components";
+import { getGameService } from "@/domains/game/game-service";
+import { getLibraryService } from "@/domains/game/library-service";
+import { getUserService } from "@/domains/user/user-service";
 import { Home } from "@/home/home";
-import { getGameService, getLibraryService, getUserService } from "@/services";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 

@@ -1,3 +1,4 @@
+import { getLibraryService } from "@/domains/game/library-service";
 import {
   Button,
   Dialog,
@@ -10,7 +11,6 @@ import {
 } from "../../design-system/primitives";
 import { BracesIcon } from "lucide-react";
 import { ChangeEvent, useCallback, useState } from "react";
-import { getLibraryService } from "@/services";
 import { toast } from "sonner";
 
 export const ImportModal = () => {

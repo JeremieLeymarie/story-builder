@@ -3,7 +3,7 @@ import {
   getLocalRepositoryStub,
   MockLocalRepository,
 } from "@/repositories/stubs";
-import { _getGameService } from "../game-service";
+import { _getGameService } from "../game/game-service";
 import {
   BASIC_SCENE,
   BASIC_STORY,

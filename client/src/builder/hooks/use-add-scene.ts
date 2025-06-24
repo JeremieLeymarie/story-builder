@@ -1,7 +1,7 @@
-import { getBuilderService } from "@/services";
 import { useBuilderContext } from "./use-builder-store";
 import { SceneEditorSchema } from "../components/editors/scene-editor";
 import { useReactFlow } from "@xyflow/react";
+import { getBuilderService } from "@/get-builder-service";
 
 export const useAddScene = () => {
   const builderService = getBuilderService();

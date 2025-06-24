@@ -1,5 +1,5 @@
+import { getGameService } from "@/domains/game/game-service";
 import { Scene, StoryProgress } from "@/lib/storage/domain";
-import { getGameService } from "@/services";
 import { useCallback, useEffect } from "react";
 
 type Props = {
