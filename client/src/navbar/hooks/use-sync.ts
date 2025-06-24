@@ -1,4 +1,4 @@
-import { getSyncService } from "@/services/sync-service";
+import { getSyncService } from "@/domains/synchronization/sync-service";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 

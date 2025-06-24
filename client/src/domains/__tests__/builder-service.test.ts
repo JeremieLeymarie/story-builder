@@ -8,11 +8,18 @@ import {
   BASIC_USER,
   BASIC_STORY,
 } from "../../repositories/stubs/data";
-import { _getBuilderService } from "../builder-service";
+import { _getBuilderService } from "../builder/builder-service";
+import { BuilderNode } from "@/builder/types";
+import { Edge } from "@xyflow/react";
+import {
+  getStubLayoutService,
+  MockLayoutService,
+} from "../builder/stub-layout-service";
 
 describe("builder-service", () => {
   let builderService: ReturnType<typeof _getBuilderService>;
   let localRepository: MockLocalRepository;
+  let layoutService: MockLayoutService;
 
   beforeAll(() => {
     vi.useFakeTimers();
@@ -20,9 +27,11 @@ describe("builder-service", () => {
 
   beforeEach(() => {
     localRepository = getLocalRepositoryStub();
+    layoutService = getStubLayoutService();
 
     builderService = _getBuilderService({
       localRepository,
+      layoutService,
     });
   });
 
@@ -391,6 +400,217 @@ describe("builder-service", () => {
       ]);
       expect(localRepository.deleteStory).toHaveBeenCalledOnce();
       expect(localRepository.deleteScenes).toHaveBeenCalledOnce();
+    });
+  });
+
+  describe("computeAutoLayout", () => {
+    it("should compute new positions", async () => {
+      const builderService = _getBuilderService({
+        localRepository,
+        layoutService,
+      });
+
+      const NODES: BuilderNode[] = [
+        {
+          data: {
+            title: "A mysterious crossroads",
+            content:
+              "You arrive at a crossroads. On the left, a sinuous dirt path leads to a tree mass. The road on the right is a well-maintained paved trail that runs towards a little village in the hills.",
+            actions: [
+              { text: "Go to the forest" },
+              { text: "Go to the village" },
+            ],
+            isFirstScene: false,
+            key: "first-fake-scene-key",
+            storyKey: "fake-story-key",
+            isEditable: false,
+          },
+          id: "scene-1",
+          position: { x: 1111, y: 11111 },
+          type: "scene",
+        },
+        {
+          data: {
+            title: "The Forest",
+            content:
+              "After half an hour of walking under the bright sun, you come close to the trees. As the air gets colder, you start hearing birds and other creatures of the forest",
+            actions: [],
+            isFirstScene: false,
+            key: "forest-fake-scene-key",
+            storyKey: "fake-story-key",
+            isEditable: false,
+          },
+          id: "scene-2",
+          position: { x: 2222, y: 2222 },
+          type: "scene",
+        },
+        {
+          data: {
+            title: "The Road to the Village",
+            content:
+              "You walk alongside an - for most of it - even path that leads you under the protecting shadows of the hills. You maintain a quick pace. After a moment, you begin feeling like something is watching you.",
+            actions: [],
+            isFirstScene: false,
+            key: "village-fake-scene-key",
+            storyKey: "fake-story-key",
+            isEditable: false,
+          },
+          id: "scene-3",
+          position: { x: 3333, y: 3333 },
+          type: "scene",
+        },
+      ];
+
+      const EDGES: Edge[] = [
+        {
+          id: "edge-1",
+          source: "scene-1",
+          target: "scene-2",
+          sourceHandle: "first-fake-scene-key-0",
+        },
+        {
+          id: "edge-2",
+          source: "scene-1",
+          target: "scene-3",
+          sourceHandle: "first-fake-scene-key-1",
+        },
+      ];
+
+      localRepository.getStory.mockResolvedValueOnce({
+        creationDate: new Date(),
+        description: "description",
+        firstSceneKey: "first-fake-scene-key",
+        genres: [],
+        image: "http://image.com",
+        key: "fake-story-key",
+        title: "title",
+        type: "builder",
+      });
+
+      const SCENES = [
+        {
+          key: "first-fake-scene-key",
+          actions: [],
+          builderParams: { position: { x: 1111, y: 1111 } },
+          content: "content",
+          storyKey: "fake-story-key",
+          title: "title",
+        },
+        {
+          key: "forest-fake-scene-key",
+          actions: [],
+          builderParams: { position: { x: 2222, y: 2222 } },
+          content: "content",
+          storyKey: "fake-story-key",
+          title: "title",
+        },
+        {
+          key: "village-fake-scene-key",
+          actions: [],
+          builderParams: { position: { x: 3333, y: 3333 } },
+          content: "content",
+          storyKey: "fake-story-key",
+          title: "title",
+        },
+      ];
+
+      localRepository.getScenesByStoryKey.mockResolvedValueOnce(SCENES);
+
+      layoutService.computeAutoLayout.mockResolvedValueOnce([
+        {
+          data: {
+            title: "A mysterious crossroads",
+            content:
+              "You arrive at a crossroads. On the left, a sinuous dirt path leads to a tree mass. The road on the right is a well-maintained paved trail that runs towards a little village in the hills.",
+            actions: [
+              { text: "Go to the forest" },
+              { text: "Go to the village" },
+            ],
+            isFirstScene: false,
+            key: "first-fake-scene-key",
+            storyKey: "fake-story-key",
+            isEditable: false,
+          },
+          id: "first-fake-scene-key",
+          position: { x: 1, y: 1 },
+          type: "scene",
+        },
+        {
+          data: {
+            title: "The Forest",
+            content:
+              "After half an hour of walking under the bright sun, you come close to the trees. As the air gets colder, you start hearing birds and other creatures of the forest",
+            actions: [],
+            isFirstScene: false,
+            key: "forest-fake-scene-key",
+            storyKey: "fake-story-key",
+            isEditable: false,
+          },
+          id: "forest-fake-scene-key",
+          position: { x: 2, y: 2 },
+          type: "scene",
+        },
+        {
+          data: {
+            title: "The Road to the Village",
+            content:
+              "You walk alongside an - for most of it - even path that leads you under the protecting shadows of the hills. You maintain a quick pace. After a moment, you begin feeling like something is watching you.",
+            actions: [],
+            isFirstScene: false,
+            key: "village-fake-scene-key",
+            storyKey: "fake-story-key",
+            isEditable: false,
+          },
+          id: "village-fake-scene-key",
+          position: { x: 3, y: 3 },
+          type: "scene",
+        },
+      ]);
+
+      const result = await builderService.getAutoLayout({
+        storyKey: "fake-story-key",
+        edges: EDGES,
+        nodes: NODES,
+      });
+
+      expect(result.before).toStrictEqual(SCENES);
+      expect(result.after).toStrictEqual([
+        {
+          key: "first-fake-scene-key",
+          actions: [],
+          builderParams: { position: { x: 1, y: 1 } },
+          content: "content",
+          storyKey: "fake-story-key",
+          title: "title",
+        },
+        {
+          key: "forest-fake-scene-key",
+          actions: [],
+          builderParams: { position: { x: 2, y: 2 } },
+          content: "content",
+          storyKey: "fake-story-key",
+          title: "title",
+        },
+        {
+          key: "village-fake-scene-key",
+          actions: [],
+          builderParams: { position: { x: 3, y: 3 } },
+          content: "content",
+          storyKey: "fake-story-key",
+          title: "title",
+        },
+      ]);
+    });
+  });
+
+  describe("bulkUpdateScenes", () => {
+    it("should update or create scenes with", async () => {
+      await builderService.bulkUpdateScenes({ scenes: [BASIC_SCENE] });
+
+      expect(localRepository.updateOrCreateScenes).toHaveBeenCalledOnce();
+      expect(localRepository.updateOrCreateScenes).toHaveBeenCalledWith([
+        BASIC_SCENE,
+      ]);
     });
   });
 });

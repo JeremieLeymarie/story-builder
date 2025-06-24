@@ -1,12 +1,12 @@
 import { ErrorMessage, BackdropLoader } from "@/design-system/components";
 import { GameScene } from "@/game/components/scene";
 import { useUpdateStoryProgress } from "@/game/hooks/use-update-story-progress";
-import { getGameService } from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 import { z } from "zod";
 import { zodSearchValidator } from "@tanstack/router-zod-adapter";
+import { getGameService } from "@/domains/game/game-service";
 
 export const Component = () => {
   const { sceneKey, gameKey } = Route.useParams();

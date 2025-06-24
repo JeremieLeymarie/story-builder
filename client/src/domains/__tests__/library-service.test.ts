@@ -3,7 +3,6 @@ import {
   MockLocalRepository,
 } from "@/repositories/stubs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { _getLibraryService } from "../library-service";
 import {
   BASIC_SCENE,
   BASIC_STORY,
@@ -11,6 +10,7 @@ import {
   BASIC_USER,
 } from "@/repositories/stubs/data";
 import dayjs from "dayjs";
+import { _getLibraryService } from "../game/library-service";
 
 describe("library-service", () => {
   let libraryService: ReturnType<typeof _getLibraryService>;

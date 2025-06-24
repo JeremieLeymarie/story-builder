@@ -2,13 +2,13 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Navbar } from "@/navbar/navbar";
-import { getUserService } from "@/services";
 import { useSync } from "@/navbar/hooks/use-sync";
 import { BackdropLoader } from "@/design-system/components";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRegisterServiceWorker } from "@/hooks/use-register-service-worker";
 import { TooltipProvider } from "@/design-system/primitives/tooltip";
 import { Toaster } from "@/design-system/primitives/sonner";
+import { getUserService } from "@/domains/user/user-service";
 
 const queryClient = new QueryClient({
   defaultOptions: {

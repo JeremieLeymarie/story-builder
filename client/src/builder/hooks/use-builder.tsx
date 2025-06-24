@@ -2,10 +2,10 @@ import { MouseEvent, useEffect } from "react";
 import { useNodesState, useEdgesState, useReactFlow } from "@xyflow/react";
 import { useBuilderEdges } from "./use-builder-edges";
 import { BuilderNode } from "../types";
-import { getBuilderService } from "@/services";
 import { useBuilderShortCuts } from "./use-builder-shortcuts";
 import { useBuilderContext } from "./use-builder-store";
-import { FIT_VIEW_DURATION } from "../constants";
+// import { FIT_VIEW_DURATION } from "../constants";
+import { getBuilderService } from "@/get-builder-service";
 
 // For now state is entirely dictated by the local dexie-db, but this could be a performance
 // issue in very large stories
@@ -24,7 +24,7 @@ export const useBuilder = () => {
   useEffect(() => {
     setNodes(nodes_);
     setEdges(edges_);
-    fitView({ duration: FIT_VIEW_DURATION });
+    // fitView({ duration: FIT_VIEW_DURATION });
   }, [setNodes, edges_, nodes_, setEdges, fitView]);
 
   const onNodeMove = (_: MouseEvent, node: BuilderNode) => {

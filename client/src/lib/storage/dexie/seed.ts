@@ -1,4 +1,4 @@
-import { FullStorySchema } from "@/services/common/schemas";
+import { FullStorySchema } from "@/common/schemas";
 import { Scene, Story } from "../domain";
 
 export const DEMO_STORY: Story = {
