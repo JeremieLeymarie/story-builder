@@ -156,7 +156,10 @@ export const _getBuilderService = ({
         );
 
         if (computedNode) {
-          scene.builderParams.position = computedNode.position;
+          return {
+            ...scene,
+            builderParams: { position: { ...computedNode.position } },
+          };
         }
         return scene;
       });

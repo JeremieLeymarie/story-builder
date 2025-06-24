@@ -425,8 +425,8 @@ describe("builder-service", () => {
             storyKey: "fake-story-key",
             isEditable: false,
           },
-          id: "scene-1",
-          position: { x: 1111, y: 11111 },
+          id: "first-fake-scene-key",
+          position: { x: 1111, y: 1111 },
           type: "scene",
         },
         {
@@ -440,7 +440,7 @@ describe("builder-service", () => {
             storyKey: "fake-story-key",
             isEditable: false,
           },
-          id: "scene-2",
+          id: "forest-fake-scene-key",
           position: { x: 2222, y: 2222 },
           type: "scene",
         },
@@ -455,7 +455,7 @@ describe("builder-service", () => {
             storyKey: "fake-story-key",
             isEditable: false,
           },
-          id: "scene-3",
+          id: "village-fake-scene-key",
           position: { x: 3333, y: 3333 },
           type: "scene",
         },
@@ -573,7 +573,32 @@ describe("builder-service", () => {
         nodes: NODES,
       });
 
-      expect(result.before).toStrictEqual(SCENES);
+      expect(result.before).toStrictEqual([
+        {
+          key: "first-fake-scene-key",
+          actions: [],
+          builderParams: { position: { x: 1111, y: 1111 } },
+          content: "content",
+          storyKey: "fake-story-key",
+          title: "title",
+        },
+        {
+          key: "forest-fake-scene-key",
+          actions: [],
+          builderParams: { position: { x: 2222, y: 2222 } },
+          content: "content",
+          storyKey: "fake-story-key",
+          title: "title",
+        },
+        {
+          key: "village-fake-scene-key",
+          actions: [],
+          builderParams: { position: { x: 3333, y: 3333 } },
+          content: "content",
+          storyKey: "fake-story-key",
+          title: "title",
+        },
+      ]);
       expect(result.after).toStrictEqual([
         {
           key: "first-fake-scene-key",
