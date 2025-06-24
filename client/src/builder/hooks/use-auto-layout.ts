@@ -11,7 +11,6 @@ export const useAutoLayout = () => {
   const { story, refresh } = useBuilderContext();
   const svc = getBuilderService();
 
-  // TODO: some (or all?) of this logic belongs in builder service
   const organizeNodes = async () => {
     const { before, after } = await svc.getAutoLayout({
       storyKey: story.key,

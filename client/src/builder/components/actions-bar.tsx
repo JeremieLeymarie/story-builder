@@ -34,21 +34,19 @@ const AutoLayout = () => {
   };
 
   return (
-    <>
-      <Tooltip>
-        <TooltipTrigger
-          disabled={!enabled}
-          className="hover:bg-muted cursor-pointer rounded p-1"
-          onClick={autoOrganizeLayout}
-        >
-          <NetworkIcon
-            size="16px"
-            color={enabled ? undefined : "var(--color-muted-foreground)"}
-          />
-        </TooltipTrigger>
-        <TooltipContent>Automatically re-organize the layout</TooltipContent>
-      </Tooltip>
-    </>
+    <Tooltip>
+      <TooltipTrigger
+        disabled={!enabled}
+        className="hover:bg-muted cursor-pointer rounded p-1"
+        onClick={autoOrganizeLayout}
+      >
+        <NetworkIcon
+          size="16px"
+          color={enabled ? undefined : "var(--color-muted-foreground)"}
+        />
+      </TooltipTrigger>
+      <TooltipContent>Automatically re-organize the layout</TooltipContent>
+    </Tooltip>
   );
 };
 
