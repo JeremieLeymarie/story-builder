@@ -24,7 +24,6 @@ export const useBuilder = () => {
   useEffect(() => {
     setNodes(nodes_);
     setEdges(edges_);
-    // fitView({ duration: FIT_VIEW_DURATION });
   }, [setNodes, edges_, nodes_, setEdges, fitView]);
 
   const onNodeMove = (_: MouseEvent, node: BuilderNode) => {
