@@ -1,30 +1,35 @@
 import { MouseEvent, useEffect } from "react";
-import { useNodesState, useEdgesState, useReactFlow } from "@xyflow/react";
+import { useNodesState, useEdgesState } from "@xyflow/react";
 import { useBuilderEdges } from "./use-builder-edges";
 import { BuilderNode } from "../types";
 import { useBuilderShortCuts } from "./use-builder-shortcuts";
 import { useBuilderContext } from "./use-builder-store";
-// import { FIT_VIEW_DURATION } from "../constants";
 import { getBuilderService } from "@/get-builder-service";
 
 // For now state is entirely dictated by the local dexie-db, but this could be a performance
 // issue in very large stories
 
 export const useBuilder = () => {
-  const { edges: edges_, nodes: nodes_, story } = useBuilderContext();
-  const [nodes, setNodes, onNodesChange] = useNodesState(nodes_);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(edges_);
-  const { fitView } = useReactFlow();
+  const {
+    edges: edgesFromContext,
+    nodes: nodesFromContext,
+    story,
+  } = useBuilderContext();
+  const [nodes, setNodes, onNodesChange] = useNodesState(nodesFromContext);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(edgesFromContext);
 
   const builderService = getBuilderService();
-  const edgesProps = useBuilderEdges({ setEdges, sceneNodes: nodes_ });
+  const edgesProps = useBuilderEdges({
+    setEdges,
+    sceneNodes: nodesFromContext,
+  });
 
   useBuilderShortCuts({ firstSceneKey: story.firstSceneKey });
 
   useEffect(() => {
-    setNodes(nodes_);
-    setEdges(edges_);
-  }, [setNodes, edges_, nodes_, setEdges, fitView]);
+    setNodes(nodesFromContext);
+    setEdges(edgesFromContext);
+  }, [setNodes, edgesFromContext, nodesFromContext, setEdges]);
 
   const onNodeMove = (_: MouseEvent, node: BuilderNode) => {
     builderService.updateSceneBuilderPosition(node.data.key, node.position);

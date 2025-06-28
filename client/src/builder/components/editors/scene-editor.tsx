@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, ReactNode } from "react";
 import {
   Button,
   Form,
@@ -19,7 +19,6 @@ import {
   DialogTrigger,
   Textarea,
 } from "@/design-system/primitives";
-import { ReactNode } from "@tanstack/react-router";
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { FormError } from "@/design-system/components";
 import { SetFirstSceneSwitch } from "./set-first-scene-switch";
