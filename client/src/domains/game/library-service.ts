@@ -1,13 +1,18 @@
-import { fullStorySchema } from "@/common/schemas";
-import { Scene, Story } from "@/lib/storage/domain";
+import { Story } from "@/lib/storage/domain";
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
+import {
+  getImportService,
+  ImportServicePort,
+} from "@/services/common/import-service";
+import { DexieError } from "dexie";
 
 // TODO: uniformize responses
-// TODO: test all of this
 export const _getLibraryService = ({
   localRepository,
+  importService,
 }: {
   localRepository: LocalRepositoryPort;
+  importService: ImportServicePort;
 }) => {
   const _createBlankStoryProgress = async ({ story }: { story: Story }) => {
     const user = await localRepository.getUser();
@@ -47,83 +52,32 @@ export const _getLibraryService = ({
 
   return {
     importFromJSON: async (fileContent: string) => {
-      let parsed: unknown;
+      const parsed = importService.parseJSON(fileContent);
+      if (!parsed.isOk) return { error: "Could not parse file content" };
 
-      try {
-        parsed = JSON.parse(fileContent);
-      } catch (_) {
-        return { error: "Invalid JSON format" };
-      }
-      const zodParsed = fullStorySchema.safeParse(parsed);
-      if (!zodParsed.success)
-        return {
-          error: zodParsed.error.issues[0]?.message || "Invalid format",
-        };
+      await localRepository
+        .unitOfWork(
+          async () => {
+            const story = await importService.createStory({
+              story: parsed.data,
+              type: "imported",
+            });
 
-      const scenesByKey = zodParsed.data.scenes.reduce(
-        (acc, scene) => ({
-          ...acc,
-          [scene.key]: scene,
-        }),
-        {} as Record<string, Scene>,
-      );
+            await importService.createScenes({
+              story: parsed.data,
+              newStoryKey: story.data.key,
+            });
 
-      const { key: importedStoryKey, ...importedStory } = zodParsed.data.story;
-
-      // Create story
-      const story = await localRepository.createStory({
-        ...importedStory,
-        type: "imported",
-        originalStoryKey: importedStoryKey,
-      });
-
-      if (!story) {
-        return { error: "Could not create story" };
-      }
-
-      const oldScenesToNewScenes: Record<string, string> = {};
-
-      // This could be a performance issue
-      // Create scenes without actions
-      for (const scene of zodParsed.data.scenes) {
-        const { key: oldSceneKey, ...sceneData } = scene;
-        const { key } = await localRepository.createScene({
-          ...sceneData,
-          storyKey: story?.key,
-          actions: [],
+            await _createBlankStoryProgress({ story: story.data });
+          },
+          {
+            entities: ["story-progress", "scene", "story", "user"],
+            mode: "readwrite",
+          },
+        )
+        .catch((err) => {
+          console.log((err as DexieError).inner, (err as DexieError).stack);
         });
-        oldScenesToNewScenes[oldSceneKey] = key;
-      }
-
-      // Update scenes
-      await localRepository.updateScenes(
-        zodParsed.data.scenes
-          .map((scene) => {
-            const actions = scenesByKey[scene.key]?.actions;
-
-            if (!actions) {
-              return null;
-            }
-
-            const newActions = actions?.map((action) => ({
-              ...action,
-              sceneKey: action.sceneKey
-                ? oldScenesToNewScenes[action.sceneKey]
-                : undefined,
-            }));
-
-            const newSceneKey = oldScenesToNewScenes[scene.key];
-
-            if (!newSceneKey) {
-              return null;
-            }
-
-            return { key: newSceneKey, actions: newActions };
-          })
-          .filter((scene) => !!scene),
-      );
-
-      await _createBlankStoryProgress({ story });
 
       return { error: null };
     },
@@ -193,4 +147,5 @@ export const _getLibraryService = ({
 export const getLibraryService = () =>
   _getLibraryService({
     localRepository: getLocalRepository(),
+    importService: getImportService(),
   });

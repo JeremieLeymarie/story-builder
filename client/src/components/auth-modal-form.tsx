@@ -18,11 +18,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { User } from "./lib/storage/domain";
-import { getUserService } from "./domains/user/user-service";
 import { useMutation } from "@tanstack/react-query";
-import { SimpleLoader } from "./design-system/components/simple-loader";
-import { useIsWaitingForTooLong } from "./hooks/use-is-waiting-for-too-long";
+import { SimpleLoader } from "../design-system/components/simple-loader";
+import { useIsWaitingForTooLong } from "../hooks/use-is-waiting-for-too-long";
+import { User } from "@/lib/storage/domain";
+import { getUserService } from "@/domains/user/user-service";
 
 export const AuthModalForm = ({
   open,

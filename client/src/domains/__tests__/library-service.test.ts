@@ -11,115 +11,44 @@ import {
 } from "@/repositories/stubs/data";
 import dayjs from "dayjs";
 import { _getLibraryService } from "../game/library-service";
+import {
+  MockImportService,
+  getImportServiceStub,
+} from "@/services/common/stubs/stub-import-service";
 
 describe("library-service", () => {
   let libraryService: ReturnType<typeof _getLibraryService>;
   let localRepository: MockLocalRepository;
+  let importService: MockImportService;
 
   beforeEach(() => {
     localRepository = getLocalRepositoryStub();
+    importService = getImportServiceStub();
 
     libraryService = _getLibraryService({
       localRepository,
+      importService,
     });
 
     vi.useFakeTimers();
   });
 
   describe("importFromJSON", () => {
-    const importedStory = {
-      key: "bloup",
-      title: "The Great Journey To The Green River",
-      description: "A wonderful epic tale through the world of Penthetir. ",
-      image:
-        "https://b2-backblaze-stackpath.b-cdn.net/2178699/c5jpvq_12e7c09178a6a75a5979d117f779bb07ff07f8f9.jpg",
-      type: "builder" as const,
-      genres: ["adventure" as const, "fantasy" as const],
-      creationDate: new Date(),
-      firstSceneKey: "skibidi",
-      author: {
-        username: "author",
-        key: "author-key",
-      },
-    };
-    const importedScenes = [
-      {
-        key: "skibidi",
-        storyKey: "bloup",
-        title: "Your first scene",
-        content: "This is a placeholder content for your first scene",
-        actions: [
-          {
-            text: "An action that leads to a scene",
-            sceneKey: "jMa8IEtNg8ZCAbZaRz-yU",
-          },
-          {
-            text: "An action that leads to another scene",
-          },
-        ],
-        builderParams: {
-          position: {
-            x: 0,
-            y: 0,
-          },
-        },
-      },
-    ];
-    const fileContent = JSON.stringify({
-      story: importedStory,
-      scenes: importedScenes,
+    it("should return error when parsing fails", async () => {
+      importService.parseJSON = vi.fn(() => ({
+        error: "Invalid JSON format",
+        isOk: false,
+      }));
+
+      const result = await libraryService.importFromJSON("mock");
+      expect(result).toStrictEqual({ error: "Could not parse file content" });
+      expect(importService.createStory).not.toHaveBeenCalled();
+      expect(importService.createScenes).not.toHaveBeenCalled();
     });
 
     it("should import story from JSON", async () => {
-      const result = await libraryService.importFromJSON(fileContent);
-
-      expect(localRepository.createStory).toHaveBeenCalledWith({
-        type: "imported",
-        originalStoryKey: "bloup",
-        title: "The Great Journey To The Green River",
-        description: "A wonderful epic tale through the world of Penthetir. ",
-        image:
-          "https://b2-backblaze-stackpath.b-cdn.net/2178699/c5jpvq_12e7c09178a6a75a5979d117f779bb07ff07f8f9.jpg",
-        genres: ["adventure" as const, "fantasy" as const],
-        creationDate: importedStory.creationDate,
-        firstSceneKey: "skibidi",
-        author: {
-          username: "author",
-          key: "author-key",
-        },
-      });
-      expect(localRepository.createScene).toHaveBeenCalledOnce();
-      expect(localRepository.updateScenes).toHaveBeenCalledOnce();
-      expect(localRepository.createStoryProgress).toHaveBeenCalled();
+      const result = await libraryService.importFromJSON("mock");
       expect(result).toStrictEqual({ error: null });
-    });
-
-    it("should not create story if JSON is malformed", async () => {
-      const result = await libraryService.importFromJSON(`tutu${fileContent}`);
-
-      expect(result).toStrictEqual({ error: "Invalid JSON format" });
-      expect(localRepository.createStory).not.toHaveBeenCalled();
-    });
-
-    it("should not create story if format is invalid", async () => {
-      const result = await libraryService.importFromJSON(
-        JSON.stringify({ plouf: ["tutu"] }),
-      );
-
-      expect(result).toStrictEqual({ error: "Story is required" });
-      expect(localRepository.createStory).not.toHaveBeenCalled();
-    });
-
-    it("should not create scenes if story cannot be created", async () => {
-      localRepository.createStory.mockResolvedValueOnce(null);
-
-      const result = await libraryService.importFromJSON(fileContent);
-
-      expect(result).toStrictEqual({ error: "Could not create story" });
-
-      expect(localRepository.createStory).toHaveBeenCalled();
-      expect(localRepository.createScene).not.toHaveBeenCalled();
-      expect(localRepository.updateScenes).not.toHaveBeenCalled();
     });
   });
 

@@ -1,16 +1,19 @@
 import { Scene, Story } from "@/lib/storage/domain";
 import { LocalRepositoryPort } from "@/repositories/local-repository-port";
-import { WithoutKey } from "@/types";
 import { BuilderNode } from "@/builder/types";
 import { Edge } from "@xyflow/react";
 import { LayoutServicePort } from "./layout-service";
+import { ImportServicePort } from "@/services/common/import-service";
+import { WithoutKey } from "@/types";
 
 export const _getBuilderService = ({
   localRepository,
   layoutService,
+  importService,
 }: {
-  localRepository: LocalRepositoryPort;
   layoutService: LayoutServicePort;
+  localRepository: LocalRepositoryPort;
+  importService: ImportServicePort;
 }) => {
   const getUserBuilderStories = async () => {
     const user = await localRepository.getUser();
@@ -231,6 +234,30 @@ export const _getBuilderService = ({
           entities: ["scene", "story"],
         },
       );
+    },
+    importFromJSON: async (fileContent: string) => {
+      const parsed = importService.parseJSON(fileContent);
+      if (!parsed.isOk)
+        return { error: "Could not parse file content", data: null };
+
+      const storyKey = await localRepository.unitOfWork(
+        async () => {
+          const storyResult = await importService.createStory({
+            story: parsed.data,
+            type: "builder",
+          });
+
+          await importService.createScenes({
+            story: parsed.data,
+            newStoryKey: storyResult.data.key,
+          });
+
+          return storyResult.data.key;
+        },
+        { entities: ["scene", "story"], mode: "readwrite" },
+      );
+
+      return { error: null, data: { storyKey } };
     },
   };
 };

@@ -1,0 +1,190 @@
+import { z } from "zod";
+import { Scene, Story, STORY_GENRES, STORY_TYPE } from "@/lib/storage/domain";
+import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
+
+export const storyFromImportSchema = z.object({
+  story: z.object(
+    {
+      description: z.string({ message: "Description is required" }),
+      key: z.string({ message: "storyKey is required" }),
+      firstSceneKey: z.string({ message: "FirstSceneKey is required" }),
+      creationDate: z
+        .string({ message: "creationDate is required" })
+        .transform((val) => new Date(val)),
+      publicationDate: z
+        .string({ message: "publicationDate is required" })
+        .transform((val) => new Date(val))
+        .optional(),
+      genres: z.array(z.enum(STORY_GENRES)),
+      author: z.object({
+        username: z.string(),
+        key: z.string(),
+      }),
+      image: z.string().url({ message: "Image has to be a valid URL" }),
+      type: z.enum(STORY_TYPE, {
+        message: "Type has to be a valid StoryType",
+      }),
+      title: z.string({ message: "Title is required" }),
+    },
+    { message: "Story is required" },
+  ),
+  scenes: z.array(
+    z.object({
+      key: z.string({ message: "Key is required" }),
+      storyKey: z.string({ message: "StoryKey is required" }),
+      title: z.string({ message: "Title is required" }),
+      content: z.string({ message: "Content is required" }),
+      actions: z.array(
+        z.object({
+          text: z.string({ message: "Text is required" }),
+          sceneKey: z.string().optional(),
+        }),
+      ),
+      builderParams: z.object({
+        position: z.object({
+          x: z.number({ message: "X is required" }),
+          y: z.number({ message: "Y is required" }),
+        }),
+      }),
+    }),
+    { message: "Scenes are required" },
+  ),
+});
+export type StoryFromImport = z.infer<typeof storyFromImportSchema>;
+
+export type ImportServiceError =
+  | "Invalid JSON format"
+  | `Invalid format: ${string}`;
+
+// TODO: we should do something like this at a higher level, and make it available everywhere
+type ImportStoryResult<TData = never> =
+  | {
+      error: ImportServiceError;
+      isOk: false;
+    }
+  | {
+      data: TData;
+      isOk: true;
+    };
+
+const makeErr = (error: ImportServiceError): ImportStoryResult => ({
+  error,
+  isOk: false,
+});
+const makeOk = <T>(data: T): ImportStoryResult<T> => ({ data, isOk: true });
+
+export type ImportServicePort = {
+  parseJSON: (jsonData: string) => ImportStoryResult<StoryFromImport>;
+  createStory: (props: {
+    story: StoryFromImport;
+    type: Story["type"];
+  }) => Promise<{ data: Story }>;
+  createScenes: (props: {
+    story: StoryFromImport;
+    newStoryKey: string;
+  }) => Promise<ImportStoryResult<null>>;
+};
+
+export const _makeBulkSceneUpdatePayload = ({
+  storyFromImport,
+  oldScenesToNewScenes,
+}: {
+  storyFromImport: StoryFromImport;
+  oldScenesToNewScenes: Record<string, string>;
+}) => {
+  const scenesByKey = storyFromImport.scenes.reduce(
+    (acc, scene) => ({
+      ...acc,
+      [scene.key]: scene,
+    }),
+    {} as Record<string, Scene>,
+  );
+
+  return storyFromImport.scenes
+    .map((scene) => {
+      if (!scenesByKey[scene.key]) return null;
+
+      const actions = scenesByKey[scene.key]!.actions;
+
+      if (!actions.length) return null; // No need to update if the scene doesn't have any actions
+
+      const newActions = actions?.map((action) => ({
+        ...action,
+        ...(action.sceneKey
+          ? { sceneKey: oldScenesToNewScenes[action.sceneKey] }
+          : {}),
+      }));
+
+      const newSceneKey = oldScenesToNewScenes[scene.key];
+
+      if (!newSceneKey) {
+        return null;
+      }
+
+      return { key: newSceneKey, actions: newActions };
+    })
+    .filter((scene) => !!scene);
+};
+
+export const _getImportService = ({
+  localRepository,
+}: {
+  localRepository: LocalRepositoryPort;
+}): ImportServicePort => {
+  return {
+    parseJSON: (jsonData) => {
+      let parsed: unknown;
+
+      try {
+        parsed = JSON.parse(jsonData);
+      } catch (_) {
+        return makeErr("Invalid JSON format");
+      }
+      const zodParsed = storyFromImportSchema.safeParse(parsed);
+      if (!zodParsed.success)
+        return makeErr(`Invalid format: ${zodParsed.error.issues[0]?.message}`);
+
+      return makeOk(zodParsed.data);
+    },
+
+    createStory: async ({ story: storyFromImport, type }) => {
+      const { key: importedStoryKey, ...importedStory } = storyFromImport.story;
+
+      const story = await localRepository.createStory({
+        ...importedStory,
+        type,
+        originalStoryKey: importedStoryKey,
+      });
+
+      return { data: story };
+    },
+
+    createScenes: async ({ story: storyFromImport, newStoryKey }) => {
+      const oldScenesToNewScenes: Record<string, string> = {};
+
+      // Create scenes without actions
+      for (const scene of storyFromImport.scenes) {
+        const { key: oldSceneKey, ...sceneData } = scene;
+        const { key } = await localRepository.createScene({
+          ...sceneData,
+          storyKey: newStoryKey,
+          actions: [],
+        });
+        oldScenesToNewScenes[oldSceneKey] = key;
+      }
+
+      // Update scenes
+      await localRepository.updateScenes(
+        _makeBulkSceneUpdatePayload({
+          storyFromImport,
+          oldScenesToNewScenes,
+        }),
+      );
+
+      return makeOk(null);
+    },
+  };
+};
+
+export const getImportService = () =>
+  _getImportService({ localRepository: getLocalRepository() });

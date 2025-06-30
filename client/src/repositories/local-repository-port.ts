@@ -9,7 +9,7 @@ import {
 
 // TODO: Decide once and for all if we "| null" everywhere or not
 export type LocalRepositoryPort = {
-  createStory: (story: Story | WithoutKey<Story>) => Promise<Story | null>;
+  createStory: (story: Story | WithoutKey<Story>) => Promise<Story>;
   createStoryWithFirstScene: (props: {
     story: WithoutKey<Omit<Story, "firstSceneKey">>;
     firstScene: WithoutKey<Omit<Scene, "storyKey">>;
@@ -68,7 +68,7 @@ export type LocalRepositoryPort = {
   deleteUser: (key: string) => Promise<boolean>;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  unitOfWork: <TWork extends (...args: any[]) => any>(
+  unitOfWork: <TWork extends () => any>(
     work: TWork,
     options: { mode?: "readwrite" | "readonly"; entities: Entity[] },
   ) => ReturnType<TWork>;

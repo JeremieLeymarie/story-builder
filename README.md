@@ -63,6 +63,8 @@ In the `server` folder
 uv run fastapi dev
 ```
 
+or you can use the built-in VSCode debugger
+
 ### Run the linter
 
 ```bash

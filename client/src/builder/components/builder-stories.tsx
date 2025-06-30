@@ -2,17 +2,17 @@ import {
   Button,
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/design-system/primitives";
 import { StoryFormDialog } from "./story-form/story-form-dialog";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { MoveRightIcon, PlusIcon } from "lucide-react";
+import { BracesIcon, MoveRightIcon, PlusIcon } from "lucide-react";
 import { useBuilderStories } from "../hooks/use-builder-stories";
 import { StoryCard } from "@/design-system/components/story-card";
 import { Story } from "@/lib/storage/domain";
 import { Title } from "@/design-system/components";
+import { ImportModal } from "@/components/import-modal";
 
 type BuilderHomeProps = {
   stories: Story[];
@@ -20,7 +20,7 @@ type BuilderHomeProps = {
 
 export const BuilderStories = ({ stories }: BuilderHomeProps) => {
   const navigate = useNavigate();
-  const { handleCreateStory } = useBuilderStories();
+  const { handleCreateStory, handleImportFromJSON } = useBuilderStories();
 
   return (
     <div className="flex flex-col items-center space-y-8 px-16 py-8 sm:items-start sm:px-32">
@@ -32,18 +32,27 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
         <Card className="h-[225px] w-[275px] border-dashed">
           <CardHeader>
             <CardTitle>New story</CardTitle>
-            <CardDescription>A new adventure awaits</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center gap-2">
             <StoryFormDialog
               onSubmit={handleCreateStory}
               trigger={
-                <Button>
-                  <PlusIcon /> &nbsp;Build your own story
+                <Button size="sm">
+                  <PlusIcon size="16px" /> &nbsp;Build your own story
                 </Button>
               }
               title="Your story"
               description="Build your own adventure!"
+            />
+            <p className="text-muted-foreground text-sm">--- OR --- </p>
+            <ImportModal
+              onImportStory={handleImportFromJSON}
+              trigger={
+                <Button size="sm" variant="outline">
+                  <BracesIcon size="16px" />
+                  &nbsp; Import from JSON
+                </Button>
+              }
             />
           </CardContent>
         </Card>

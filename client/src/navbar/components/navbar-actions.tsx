@@ -1,10 +1,10 @@
-import { AuthModalForm } from "@/auth-modal-form";
 import { Button } from "@/design-system/primitives";
 import { User } from "@/lib/storage/domain";
 import { useState } from "react";
 import { ActionsDropdown } from "./actions-dropdown";
 import { LogInIcon } from "lucide-react";
 import { toast } from "sonner";
+import { AuthModalForm } from "@/components/auth-modal-form";
 
 export const NavbarActions = ({
   user,

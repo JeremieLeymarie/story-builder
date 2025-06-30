@@ -1,4 +1,4 @@
-import { Mock, vi } from "vitest";
+import { vi } from "vitest";
 import { LocalRepositoryPort } from "../local-repository-port";
 import {
   BASIC_SCENE,
@@ -6,13 +6,12 @@ import {
   BASIC_STORY_PROGRESS,
   BASIC_USER,
 } from "./data";
+import { MockService } from "@/types";
 
 const mock = <T>(returnValue?: T) =>
   vi.fn(() => new Promise<T>((res) => res(returnValue as T)));
 
-export type MockLocalRepository = {
-  [K in keyof LocalRepositoryPort]: Mock<LocalRepositoryPort[K]>;
-};
+export type MockLocalRepository = MockService<LocalRepositoryPort>;
 
 export const getLocalRepositoryStub = (): MockLocalRepository => {
   return {
