@@ -6,10 +6,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Textarea,
 } from "../../design-system/primitives";
 import { DownloadIcon, CopyIcon } from "lucide-react";
-import { useState } from "react";
 import { Scene, Story } from "@/lib/storage/domain";
 import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
 
@@ -24,39 +22,9 @@ export const ExportModal = ({
   scenes: Scene[];
 }) => {
   const { isOpen, setOpen } = useExportModalStore();
-  const [url, setUrl] = useState<string>();
-  // TODO: check that this is not impacting perfs
-  const storyJson = JSON.stringify(
-    {
-      story,
-      scenes,
-    },
-    null,
-    2,
-  );
-
-  const handleModalState = (open: boolean) => {
-    if (open) {
-      const blob = new Blob([storyJson], { type: "text/json" });
-      const url = URL.createObjectURL(blob);
-      setUrl(url);
-    }
-
-    setOpen(open);
-  };
-
-  const exportToast = async () => {
-    toast.success("Export complete!", {
-      description: "Your game is now in your computer.",
-    });
-  };
-
-  const copyToast = async () => {
-    toast.success("Copied to clipboard !");
-  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleModalState}>
+    <Dialog open={isOpen} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" className="w-full justify-start" size="sm">
           <DownloadIcon size="16px" />
@@ -65,47 +33,81 @@ export const ExportModal = ({
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            Export your story to file
-          </DialogTitle>
-          <Textarea className="h-[40vh] max-h-[72.5vh] min-h-[25vh]" disabled>
-            {storyJson}
-          </Textarea>
-        </DialogHeader>
-        <DialogFooter className="py-2">
-          <Button
-            variant="secondary"
+        <ExportModalContent story={story} scenes={scenes} />
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const getExportData = ({
+  story,
+  scenes,
+}: {
+  story: Story;
+  scenes: Scene[];
+}) => {
+  const storyJson = JSON.stringify({ story, scenes }, null, 2);
+  const blob = new Blob([storyJson], { type: "text/json" });
+  const url = URL.createObjectURL(blob);
+  return { url, data: storyJson };
+};
+
+export const ExportModalContent = ({
+  story,
+  scenes,
+}: {
+  story: Story;
+  scenes: Scene[];
+}) => {
+  const { setOpen } = useExportModalStore();
+  const exportData = getExportData({ story, scenes });
+
+  return (
+    <>
+      <DialogHeader>
+        <DialogTitle className="flex items-center gap-2">
+          Export your story to file
+        </DialogTitle>
+      </DialogHeader>
+
+      <div className="py-2">
+        <p>Your export is ready!</p>
+      </div>
+      <DialogFooter className="py-2">
+        <Button
+          variant="secondary"
+          onClick={() => {
+            setOpen(false);
+          }}
+        >
+          Cancel
+        </Button>
+        <>
+          <a
+            href={exportData.url}
+            download={story.title + ".json"}
             onClick={() => {
-              handleModalState(false);
+              toast.success("Export complete!", {
+                description: "Your game is now in your computer.",
+              });
+              setOpen(false);
             }}
           >
-            Cancel
-          </Button>
-          {url && (
-            <a
-              href={url}
-              download={story.title + ".json"}
-              onClick={() => {
-                exportToast();
-                handleModalState(false);
-              }}
-            >
-              <Button>
-                <DownloadIcon size="16px" />
-              </Button>
-            </a>
-          )}
+            <Button>
+              <DownloadIcon size="16px" />
+            </Button>
+          </a>
           <Button
             onClick={() => {
-              navigator.clipboard.writeText(storyJson);
-              copyToast();
+              navigator.clipboard.writeText(exportData.data);
+              toast.success("Copied to clipboard !");
+              setOpen(false);
             }}
           >
             <CopyIcon size="16px" />
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </>
+      </DialogFooter>
+    </>
   );
 };
