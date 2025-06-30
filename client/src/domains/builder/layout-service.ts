@@ -10,7 +10,7 @@ export type LayoutServicePort = {
 };
 
 // TODO: find a way to test this without ELK time out
-export const _getLayoutService = (): LayoutServicePort => {
+const _getLayoutService = (): LayoutServicePort => {
   return {
     computeAutoLayout: async ({
       nodes,
@@ -79,3 +79,5 @@ export const _getLayoutService = (): LayoutServicePort => {
     },
   };
 };
+
+export const getLayoutService = _getLayoutService;

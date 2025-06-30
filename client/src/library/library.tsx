@@ -7,10 +7,12 @@ import {
   CardTitle,
 } from "@/design-system/primitives";
 import { useNavigate } from "@tanstack/react-router";
-import { SwordIcon } from "lucide-react";
+import { BracesIcon, SwordIcon } from "lucide-react";
 import { StoryCard, Title } from "@/design-system/components";
 import { Story } from "@/lib/storage/domain";
-import { ImportModal } from "@/builder/components/import-modal";
+import { ImportModal } from "@/components/import-modal";
+import { toast } from "sonner";
+import { getLibraryService } from "@/domains/game/library-service";
 
 type Library = {
   stories: Story[];
@@ -24,6 +26,18 @@ type Library = {
 export const Library = ({ stories }: Library) => {
   const navigate = useNavigate();
 
+  const importStory = async (fileContent: string) => {
+    const { error } = await getLibraryService().importFromJSON(fileContent);
+    if (error) {
+      toast.error("Import failed!", { description: error });
+      return;
+    }
+
+    toast.success("Import complete!", {
+      description: "Game was successfully downloaded on this device.",
+    });
+  };
+
   return (
     <div className="flex flex-col items-center space-y-8 p-8 px-16 sm:items-start sm:px-32">
       <div className="flex flex-col items-center space-y-8 sm:items-start">
@@ -35,7 +49,15 @@ export const Library = ({ stories }: Library) => {
               <CardDescription>Import a story from a JSON file</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col items-center justify-center gap-2">
-              <ImportModal />
+              <ImportModal
+                onImportStory={importStory}
+                trigger={
+                  <Button size="sm">
+                    <BracesIcon size="16px" />
+                    &nbsp; Import from JSON
+                  </Button>
+                }
+              />
             </CardContent>
           </Card>
           {stories.length > 0 &&

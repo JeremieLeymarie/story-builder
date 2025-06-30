@@ -1,4 +1,4 @@
-import { Mock, vi } from "vitest";
+import { vi } from "vitest";
 import {
   RemoteRepositoryPort,
   RemoteRepositoryResponse,
@@ -9,6 +9,7 @@ import {
   BASIC_STORY_PROGRESS,
   BASIC_USER,
 } from "./data";
+import { MockService } from "@/types";
 
 const P = <T>(returnValue: T) =>
   vi.fn(
@@ -18,9 +19,7 @@ const P = <T>(returnValue: T) =>
       ),
   );
 
-export type MockRemoteRepository = {
-  [K in keyof RemoteRepositoryPort]: Mock<RemoteRepositoryPort[K]>;
-};
+export type MockRemoteRepository = MockService<RemoteRepositoryPort>;
 
 export const getRemoteRepositoryStub = (): MockRemoteRepository => {
   return {

@@ -1,4 +1,3 @@
-import { getLibraryService } from "@/domains/game/library-service";
 import {
   Button,
   Dialog,
@@ -8,12 +7,17 @@ import {
   DialogTitle,
   DialogTrigger,
   Textarea,
-} from "../../design-system/primitives";
-import { BracesIcon } from "lucide-react";
-import { ChangeEvent, useCallback, useState } from "react";
+} from "@/design-system/primitives";
+import { ChangeEvent, ReactNode, useState } from "react";
 import { toast } from "sonner";
 
-export const ImportModal = () => {
+export const ImportModal = ({
+  onImportStory,
+  trigger,
+}: {
+  onImportStory: (fileContent: string) => Promise<void>;
+  trigger: ReactNode;
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fileContent, setFileContent] = useState<string | undefined>();
 
@@ -32,27 +36,16 @@ export const ImportModal = () => {
     }
   };
 
-  const importFile = useCallback(async () => {
+  const importStory = async () => {
     if (!fileContent) {
       return toast.error("No content in file.");
     }
-
-    const { error } = await getLibraryService().importFromJSON(fileContent);
-    if (error) return toast.error("Import failed!", { description: error });
-
-    toast.success("Import complete!", {
-      description: "Game was successfully downloaded on this device.",
-    });
-  }, [fileContent]);
+    onImportStory(fileContent);
+  };
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <DialogTrigger asChild>
-        <Button size="sm">
-          <BracesIcon size="16px" />
-          &nbsp; Import from JSON
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -63,13 +56,13 @@ export const ImportModal = () => {
             onChange={handleChange}
             accept="application/JSON"
           />
-          <Textarea
-            className="h-[40vh] max-h-[72.5vh] min-h-[25vh]"
-            placeholder="Your story JSON will appear here"
-            disabled
-            value={fileContent}
-          />
         </DialogHeader>
+        <Textarea
+          className="h-[40vh] max-h-[72.5vh] min-h-[25vh]"
+          placeholder="Your story JSON will appear here"
+          disabled
+          value={fileContent}
+        />
         <DialogFooter className="pt-2">
           <Button
             variant="secondary"
@@ -84,7 +77,7 @@ export const ImportModal = () => {
           <Button
             onClick={() => {
               setIsModalOpen(false);
-              importFile();
+              importStory();
             }}
           >
             Import

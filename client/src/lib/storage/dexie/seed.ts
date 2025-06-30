@@ -1,5 +1,5 @@
-import { FullStorySchema } from "@/common/schemas";
 import { Scene, Story } from "../domain";
+import { StoryFromImport } from "@/services/common/import-service";
 
 export const DEMO_STORY: Story = {
   title: "[DEMO] The Enchanted Mountain",
@@ -272,7 +272,7 @@ export const DEMO_SCENES: Scene[] = [
   },
 ];
 
-const IMPORTED_STORY: FullStorySchema = {
+const IMPORTED_STORY: StoryFromImport = {
   story: {
     ...DEMO_STORY,
     title: "[DEMO] The Enchanted Mountain (imported)",

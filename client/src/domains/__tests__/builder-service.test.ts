@@ -8,18 +8,23 @@ import {
   BASIC_USER,
   BASIC_STORY,
 } from "../../repositories/stubs/data";
-import { _getBuilderService } from "../builder/builder-service";
 import { BuilderNode } from "@/builder/types";
 import { Edge } from "@xyflow/react";
 import {
   getStubLayoutService,
   MockLayoutService,
 } from "../builder/stub-layout-service";
+import { _getBuilderService } from "../builder/builder-service";
+import {
+  getImportServiceStub,
+  MockImportService,
+} from "@/services/common/stubs/stub-import-service";
 
 describe("builder-service", () => {
   let builderService: ReturnType<typeof _getBuilderService>;
   let localRepository: MockLocalRepository;
   let layoutService: MockLayoutService;
+  let importService: MockImportService;
 
   beforeAll(() => {
     vi.useFakeTimers();
@@ -28,9 +33,11 @@ describe("builder-service", () => {
   beforeEach(() => {
     localRepository = getLocalRepositoryStub();
     layoutService = getStubLayoutService();
+    importService = getImportServiceStub();
 
     builderService = _getBuilderService({
       localRepository,
+      importService,
       layoutService,
     });
   });
@@ -405,11 +412,6 @@ describe("builder-service", () => {
 
   describe("computeAutoLayout", () => {
     it("should compute new positions", async () => {
-      const builderService = _getBuilderService({
-        localRepository,
-        layoutService,
-      });
-
       const NODES: BuilderNode[] = [
         {
           data: {
@@ -636,6 +638,31 @@ describe("builder-service", () => {
       expect(localRepository.updateOrCreateScenes).toHaveBeenCalledWith([
         BASIC_SCENE,
       ]);
+    });
+
+    describe("importFromJSON", () => {
+      it("should return error when parsing fails", async () => {
+        importService.parseJSON = vi.fn(() => ({
+          error: "Invalid JSON format",
+          isOk: false,
+        }));
+
+        const result = await builderService.importFromJSON("mock");
+        expect(result).toStrictEqual({
+          error: "Could not parse file content",
+          data: null,
+        });
+        expect(importService.createStory).not.toHaveBeenCalled();
+        expect(importService.createScenes).not.toHaveBeenCalled();
+      });
+
+      it("should import story from JSON", async () => {
+        const result = await builderService.importFromJSON("mock");
+        expect(result).toStrictEqual({
+          error: null,
+          data: { storyKey: BASIC_STORY.key },
+        });
+      });
     });
   });
 });

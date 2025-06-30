@@ -1,1 +1,11 @@
+import { Mock } from "vitest";
+
 export type WithoutKey<T extends { key: string }> = Omit<T, "key">;
+
+// This type allows to type stub services/repositories while keeping methods typing + vitest's mock definition
+export type MockService<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  TPort extends Record<string, (...args: any[]) => unknown>,
+> = {
+  [K in keyof TPort]: Mock<TPort[K]>;
+};

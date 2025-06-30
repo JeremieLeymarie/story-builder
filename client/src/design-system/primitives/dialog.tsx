@@ -5,6 +5,8 @@ import { X } from "lucide-react";
 import { cn } from "@/lib/style";
 import { ScrollArea } from "./scroll-area";
 
+// This component has been manually modified after ShadCN install
+
 const Dialog = DialogPrimitive.Root;
 
 const DialogTrigger = DialogPrimitive.Trigger;
