@@ -178,7 +178,7 @@ describe("library-service", () => {
       localRepository.getStoryProgress.mockResolvedValueOnce(null);
 
       const createdProgress = await libraryService.createBlankStoryProgress({
-        story: BASIC_STORY,
+        storyKey: BASIC_STORY.key,
       });
 
       expect(localRepository.getUser).toHaveBeenCalled();

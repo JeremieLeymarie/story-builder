@@ -1,9 +1,9 @@
-import { Story } from "@/lib/storage/domain";
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 import {
   getImportService,
   ImportServicePort,
   StoryFromImport,
+  TEMPORARY_NULL_KEY,
 } from "@/services/common/import-service";
 import { DexieError } from "dexie";
 
@@ -15,10 +15,17 @@ export const _getLibraryService = ({
   localRepository: LocalRepositoryPort;
   importService: ImportServicePort;
 }) => {
-  const _createBlankStoryProgress = async ({ story }: { story: Story }) => {
+  const _createBlankStoryProgress = async ({
+    storyKey,
+  }: {
+    storyKey: string;
+  }) => {
     const user = await localRepository.getUser();
+    const story = await localRepository.getStory(storyKey);
 
-    if (!story.firstSceneKey) {
+    if (!story) throw new Error(`Error: invalid story key: ${storyKey}`);
+
+    if (!story.firstSceneKey || story.firstSceneKey === TEMPORARY_NULL_KEY) {
       throw new Error(
         `Error: story should have a first scene. Story: ${story.key}`,
       );
@@ -66,7 +73,7 @@ export const _getLibraryService = ({
               newStoryKey: story.data.key,
             });
 
-            await _createBlankStoryProgress({ story: story.data });
+            await _createBlankStoryProgress({ storyKey: story.data.key });
           },
           {
             entities: ["story-progress", "scene", "story", "user"],

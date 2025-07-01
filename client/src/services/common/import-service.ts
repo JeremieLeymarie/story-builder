@@ -2,6 +2,8 @@ import * as z from "zod/v4";
 import { Scene, Story, STORY_GENRES, STORY_TYPE } from "@/lib/storage/domain";
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 
+export const TEMPORARY_NULL_KEY = "TEMPORARY_NULL_KEY";
+
 export const storyFromImportSchema = z.object({
   story: z.object(
     {
@@ -154,6 +156,7 @@ export const _getImportService = ({
         ...importedStory,
         type,
         originalStoryKey: importedStoryKey,
+        firstSceneKey: TEMPORARY_NULL_KEY,
       });
 
       return { data: story };
@@ -180,6 +183,16 @@ export const _getImportService = ({
           oldScenesToNewScenes,
         }),
       );
+
+      // Update the story's firstSceneKey
+      const newFirstSceneKey =
+        oldScenesToNewScenes[storyFromImport.story.firstSceneKey];
+      if (!newFirstSceneKey)
+        throw new Error(
+          "Story's old first scene key should be found in the old-key/new-key mapping",
+        );
+
+      await localRepository.updateFirstScene(newStoryKey, newFirstSceneKey);
 
       return makeOk(null);
     },
