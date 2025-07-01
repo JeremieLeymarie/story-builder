@@ -19,7 +19,7 @@ export const Component = () => {
 
   const { data: storyProgress } = useQuery({
     queryFn: () => gameService.getStoryProgress(storyProgressKey),
-    queryKey: ["story-progress"],
+    queryKey: ["story-progress", storyProgressKey],
   });
 
   useUpdateStoryProgress({ scene, storyProgress });

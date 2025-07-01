@@ -7,6 +7,7 @@ import {
   _getImportService,
   _makeBulkSceneUpdatePayload,
   ImportServicePort,
+  TEMPORARY_NULL_KEY,
 } from "../import-service";
 import { BASIC_SCENE, BASIC_STORY } from "@/repositories/stubs/data";
 
@@ -121,7 +122,7 @@ describe("import-service", () => {
           "https://b2-backblaze-stackpath.b-cdn.net/2178699/c5jpvq_12e7c09178a6a75a5979d117f779bb07ff07f8f9.jpg",
         genres: ["adventure" as const, "fantasy" as const],
         creationDate: importedStory.creationDate,
-        firstSceneKey: "skibidi",
+        firstSceneKey: TEMPORARY_NULL_KEY,
         author: {
           username: "author",
           key: "author-key",
@@ -223,6 +224,10 @@ describe("import-service", () => {
       });
       // Scene is updated with the new keys in the action (only the ones with a sceneKey)
       expect(localRepository.updateScenes).toHaveBeenCalledOnce();
+      expect(localRepository.updateFirstScene).toHaveBeenCalledWith(
+        "new-key",
+        BASIC_SCENE.key,
+      );
       expect(result).toStrictEqual({ data: null, isOk: true });
     });
   });

@@ -4,7 +4,6 @@ import { ExtendedProgress } from "./types";
 import { GameBanner } from "./game-banner";
 import { GameInfo } from "./game-info";
 import { useRouter } from "@tanstack/react-router";
-import { useCallback } from "react";
 import { DeleteGameButton } from "./delete-game-button";
 import { getLibraryService } from "@/domains/game/library-service";
 
@@ -21,14 +20,14 @@ export const LibraryGameDetail = ({
 }: Props) => {
   const { navigate } = useRouter();
 
-  const deleteGame = useCallback(async () => {
+  const deleteGame = async () => {
     await getLibraryService().deleteGame(story.key);
     navigate({ to: "/library" });
-  }, [navigate, story.key]);
+  };
 
-  const startNewGame = useCallback(() => {
+  const startNewGame = () => {
     getLibraryService()
-      .createBlankStoryProgress({ story })
+      .createBlankStoryProgress({ storyKey: story.key })
       .then((progress) =>
         navigate({
           to: "/game/$gameKey/$sceneKey",
@@ -36,7 +35,7 @@ export const LibraryGameDetail = ({
           search: { storyProgressKey: progress.key },
         }),
       );
-  }, [navigate, story]);
+  };
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-start">

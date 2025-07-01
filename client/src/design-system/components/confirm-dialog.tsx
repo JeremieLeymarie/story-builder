@@ -54,10 +54,10 @@ export const ConfirmDialog = ({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <DialogFooter className="pt-2">
-          <DialogClose onClick={onCancel}>
+          <DialogClose onClick={onCancel} asChild>
             <Button variant="secondary">{cancelLabel}</Button>
           </DialogClose>
-          <DialogClose onClick={onConfirm}>
+          <DialogClose onClick={onConfirm} asChild>
             <Button>{confirmLabel}</Button>
           </DialogClose>
         </DialogFooter>
