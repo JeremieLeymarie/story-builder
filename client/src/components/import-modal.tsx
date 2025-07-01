@@ -1,3 +1,4 @@
+import { FileDropInput } from "@/design-system/components/file-input";
 import {
   Button,
   Dialog,
@@ -8,8 +9,7 @@ import {
   DialogTrigger,
   Textarea,
 } from "@/design-system/primitives";
-import { ChangeEvent, ReactNode, useState } from "react";
-import { toast } from "sonner";
+import { ReactNode, useState } from "react";
 
 export const ImportModal = ({
   onImportStory,
@@ -19,65 +19,49 @@ export const ImportModal = ({
   trigger: ReactNode;
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [fileContent, setFileContent] = useState<string | undefined>();
-
-  const handleChange = (event: ChangeEvent) => {
-    const reader = new FileReader();
-    const file = (event.target as HTMLInputElement)?.files?.[0];
-    if (file) {
-      reader.onload = function () {
-        if (typeof reader.result === "string") {
-          setFileContent(reader.result);
-        } else {
-          console.error("error when reading file :" + reader.result);
-        }
-      };
-      reader.readAsText(file);
-    }
-  };
-
-  const importStory = async () => {
-    if (!fileContent) {
-      return toast.error("No content in file.");
-    }
-    onImportStory(fileContent);
-  };
+  const [fileContent, setFileContent] = useState<string | null>(null);
 
   return (
-    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+    <Dialog
+      open={isModalOpen}
+      onOpenChange={(open) => {
+        setIsModalOpen(open);
+        if (!open) setFileContent(null);
+      }}
+    >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
-        <DialogHeader>
+        <DialogHeader className="mb-2">
           <DialogTitle className="flex items-center gap-2">
             Import your story
           </DialogTitle>
-          <input
-            type="file"
-            onChange={handleChange}
-            accept="application/JSON"
-          />
         </DialogHeader>
-        <Textarea
-          className="h-[40vh] max-h-[72.5vh] min-h-[25vh]"
-          placeholder="Your story JSON will appear here"
-          disabled
-          value={fileContent}
-        />
+        {fileContent ? (
+          <Textarea
+            className="h-[40vh] max-h-[72.5vh] min-h-[25vh]"
+            placeholder="Your story JSON will appear here"
+            disabled
+            value={fileContent}
+          />
+        ) : (
+          <FileDropInput onUploadFile={setFileContent} />
+        )}
         <DialogFooter className="pt-2">
           <Button
             variant="secondary"
             onClick={() => {
               setIsModalOpen(false);
-              setFileContent(undefined);
+              setFileContent(null);
             }}
           >
             Cancel
           </Button>
 
           <Button
+            disabled={!fileContent}
             onClick={() => {
               setIsModalOpen(false);
-              importStory();
+              onImportStory(fileContent!);
             }}
           >
             Import
