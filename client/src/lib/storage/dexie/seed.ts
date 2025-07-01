@@ -272,7 +272,7 @@ export const DEMO_SCENES: Scene[] = [
   },
 ];
 
-const IMPORTED_STORY: StoryFromImport = {
+export const DEMO_IMPORTED_STORY: StoryFromImport = {
   story: {
     ...DEMO_STORY,
     title: "[DEMO] The Enchanted Mountain (imported)",
@@ -281,5 +281,3 @@ const IMPORTED_STORY: StoryFromImport = {
   },
   scenes: DEMO_SCENES,
 };
-
-export const DEMO_IMPORTED_JSON = JSON.stringify(IMPORTED_STORY);

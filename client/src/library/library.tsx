@@ -10,9 +10,13 @@ import { useNavigate } from "@tanstack/react-router";
 import { BracesIcon, SwordIcon } from "lucide-react";
 import { StoryCard, Title } from "@/design-system/components";
 import { Story } from "@/lib/storage/domain";
-import { ImportModal } from "@/components/import-modal";
+import { ImportModal } from "@/design-system/components/import-modal";
 import { toast } from "sonner";
 import { getLibraryService } from "@/domains/game/library-service";
+import {
+  getImportService,
+  StoryFromImport,
+} from "@/services/common/import-service";
 
 type Library = {
   stories: Story[];
@@ -26,8 +30,18 @@ type Library = {
 export const Library = ({ stories }: Library) => {
   const navigate = useNavigate();
 
-  const importStory = async (fileContent: string) => {
-    const { error } = await getLibraryService().importFromJSON(fileContent);
+  const parseFile = (content: string) => {
+    const result = getImportService().parseJSON(content);
+
+    if (!result.isOk) {
+      toast.error("Import failed", { description: result.error });
+      return null;
+    }
+    return result.data;
+  };
+
+  const importStory = async (storyFromImport: StoryFromImport) => {
+    const { error } = await getLibraryService().importStory(storyFromImport);
     if (error) {
       toast.error("Import failed!", { description: error });
       return;
@@ -48,9 +62,10 @@ export const Library = ({ stories }: Library) => {
               <CardTitle>Import your game</CardTitle>
               <CardDescription>Import a story from a JSON file</CardDescription>
             </CardHeader>
-            <CardContent className="flex flex-col items-center justify-center gap-2">
+            <CardContent className="mt-4 flex flex-col items-center justify-center gap-2">
               <ImportModal
                 onImportStory={importStory}
+                parseFile={parseFile}
                 trigger={
                   <Button size="sm">
                     <BracesIcon size="16px" />

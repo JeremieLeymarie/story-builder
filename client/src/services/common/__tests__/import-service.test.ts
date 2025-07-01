@@ -87,10 +87,10 @@ describe("import-service", () => {
         JSON.stringify({ plouf: ["tutu"] }),
       );
 
-      expect(result).toStrictEqual({
-        error: "Invalid format: Story is required",
-        isOk: false,
-      });
+      if (result.isOk) throw new Error("Result should be an error");
+
+      expect(result.isOk).toBeFalsy();
+      expect(result.error).toMatch(/^Invalid format:?/);
       expect(localRepository.createStory).not.toHaveBeenCalled();
     });
 

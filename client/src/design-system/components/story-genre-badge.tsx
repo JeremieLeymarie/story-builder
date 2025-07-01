@@ -3,7 +3,7 @@ import { cva, VariantProps } from "class-variance-authority";
 import { HTMLAttributes } from "react";
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 select-none",
+  "inline-flex items-center rounded-full border text-xs font-semibold transition-colors focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 select-none",
   {
     variants: {
       variant: {
@@ -37,9 +37,14 @@ const badgeVariants = cva(
         western:
           "border-transparent bg-[#cc9e1d] text-gray-800 hover:opacity-80",
       },
+      size: {
+        sm: "text-xs px-1 py-.5",
+        md: "px-2.5 py-1",
+      },
     },
     defaultVariants: {
       variant: "default",
+      size: "md",
     },
   },
 );
@@ -50,10 +55,11 @@ type BadgeProps = HTMLAttributes<HTMLDivElement> &
 export const StoryGenreBadge = ({
   className,
   variant,
+  size,
   ...props
 }: BadgeProps) => {
   return (
-    <div className={cn(badgeVariants({ variant }), className)} {...props}>
+    <div className={cn(badgeVariants({ variant, size }), className)} {...props}>
       {variant}
     </div>
   );

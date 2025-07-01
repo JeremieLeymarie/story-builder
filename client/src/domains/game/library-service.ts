@@ -3,6 +3,7 @@ import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 import {
   getImportService,
   ImportServicePort,
+  StoryFromImport,
 } from "@/services/common/import-service";
 import { DexieError } from "dexie";
 
@@ -51,20 +52,17 @@ export const _getLibraryService = ({
   };
 
   return {
-    importFromJSON: async (fileContent: string) => {
-      const parsed = importService.parseJSON(fileContent);
-      if (!parsed.isOk) return { error: "Could not parse file content" };
-
+    importStory: async (storyFromImport: StoryFromImport) => {
       await localRepository
         .unitOfWork(
           async () => {
             const story = await importService.createStory({
-              story: parsed.data,
+              story: storyFromImport,
               type: "imported",
             });
 
             await importService.createScenes({
-              story: parsed.data,
+              story: storyFromImport,
               newStoryKey: story.data.key,
             });
 

@@ -12,7 +12,7 @@ import { useBuilderStories } from "../hooks/use-builder-stories";
 import { StoryCard } from "@/design-system/components/story-card";
 import { Story } from "@/lib/storage/domain";
 import { Title } from "@/design-system/components";
-import { ImportModal } from "@/components/import-modal";
+import { ImportModal } from "@/design-system/components/import-modal";
 
 type BuilderHomeProps = {
   stories: Story[];
@@ -20,7 +20,8 @@ type BuilderHomeProps = {
 
 export const BuilderStories = ({ stories }: BuilderHomeProps) => {
   const navigate = useNavigate();
-  const { handleCreateStory, handleImportFromJSON } = useBuilderStories();
+  const { handleCreateStory, handleImportFromJSON, parseFile } =
+    useBuilderStories();
 
   return (
     <div className="flex flex-col items-center space-y-8 px-16 py-8 sm:items-start sm:px-32">
@@ -46,6 +47,7 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
             />
             <p className="text-muted-foreground text-sm">--- OR --- </p>
             <ImportModal
+              parseFile={parseFile}
               onImportStory={handleImportFromJSON}
               trigger={
                 <Button size="sm" variant="outline">

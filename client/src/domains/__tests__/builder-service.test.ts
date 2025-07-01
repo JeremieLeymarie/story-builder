@@ -19,6 +19,10 @@ import {
   getImportServiceStub,
   MockImportService,
 } from "@/services/common/stubs/stub-import-service";
+import {
+  MOCK_IMPORTED_SCENE,
+  MOCK_IMPORTED_STORY,
+} from "./data/imported-story-mocks";
 
 describe("builder-service", () => {
   let builderService: ReturnType<typeof _getBuilderService>;
@@ -641,23 +645,12 @@ describe("builder-service", () => {
     });
 
     describe("importFromJSON", () => {
-      it("should return error when parsing fails", async () => {
-        importService.parseJSON = vi.fn(() => ({
-          error: "Invalid JSON format",
-          isOk: false,
-        }));
-
-        const result = await builderService.importFromJSON("mock");
-        expect(result).toStrictEqual({
-          error: "Could not parse file content",
-          data: null,
-        });
-        expect(importService.createStory).not.toHaveBeenCalled();
-        expect(importService.createScenes).not.toHaveBeenCalled();
-      });
-
       it("should import story from JSON", async () => {
-        const result = await builderService.importFromJSON("mock");
+        const result = await builderService.importStory({
+          story: MOCK_IMPORTED_STORY,
+          scenes: [MOCK_IMPORTED_SCENE],
+        });
+
         expect(result).toStrictEqual({
           error: null,
           data: { storyKey: BASIC_STORY.key },

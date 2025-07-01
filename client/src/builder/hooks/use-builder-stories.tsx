@@ -2,6 +2,10 @@ import { useNavigate } from "@tanstack/react-router";
 import { OnSubmitStoryFormProps } from "../components/story-form/story-form-dialog";
 import { toast } from "sonner";
 import { getBuilderService } from "@/get-builder-service";
+import {
+  getImportService,
+  StoryFromImport,
+} from "@/services/common/import-service";
 
 export const useBuilderStories = () => {
   const navigate = useNavigate();
@@ -22,8 +26,8 @@ export const useBuilderStories = () => {
     });
   };
 
-  const handleImportFromJSON = async (fileContent: string) => {
-    const { error, data } = await builderService.importFromJSON(fileContent);
+  const handleImportFromJSON = async (storyFromImport: StoryFromImport) => {
+    const { error, data } = await builderService.importStory(storyFromImport);
 
     if (error) {
       toast.error("Import failed!", { description: error });
@@ -40,5 +44,15 @@ export const useBuilderStories = () => {
     });
   };
 
-  return { handleCreateStory, handleImportFromJSON };
+  const parseFile = (content: string) => {
+    const result = getImportService().parseJSON(content);
+
+    if (!result.isOk) {
+      toast.error("Import failed", { description: result.error });
+      return null;
+    }
+    return result.data;
+  };
+
+  return { handleCreateStory, parseFile, handleImportFromJSON };
 };
