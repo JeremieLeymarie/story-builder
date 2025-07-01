@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod/v4";
 import { Scene, Story, STORY_GENRES, STORY_TYPE } from "@/lib/storage/domain";
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 
@@ -142,7 +142,7 @@ export const _getImportService = ({
       }
       const zodParsed = storyFromImportSchema.safeParse(parsed);
       if (!zodParsed.success)
-        return makeErr(`Invalid format: ${zodParsed.error.issues[0]?.message}`);
+        return makeErr(`Invalid format: ${z.prettifyError(zodParsed.error)}`);
 
       return makeOk(zodParsed.data);
     },

@@ -3,7 +3,10 @@ import { LocalRepositoryPort } from "@/repositories/local-repository-port";
 import { BuilderNode } from "@/builder/types";
 import { Edge } from "@xyflow/react";
 import { LayoutServicePort } from "./layout-service";
-import { ImportServicePort } from "@/services/common/import-service";
+import {
+  ImportServicePort,
+  StoryFromImport,
+} from "@/services/common/import-service";
 import { WithoutKey } from "@/types";
 
 export const _getBuilderService = ({
@@ -235,20 +238,16 @@ export const _getBuilderService = ({
         },
       );
     },
-    importFromJSON: async (fileContent: string) => {
-      const parsed = importService.parseJSON(fileContent);
-      if (!parsed.isOk)
-        return { error: "Could not parse file content", data: null };
-
+    importStory: async (storyFromImport: StoryFromImport) => {
       const storyKey = await localRepository.unitOfWork(
         async () => {
           const storyResult = await importService.createStory({
-            story: parsed.data,
+            story: storyFromImport,
             type: "builder",
           });
 
           await importService.createScenes({
-            story: parsed.data,
+            story: storyFromImport,
             newStoryKey: storyResult.data.key,
           });
 

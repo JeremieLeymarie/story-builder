@@ -1,7 +1,7 @@
 import Dexie, { type EntityTable } from "dexie";
 import { nanoid } from "nanoid";
 import { User, Story, Scene, StoryProgress } from "../domain";
-import { DEMO_IMPORTED_JSON, DEMO_SCENES, DEMO_STORY } from "./seed";
+import { DEMO_IMPORTED_STORY, DEMO_SCENES, DEMO_STORY } from "./seed";
 import { getLibraryService } from "@/domains/game/library-service";
 
 // TODO: move this file to a more appropriate location
@@ -28,7 +28,7 @@ db.on("populate", async (_transaction) => {
   await db.scenes.bulkAdd(DEMO_SCENES);
 
   // Add story to library
-  await getLibraryService().importFromJSON(DEMO_IMPORTED_JSON);
+  await getLibraryService().importStory(DEMO_IMPORTED_STORY);
 });
 
 // Register nanoid middleware
