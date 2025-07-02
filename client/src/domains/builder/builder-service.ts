@@ -253,7 +253,7 @@ export const _getBuilderService = ({
 
           return storyResult.data.key;
         },
-        { entities: ["scene", "story"], mode: "readwrite" },
+        { entities: ["scene", "story", "user"], mode: "readwrite" },
       );
 
       return { error: null, data: { storyKey } };

@@ -1,6 +1,14 @@
 import * as z from "zod/v4";
-import { Scene, Story, STORY_GENRES, STORY_TYPE } from "@/lib/storage/domain";
+import {
+  BuilderStory,
+  ImportedStory,
+  Scene,
+  Story,
+  STORY_GENRES,
+  STORY_TYPE,
+} from "@/lib/storage/domain";
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
+import { WithoutKey } from "@/types";
 
 export const TEMPORARY_NULL_KEY = "TEMPORARY_NULL_KEY";
 
@@ -152,12 +160,22 @@ export const _getImportService = ({
     createStory: async ({ story: storyFromImport, type }) => {
       const { key: importedStoryKey, ...importedStory } = storyFromImport.story;
 
-      const story = await localRepository.createStory({
-        ...importedStory,
-        type,
-        originalStoryKey: importedStoryKey,
-        firstSceneKey: TEMPORARY_NULL_KEY,
-      });
+      const storyPayload: WithoutKey<ImportedStory> | WithoutKey<BuilderStory> =
+        {
+          ...importedStory,
+          type,
+          originalStoryKey: importedStoryKey,
+          firstSceneKey: TEMPORARY_NULL_KEY,
+        };
+
+      if (type === "builder") {
+        const user = await localRepository.getUser();
+        storyPayload.author = user
+          ? { username: user.username, key: user.key }
+          : undefined;
+      }
+
+      const story = await localRepository.createStory(storyPayload);
 
       return { data: story };
     },

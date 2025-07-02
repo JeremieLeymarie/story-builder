@@ -40,12 +40,12 @@ type StoryBase = {
   creationDate: Date;
 };
 
-type ImportedStory = StoryBase & {
+export type ImportedStory = StoryBase & {
   originalStoryKey?: string;
   type: "imported";
 };
 
-type BuilderStory = StoryBase & { type: "builder" };
+export type BuilderStory = StoryBase & { type: "builder" };
 
 export type Story = ImportedStory | BuilderStory;
 
