@@ -91,6 +91,10 @@ const indexedDBRepository: LocalRepositoryPort = {
     await db.stories.delete(storyKey);
   },
 
+  deleteStories: async (storyKeys) => {
+    await db.stories.bulkDelete(storyKeys);
+  },
+
   // SCENES
 
   updateFirstScene: async (storyKey, sceneKey) => {
@@ -244,6 +248,10 @@ const indexedDBRepository: LocalRepositoryPort = {
   createStoryProgress: async (storyProgress) => {
     const key = await db.storyProgresses.add(storyProgress);
     return { ...storyProgress, key };
+  },
+
+  deleteStoryProgresses: async (keys) => {
+    await db.storyProgresses.bulkDelete(keys);
   },
 
   // OTHER

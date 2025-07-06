@@ -1,4 +1,4 @@
-import { Action, Scene, Story, StoryProgress } from "@/lib/storage/domain";
+import { Action, StoryProgress } from "@/lib/storage/domain";
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 
 export const _getGameService = ({
@@ -6,6 +6,13 @@ export const _getGameService = ({
 }: {
   localRepository: LocalRepositoryPort;
 }) => {
+  const getStoryProgresses = async () => {
+    const user = await localRepository.getUser();
+    const progresses = await localRepository.getUserStoryProgresses(user?.key);
+
+    return progresses;
+  };
+
   return {
     saveProgress: async (
       progress: StoryProgress,
@@ -66,31 +73,7 @@ export const _getGameService = ({
       return await localRepository.getStoryProgress(storyKey);
     },
 
-    getStoryProgresses: async () => {
-      const user = await localRepository.getUser();
-      const progresses = await localRepository.getUserStoryProgresses(
-        user?.key,
-      );
-
-      return progresses;
-    },
-
-    loadGamesState: async ({
-      progresses,
-      libraryStories,
-    }: {
-      progresses: StoryProgress[];
-      libraryStories: { stories: Story[]; scenes: Scene[] };
-    }) => {
-      await localRepository.unitOfWork(
-        async () => {
-          await localRepository.updateOrCreateStoryProgresses(progresses);
-          await localRepository.updateOrCreateStories(libraryStories.stories);
-          await localRepository.updateOrCreateScenes(libraryStories.scenes);
-        },
-        { mode: "readwrite", entities: ["story", "scene", "story-progress"] },
-      );
-    },
+    getStoryProgresses,
   };
 };
 
