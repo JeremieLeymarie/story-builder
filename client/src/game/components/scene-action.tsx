@@ -16,6 +16,12 @@ export const SceneAction = ({
     return null;
   }
 
+  const button = (
+    <Button className="h-max text-left text-wrap whitespace-normal">
+      {text}
+    </Button>
+  );
+
   // This corresponds to test mode
   if (!progressKey)
     return (
@@ -24,7 +30,7 @@ export const SceneAction = ({
         to="/game/test/$gameKey/$sceneKey"
         params={{ gameKey: storyKey, sceneKey }}
       >
-        <Button className="w-[full]">{text}</Button>
+        {button}
       </Link>
     );
 
@@ -35,7 +41,7 @@ export const SceneAction = ({
       params={{ gameKey: storyKey, sceneKey }}
       search={{ storyProgressKey: progressKey }}
     >
-      <Button className="w-[full]">{text}</Button>
+      {button}
     </Link>
   );
 };
