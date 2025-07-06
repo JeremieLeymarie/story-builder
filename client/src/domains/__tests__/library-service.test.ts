@@ -212,4 +212,24 @@ describe("library-service", () => {
       expect(localRepository.deleteScenes).toHaveBeenCalledOnce();
     });
   });
+
+  describe("loadLibraryState", () => {
+    it("should load state in the local database", async () => {
+      await libraryService.loadLibraryState({
+        progresses: [BASIC_STORY_PROGRESS],
+        libraryStories: { stories: [BASIC_STORY], scenes: [BASIC_SCENE] },
+      });
+
+      expect(localRepository.unitOfWork).toHaveBeenCalled();
+      expect(
+        localRepository.updateOrCreateStoryProgresses,
+      ).toHaveBeenCalledWith([BASIC_STORY_PROGRESS]);
+      expect(localRepository.updateOrCreateStories).toHaveBeenCalledWith([
+        BASIC_STORY,
+      ]);
+      expect(localRepository.updateOrCreateScenes).toHaveBeenCalledWith([
+        BASIC_SCENE,
+      ]);
+    });
+  });
 });

@@ -1,3 +1,4 @@
+import { Scene, Story, StoryProgress } from "@/lib/storage/domain";
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 import {
   getImportService,
@@ -58,6 +59,16 @@ export const _getLibraryService = ({
     };
   };
 
+  const _getAllLibraryData = async () => {
+    const { games: stories } = await _getLibrary();
+
+    const scenes = await localRepository.getScenesByStoryKey(
+      stories?.map((story) => story.key) ?? [],
+    );
+
+    return { stories, scenes };
+  };
+
   return {
     importStory: async (storyFromImport: StoryFromImport) => {
       await localRepository
@@ -89,15 +100,7 @@ export const _getLibraryService = ({
 
     getLibrary: _getLibrary,
 
-    getAllLibraryData: async () => {
-      const { games: stories } = await _getLibrary();
-
-      const scenes = await localRepository.getScenesByStoryKey(
-        stories?.map((story) => story.key) ?? [],
-      );
-
-      return { stories, scenes };
-    },
+    getAllLibraryData: _getAllLibraryData,
 
     getGameDetail: async (storyKey: string) => {
       const story = await localRepository.getStory(storyKey);
@@ -143,6 +146,50 @@ export const _getLibraryService = ({
         {
           mode: "readwrite",
           entities: ["scene", "story"],
+        },
+      );
+    },
+
+    loadLibraryState: async ({
+      progresses,
+      libraryStories,
+    }: {
+      progresses: StoryProgress[];
+      libraryStories: { stories: Story[]; scenes: Scene[] };
+    }) => {
+      const newScenesKeys = libraryStories.scenes.map((s) => s.key);
+      const newStoriesKeys = libraryStories.stories.map((s) => s.key);
+      const newProgressesKeys = progresses.map((p) => p.key);
+
+      await localRepository.unitOfWork(
+        async () => {
+          const user = await localRepository.getUser();
+          const existingProgresses =
+            await localRepository.getUserStoryProgresses(user?.key);
+          const currentLibraryState = await _getAllLibraryData();
+
+          await localRepository.deleteScenes(
+            currentLibraryState.scenes
+              .filter((s) => !newScenesKeys.includes(s.key))
+              .map((s) => s.key),
+          );
+          await localRepository.deleteStories(
+            currentLibraryState.stories
+              .filter((s) => !newStoriesKeys.includes(s.key))
+              .map((s) => s.key),
+          );
+          await localRepository.deleteStoryProgresses(
+            existingProgresses
+              .filter((p) => !newProgressesKeys.includes(p.key))
+              .map((p) => p.key),
+          );
+          await localRepository.updateOrCreateStoryProgresses(progresses);
+          await localRepository.updateOrCreateStories(libraryStories.stories);
+          await localRepository.updateOrCreateScenes(libraryStories.scenes);
+        },
+        {
+          mode: "readwrite",
+          entities: ["story", "scene", "story-progress", "user"],
         },
       );
     },

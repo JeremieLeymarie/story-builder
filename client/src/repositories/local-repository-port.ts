@@ -26,6 +26,7 @@ export type LocalRepositoryPort = {
     username: string;
   }) => Promise<void>;
   deleteStory: (storyKey: string) => Promise<void>;
+  deleteStories: (storyKeys: string[]) => Promise<void>;
   getFinishedGameKeys: () => Promise<string[]>;
 
   createScene: (scene: WithoutKey<Scene>) => Promise<Scene>;
@@ -60,6 +61,7 @@ export type LocalRepositoryPort = {
   getMostRecentStoryProgress: (
     userKey: string | undefined,
   ) => Promise<StoryProgress | null>;
+  deleteStoryProgresses: (keys: string[]) => Promise<void>;
 
   getUser: () => Promise<User | null>;
   getUserCount: () => Promise<number>;
