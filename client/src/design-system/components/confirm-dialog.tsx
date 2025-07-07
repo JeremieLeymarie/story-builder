@@ -11,14 +11,14 @@ import {
   DialogTrigger,
 } from "../primitives";
 
-import type { JSX } from "react";
+import type { ReactNode } from "react";
 
 type Props = {
   onCancel?: () => void;
   onConfirm?: () => void;
-  title: JSX.Element | string;
-  description: JSX.Element | string;
-  trigger?: JSX.Element | string;
+  title: ReactNode | string;
+  description: ReactNode | string;
+  trigger?: ReactNode | string;
   cancelLabel?: string;
   confirmLabel?: string;
   open?: boolean;
