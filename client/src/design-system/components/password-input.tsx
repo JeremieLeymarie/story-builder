@@ -6,15 +6,14 @@ import { Eye, EyeOff } from "lucide-react";
  * Reusable component for a password field with visibility toggle
  * Uses all standard Input props
  */
-export const PasswordInput = ({ ...props }: React.ComponentProps<typeof Input>) => {
+export const PasswordInput = ({
+  ...props
+}: React.ComponentProps<typeof Input>) => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="relative">
-      <Input
-        type={showPassword ? "text" : "password"}
-        {...props}
-      />
+      <Input type={showPassword ? "text" : "password"} {...props} />
       <Button
         type="button"
         variant="ghost"
