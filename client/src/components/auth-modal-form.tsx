@@ -25,7 +25,7 @@ import { User } from "@/lib/storage/domain";
 import { getUserService } from "@/domains/user/user-service";
 import { Eye, EyeOff } from "lucide-react";
 
-// Composant réutilisable pour un champ password avec toggle de visibilité
+// Reusable component for a password field with visibility toggle
 const PasswordInput = ({ ...props }: React.ComponentProps<typeof Input>) => {
   const [showPassword, setShowPassword] = useState(false);
 
