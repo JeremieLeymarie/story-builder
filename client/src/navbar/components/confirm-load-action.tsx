@@ -1,7 +1,8 @@
 import { ConfirmDialog } from "@/design-system/components";
 import { Button } from "@/design-system/primitives";
-import { Link, ReactNode } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { CloudDownloadIcon } from "lucide-react";
+import { ReactNode } from "react";
 
 export const ConfirmLoadAction = ({
   load,
