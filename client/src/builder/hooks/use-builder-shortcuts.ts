@@ -3,8 +3,14 @@ import { useTestStory } from "./use-test-story";
 import { useExportModalStore } from "./use-export-modal-store";
 import { useAddScene } from "./use-add-scene";
 
-const isAnyInputFocused = () =>
-  ["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName ?? "");
+const isAnyInputFocused = () => {
+  const isInputFocused = document.activeElement?.tagName === "INPUT";
+  const isTextAreaFocused = document.activeElement?.tagName === "TEXTAREA";
+  const isContentEditableFocused =
+    document.activeElement?.getAttribute("contenteditable") === "true";
+
+  return isInputFocused || isTextAreaFocused || isContentEditableFocused;
+};
 
 // ShadCN sets pointer-events: 'none' on the body when a dialog is open
 const isAnyModalOpen = () => document.body.style.pointerEvents === "none";
