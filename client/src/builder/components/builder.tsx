@@ -46,7 +46,7 @@ const BuilderFlow = () => {
       onNodesDelete={onNodesDelete}
       minZoom={0.1}
       defaultEdgeOptions={{ zIndex: 10000 }}
-      selectionMode={SelectionMode.Full}
+      selectionMode={SelectionMode.Partial}
       nodesFocusable
       selectionOnDrag
       selectNodesOnDrag
