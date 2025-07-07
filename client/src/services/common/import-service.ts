@@ -9,6 +9,7 @@ import {
 } from "@/lib/storage/domain";
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 import { WithoutKey } from "@/types";
+import { contentSchema } from "@/lib/scene-content";
 
 export const TEMPORARY_NULL_KEY = "TEMPORARY_NULL_KEY";
 
@@ -43,7 +44,7 @@ export const storyFromImportSchema = z.object({
       key: z.string({ message: "Key is required" }),
       storyKey: z.string({ message: "StoryKey is required" }),
       title: z.string({ message: "Title is required" }),
-      content: z.string({ message: "Content is required" }),
+      content: contentSchema,
       actions: z.array(
         z.object({
           text: z.string({ message: "Text is required" }),

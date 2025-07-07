@@ -212,6 +212,7 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        JsonValue: unknown;
         /** LoginUserRequest */
         LoginUserRequest: {
             /** Usernameoremail */
@@ -228,7 +229,9 @@ export interface components {
             /** Title */
             title: string;
             /** Content */
-            content: string;
+            content: {
+                [key: string]: components["schemas"]["JsonValue"];
+            };
             /** Actions */
             actions: components["schemas"]["Action"][];
             builderParams: components["schemas"]["BuilderParams"];
@@ -242,7 +245,9 @@ export interface components {
             /** Title */
             title: string;
             /** Content */
-            content: string;
+            content: {
+                [key: string]: components["schemas"]["JsonValue"];
+            };
             /** Actions */
             actions: components["schemas"]["Action"][];
             builderParams: components["schemas"]["BuilderParams"];

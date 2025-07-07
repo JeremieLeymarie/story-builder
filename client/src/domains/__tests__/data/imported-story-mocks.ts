@@ -1,3 +1,5 @@
+import { makeSimpleSceneContent } from "@/lib/scene-content";
+
 export const MOCK_IMPORTED_STORY = {
   key: "bloup",
   title: "The Great Journey To The Green River",
@@ -18,7 +20,9 @@ export const MOCK_IMPORTED_SCENE = {
   key: "skibidi",
   storyKey: "bloup",
   title: "Your first scene",
-  content: "This is a placeholder content for your first scene",
+  content: makeSimpleSceneContent(
+    "This is a placeholder content for your first scene",
+  ),
   actions: [
     {
       text: "An action that leads to a scene",
