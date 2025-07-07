@@ -31,15 +31,12 @@ const PasswordInput = ({ ...props }: React.ComponentProps<typeof Input>) => {
 
   return (
     <div className="relative">
-      <Input
-        type={showPassword ? "text" : "password"}
-        {...props}
-      />
+      <Input type={showPassword ? "text" : "password"} {...props} />
       <Button
         type="button"
         variant="ghost"
         size="sm"
-        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+        className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
         onClick={() => setShowPassword(!showPassword)}
       >
         {showPassword ? (
