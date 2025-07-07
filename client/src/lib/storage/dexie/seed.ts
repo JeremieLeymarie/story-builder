@@ -1,3 +1,4 @@
+import { makeSimpleSceneContent } from "@/lib/scene-content";
 import { Scene, Story } from "../domain";
 import { StoryFromImport } from "@/services/common/import-service";
 
@@ -21,8 +22,9 @@ export const DEMO_SCENES: Scene[] = [
         y: -117.68450914552545,
       },
     },
-    content:
+    content: makeSimpleSceneContent(
       "You find yourself at the foot of the legendary mount Leybaudt which is said to be home to a feerical kingdom in which lives a mysterious wizard. The mountain in all of it's majesty pierces the sky and disappears on the night sky. What do you do ? ",
+    ),
     title: "At the foot of the mountain",
     actions: [
       {
@@ -45,8 +47,9 @@ export const DEMO_SCENES: Scene[] = [
   },
   {
     title: "Glitter Lake ",
-    content:
+    content: makeSimpleSceneContent(
       "You tread past the ancient grove towards the end of the trees you finally arrive at your destination and the view takes you breath away. The moonlight and the stars relflect their light on the surface of the lake giving it a mystical and eerie feeling.",
+    ),
     actions: [
       {
         text: "You take in this marvelous sight and continue walking towards the direction of the song",
@@ -68,7 +71,9 @@ export const DEMO_SCENES: Scene[] = [
   },
   {
     title: "An entrancing voice",
-    content: "You hear a song, a sweet melody that seems to lull you in ",
+    content: makeSimpleSceneContent(
+      "You hear a song, a sweet melody that seems to lull you in ",
+    ),
     actions: [
       {
         text: "You head towards the provenance of this song ",
@@ -90,8 +95,9 @@ export const DEMO_SCENES: Scene[] = [
   },
   {
     title: "A lonlely island",
-    content:
+    content: makeSimpleSceneContent(
       "You reach an island of very small stature in which you can see a distant silouhette",
+    ),
     actions: [
       {
         text: "You walk towards the silouhette ",
@@ -113,8 +119,9 @@ export const DEMO_SCENES: Scene[] = [
   },
   {
     title: "A way in ",
-    content:
+    content: makeSimpleSceneContent(
       "You see a small embarcation which is gonna help you go towards the center of the Lake ",
+    ),
     actions: [
       {
         text: "You go in and row towards the center of the Lake",
@@ -136,7 +143,7 @@ export const DEMO_SCENES: Scene[] = [
   },
   {
     title: "END OF CHAPTER ONE ",
-    content: "END OF CHAPTER ONE ",
+    content: makeSimpleSceneContent("END OF CHAPTER ONE "),
     actions: [],
     storyKey: "mcDZQvTdmUCJ7laL8yyLq",
     builderParams: {
@@ -149,8 +156,9 @@ export const DEMO_SCENES: Scene[] = [
   },
   {
     title: "An ancient grove",
-    content:
+    content: makeSimpleSceneContent(
       "When heading towards you arrive in a millenial grove which is enlightened by the moonlight ",
+    ),
     actions: [
       {
         text: "You stop a few minutes to take on this beautiful sight",
@@ -176,8 +184,9 @@ export const DEMO_SCENES: Scene[] = [
   },
   {
     title: "A peculiar being",
-    content:
+    content: makeSimpleSceneContent(
       "You keep walking and you stop dead on your tracks because you can finally see the provenance of those songs. It's a chimerical being half woman with long aubrun hair and half fish with a long tail which end in a large fin. A CREATURE OF LEGENDS, A SIREN.",
+    ),
     actions: [
       {
         text: "You walk towards the creature waiting foe an eventual interaction",
@@ -199,8 +208,9 @@ export const DEMO_SCENES: Scene[] = [
   },
   {
     title: "A foggy path ",
-    content:
+    content: makeSimpleSceneContent(
       "Continuing to walk towards the mountain the fog becomes thicker and thicker. ",
+    ),
     actions: [
       {
         text: "I light a candle and try to find my way through the fog.",
@@ -226,8 +236,9 @@ export const DEMO_SCENES: Scene[] = [
   },
   {
     title: "Friend or foe ?",
-    content:
+    content: makeSimpleSceneContent(
       "You're now very close to the siren you can have a close-up of it's peculiar attributes as the color of her scales which is a shimery azure blue and it's golden eyes in which a vertical slit can be seen.",
+    ),
     actions: [
       {
         text: "You try speaking to her",
@@ -249,8 +260,9 @@ export const DEMO_SCENES: Scene[] = [
   },
   {
     title: "An unexpected exchange",
-    content:
+    content: makeSimpleSceneContent(
       "You ask her what she is currently doing here and what her name is ?",
+    ),
     actions: [
       {
         text: "She stops singing and gazes at you with an inquisitive look",

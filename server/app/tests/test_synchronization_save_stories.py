@@ -10,6 +10,7 @@ from utils.mongo.base_repository import (
     MongoStory,
     MongoStoryAuthor,
 )
+from utils.scene_content import make_simple_scene_content
 
 
 URL = "/api/save/stories"
@@ -212,7 +213,7 @@ def test_save_builder_state(api_test_infra_authenticated) -> None:
                     builderParams=MongoBuilderParams(
                         position=MongoBuilderPosition(x=400.0, y=200.0)
                     ),
-                    content="Content",
+                    content=make_simple_scene_content("Content"),
                     key="scene-1",
                     storyKey="builder-key",
                     title="Scene title",
@@ -239,7 +240,7 @@ def test_save_builder_state(api_test_infra_authenticated) -> None:
                     builderParams=MongoBuilderParams(
                         position=MongoBuilderPosition(x=400.0, y=200.0)
                     ),
-                    content="Content",
+                    content=make_simple_scene_content("Content"),
                     key="scene-1",
                     storyKey="imported-key",
                     title="Scene title",

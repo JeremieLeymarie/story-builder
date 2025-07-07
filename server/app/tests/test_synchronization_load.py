@@ -10,6 +10,7 @@ from utils.mongo.base_repository import (
     MongoStoryAuthor,
     MongoStoryProgress,
 )
+from utils.scene_content import make_simple_scene_content
 from utils.type_defs import StoryGenre, StoryType
 
 URL = "/api/load"
@@ -45,7 +46,7 @@ def test_load(api_test_infra_authenticated) -> None:
                         builderParams=MongoBuilderParams(
                             position=MongoBuilderPosition(x=400.0, y=200.0)
                         ),
-                        content="Content",
+                        content=make_simple_scene_content("Content"),
                         key="scene-1",
                         storyKey="key",
                         title="Scene title",

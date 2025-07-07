@@ -1,7 +1,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/design-system/primitives/card";
@@ -69,13 +68,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
             </Button>
           )}
         </div>
-        {data.content ? (
-          <CardDescription>{data.content}</CardDescription>
-        ) : (
-          <CardDescription className="italic">
-            (Empty content) Double Click to edit
-          </CardDescription>
-        )}
+        {/* <CardDescription>{data.content}</CardDescription> */}
       </CardHeader>
       {data.actions.length > 0 && (
         <CardContent className="flex flex-col gap-2">

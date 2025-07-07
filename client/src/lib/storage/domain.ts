@@ -58,7 +58,7 @@ export type Scene = {
   key: string;
   storyKey: string;
   title: string;
-  content: string;
+  content: Record<string, unknown>;
   actions: Action[];
   builderParams: { position: { x: number; y: number } };
 };
