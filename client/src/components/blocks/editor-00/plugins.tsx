@@ -31,10 +31,8 @@ export function Plugins() {
       <div className="relative">
         <RichTextPlugin
           contentEditable={
-            <div className="">
-              <div className="" ref={onRef}>
-                <ContentEditable placeholder={"Start typing ..."} />
-              </div>
+            <div className="" ref={onRef}>
+              <ContentEditable placeholder={"Start typing ..."} />
             </div>
           }
           ErrorBoundary={LexicalErrorBoundary}
