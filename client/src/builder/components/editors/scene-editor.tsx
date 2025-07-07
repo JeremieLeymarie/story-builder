@@ -24,6 +24,7 @@ import { FormError } from "@/design-system/components";
 import { SetFirstSceneSwitch } from "./set-first-scene-switch";
 import { Action } from "@/lib/storage/domain";
 import { cn } from "@/lib/style";
+import { Editor } from "@/components/blocks/editor-00/editor";
 
 const schema = z.object({
   title: z
@@ -163,11 +164,7 @@ export const SceneEditor = ({
                     <FormItem>
                       <FormLabel>Content</FormLabel>
                       <FormControl>
-                        <Textarea
-                          placeholder="You're at a crossroads. On the left, the forest, on the right, the village."
-                          className="max-h-[300px] min-h-[120px]"
-                          {...field}
-                        />
+                        <Editor />
                       </FormControl>
                       <FormDescription>
                         The actual content of the scene.
