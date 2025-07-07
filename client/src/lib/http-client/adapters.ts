@@ -7,8 +7,9 @@ import {
   StoryProgress,
 } from "../storage/domain";
 import { components } from "./schema";
+import dayjs from "dayjs";
 
-// TODO: all of these should be tested
+const _toAPIDate = (date: Date) => dayjs(date).format("YYYY-MM-DD[T]hh:mm:ss");
 
 /* API TO CLIENT DOMAIN */
 
@@ -123,7 +124,7 @@ const fromClientStoryAdapter = (
     ...story,
     userKey,
     author: story.author ?? null,
-    creationDate: story.creationDate.toISOString(),
+    creationDate: _toAPIDate(story.creationDate),
   };
 };
 
@@ -151,7 +152,7 @@ const fromClientStoryProgressAdapter = (
   return {
     ...storyProgress,
     userKey,
-    lastPlayedAt: storyProgress.lastPlayedAt.toISOString(),
+    lastPlayedAt: _toAPIDate(storyProgress.lastPlayedAt),
   };
 };
 
