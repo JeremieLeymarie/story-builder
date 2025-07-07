@@ -20,34 +20,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { SimpleLoader } from "../design-system/components/simple-loader";
+import { PasswordInput } from "../design-system/components";
 import { useIsWaitingForTooLong } from "../hooks/use-is-waiting-for-too-long";
 import { User } from "@/lib/storage/domain";
 import { getUserService } from "@/domains/user/user-service";
-import { Eye, EyeOff } from "lucide-react";
-
-// Reusable component for a password field with visibility toggle
-const PasswordInput = ({ ...props }: React.ComponentProps<typeof Input>) => {
-  const [showPassword, setShowPassword] = useState(false);
-
-  return (
-    <div className="relative">
-      <Input type={showPassword ? "text" : "password"} {...props} />
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
-        onClick={() => setShowPassword((prev) => !prev)}
-      >
-        {showPassword ? (
-          <EyeOff className="h-4 w-4" />
-        ) : (
-          <Eye className="h-4 w-4" />
-        )}
-      </Button>
-    </div>
-  );
-};
 
 export const AuthModalForm = ({
   open,
