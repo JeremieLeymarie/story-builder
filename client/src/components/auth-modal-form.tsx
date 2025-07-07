@@ -37,7 +37,7 @@ const PasswordInput = ({ ...props }: React.ComponentProps<typeof Input>) => {
         variant="ghost"
         size="icon"
         className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
-        onClick={() => setShowPassword(!showPassword)}
+        onClick={() => setShowPassword((prev) => !prev)}
       >
         {showPassword ? (
           <EyeOff className="h-4 w-4" />
