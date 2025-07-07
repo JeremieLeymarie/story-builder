@@ -7,7 +7,7 @@ import { ToolbarPlugin } from "@/components/editor/plugins/toolbar/toolbar-plugi
 import { FontFormatToolbarPlugin } from "@/components/editor/plugins/toolbar/font-format-toolbar-plugin";
 
 export function Plugins() {
-  const [floatingAnchorElem, setFloatingAnchorElem] =
+  const [_floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
 
   const onRef = (_floatingAnchorElem: HTMLDivElement) => {

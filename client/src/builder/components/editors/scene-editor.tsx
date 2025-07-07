@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
-import { z } from "zod";
+import * as z from "zod/v4";
 import { ReactNode, useCallback, useEffect, useState } from "react";
 import {
   Button,
@@ -17,7 +17,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Textarea,
 } from "@/design-system/primitives";
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { FormError } from "@/design-system/components";
@@ -25,16 +24,15 @@ import { SetFirstSceneSwitch } from "./set-first-scene-switch";
 import { Action } from "@/lib/storage/domain";
 import { cn } from "@/lib/style";
 import { Editor } from "@/components/blocks/editor-00/editor";
+import { contentSchema } from "@/lib/scene-content";
+import { SerializedEditorState } from "lexical";
 
 const schema = z.object({
   title: z
     .string()
     .min(2, { message: "Title has to be at least 2 characters" })
     .max(50, { message: "Title has to be less than 50 characters" }),
-  content: z
-    .string()
-    .min(10, { message: "Content has to be at least 10 characters" })
-    .max(8000, { message: "Content has to be less than 10 000 characters" }),
+  content: contentSchema,
   actions: z.array(
     z.object({
       text: z
@@ -49,7 +47,7 @@ export type SceneEditorSchema = z.infer<typeof schema>;
 type SceneEditorProps = {
   defaultValues?: {
     title?: string;
-    content?: string;
+    content?: Record<string, unknown>;
     actions: Action[];
     isFirstScene: boolean;
     key: string;
@@ -73,7 +71,7 @@ export const SceneEditor = ({
 }: SceneEditorProps) => {
   const form = useForm<SceneEditorSchema>({
     resolver: zodResolver(schema),
-    defaultValues: defaultValues ?? { title: "", content: "", actions: [] },
+    defaultValues: defaultValues ?? { title: "", content: {}, actions: [] },
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -89,7 +87,7 @@ export const SceneEditor = ({
   // Reset form to empty values when opening for new scene creation
   useEffect(() => {
     if (isOpen && !defaultValues) {
-      form.reset({ title: "", content: "", actions: [] });
+      form.reset({ title: "", content: {}, actions: [] });
     }
   }, [isOpen, defaultValues, form]);
 
@@ -163,7 +161,14 @@ export const SceneEditor = ({
                     <FormItem>
                       <FormLabel>Content</FormLabel>
                       <FormControl>
-                        <Editor />
+                        <Editor
+                          onSerializedChange={(data) => {
+                            field.onChange(data);
+                          }}
+                          editorSerializedState={
+                            field.value as unknown as SerializedEditorState
+                          }
+                        />
                       </FormControl>
                       <FormDescription>
                         The actual content of the scene.

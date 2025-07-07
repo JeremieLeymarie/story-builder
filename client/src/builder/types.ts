@@ -2,7 +2,7 @@ import { Node } from "@xyflow/react";
 
 export type SceneProps = {
   title: string;
-  content: string;
+  content: Record<string, unknown>;
   actions: { text: string; sceneKey?: string }[];
   key: string;
   storyKey: string;

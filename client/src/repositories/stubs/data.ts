@@ -1,10 +1,42 @@
 import { Scene, Story, StoryProgress, User } from "@/lib/storage/domain";
 
+export const BASIC_SCENE_CONTENT = {
+  root: {
+    children: [
+      {
+        children: [
+          {
+            detail: 0,
+            format: 0,
+            mode: "normal",
+            style: "",
+            text: "Simple scene content",
+            type: "text",
+            version: 1,
+          },
+        ],
+        direction: "ltr",
+        format: "",
+        indent: 0,
+        type: "paragraph",
+        version: 1,
+        textFormat: 0,
+        textStyle: "",
+      },
+    ],
+    direction: "ltr",
+    format: "",
+    indent: 0,
+    type: "root",
+    version: 1,
+  },
+};
+
 export const BASIC_SCENE: Scene = {
   key: "vroum",
   actions: [{ text: "action A" }, { text: "action B" }],
   builderParams: { position: { x: 0, y: 0 } },
-  content: "pas content",
+  content: BASIC_SCENE_CONTENT,
   storyKey: "zut",
   title: "flûte",
 };

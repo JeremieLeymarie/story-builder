@@ -8,6 +8,7 @@ import {
   StoryFromImport,
 } from "@/services/common/import-service";
 import { WithoutKey } from "@/types";
+import { makeSimpleSceneContent } from "@/lib/scene-content";
 
 export const _getBuilderService = ({
   localRepository,
@@ -117,7 +118,9 @@ export const _getBuilderService = ({
         },
         firstScene: {
           builderParams: { position: { x: 0, y: 0 } },
-          content: "This is a placeholder content for your first scene",
+          content: makeSimpleSceneContent(
+            "This is a placeholder content for your first scene",
+          ),
           title: "Your first scene",
           actions: [
             {

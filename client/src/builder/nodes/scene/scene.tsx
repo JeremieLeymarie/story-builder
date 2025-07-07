@@ -1,7 +1,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/design-system/primitives/card";
@@ -73,7 +72,7 @@ export const SceneNode = ({
             )}
           </div>
         </div>
-        <CardDescription>{data.content}</CardDescription>
+        {/* <CardDescription>{data.content}</CardDescription> */}
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
         {data.actions.map(({ text }, i) => (

@@ -7,15 +7,20 @@ import {
   _getImportService,
   _makeBulkSceneUpdatePayload,
   ImportServicePort,
+  StoryFromImport,
   TEMPORARY_NULL_KEY,
 } from "../import-service";
-import { BASIC_SCENE, BASIC_STORY } from "@/repositories/stubs/data";
+import {
+  BASIC_SCENE,
+  BASIC_SCENE_CONTENT,
+  BASIC_STORY,
+} from "@/repositories/stubs/data";
 
 describe("import-service", () => {
   let localRepository: MockLocalRepository;
   let importService: ImportServicePort;
 
-  const importedStory = {
+  const importedStory: StoryFromImport["story"] = {
     key: "bloup",
     title: "The Great Journey To The Green River",
     description: "A wonderful epic tale through the world of Penthetir. ",
@@ -30,11 +35,11 @@ describe("import-service", () => {
       key: "author-key",
     },
   };
-  const sourceScene = {
+  const sourceScene: StoryFromImport["scenes"][number] = {
     key: "skibidi",
     storyKey: "bloup",
     title: "Your first scene",
-    content: "This is a placeholder content for your first scene",
+    content: BASIC_SCENE_CONTENT,
     actions: [
       {
         text: "An action that leads to a scene",
@@ -172,14 +177,14 @@ describe("import-service", () => {
 
   describe("createScenes", () => {
     it("should produce correct bulk update payload", () => {
-      const storyFromImport = {
+      const storyFromImport: StoryFromImport = {
         story: importedStory,
         scenes: [
           {
             key: "old-source-scene",
             storyKey: "bloup",
             title: "Your first scene",
-            content: "This is a placeholder content for your first scene",
+            content: BASIC_SCENE_CONTENT,
             actions: [
               {
                 text: "An action that leads to a scene",
@@ -200,7 +205,7 @@ describe("import-service", () => {
             key: "old-dest-scene",
             storyKey: "bloup",
             title: "title",
-            content: "content",
+            content: BASIC_SCENE_CONTENT,
             actions: [],
             builderParams: {
               position: {
@@ -248,7 +253,7 @@ describe("import-service", () => {
       expect(localRepository.createScene).toHaveBeenCalledWith({
         storyKey: "new-key",
         title: "Your first scene",
-        content: "This is a placeholder content for your first scene",
+        content: BASIC_SCENE_CONTENT,
         actions: [],
         builderParams: {
           position: {

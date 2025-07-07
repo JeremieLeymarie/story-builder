@@ -23,6 +23,7 @@ import {
   MOCK_IMPORTED_SCENE,
   MOCK_IMPORTED_STORY,
 } from "./data/imported-story-mocks";
+import { makeSimpleSceneContent } from "@/lib/scene-content";
 
 describe("builder-service", () => {
   let builderService: ReturnType<typeof _getBuilderService>;
@@ -203,7 +204,9 @@ describe("builder-service", () => {
         },
         firstScene: {
           builderParams: { position: { x: 0, y: 0 } },
-          content: "This is a placeholder content for your first scene",
+          content: makeSimpleSceneContent(
+            "This is a placeholder content for your first scene",
+          ),
           title: "Your first scene",
           actions: [
             {
@@ -238,7 +241,9 @@ describe("builder-service", () => {
         },
         firstScene: {
           builderParams: { position: { x: 0, y: 0 } },
-          content: "This is a placeholder content for your first scene",
+          content: makeSimpleSceneContent(
+            "This is a placeholder content for your first scene",
+          ),
           title: "Your first scene",
           actions: [
             {
@@ -279,12 +284,15 @@ describe("builder-service", () => {
 
   describe("updateScene", () => {
     it("should only update specified parts of the scene", async () => {
-      await builderService.updateScene({ content: "tututu", key: "blabla" });
+      await builderService.updateScene({
+        content: makeSimpleSceneContent("tututu"),
+        key: "blabla",
+      });
 
       expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
         "blabla",
         {
-          content: "tututu",
+          content: makeSimpleSceneContent("tututu"),
         },
       );
     });
@@ -420,8 +428,9 @@ describe("builder-service", () => {
         {
           data: {
             title: "A mysterious crossroads",
-            content:
+            content: makeSimpleSceneContent(
               "You arrive at a crossroads. On the left, a sinuous dirt path leads to a tree mass. The road on the right is a well-maintained paved trail that runs towards a little village in the hills.",
+            ),
             actions: [
               { text: "Go to the forest" },
               { text: "Go to the village" },
@@ -438,8 +447,9 @@ describe("builder-service", () => {
         {
           data: {
             title: "The Forest",
-            content:
+            content: makeSimpleSceneContent(
               "After half an hour of walking under the bright sun, you come close to the trees. As the air gets colder, you start hearing birds and other creatures of the forest",
+            ),
             actions: [],
             isFirstScene: false,
             key: "forest-fake-scene-key",
@@ -453,8 +463,9 @@ describe("builder-service", () => {
         {
           data: {
             title: "The Road to the Village",
-            content:
+            content: makeSimpleSceneContent(
               "You walk alongside an - for most of it - even path that leads you under the protecting shadows of the hills. You maintain a quick pace. After a moment, you begin feeling like something is watching you.",
+            ),
             actions: [],
             isFirstScene: false,
             key: "village-fake-scene-key",
@@ -498,7 +509,7 @@ describe("builder-service", () => {
           key: "first-fake-scene-key",
           actions: [],
           builderParams: { position: { x: 1111, y: 1111 } },
-          content: "content",
+          content: makeSimpleSceneContent("content"),
           storyKey: "fake-story-key",
           title: "title",
         },
@@ -506,7 +517,7 @@ describe("builder-service", () => {
           key: "forest-fake-scene-key",
           actions: [],
           builderParams: { position: { x: 2222, y: 2222 } },
-          content: "content",
+          content: makeSimpleSceneContent("content"),
           storyKey: "fake-story-key",
           title: "title",
         },
@@ -514,7 +525,7 @@ describe("builder-service", () => {
           key: "village-fake-scene-key",
           actions: [],
           builderParams: { position: { x: 3333, y: 3333 } },
-          content: "content",
+          content: makeSimpleSceneContent("content"),
           storyKey: "fake-story-key",
           title: "title",
         },
@@ -526,8 +537,9 @@ describe("builder-service", () => {
         {
           data: {
             title: "A mysterious crossroads",
-            content:
+            content: makeSimpleSceneContent(
               "You arrive at a crossroads. On the left, a sinuous dirt path leads to a tree mass. The road on the right is a well-maintained paved trail that runs towards a little village in the hills.",
+            ),
             actions: [
               { text: "Go to the forest" },
               { text: "Go to the village" },
@@ -544,8 +556,9 @@ describe("builder-service", () => {
         {
           data: {
             title: "The Forest",
-            content:
+            content: makeSimpleSceneContent(
               "After half an hour of walking under the bright sun, you come close to the trees. As the air gets colder, you start hearing birds and other creatures of the forest",
+            ),
             actions: [],
             isFirstScene: false,
             key: "forest-fake-scene-key",
@@ -559,8 +572,9 @@ describe("builder-service", () => {
         {
           data: {
             title: "The Road to the Village",
-            content:
+            content: makeSimpleSceneContent(
               "You walk alongside an - for most of it - even path that leads you under the protecting shadows of the hills. You maintain a quick pace. After a moment, you begin feeling like something is watching you.",
+            ),
             actions: [],
             isFirstScene: false,
             key: "village-fake-scene-key",
@@ -584,7 +598,7 @@ describe("builder-service", () => {
           key: "first-fake-scene-key",
           actions: [],
           builderParams: { position: { x: 1111, y: 1111 } },
-          content: "content",
+          content: makeSimpleSceneContent("content"),
           storyKey: "fake-story-key",
           title: "title",
         },
@@ -592,7 +606,7 @@ describe("builder-service", () => {
           key: "forest-fake-scene-key",
           actions: [],
           builderParams: { position: { x: 2222, y: 2222 } },
-          content: "content",
+          content: makeSimpleSceneContent("content"),
           storyKey: "fake-story-key",
           title: "title",
         },
@@ -600,7 +614,7 @@ describe("builder-service", () => {
           key: "village-fake-scene-key",
           actions: [],
           builderParams: { position: { x: 3333, y: 3333 } },
-          content: "content",
+          content: makeSimpleSceneContent("content"),
           storyKey: "fake-story-key",
           title: "title",
         },
@@ -610,7 +624,7 @@ describe("builder-service", () => {
           key: "first-fake-scene-key",
           actions: [],
           builderParams: { position: { x: 1, y: 1 } },
-          content: "content",
+          content: makeSimpleSceneContent("content"),
           storyKey: "fake-story-key",
           title: "title",
         },
@@ -618,7 +632,7 @@ describe("builder-service", () => {
           key: "forest-fake-scene-key",
           actions: [],
           builderParams: { position: { x: 2, y: 2 } },
-          content: "content",
+          content: makeSimpleSceneContent("content"),
           storyKey: "fake-story-key",
           title: "title",
         },
@@ -626,7 +640,7 @@ describe("builder-service", () => {
           key: "village-fake-scene-key",
           actions: [],
           builderParams: { position: { x: 3, y: 3 } },
-          content: "content",
+          content: makeSimpleSceneContent("content"),
           storyKey: "fake-story-key",
           title: "title",
         },
