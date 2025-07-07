@@ -43,7 +43,7 @@ export const ActionsDropdown = ({
       <DropdownMenuContent className="w-56">
         <DropdownMenuGroup>
           <DropdownMenuLabel className="flex items-center gap-2">
-            Actions
+            Synchronization
             <Tooltip>
               <TooltipTrigger asChild>
                 <CircleHelpIcon size="16px" className="hover:text-primary" />
@@ -70,12 +70,9 @@ export const ActionsDropdown = ({
           {/* TODO: implement shortcuts */}
           <LoadMenuItem
             load={loadRemoteData}
-            closeMenu={() => setIsOpen(false)}
+            onClose={() => setIsOpen(false)}
           />
-          <SaveMenuItem
-            save={saveLocalData}
-            closeMenu={() => setIsOpen(false)}
-          />
+          <SaveMenuItem save={saveLocalData} onClose={() => setIsOpen(false)} />
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
