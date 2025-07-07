@@ -84,7 +84,7 @@ export const ControlledStoryFormDialog = ({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(submit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(submit)} className="space-y-4">
             <FormField
               control={form.control}
               name="title"
