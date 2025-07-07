@@ -110,6 +110,41 @@ describe("import-service", () => {
     it("should create story", async () => {
       const result = await importService.createStory({
         story: parsed,
+        type: "imported",
+      });
+
+      expect(localRepository.createStory).toHaveBeenCalledWith({
+        type: "imported",
+        originalStoryKey: "bloup",
+        title: "The Great Journey To The Green River",
+        description: "A wonderful epic tale through the world of Penthetir. ",
+        image:
+          "https://b2-backblaze-stackpath.b-cdn.net/2178699/c5jpvq_12e7c09178a6a75a5979d117f779bb07ff07f8f9.jpg",
+        genres: ["adventure" as const, "fantasy" as const],
+        creationDate: importedStory.creationDate,
+        firstSceneKey: TEMPORARY_NULL_KEY,
+        author: {
+          username: "author",
+          key: "author-key",
+        },
+      });
+
+      expect(result).toStrictEqual({
+        data: BASIC_STORY, // From repository stub
+      });
+    });
+
+    it("should update author field when imported in the builder", async () => {
+      localRepository.getUser = vi.fn(() =>
+        Promise.resolve({
+          key: "bob-key",
+          username: "bob-bidou",
+          email: "bob@mail.com",
+        }),
+      );
+
+      const result = await importService.createStory({
+        story: parsed,
         type: "builder",
       });
 
@@ -124,8 +159,8 @@ describe("import-service", () => {
         creationDate: importedStory.creationDate,
         firstSceneKey: TEMPORARY_NULL_KEY,
         author: {
-          username: "author",
-          key: "author-key",
+          username: "bob-bidou",
+          key: "bob-key",
         },
       });
 

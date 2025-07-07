@@ -55,7 +55,7 @@ const _getSyncService = ({
           builderGames.stories,
           builderGames.scenes,
         ),
-        gameService.loadGamesState({
+        libraryService.loadLibraryState({
           progresses: storyProgresses,
           libraryStories: playerGames,
         }),

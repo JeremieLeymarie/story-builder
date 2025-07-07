@@ -41,6 +41,15 @@ export const _getBuilderService = ({
     return { story, scenes };
   };
 
+  const getAllBuilderData = async () => {
+    const stories = await getUserBuilderStories();
+    const scenes = await localRepository.getScenesByStoryKey(
+      stories?.map((story) => story.key) ?? [],
+    );
+
+    return { stories, scenes };
+  };
+
   return {
     updateSceneBuilderPosition: async (
       sceneKey: string,
@@ -193,27 +202,33 @@ export const _getBuilderService = ({
     },
 
     getBuilderStoryData,
-
     getUserBuilderStories,
-
-    getAllBuilderData: async () => {
-      const stories = await getUserBuilderStories();
-      const scenes = await localRepository.getScenesByStoryKey(
-        stories?.map((story) => story.key) ?? [],
-      );
-
-      return { stories, scenes };
-    },
+    getAllBuilderData,
 
     loadBuilderState: async (stories: Story[], scenes: Scene[]) => {
+      const newScenesKeys = scenes.map((s) => s.key);
+      const newStoriesKeys = stories.map((s) => s.key);
       await localRepository.unitOfWork(
         async () => {
+          const currentState = await getAllBuilderData();
+          // Delete scenes that don't exist anymore
+          await localRepository.deleteScenes(
+            currentState.scenes
+              .filter((s) => !newScenesKeys.includes(s.key))
+              .map((s) => s.key),
+          );
+          // Delete stories that don't exist anymore
+          await localRepository.deleteStories(
+            currentState.stories
+              .filter((s) => !newStoriesKeys.includes(s.key))
+              .map((s) => s.key),
+          );
           await localRepository.updateOrCreateStories(stories);
           await localRepository.updateOrCreateScenes(scenes);
         },
         {
           mode: "readwrite",
-          entities: ["scene", "story"],
+          entities: ["scene", "story", "user"],
         },
       );
     },
@@ -253,7 +268,7 @@ export const _getBuilderService = ({
 
           return storyResult.data.key;
         },
-        { entities: ["scene", "story"], mode: "readwrite" },
+        { entities: ["scene", "story", "user"], mode: "readwrite" },
       );
 
       return { error: null, data: { storyKey } };

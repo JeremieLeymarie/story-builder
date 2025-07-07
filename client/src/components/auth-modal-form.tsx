@@ -20,6 +20,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { SimpleLoader } from "../design-system/components/simple-loader";
+import { PasswordInput } from "../design-system/components";
 import { useIsWaitingForTooLong } from "../hooks/use-is-waiting-for-too-long";
 import { User } from "@/lib/storage/domain";
 import { getUserService } from "@/domains/user/user-service";
@@ -177,7 +178,7 @@ const SignUpForm = ({
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" {...field} />
+                <PasswordInput {...field} />
               </FormControl>
               <FormDescription>Your secure password.</FormDescription>
               <FormMessage />
@@ -278,7 +279,7 @@ const SignInForm = ({
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" {...field} />
+                <PasswordInput {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

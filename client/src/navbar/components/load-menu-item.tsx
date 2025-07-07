@@ -1,16 +1,15 @@
-import { ConfirmDialog } from "@/design-system/components";
-import { Button, DropdownMenuItem } from "@/design-system/primitives";
+import { DropdownMenuItem } from "@/design-system/primitives";
 import { useIsOnline } from "@/hooks/use-is-online";
-import { Link } from "@tanstack/react-router";
 import { CloudDownloadIcon } from "lucide-react";
 import { useState } from "react";
+import { ConfirmLoadAction } from "./confirm-load-action";
 
 export const LoadMenuItem = ({
   load,
-  closeMenu,
+  onClose,
 }: {
   load: () => void;
-  closeMenu: () => void;
+  onClose: () => void;
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isOnline = useIsOnline();
@@ -29,33 +28,11 @@ export const LoadMenuItem = ({
         <span>Load</span>
       </DropdownMenuItem>
 
-      <ConfirmDialog
-        title={
-          <div className="text-primary flex items-center gap-2">
-            <CloudDownloadIcon />
-            Load data from cloud backup
-          </div>
-        }
-        description={
-          <>
-            This will replace the state of your stories (both in your library
-            and in the builder) with data you've saved on the cloud. This action
-            cannot be reversed. <br />
-            Learn more about why we use this method{" "}
-            <Link to="/about" target="_blank">
-              <Button variant="link" className="m-0 p-0">
-                here.
-              </Button>
-            </Link>
-          </>
-        }
-        open={isModalOpen}
-        setOpen={setIsModalOpen}
-        onConfirm={() => {
-          load();
-          closeMenu();
-        }}
-        confirmLabel="Load"
+      <ConfirmLoadAction
+        onClose={onClose}
+        load={load}
+        setIsOpen={setIsModalOpen}
+        isOpen={isModalOpen}
       />
     </>
   );

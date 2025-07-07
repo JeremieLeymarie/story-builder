@@ -166,25 +166,5 @@ describe("game-service", () => {
 
       expect(p).toStrictEqual([BASIC_STORY_PROGRESS]);
     });
-
-    describe("loadGamesState", () => {
-      it("should load state in the local database", async () => {
-        await gameService.loadGamesState({
-          progresses: [BASIC_STORY_PROGRESS],
-          libraryStories: { stories: [BASIC_STORY], scenes: [BASIC_SCENE] },
-        });
-
-        expect(localRepository.unitOfWork).toHaveBeenCalled();
-        expect(
-          localRepository.updateOrCreateStoryProgresses,
-        ).toHaveBeenCalledWith([BASIC_STORY_PROGRESS]);
-        expect(localRepository.updateOrCreateStories).toHaveBeenCalledWith([
-          BASIC_STORY,
-        ]);
-        expect(localRepository.updateOrCreateScenes).toHaveBeenCalledWith([
-          BASIC_SCENE,
-        ]);
-      });
-    });
   });
 });

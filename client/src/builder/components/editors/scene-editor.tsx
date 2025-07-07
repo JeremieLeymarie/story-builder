@@ -73,7 +73,7 @@ export const SceneEditor = ({
 }: SceneEditorProps) => {
   const form = useForm<SceneEditorSchema>({
     resolver: zodResolver(schema),
-    defaultValues: defaultValues ?? { actions: [] },
+    defaultValues: defaultValues ?? { title: "", content: "", actions: [] },
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -85,6 +85,13 @@ export const SceneEditor = ({
 
   const isOpen = open !== undefined ? open : internalOpen;
   const handleOpen = setOpen !== undefined ? setOpen : setInternalOpen;
+
+  // Reset form to empty values when opening for new scene creation
+  useEffect(() => {
+    if (isOpen && !defaultValues) {
+      form.reset({ title: "", content: "", actions: [] });
+    }
+  }, [isOpen, defaultValues, form]);
 
   useEffect(() => {
     // Update the form when the default values change, which are 'cached' otherwise
@@ -102,15 +109,7 @@ export const SceneEditor = ({
   );
 
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={(open) => {
-        if (!open) {
-          form.reset();
-        }
-        handleOpen(open);
-      }}
-    >
+    <Dialog open={isOpen} onOpenChange={handleOpen}>
       {!!trigger && (
         <DialogTrigger
           className={cn("cursor-pointer", triggerClassName)}
