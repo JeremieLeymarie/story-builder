@@ -42,12 +42,9 @@ export const UserDropdown = ({
 
           <LoadMenuItem
             load={loadRemoteData}
-            closeMenu={() => setIsOpen(false)}
+            onClose={() => setIsOpen(false)}
           />
-          <SaveMenuItem
-            save={saveLocalData}
-            closeMenu={() => setIsOpen(false)}
-          />
+          <SaveMenuItem save={saveLocalData} onClose={() => setIsOpen(false)} />
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
