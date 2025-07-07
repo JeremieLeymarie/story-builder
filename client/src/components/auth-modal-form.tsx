@@ -23,6 +23,34 @@ import { SimpleLoader } from "../design-system/components/simple-loader";
 import { useIsWaitingForTooLong } from "../hooks/use-is-waiting-for-too-long";
 import { User } from "@/lib/storage/domain";
 import { getUserService } from "@/domains/user/user-service";
+import { Eye, EyeOff } from "lucide-react";
+
+// Composant réutilisable pour un champ password avec toggle de visibilité
+const PasswordInput = ({ ...props }: React.ComponentProps<typeof Input>) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  return (
+    <div className="relative">
+      <Input
+        type={showPassword ? "text" : "password"}
+        {...props}
+      />
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+        onClick={() => setShowPassword(!showPassword)}
+      >
+        {showPassword ? (
+          <EyeOff className="h-4 w-4" />
+        ) : (
+          <Eye className="h-4 w-4" />
+        )}
+      </Button>
+    </div>
+  );
+};
 
 export const AuthModalForm = ({
   open,
@@ -177,7 +205,7 @@ const SignUpForm = ({
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" {...field} />
+                <PasswordInput {...field} />
               </FormControl>
               <FormDescription>Your secure password.</FormDescription>
               <FormMessage />
@@ -278,7 +306,7 @@ const SignInForm = ({
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" {...field} />
+                <PasswordInput {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
