@@ -44,19 +44,43 @@ export const _getLibraryService = ({
   };
 
   const _getLibrary = async () => {
-    const user = await localRepository.getUser();
-    const storyKeys = (
-      await localRepository.getUserStoryProgresses(user?.key)
-    ).map(({ storyKey }) => storyKey);
+      const user = await localRepository.getUser();
 
-    const games = await localRepository.getStoriesByKeys(storyKeys);
+     // 1. Retrieve all storyProgresses linked to the user => DB 
+      const storyProgresses = await localRepository.getUserStoryProgresses(user?.key);
 
-    const finishedGameKeys = await localRepository.getFinishedGameKeys();
+      // 2. For each storyKey in your story progresses, keep only the most recent storyProgresses, so that you have a list of storyProgresses with unique storyKeys => Logic
+      const storyProgressByStoryKey: Record<string, StoryProgress> = {}
 
-    return {
-      games,
-      finishedGameKeys,
-    };
+      storyProgresses.forEach((storyProgress) => {
+        const storyKey = storyProgress.storyKey
+        const storyHasStoryProgress = storyKey in storyProgressByStoryKey
+        const shouldReplaceStoryProgress = storyHasStoryProgress && storyProgress.lastPlayedAt > storyProgressByStoryKey[storyKey]!.lastPlayedAt
+
+        if (!storyHasStoryProgress || shouldReplaceStoryProgress) {
+          storyProgressByStoryKey[storyKey] = storyProgress
+        }
+      })
+
+      // 3. Sort the list of storyProgresses by lastPlayedAt => Logic
+      const sortedStoryKeys = Object.values(storyProgressByStoryKey).sort((a, b) => {
+        return b.lastPlayedAt.getTime() -  a.lastPlayedAt.getTime()
+      }).map(storyProgress => storyProgress.storyKey)
+
+      // 4. Retrieve all the stories linked to the list of storyProgresses computed just before => DB
+      const stories = await localRepository.getStoriesByKeys(sortedStoryKeys)
+
+      // 5. Sort the stories you retrieved to match the order of the sorted storyProgresses => Logic
+      const sortedStories = stories.sort((a, b) => {
+        return sortedStoryKeys.indexOf(a.key) - sortedStoryKeys.indexOf((b.key))
+      })
+
+      const finishedGameKeys = await localRepository.getFinishedGameKeys();
+      
+      return {
+        games : sortedStories,
+        finishedGameKeys,
+      };
   };
 
   const _getAllLibraryData = async () => {
