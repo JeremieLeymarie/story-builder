@@ -14,6 +14,7 @@ import {
 } from "@xyflow/react";
 import { BuilderContextProvider } from "@/builder/hooks/use-builder-store";
 import { Story } from "@/lib/storage/domain";
+import { makeSimpleSceneContent } from "@/lib/scene-content";
 
 const nodeTypes = { scene: SceneNode };
 
@@ -21,8 +22,9 @@ const NODES: SceneNodeType[] = [
   {
     data: {
       title: "A mysterious crossroads",
-      content:
+      content: makeSimpleSceneContent(
         "You arrive at a crossroads. On the left, a sinuous dirt path leads to a tree mass. The road on the right is a well-maintained paved trail that runs towards a little village in the hills.",
+      ),
       actions: [{ text: "Go to the forest" }, { text: "Go to the village" }],
       isFirstScene: false,
       key: "first-fake-scene-key",
@@ -36,8 +38,9 @@ const NODES: SceneNodeType[] = [
   {
     data: {
       title: "The Forest",
-      content:
+      content: makeSimpleSceneContent(
         "After half an hour of walking under the bright sun, you come close to the trees. As the air gets colder, you start hearing birds and other creatures of the forest",
+      ),
       actions: [],
       isFirstScene: false,
       key: "forest-fake-scene-key",
@@ -51,8 +54,9 @@ const NODES: SceneNodeType[] = [
   {
     data: {
       title: "The Road to the Village",
-      content:
+      content: makeSimpleSceneContent(
         "You walk alongside an - for most of it - even path that leads you under the protecting shadows of the hills. You maintain a quick pace. After a moment, you begin feeling like something is watching you.",
+      ),
       actions: [],
       isFirstScene: false,
       key: "village-fake-scene-key",

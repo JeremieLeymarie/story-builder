@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Self
-from pydantic import Field
+from pydantic import Field, JsonValue
 
 from domains.synchronization.type_defs import (
     SynchronizationBuilderParams,
@@ -33,7 +33,7 @@ class Scene(BaseAPIModel):
     key: str
     story_key: str
     title: str
-    content: str
+    content: dict[str, JsonValue]
     actions: list[Action]
     builder_params: BuilderParams
 

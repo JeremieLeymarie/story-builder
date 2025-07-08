@@ -24,6 +24,7 @@ from utils.mongo.base_repository import (
     TestMongoRepository,
 )
 from utils.result import Result
+from utils.scene_content import make_simple_scene_content
 from utils.type_defs import StoryGenre, StoryType
 from unittest.mock import ANY
 
@@ -46,7 +47,7 @@ FAKE_STORY_A = SynchronizationStory(
             builder_params=SynchronizationBuilderParams(
                 position=SynchronizationBuilderPosition(x=400.0, y=200.0)
             ),
-            content="Content",
+            content=make_simple_scene_content("Content"),
             key="scene-1",
             story_key="key",
             title="Scene title",
@@ -122,7 +123,7 @@ def _assert_fake_stories_match(stories: list[MongoStory]) -> None:
                     builderParams=MongoBuilderParams(
                         position=MongoBuilderPosition(x=400, y=200)
                     ),
-                    content="Content",
+                    content=make_simple_scene_content("Content"),
                     key="scene-1",
                     storyKey="key",
                     title="Scene title",
@@ -213,7 +214,7 @@ def test_save_stories_with_existing_stories() -> None:
                         builderParams=MongoBuilderParams(
                             position=MongoBuilderPosition(x=400, y=200)
                         ),
-                        content="Content",
+                        content=make_simple_scene_content("Content"),
                         key="scene-1",
                         storyKey="key",
                         title="Scene title",
@@ -411,7 +412,7 @@ def test_get_stories() -> None:
                         builderParams=MongoBuilderParams(
                             position=MongoBuilderPosition(x=400, y=200)
                         ),
-                        content="Content",
+                        content=make_simple_scene_content("Content"),
                         key="scene-1",
                         storyKey="key",
                         title="Scene title",
@@ -461,7 +462,7 @@ def test_get_stories() -> None:
                     builder_params=SynchronizationBuilderParams(
                         position=SynchronizationBuilderPosition(x=400, y=200)
                     ),
-                    content="Content",
+                    content=make_simple_scene_content("Content"),
                     key="scene-1",
                     story_key="key",
                     title="Scene title",

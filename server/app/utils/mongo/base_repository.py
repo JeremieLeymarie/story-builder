@@ -38,7 +38,7 @@ class MongoScene(TypedDict):
     key: str
     storyKey: str
     title: str
-    content: str
+    content: dict[str, Any]
     actions: list[MongoSceneAction]
     builderParams: MongoBuilderParams
 

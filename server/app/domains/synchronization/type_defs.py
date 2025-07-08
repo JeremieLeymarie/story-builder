@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 from pydantic import BaseModel
 
 from utils.type_defs import StoryGenre, StoryType
@@ -22,7 +23,7 @@ class SynchronizationScene(BaseModel):
     key: str
     story_key: str
     title: str
-    content: str
+    content: dict[str, Any]
     actions: list[SynchronizationSceneAction]
     builder_params: SynchronizationBuilderParams
 

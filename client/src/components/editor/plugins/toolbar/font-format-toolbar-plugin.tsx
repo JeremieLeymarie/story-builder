@@ -1,22 +1,22 @@
-import { useState } from "react"
-import { $isTableSelection } from "@lexical/table"
+import { useState } from "react";
+import { $isTableSelection } from "@lexical/table";
 import {
   $isRangeSelection,
   BaseSelection,
   FORMAT_TEXT_COMMAND,
   TextFormatType,
-} from "lexical"
+} from "lexical";
 import {
   BoldIcon,
   CodeIcon,
   ItalicIcon,
   StrikethroughIcon,
   UnderlineIcon,
-} from "lucide-react"
+} from "lucide-react";
 
-import { useToolbarContext } from "@/components/editor/context/toolbar-context"
-import { useUpdateToolbarHandler } from "@/components/editor/editor-hooks/use-update-toolbar"
-import { Toggle } from "@/design-system/primitives/toggle"
+import { useToolbarContext } from "@/components/editor/context/toolbar-context";
+import { useUpdateToolbarHandler } from "@/components/editor/editor-hooks/use-update-toolbar";
+import { Toggle } from "@/design-system/primitives/toggle";
 
 const Icons: Partial<Record<TextFormatType, React.ElementType>> = {
   bold: BoldIcon,
@@ -24,26 +24,25 @@ const Icons: Partial<Record<TextFormatType, React.ElementType>> = {
   underline: UnderlineIcon,
   strikethrough: StrikethroughIcon,
   code: CodeIcon,
-} as const
+} as const;
 
 export function FontFormatToolbarPlugin({
   format,
 }: {
-  format: Omit<TextFormatType, "highlight" | "subscript" | "superscript">
+  format: Omit<TextFormatType, "highlight" | "subscript" | "superscript">;
 }) {
-  const { activeEditor } = useToolbarContext()
-  const [isSelected, setIsSelected] = useState<boolean>(false)
+  const { activeEditor } = useToolbarContext();
+  const [isSelected, setIsSelected] = useState<boolean>(false);
 
   const $updateToolbar = (selection: BaseSelection) => {
     if ($isRangeSelection(selection) || $isTableSelection(selection)) {
-      // @ts-ignore
-      setIsSelected(selection.hasFormat(format as TextFormatType))
+      setIsSelected(selection.hasFormat(format as TextFormatType));
     }
-  }
+  };
 
-  useUpdateToolbarHandler($updateToolbar)
+  useUpdateToolbarHandler($updateToolbar);
 
-  const Icon = Icons[format as TextFormatType] as React.ElementType
+  const Icon = Icons[format as TextFormatType] as React.ElementType;
 
   return (
     <Toggle
@@ -56,11 +55,11 @@ export function FontFormatToolbarPlugin({
       onClick={() => {
         activeEditor.dispatchCommand(
           FORMAT_TEXT_COMMAND,
-          format as TextFormatType
-        )
+          format as TextFormatType,
+        );
       }}
     >
       <Icon className="h-4 w-4" />
     </Toggle>
-  )
+  );
 }
