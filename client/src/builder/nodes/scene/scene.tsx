@@ -14,6 +14,7 @@ import { useBuilderContext } from "@/builder/hooks/use-builder-store";
 import { useState } from "react";
 import { toast } from "sonner";
 import { getBuilderService } from "@/get-builder-service";
+import { useNewEditorStore } from "@/builder/components/scene-editor/hooks/use-new-editor-store";
 
 export type SceneNodeProps = NodeProps<SceneNodeType>;
 
@@ -27,6 +28,7 @@ export const SceneNode = ({
   const isEditable = data.isEditable !== undefined ? data.isEditable : true;
   const { refresh } = useBuilderContext();
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const { open } = useNewEditorStore();
 
   return (
     <Card
@@ -36,7 +38,8 @@ export const SceneNode = ({
         selected && "border border-black",
       )}
       onDoubleClick={() => {
-        setIsEditorOpen(true);
+        // setIsEditorOpen(true);
+        open(data.key);
       }}
     >
       <CardHeader>
@@ -48,7 +51,8 @@ export const SceneNode = ({
                 defaultValues={data}
                 trigger={<EditIcon />}
                 open={isEditorOpen}
-                setOpen={setIsEditorOpen}
+                // setOpen={setIsEditorOpen}
+                setOpen={() => open(data.key)}
                 onSave={(values) => {
                   builderService.updateScene({
                     ...data,

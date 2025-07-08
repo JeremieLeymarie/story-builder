@@ -2,13 +2,14 @@ import { ReactFlowProvider } from "@xyflow/react";
 import { Builder } from "./builder";
 import { BuilderContextProvider } from "../hooks/use-builder-store";
 import { Scene, Story } from "@/lib/storage/domain";
+import { RefreshFunction } from "./types";
 
 export const BuilderContainer = ({
   refresh,
   story,
   scenes,
 }: {
-  refresh: () => void;
+  refresh: RefreshFunction;
   scenes: Scene[];
   story: Story;
 }) => {

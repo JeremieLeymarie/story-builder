@@ -10,9 +10,10 @@ import {
 import { BuilderNode } from "../types";
 import { Edge } from "@xyflow/react";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
+import { RefreshFunction } from "../components/types";
 
 type BuilderContext = {
-  refresh: () => void;
+  refresh: RefreshFunction;
   reactFlowRef: RefObject<HTMLDivElement | null>;
   story: Story;
   scenes: Scene[];

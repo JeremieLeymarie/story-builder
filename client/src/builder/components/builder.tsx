@@ -15,6 +15,8 @@ import { useAddSceneEditorStore } from "../hooks/use-add-scene-editor-store";
 import { useAddScene } from "../hooks/use-add-scene";
 import { ActionsBar } from "./actions-bar";
 import { FIT_VIEW_DURATION } from "../constants";
+import { NewEditor } from "./scene-editor/scene-editor-drawer";
+import { useNewEditorStore } from "./scene-editor/hooks/use-new-editor-store";
 
 const nodeTypes = { scene: SceneNode };
 
@@ -33,12 +35,16 @@ export const Builder = () => {
     useAddSceneEditorStore();
   const { addScene } = useAddScene();
   const { reactFlowRef } = useBuilderContext();
+  const { close: closeNewEditor } = useNewEditorStore();
 
   return (
     <div className="relative flex h-full w-full border">
       <div className="absolute top-5 left-5 flex flex-col gap-4">
         <Toolbar />
         <ActionsBar />
+      </div>
+      <div className="absolute top-5 right-5 flex flex-col gap-4">
+        <NewEditor onSave={() => {}} />
       </div>
       <ReactFlow
         nodeTypes={nodeTypes}
@@ -60,9 +66,10 @@ export const Builder = () => {
         fitView
         multiSelectionKeyCode={getUserOS() === "Mac" ? "Meta" : "ControlLeft"}
         fitViewOptions={{ duration: FIT_VIEW_DURATION }}
+        onPaneClick={closeNewEditor}
       >
-        <MiniMap />
-        <Background variant={BackgroundVariant.Dots} gap={25} size={1} />
+        <MiniMap position="bottom-left" />
+        <Background variant={BackgroundVariant.Dots} gap={25} size={1.5} />
       </ReactFlow>
 
       <SceneEditor
