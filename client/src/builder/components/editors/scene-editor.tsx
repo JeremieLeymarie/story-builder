@@ -71,7 +71,11 @@ export const SceneEditor = ({
 }: SceneEditorProps) => {
   const form = useForm<SceneEditorSchema>({
     resolver: zodResolver(schema),
-    defaultValues: defaultValues ?? { title: "", content: {}, actions: [] },
+    defaultValues: defaultValues ?? {
+      title: "",
+      content: undefined,
+      actions: [],
+    },
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -87,7 +91,11 @@ export const SceneEditor = ({
   // Reset form to empty values when opening for new scene creation
   useEffect(() => {
     if (isOpen && !defaultValues) {
-      form.reset({ title: "", content: {}, actions: [] });
+      form.reset({
+        title: "",
+        content: undefined,
+        actions: [],
+      });
     }
   }, [isOpen, defaultValues, form]);
 
