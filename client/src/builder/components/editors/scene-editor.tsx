@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
-import { ReactNode, useCallback, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import {
   Button,
   Form,
@@ -99,13 +99,10 @@ export const SceneEditor = ({
 
   const isEditing = !!defaultValues;
 
-  const submit = useCallback(
-    (values: SceneEditorSchema) => {
-      onSave(values);
-      handleOpen(false);
-    },
-    [handleOpen, onSave],
-  );
+  const submit = (values: SceneEditorSchema) => {
+    onSave(values);
+    handleOpen(false);
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpen}>
