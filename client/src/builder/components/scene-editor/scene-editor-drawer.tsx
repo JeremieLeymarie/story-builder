@@ -15,6 +15,8 @@ import { useEffect } from "react";
 import { Form } from "@/design-system/primitives";
 import { SceneSchema, sceneSchema } from "./schema";
 import { ActionsSection } from "./actions-section";
+import { useDebouncedCallback } from "@tanstack/react-pacer/debouncer";
+import { getBuilderService } from "@/get-builder-service";
 
 export const NewEditor = ({
   onSave,
@@ -24,13 +26,13 @@ export const NewEditor = ({
   const { isOpen, sceneKey } = useNewEditorStore();
   const { scenes } = useBuilderContext();
   const scene = scenes.find((s) => s.key === sceneKey);
+
   if (!scene || !isOpen) return null;
 
   return <NewEditorContent scene={scene} onSave={onSave} />;
 };
 
 const NewEditorContent = ({
-  onSave,
   scene,
 }: {
   onSave: (scene: WithoutKey<Scene> | Scene) => void;
@@ -49,12 +51,25 @@ const NewEditorContent = ({
     if (scene) form.reset(scene);
   }, [scene, form]);
 
-  const submit = (values: SceneSchema) => {
-    // onSave(values);
-    close();
-  };
+  const submit = useDebouncedCallback(
+    form.handleSubmit((values: SceneSchema) => {
+      console.log("hihi", values);
+      // TODO: update react flow directly
+      getBuilderService().updateScene({ ...scene, ...values });
+    }),
+    { wait: 500 },
+  );
 
-  // TODO: submit on change
+  useEffect(() => {
+    const callback = form.subscribe({
+      formState: {
+        values: true,
+      },
+      callback: () => submit(),
+    });
+
+    return () => callback();
+  }, [form, submit]);
 
   // TODO: take inspiration from dialog's animations & extract into reusable ui component
 
@@ -64,8 +79,8 @@ const NewEditorContent = ({
   return (
     <div className="z-50 min-w-[450px] rounded border bg-white/95 p-4 shadow-sm">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(submit)} className="w-full">
-          <Tabs defaultValue="scene" className="w-[400px]">
+        <form className="w-full">
+          <Tabs defaultValue="scene" className="w-full">
             <TabsList>
               <TabsTrigger value="scene">Scene</TabsTrigger>
               <TabsTrigger value="actions">Actions</TabsTrigger>
