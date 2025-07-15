@@ -53,7 +53,6 @@ const NewEditorContent = ({
 
   const submit = useDebouncedCallback(
     form.handleSubmit((values: SceneSchema) => {
-      console.log("hihi", values);
       // TODO: update react flow directly
       getBuilderService().updateScene({ ...scene, ...values });
     }),
@@ -71,9 +70,9 @@ const NewEditorContent = ({
     return () => callback();
   }, [form, submit]);
 
-  // TODO: take inspiration from dialog's animations & extract into reusable ui component
+  // TODO: handle first scene update
 
-  // TODO: handle scene creation
+  // TODO: take inspiration from dialog's animations & extract this drawer into a reusable ui component
 
   // TODO: add shortcuts to tabs
   return (
