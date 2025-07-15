@@ -6,16 +6,13 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/design-system/primitives/tabs";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
 import { Form } from "@/design-system/primitives";
-import { SceneSchema, sceneSchema, SceneUpdatePayload } from "./schema";
+import { SceneUpdatePayload } from "./schema";
 import { ActionsSection } from "./actions-section";
-import { useDebouncer } from "@tanstack/react-pacer/debouncer";
 import { useBuilderActions } from "@/builder/hooks/use-builder-actions";
+import { useSceneEditorForm } from "./hooks/use-scene-editor-form";
 
-export const NewEditor = ({
+export const SceneEditor = ({
   onSave,
 }: {
   onSave: (scene: SceneUpdatePayload) => void;
@@ -25,7 +22,7 @@ export const NewEditor = ({
   if (!scene || !isOpen || isFirstScene === null) return null;
 
   return (
-    <NewEditorContent
+    <SceneEditorContent
       scene={scene}
       onSave={onSave}
       isFirstScene={isFirstScene}
@@ -33,7 +30,7 @@ export const NewEditor = ({
   );
 };
 
-const NewEditorContent = ({
+const SceneEditorContent = ({
   scene,
   isFirstScene,
   onSave,
@@ -43,51 +40,8 @@ const NewEditorContent = ({
   onSave: (scene: SceneUpdatePayload) => void;
 }) => {
   const { setFirstScene } = useBuilderActions();
-  const form = useForm<SceneSchema>({
-    resolver: zodResolver(sceneSchema),
-    defaultValues: {
-      content: scene?.content,
-      title: scene?.title,
-      actions: scene?.actions,
-    },
-  });
+  const form = useSceneEditorForm({ onSave, scene });
 
-  const debouncer = useDebouncer(
-    (scene) => {
-      form.handleSubmit((values: SceneSchema) => {
-        onSave({
-          key: scene.key,
-          storyKey: scene.storyKey,
-          actions: values.actions,
-          content: values.content,
-          title: values.title,
-        });
-      })();
-    },
-    { wait: 500 },
-    () => {}, // Never re-render when internal debouncer state changes
-  );
-
-  useEffect(() => {
-    // Update the form when the default values change, which are 'cached' otherwise
-    if (scene) form.reset(scene);
-  }, [scene, form, debouncer]);
-
-  useEffect(() => {
-    const callback = form.subscribe({
-      formState: {
-        values: true,
-      },
-      callback: () => debouncer.maybeExecute(scene),
-    });
-    return () => callback();
-  }, [debouncer, form, scene]);
-
-  // TODO: take inspiration from dialog's animations & extract this drawer into a reusable ui component
-
-  // TODO: add shortcuts to tabs
-
-  console.log({ scene, isFirstScene });
   return (
     <div className="z-50 min-w-[450px] rounded border bg-white/95 p-4 shadow-sm">
       <Form {...form}>

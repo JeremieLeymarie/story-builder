@@ -12,7 +12,7 @@ import { useBuilderContext } from "../hooks/use-builder-context";
 import { getUserOS } from "@/lib/get-os";
 import { ActionsBar } from "./actions-bar";
 import { FIT_VIEW_DURATION } from "../constants";
-import { NewEditor } from "./scene-editor/scene-editor-drawer";
+import { SceneEditor } from "./scene-editor/scene-editor-drawer";
 import { useSceneEditorStore } from "./scene-editor/hooks/use-scene-editor-store";
 import { useBuilderActions } from "../hooks/use-builder-actions";
 
@@ -72,7 +72,7 @@ export const Builder = () => {
         <ActionsBar />
       </div>
       <div className="absolute top-5 right-5 flex flex-col gap-4">
-        <NewEditor onSave={updateScene} />
+        <SceneEditor onSave={updateScene} />
       </div>
       <BuilderFlow />
     </div>
