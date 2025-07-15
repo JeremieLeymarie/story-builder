@@ -1,7 +1,4 @@
-import { useNewEditorStore } from "./hooks/use-new-editor-store";
-import { useBuilderContext } from "../../hooks/use-builder-store";
-import { Scene } from "@/lib/storage/domain";
-import { WithoutKey } from "@/types";
+import { useSceneEditorStore } from "./hooks/use-scene-editor-store";
 import { SceneContentSection } from "./scene-content-section";
 import {
   Tabs,
@@ -11,21 +8,18 @@ import {
 } from "@/design-system/primitives/tabs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Form } from "@/design-system/primitives";
-import { SceneSchema, sceneSchema } from "./schema";
+import { SceneSchema, sceneSchema, SceneUpdatePayload } from "./schema";
 import { ActionsSection } from "./actions-section";
-import { useDebouncedCallback } from "@tanstack/react-pacer/debouncer";
-import { getBuilderService } from "@/get-builder-service";
+import { useDebouncer } from "@tanstack/react-pacer/debouncer";
 
 export const NewEditor = ({
   onSave,
 }: {
-  onSave: (scene: WithoutKey<Scene> | Scene) => void;
+  onSave: (scene: SceneUpdatePayload) => void;
 }) => {
-  const { isOpen, sceneKey } = useNewEditorStore();
-  const { scenes } = useBuilderContext();
-  const scene = scenes.find((s) => s.key === sceneKey);
+  const { isOpen, scene } = useSceneEditorStore();
 
   if (!scene || !isOpen) return null;
 
@@ -34,9 +28,10 @@ export const NewEditor = ({
 
 const NewEditorContent = ({
   scene,
+  onSave,
 }: {
-  onSave: (scene: WithoutKey<Scene> | Scene) => void;
-  scene: Scene;
+  onSave: (scene: SceneUpdatePayload) => void;
+  scene: SceneUpdatePayload;
 }) => {
   const form = useForm<SceneSchema>({
     resolver: zodResolver(sceneSchema),
@@ -46,29 +41,47 @@ const NewEditorContent = ({
     },
   });
 
+  const sceneKey = useRef<string>(scene.key);
+
+  const debouncer = useDebouncer(
+    () => {
+      form.handleSubmit((values: SceneSchema) => {
+        // The lifecycle management is a bit dicey here: switching to another scene does not unmount this component,
+        // so we need to avoid firing changes with the wrong sceneKey
+        // For now this works, but we should look into why this problem occurs
+        if (scene.key !== sceneKey.current) return;
+        onSave({
+          ...scene,
+          actions: values.actions,
+          content: values.content,
+          title: values.title,
+        });
+      })();
+    },
+    { wait: 500 },
+    () => {}, // Never re-render when internal debouncer state changes
+  );
+
   useEffect(() => {
     // Update the form when the default values change, which are 'cached' otherwise
-    if (scene) form.reset(scene);
-  }, [scene, form]);
-
-  const submit = useDebouncedCallback(
-    form.handleSubmit((values: SceneSchema) => {
-      // TODO: update react flow directly
-      getBuilderService().updateScene({ ...scene, ...values });
-    }),
-    { wait: 500 },
-  );
+    if (scene) {
+      form.reset(scene);
+      if (sceneKey.current !== scene.key) {
+        sceneKey.current = scene.key;
+        debouncer.cancel();
+      }
+    }
+  }, [scene, form, debouncer]);
 
   useEffect(() => {
     const callback = form.subscribe({
       formState: {
         values: true,
       },
-      callback: () => submit(),
+      callback: () => debouncer.maybeExecute(),
     });
-
     return () => callback();
-  }, [form, submit]);
+  }, [debouncer, form]);
 
   // TODO: handle first scene update
 

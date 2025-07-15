@@ -1,7 +1,7 @@
-import { useBuilderContext } from "./use-builder-store";
-import { SceneEditorSchema } from "../components/editors/scene-editor";
+import { useBuilderContext } from "./use-builder-context";
 import { useReactFlow } from "@xyflow/react";
 import { getBuilderService } from "@/get-builder-service";
+import { SceneSchema } from "../components/scene-editor/schema";
 
 export const useAddScene = () => {
   const builderService = getBuilderService();
@@ -22,7 +22,7 @@ export const useAddScene = () => {
     return reactFlowInstance.screenToFlowPosition(position);
   };
 
-  const addScene = async (scene: SceneEditorSchema) => {
+  const addScene = async (scene: SceneSchema) => {
     await builderService.addScene({
       ...scene,
       storyKey: story.key,

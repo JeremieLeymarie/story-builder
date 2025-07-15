@@ -28,9 +28,8 @@ const Page = () => {
       <BuilderContainer
         scenes={scenes}
         story={story}
-        refresh={async (callback) => {
-          await refetch();
-          if (callback) callback();
+        refresh={async () => {
+          refetch();
         }}
       />
     </div>

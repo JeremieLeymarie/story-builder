@@ -1,3 +1,4 @@
+import { Scene } from "@/lib/storage/domain";
 import * as z from "zod/v4";
 
 export const sceneSchema = z.object({
@@ -16,3 +17,5 @@ export const sceneSchema = z.object({
 });
 
 export type SceneSchema = z.infer<typeof sceneSchema>;
+
+export type SceneUpdatePayload = Omit<Scene, "builderParams">;

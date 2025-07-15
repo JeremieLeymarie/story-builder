@@ -8,15 +8,12 @@ import {
 import { SceneNode } from "../nodes/scene/scene";
 import { Toolbar } from "./toolbar";
 import { useBuilder } from "../hooks/use-builder";
-import { useBuilderContext } from "../hooks/use-builder-store";
+import { useBuilderContext } from "../hooks/use-builder-context";
 import { getUserOS } from "@/lib/get-os";
-import { SceneEditor } from "./editors/scene-editor";
-import { useAddSceneEditorStore } from "../hooks/use-add-scene-editor-store";
-import { useAddScene } from "../hooks/use-add-scene";
 import { ActionsBar } from "./actions-bar";
 import { FIT_VIEW_DURATION } from "../constants";
 import { NewEditor } from "./scene-editor/scene-editor-drawer";
-import { useNewEditorStore } from "./scene-editor/hooks/use-new-editor-store";
+import { useSceneEditorStore } from "./scene-editor/hooks/use-scene-editor-store";
 
 const nodeTypes = { scene: SceneNode };
 
@@ -30,12 +27,10 @@ export const Builder = () => {
     onNodesChange,
     onNodesDelete,
     onEdgesDelete,
+    updateScene,
   } = useBuilder();
-  const { isOpen: isOpenAddSceneEditor, setOpen: setOpenAddSceneEditor } =
-    useAddSceneEditorStore();
-  const { addScene } = useAddScene();
   const { reactFlowRef } = useBuilderContext();
-  const { close: closeNewEditor } = useNewEditorStore();
+  const { close: closeNewEditor } = useSceneEditorStore();
 
   return (
     <div className="relative flex h-full w-full border">
@@ -44,7 +39,7 @@ export const Builder = () => {
         <ActionsBar />
       </div>
       <div className="absolute top-5 right-5 flex flex-col gap-4">
-        <NewEditor onSave={() => {}} />
+        <NewEditor onSave={updateScene} />
       </div>
       <ReactFlow
         nodeTypes={nodeTypes}
@@ -71,12 +66,6 @@ export const Builder = () => {
         <MiniMap position="bottom-left" />
         <Background variant={BackgroundVariant.Dots} gap={25} size={1.5} />
       </ReactFlow>
-
-      <SceneEditor
-        open={isOpenAddSceneEditor}
-        setOpen={setOpenAddSceneEditor}
-        onSave={addScene}
-      />
     </div>
   );
 };
