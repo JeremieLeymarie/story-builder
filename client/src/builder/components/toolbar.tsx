@@ -4,11 +4,11 @@ import { useToolbar } from "../hooks/use-toolbar";
 import { ExportModal } from "./export-modal";
 import { DeleteModal } from "./delete-modal";
 import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
-import { useBuilderContext } from "../hooks/use-builder-store";
+import { useBuilderContext } from "../hooks/use-builder-context";
 import { useAddScene } from "../hooks/use-add-scene";
 
 export const Toolbar = () => {
-  const { story, scenes } = useBuilderContext();
+  const { story } = useBuilderContext();
   const { testStory, deleteStory } = useToolbar({ storyKey: story.key });
   const { addScene } = useAddScene();
 
@@ -37,7 +37,7 @@ export const Toolbar = () => {
           &nbsp; Test
           <ButtonShortCutDoc doc="T" />
         </Button>
-        <ExportModal story={story} scenes={scenes} />
+        <ExportModal storyKey={story.key} />
         <DeleteModal deleteStory={deleteStory} />
       </div>
     </div>

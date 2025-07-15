@@ -56,7 +56,6 @@ export const scenesToNodesAndEdgesAdapter = ({
 
 export const nodeToSceneAdapter = (node: Node<SceneProps, "scene">): Scene => {
   return {
-    builderParams: { position: node.position },
     ...node.data,
   };
 };

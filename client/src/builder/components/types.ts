@@ -1,1 +1,1 @@
-export type RefreshFunction = (callback?: () => void) => Promise<void>;
+export type RefreshFunction = () => Promise<void>;

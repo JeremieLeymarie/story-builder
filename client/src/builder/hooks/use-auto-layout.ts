@@ -2,7 +2,7 @@ import { useReactFlow } from "@xyflow/react";
 import { BuilderNode } from "../types";
 import { useRef } from "react";
 import { Scene } from "@/lib/storage/domain";
-import { useBuilderContext } from "./use-builder-store";
+import { useBuilderContext } from "./use-builder-context";
 import { getBuilderService } from "@/get-builder-service";
 
 export const useAutoLayout = () => {

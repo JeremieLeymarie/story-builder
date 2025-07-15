@@ -16,7 +16,6 @@ type BuilderContext = {
   refresh: RefreshFunction;
   reactFlowRef: RefObject<HTMLDivElement | null>;
   story: Story;
-  scenes: Scene[];
   nodes: BuilderNode[];
   edges: Edge[];
 };
@@ -28,7 +27,11 @@ export const BuilderContextProvider = ({
   scenes,
   story,
   refresh,
-}: PropsWithChildren<Pick<BuilderContext, "story" | "scenes" | "refresh">>) => {
+}: PropsWithChildren<{
+  scenes: Scene[];
+  story: Story;
+  refresh: RefreshFunction;
+}>) => {
   const reactFlowRef = useRef<HTMLDivElement>(null);
 
   const [nodes, edges] = scenesToNodesAndEdgesAdapter({ scenes, story });
@@ -39,7 +42,6 @@ export const BuilderContextProvider = ({
         reactFlowRef,
         nodes,
         edges,
-        scenes,
         story,
         refresh,
       }}
