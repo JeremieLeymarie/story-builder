@@ -25,15 +25,18 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
         data.isFirstScene && "bg-primary/60",
         selected && "border border-black",
       )}
-      onDoubleClick={() =>
+      onDoubleClick={() => {
         openEditor({
-          actions: data.actions,
-          content: data.content,
-          key: data.key,
-          storyKey: data.storyKey,
-          title: data.title,
-        })
-      }
+          scene: {
+            actions: data.actions,
+            content: data.content,
+            key: data.key,
+            storyKey: data.storyKey,
+            title: data.title,
+          },
+          isFirstScene: data.isFirstScene,
+        });
+      }}
     >
       <CardHeader>
         <div className="flex justify-between gap-1">
@@ -49,7 +52,18 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
               className="invisible aspect-square group-hover:visible"
               size="icon"
               variant="ghost"
-              onClick={() => openEditor(data)}
+              onClick={() =>
+                openEditor({
+                  scene: {
+                    actions: data.actions,
+                    content: data.content,
+                    key: data.key,
+                    storyKey: data.storyKey,
+                    title: data.title,
+                  },
+                  isFirstScene: data.isFirstScene,
+                })
+              }
             >
               <EditIcon size="20px" />
             </Button>

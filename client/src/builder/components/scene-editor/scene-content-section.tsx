@@ -10,14 +10,26 @@ import {
 } from "@/design-system/primitives";
 import { UseFormReturn } from "react-hook-form";
 import { SceneSchema } from "./schema";
+import { SetFirstSceneSwitch } from "./set-first-scene-switch";
 
 export const SceneContentSection = ({
   form,
+  sceneKey,
+  isFirstScene,
+  setFirstScene,
 }: {
   form: UseFormReturn<SceneSchema>;
+  sceneKey: string;
+  isFirstScene: boolean;
+  setFirstScene: () => void;
 }) => {
   return (
     <div className="space-y-4">
+      <SetFirstSceneSwitch
+        isFirstScene={isFirstScene}
+        setFirstScene={setFirstScene}
+        sceneKey={sceneKey}
+      />
       <FormField
         control={form.control}
         name="title"
