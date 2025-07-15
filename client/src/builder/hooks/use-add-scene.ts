@@ -1,12 +1,11 @@
 import { useBuilderContext } from "./use-builder-store";
 import { SceneEditorSchema } from "../components/editors/scene-editor";
-import { useReactFlow, useStoreApi } from "@xyflow/react";
+import { useReactFlow } from "@xyflow/react";
 import { getBuilderService } from "@/get-builder-service";
 
 export const useAddScene = () => {
   const builderService = getBuilderService();
-  const { refresh, story, nodes } = useBuilderContext();
-  const reactFlowStore = useStoreApi();
+  const { refresh, story } = useBuilderContext();
 
   const reactFlowInstance = useReactFlow();
 
@@ -24,16 +23,12 @@ export const useAddScene = () => {
   };
 
   const addScene = async (scene: SceneEditorSchema) => {
-    const newScene = await builderService.addScene({
+    await builderService.addScene({
       ...scene,
       storyKey: story.key,
       builderParams: { position: getCenterPosition() },
     });
-    console.log({ newScene, nodes });
     await refresh();
-    console.log("after refresh", nodes);
-    const { addSelectedNodes } = reactFlowStore.getState();
-    addSelectedNodes([newScene.key]);
   };
 
   return { addScene };

@@ -25,6 +25,7 @@ import { SetFirstSceneSwitch } from "./set-first-scene-switch";
 import { Action } from "@/lib/storage/domain";
 import { cn } from "@/lib/style";
 
+// TODO: delete all of this
 const schema = z.object({
   title: z
     .string()
