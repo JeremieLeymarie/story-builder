@@ -20,7 +20,7 @@ export const Toolbar = () => {
           size="sm"
           className="flex w-full justify-start"
           onClick={() => {
-            addScene({ title: "", content: "", actions: [] });
+            addScene({ title: "", content: {}, actions: [] });
           }}
         >
           <BookOpenTextIcon size="16px" />
