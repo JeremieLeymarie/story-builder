@@ -66,7 +66,7 @@ export const _getLibraryService = ({
       }
     });
 
-    // Sorting the current storyProgresses by last played save
+    // Sort story keys by last played save
     const sortedStoryKeys = Object.values(mostRecentStoryProgressByStory)
       .sort((a, b) => {
         return b.lastPlayedAt.getTime() - a.lastPlayedAt.getTime();
