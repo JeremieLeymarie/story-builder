@@ -9,6 +9,7 @@ import { TooltipProvider } from "@/design-system/primitives/tooltip";
 
 import { nodes } from "./nodes";
 import { Plugins } from "./plugins";
+import { useMemo } from "react";
 
 const editorConfig: InitialConfigType = {
   namespace: "Editor",
@@ -36,6 +37,12 @@ export function Editor({
   onChange?: (editorState: EditorState) => void;
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
 }) {
+  // The key is used to force lexical to update its initial value.
+  // We need it to change only when the editor state changes, to avoid de-synchronization issues
+  // In the lifecycle, sceneKey (from global store) is updated before the scene content (from form);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const key = useMemo(() => sceneKey, [editorSerializedState, sceneKey]);
+
   return (
     <div className="bg-background overflow-hidden rounded-lg border shadow">
       <LexicalComposer
