@@ -73,7 +73,7 @@ export const _getLibraryService = ({
       })
       .map((storyProgress) => storyProgress.storyKey);
 
-    // Fetching all the stories associated with the list of storyProgresses from the database
+    // Fetch all the stories associated with the sorted story keys
     const stories = await localRepository.getStoriesByKeys(sortedStoryKeys);
 
     // Sorting the story in descending order in the library from most recent to the least recent.
