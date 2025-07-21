@@ -44,50 +44,49 @@ export const _getLibraryService = ({
   };
 
   const _getLibrary = async () => {
-      const user = await localRepository.getUser();
-      // 1. Retrieving all the storyProgresses of the current user in the database
-      const storyProgresses = await localRepository.getUserStoryProgresses(
-        user?.key,
-      );
+    const user = await localRepository.getUser();
+    // 1. Retrieving all the storyProgresses of the current user in the database
+    const storyProgresses = await localRepository.getUserStoryProgresses(
+      user?.key,
+    );
 
-      // Filtering storyProgresses that are the most recent by checking the storyKeys and listing them
-      const mostRecentStoryProgressByStory: Record<string, StoryProgress> = {};
+    // Filtering storyProgresses that are the most recent by checking the storyKeys and listing them
+    const mostRecentStoryProgressByStory: Record<string, StoryProgress> = {};
 
-      storyProgresses.forEach((storyProgress) => {
-        const storyKey = storyProgress.storyKey;
-        const storyHasStoryProgress =
-          storyKey in mostRecentStoryProgressByStory;
-        const shouldReplaceStoryProgress =
-          storyHasStoryProgress &&
-          storyProgress.lastPlayedAt >
-            mostRecentStoryProgressByStory[storyKey]!.lastPlayedAt;
+    storyProgresses.forEach((storyProgress) => {
+      const storyKey = storyProgress.storyKey;
+      const storyHasStoryProgress = storyKey in mostRecentStoryProgressByStory;
+      const shouldReplaceStoryProgress =
+        storyHasStoryProgress &&
+        storyProgress.lastPlayedAt >
+          mostRecentStoryProgressByStory[storyKey]!.lastPlayedAt;
 
-        if (!storyHasStoryProgress || shouldReplaceStoryProgress) {
-          mostRecentStoryProgressByStory[storyKey] = storyProgress;
-        }
-      });
+      if (!storyHasStoryProgress || shouldReplaceStoryProgress) {
+        mostRecentStoryProgressByStory[storyKey] = storyProgress;
+      }
+    });
 
-      // Sorting the current storyProgresses by last played save
-      const sortedStoryKeys = Object.values(mostRecentStoryProgressByStory)
-        .sort((a, b) => {
-          return b.lastPlayedAt.getTime() - a.lastPlayedAt.getTime();
-        })
-        .map((storyProgress) => storyProgress.storyKey);
+    // Sorting the current storyProgresses by last played save
+    const sortedStoryKeys = Object.values(mostRecentStoryProgressByStory)
+      .sort((a, b) => {
+        return b.lastPlayedAt.getTime() - a.lastPlayedAt.getTime();
+      })
+      .map((storyProgress) => storyProgress.storyKey);
 
-      // Fetching all the stories associated with the list of storyProgresses from the database
-      const stories = await localRepository.getStoriesByKeys(sortedStoryKeys);
+    // Fetching all the stories associated with the list of storyProgresses from the database
+    const stories = await localRepository.getStoriesByKeys(sortedStoryKeys);
 
-      // Sorting the story in descending order in the library from most recent to the least recent.
-      const sortedStories = stories.sort((a, b) => {
-        return sortedStoryKeys.indexOf(a.key) - sortedStoryKeys.indexOf(b.key);
-      });
+    // Sorting the story in descending order in the library from most recent to the least recent.
+    const sortedStories = stories.sort((a, b) => {
+      return sortedStoryKeys.indexOf(a.key) - sortedStoryKeys.indexOf(b.key);
+    });
 
-      const finishedGameKeys = await localRepository.getFinishedGameKeys();
+    const finishedGameKeys = await localRepository.getFinishedGameKeys();
 
-      return {
-        games: sortedStories,
-        finishedGameKeys,
-      };
+    return {
+      games: sortedStories,
+      finishedGameKeys,
+    };
   };
 
   const _getAllLibraryData = async () => {
