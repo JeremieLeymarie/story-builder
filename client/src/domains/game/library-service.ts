@@ -45,16 +45,46 @@ export const _getLibraryService = ({
 
   const _getLibrary = async () => {
     const user = await localRepository.getUser();
-    const storyKeys = (
-      await localRepository.getUserStoryProgresses(user?.key)
-    ).map(({ storyKey }) => storyKey);
+    // 1. Retrieving all the storyProgresses of the current user in the database
+    const storyProgresses = await localRepository.getUserStoryProgresses(
+      user?.key,
+    );
 
-    const games = await localRepository.getStoriesByKeys(storyKeys);
+    // Store most recent story progress for each story
+    const mostRecentStoryProgressByStory: Record<string, StoryProgress> = {};
+
+    storyProgresses.forEach((storyProgress) => {
+      const storyKey = storyProgress.storyKey;
+      const storyHasStoryProgress = storyKey in mostRecentStoryProgressByStory;
+      const shouldReplaceStoryProgress =
+        storyHasStoryProgress &&
+        storyProgress.lastPlayedAt >
+          mostRecentStoryProgressByStory[storyKey]!.lastPlayedAt;
+
+      if (!storyHasStoryProgress || shouldReplaceStoryProgress) {
+        mostRecentStoryProgressByStory[storyKey] = storyProgress;
+      }
+    });
+
+    // Sort story keys by last played save
+    const sortedStoryKeys = Object.values(mostRecentStoryProgressByStory)
+      .sort((a, b) => {
+        return b.lastPlayedAt.getTime() - a.lastPlayedAt.getTime();
+      })
+      .map((storyProgress) => storyProgress.storyKey);
+
+    // Fetch all the stories associated with the sorted story keys
+    const stories = await localRepository.getStoriesByKeys(sortedStoryKeys);
+
+    // Sorting the story in descending order in the library from most recent to the least recent.
+    const sortedStories = stories.sort((a, b) => {
+      return sortedStoryKeys.indexOf(a.key) - sortedStoryKeys.indexOf(b.key);
+    });
 
     const finishedGameKeys = await localRepository.getFinishedGameKeys();
 
     return {
-      games,
+      games: sortedStories,
       finishedGameKeys,
     };
   };
@@ -121,7 +151,7 @@ export const _getLibraryService = ({
         lastScene: lastScenes.find((scene) => scene.key === p.currentSceneKey),
       }));
 
-      // The first element in the orderered progresses represent the last played game
+      // The first element in the library is now the last playedAt game
       const [currentProgress, ...otherProgresses] = progressesWithLastScene;
 
       return {
