@@ -50,7 +50,7 @@ export const _getLibraryService = ({
       user?.key,
     );
 
-    // Filtering storyProgresses that are the most recent by checking the storyKeys and listing them
+    // Store most recent story progress for each story
     const mostRecentStoryProgressByStory: Record<string, StoryProgress> = {};
 
     storyProgresses.forEach((storyProgress) => {
