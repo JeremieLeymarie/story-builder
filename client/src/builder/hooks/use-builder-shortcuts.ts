@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
-import { useAddSceneEditorStore } from "./use-add-scene-editor-store";
 import { useTestStory } from "./use-test-story";
 import { useExportModalStore } from "./use-export-modal-store";
+import { useAddScene } from "./use-add-scene";
 
 const isAnyInputFocused = () => {
   const isInputFocused = document.activeElement?.tagName === "INPUT";
@@ -20,7 +20,7 @@ export const useBuilderShortCuts = ({
 }: {
   firstSceneKey: string;
 }) => {
-  const { setOpen: openAddSceneEditor } = useAddSceneEditorStore();
+  const { addScene } = useAddScene();
   const { setOpen: openExportModal } = useExportModalStore();
   const { testStory } = useTestStory();
 
@@ -33,7 +33,7 @@ export const useBuilderShortCuts = ({
       switch (key) {
         case "n":
           if (isAnyModalOpen()) return;
-          openAddSceneEditor(true);
+          addScene({ actions: [], content: "", title: "" });
           e.preventDefault();
           break;
         case "t":
@@ -47,7 +47,7 @@ export const useBuilderShortCuts = ({
           break;
       }
     },
-    [firstSceneKey, openAddSceneEditor, openExportModal, testStory],
+    [addScene, firstSceneKey, openExportModal, testStory],
   );
 
   useEffect(() => {

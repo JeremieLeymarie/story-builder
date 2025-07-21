@@ -3,14 +3,14 @@ import { BookOpenTextIcon, TestTubesIcon } from "lucide-react";
 import { useToolbar } from "../hooks/use-toolbar";
 import { ExportModal } from "./export-modal";
 import { DeleteModal } from "./delete-modal";
-import { useAddSceneEditorStore } from "../hooks/use-add-scene-editor-store";
 import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
-import { useBuilderContext } from "../hooks/use-builder-store";
+import { useBuilderContext } from "../hooks/use-builder-context";
+import { useAddScene } from "../hooks/use-add-scene";
 
 export const Toolbar = () => {
-  const { story, scenes } = useBuilderContext();
+  const { story } = useBuilderContext();
   const { testStory, deleteStory } = useToolbar({ storyKey: story.key });
-  const { setOpen: openAddSceneEditor } = useAddSceneEditorStore();
+  const { addScene } = useAddScene();
 
   return (
     <div className="z-50 w-[250px] rounded border bg-white/80 p-4 shadow-sm">
@@ -19,7 +19,9 @@ export const Toolbar = () => {
         <Button
           size="sm"
           className="flex w-full justify-start"
-          onClick={() => openAddSceneEditor(true)}
+          onClick={() => {
+            addScene({ title: "", content: "", actions: [] });
+          }}
         >
           <BookOpenTextIcon size="16px" />
           &nbsp; Add a scene
@@ -35,7 +37,7 @@ export const Toolbar = () => {
           &nbsp; Test
           <ButtonShortCutDoc doc="T" />
         </Button>
-        <ExportModal story={story} scenes={scenes} />
+        <ExportModal storyKey={story.key} />
         <DeleteModal deleteStory={deleteStory} />
       </div>
     </div>

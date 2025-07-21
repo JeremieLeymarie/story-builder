@@ -10,12 +10,12 @@ import {
 import { BuilderNode } from "../types";
 import { Edge } from "@xyflow/react";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
+import { RefreshFunction } from "../components/types";
 
 type BuilderContext = {
-  refresh: () => void;
+  refresh: RefreshFunction;
   reactFlowRef: RefObject<HTMLDivElement | null>;
   story: Story;
-  scenes: Scene[];
   nodes: BuilderNode[];
   edges: Edge[];
 };
@@ -27,7 +27,11 @@ export const BuilderContextProvider = ({
   scenes,
   story,
   refresh,
-}: PropsWithChildren<Pick<BuilderContext, "story" | "scenes" | "refresh">>) => {
+}: PropsWithChildren<{
+  scenes: Scene[];
+  story: Story;
+  refresh: RefreshFunction;
+}>) => {
   const reactFlowRef = useRef<HTMLDivElement>(null);
 
   const [nodes, edges] = scenesToNodesAndEdgesAdapter({ scenes, story });
@@ -38,7 +42,6 @@ export const BuilderContextProvider = ({
         reactFlowRef,
         nodes,
         edges,
-        scenes,
         story,
         refresh,
       }}

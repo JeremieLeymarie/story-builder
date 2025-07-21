@@ -20,7 +20,7 @@ export function Plugins() {
     <div className="relative">
       <ToolbarPlugin>
         {() => (
-          <div className="vertical-align-middle sticky top-0 z-10 flex gap-2 overflow-auto border-b p-1">
+          <div className="vertical-align-middle sticky top-0 z-10 flex gap-2 overflow-auto border-b bg-white p-1">
             <FontFormatToolbarPlugin format="bold" />
             <FontFormatToolbarPlugin format="italic" />
             <FontFormatToolbarPlugin format="underline" />

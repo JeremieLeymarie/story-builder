@@ -37,6 +37,7 @@ export function Reader({
   return (
     <div>
       <LexicalComposer
+        key={JSON.stringify(editorSerializedState)}
         initialConfig={{
           ...editorConfig,
           ...(editorState ? { editorState } : {}),

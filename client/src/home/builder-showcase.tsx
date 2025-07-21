@@ -12,7 +12,7 @@ import {
   useEdgesState,
   useNodesState,
 } from "@xyflow/react";
-import { BuilderContextProvider } from "@/builder/hooks/use-builder-store";
+import { BuilderContextProvider } from "@/builder/hooks/use-builder-context";
 import { Story } from "@/lib/storage/domain";
 import { makeSimpleSceneContent } from "@/lib/scene-content";
 
@@ -30,6 +30,7 @@ const NODES: SceneNodeType[] = [
       key: "first-fake-scene-key",
       storyKey: "fake-story-key",
       isEditable: false,
+      builderParams: { position: { x: 50, y: 150 } },
     },
     id: "scene-1",
     position: { x: 50, y: 150 },
@@ -46,6 +47,7 @@ const NODES: SceneNodeType[] = [
       key: "forest-fake-scene-key",
       storyKey: "fake-story-key",
       isEditable: false,
+      builderParams: { position: { x: 550, y: 50 } },
     },
     id: "scene-2",
     position: { x: 550, y: 50 },
@@ -62,6 +64,7 @@ const NODES: SceneNodeType[] = [
       key: "village-fake-scene-key",
       storyKey: "fake-story-key",
       isEditable: false,
+      builderParams: { position: { x: 550, y: 350 } },
     },
     id: "scene-3",
     position: { x: 550, y: 350 },
@@ -123,7 +126,7 @@ export const BuilderShowcase = () => {
       </div>
       <div className="h-full w-7/12 bg-white max-lg:h-[400px] max-lg:w-full">
         <BuilderContextProvider
-          refresh={() => {}}
+          refresh={async () => {}}
           story={MOCK_STORY}
           scenes={[]}
         >

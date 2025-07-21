@@ -25,7 +25,13 @@ const Page = () => {
 
   return (
     <div className="h-full w-full">
-      <BuilderContainer scenes={scenes} story={story} refresh={refetch} />
+      <BuilderContainer
+        scenes={scenes}
+        story={story}
+        refresh={async () => {
+          refetch();
+        }}
+      />
     </div>
   );
 };
