@@ -33,7 +33,7 @@ export const useBuilderShortCuts = ({
       switch (key) {
         case "n":
           if (isAnyModalOpen()) return;
-          addScene({ actions: [], content: "", title: "" });
+          addScene({ actions: [], content: {}, title: "" });
           e.preventDefault();
           break;
         case "t":
