@@ -8,8 +8,10 @@ import { EditorState, SerializedEditorState } from "lexical";
 import { TooltipProvider } from "@/design-system/primitives/tooltip";
 
 import { nodes } from "./nodes";
-import { Plugins } from "./plugins";
+import { EditorPlugins } from "./editor-plugins";
 import { useMemo } from "react";
+import { BasePlugins } from "./base-plugins";
+import { cn } from "@/lib/style";
 
 const editorConfig: InitialConfigType = {
   namespace: "Editor",
@@ -31,8 +33,9 @@ export const Editor = ({
   onChange,
   onSerializedChange,
   sceneKey,
+  editable,
 }: {
-  editorState?: EditorState;
+  editable: boolean;
   editorSerializedState?: SerializedEditorState;
   onChange?: (editorState: EditorState) => void;
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
@@ -43,9 +46,13 @@ export const Editor = ({
   // In the lifecycle, sceneKey (from global store) is updated before the scene content (from form);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const key = useMemo(() => sceneKey, [editorSerializedState]);
-
   return (
-    <div className="bg-background max-h-75 min-h-25 overflow-y-auto rounded-lg border shadow">
+    <div
+      className={cn(
+        editable &&
+          "bg-background max-h-75 min-h-25 overflow-y-auto rounded-lg border shadow",
+      )}
+    >
       <LexicalComposer
         key={key}
         initialConfig={{
@@ -53,10 +60,15 @@ export const Editor = ({
           ...(editorSerializedState
             ? { editorState: JSON.stringify(editorSerializedState) }
             : {}),
+          editable,
         }}
       >
         <TooltipProvider>
-          <Plugins />
+          {editable ? (
+            <EditorPlugins editable={editable} />
+          ) : (
+            <BasePlugins editable={editable} />
+          )}
 
           <OnChangePlugin
             ignoreSelectionChange={true}

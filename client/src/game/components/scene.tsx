@@ -5,8 +5,8 @@ import { LibraryBigIcon } from "lucide-react";
 import { Scene, StoryProgress } from "@/lib/storage/domain";
 import { Divider } from "@/design-system/components/divider";
 import { Link } from "@tanstack/react-router";
-import { Reader } from "@/design-system/components/editor/blocks/reader";
 import { SerializedEditorState } from "lexical";
+import { Editor } from "@/design-system/components/editor/blocks/editor";
 
 type GameSceneProps = {
   scene: Scene;
@@ -16,7 +16,7 @@ type GameSceneProps = {
 
 export const GameScene = ({
   progress,
-  scene: { content, title, actions, storyKey },
+  scene: { key, content, title, actions, storyKey },
   isLastScene,
 }: GameSceneProps) => {
   return (
@@ -28,7 +28,9 @@ export const GameScene = ({
               {title}
             </h1>
             <p className="leading-7 wrap-break-word not-first:mt-6">
-              <Reader
+              <Editor
+                sceneKey={key}
+                editable={false}
                 editorSerializedState={
                   content as unknown as SerializedEditorState
                 }

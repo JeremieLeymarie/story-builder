@@ -53,6 +53,7 @@ export const SceneContentSection = ({
             <FormLabel>Content</FormLabel>
             <FormControl>
               <Editor
+                editable={true}
                 sceneKey={sceneKey}
                 onSerializedChange={(data) => {
                   field.onChange(data);
