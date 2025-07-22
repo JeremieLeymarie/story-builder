@@ -1,6 +1,6 @@
 import { BackdropLoader, ErrorMessage } from "@/design-system/components";
 import { useMigrations } from "@/hooks/use-migrations";
-import { ReactNode } from "@tanstack/react-router";
+import { ReactNode } from "react";
 
 export const MigrationProvider = ({ children }: { children: ReactNode }) => {
   const { isError, isLoading, isSuccess } = useMigrations();

@@ -1,4 +1,4 @@
-import { ReactNode } from "@tanstack/react-router";
+import { ReactNode } from "react";
 import { Card, CardDescription, CardHeader, CardTitle } from "../primitives";
 
 export const ErrorMessage = ({ children }: { children?: ReactNode }) => {
