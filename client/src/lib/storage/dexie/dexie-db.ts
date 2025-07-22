@@ -5,22 +5,27 @@ import { DEMO_IMPORTED_STORY, DEMO_SCENES, DEMO_STORY } from "./seed";
 import { getLibraryService } from "@/domains/game/library-service";
 
 // TODO: move this file to a more appropriate location
-
-export const db = new Dexie("story-builder") as Dexie & {
+type Tables = {
   user: EntityTable<User, "key">;
   stories: EntityTable<Story, "key">;
   scenes: EntityTable<Scene, "key">;
   storyProgresses: EntityTable<StoryProgress, "key">;
 };
 
-db.version(1).stores({
+export const db = new Dexie("story-builder") as Dexie & Tables;
+
+const tables: Record<keyof Tables, string> = {
   user: "&key, username, email",
   stories:
     "&key, firstSceneKey, title, description, image, status, genres, publicationDate, creationDate, author, finished",
   scenes: "&key, storyKey, title, content, actions, builderParams",
   storyProgresses:
     "&key, storyKey, userKey, currentSceneKey, character, inventory, history, lastPlayedAt",
-});
+};
+
+db.version(1).stores(tables);
+
+export const TABLE_NAMES = Object.keys(tables);
 
 db.on("populate", async (_transaction) => {
   // Add story to builder

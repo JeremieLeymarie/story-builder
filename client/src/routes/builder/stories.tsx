@@ -13,7 +13,7 @@ const Component = () => {
   return stories ? (
     <BuilderStories stories={stories} />
   ) : (
-    <ErrorMessage text="Could not get stories" />
+    <ErrorMessage>Could not get stories</ErrorMessage>
   );
 };
 
