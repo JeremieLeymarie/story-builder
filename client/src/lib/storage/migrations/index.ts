@@ -1,3 +1,5 @@
+import { db, TABLE_NAMES } from "../dexie/dexie-db";
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type MigrateFunction = (...params: any[]) => Promise<void>;
 
@@ -16,12 +18,14 @@ export const executeMigrations = async () => {
     localStorage.getItem(LS_KEY) ?? "{}",
   );
 
-  for (let i = 0; i < MIGRATIONS.length; i++) {
-    const migration = MIGRATIONS[i]!;
-    if (migration.key in executedMigrations) continue;
+  db.transaction("rw", TABLE_NAMES, async () => {
+    for (let i = 0; i < MIGRATIONS.length; i++) {
+      const migration = MIGRATIONS[i]!;
+      if (migration.key in executedMigrations) continue;
 
-    await migration.migrate();
-    executedMigrations[migration.key] = true;
-    localStorage.setItem(LS_KEY, JSON.stringify(executedMigrations));
-  }
+      await migration.migrate();
+      executedMigrations[migration.key] = true;
+      localStorage.setItem(LS_KEY, JSON.stringify(executedMigrations));
+    }
+  });
 };

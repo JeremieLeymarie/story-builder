@@ -18,7 +18,7 @@ const Page = () => {
   }
 
   if (story === null || currentProgress === null) {
-    return <ErrorMessage text="This page does not exist." />;
+    return <ErrorMessage>This page does not exist.</ErrorMessage>;
   }
 
   return (
