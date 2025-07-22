@@ -20,6 +20,8 @@ const editorConfig: InitialConfigType = {
       underline: "underline",
       strikethrough: "line-through",
       underlineStrikethrough: "[text-decoration:underline_line-through]",
+      bold: "bold",
+      italic: "italic",
     },
   },
   nodes,
