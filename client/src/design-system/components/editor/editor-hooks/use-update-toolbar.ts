@@ -7,11 +7,11 @@ import {
   SELECTION_CHANGE_COMMAND,
 } from "lexical";
 
-import { useToolbarContext } from "@/components/editor/context/toolbar-context";
+import { useToolbarContext } from "@/design-system/components/editor/context/toolbar-context";
 
-export function useUpdateToolbarHandler(
+export const useUpdateToolbarHandler = (
   callback: (selection: BaseSelection) => void,
-) {
+) => {
   const [editor] = useLexicalComposerContext();
   const { activeEditor } = useToolbarContext();
 
@@ -37,4 +37,4 @@ export function useUpdateToolbarHandler(
       }
     });
   }, [activeEditor, callback]);
-}
+};

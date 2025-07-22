@@ -14,8 +14,8 @@ import {
   UnderlineIcon,
 } from "lucide-react";
 
-import { useToolbarContext } from "@/components/editor/context/toolbar-context";
-import { useUpdateToolbarHandler } from "@/components/editor/editor-hooks/use-update-toolbar";
+import { useToolbarContext } from "@/design-system/components/editor/context/toolbar-context";
+import { useUpdateToolbarHandler } from "@/design-system/components/editor/editor-hooks/use-update-toolbar";
 import { Toggle } from "@/design-system/primitives/toggle";
 
 const Icons: Partial<Record<TextFormatType, React.ElementType>> = {
@@ -26,11 +26,11 @@ const Icons: Partial<Record<TextFormatType, React.ElementType>> = {
   code: CodeIcon,
 } as const;
 
-export function FontFormatToolbarPlugin({
+export const FontFormatToolbarPlugin = ({
   format,
 }: {
   format: Omit<TextFormatType, "highlight" | "subscript" | "superscript">;
-}) {
+}) => {
   const { activeEditor } = useToolbarContext();
   const [isSelected, setIsSelected] = useState<boolean>(false);
 
@@ -62,4 +62,4 @@ export function FontFormatToolbarPlugin({
       <Icon className="h-4 w-4" />
     </Toggle>
   );
-}
+};
