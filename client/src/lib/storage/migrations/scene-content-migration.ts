@@ -1,6 +1,6 @@
 import { makeSimpleSceneContent } from "@/lib/scene-content";
 import { db } from "../dexie/dexie-db";
-import { Migration } from ".";
+import { Migration } from "./types";
 
 const SCENE_CONTENT_MIGRATION_KEY = "SCENE_CONTENT_MIGRATION_KEY";
 

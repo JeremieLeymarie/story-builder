@@ -1,13 +1,6 @@
 import { db, TABLE_NAMES } from "../dexie/dexie-db";
 import { SceneContentMigration } from "./scene-content-migration";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type MigrateFunction = (...params: any[]) => Promise<void>;
-
-export type Migration = {
-  key: string;
-  migrate: MigrateFunction;
-};
+import { Migration } from "./types";
 
 // The order is important here
 export const MIGRATIONS: Migration[] = [SceneContentMigration];
