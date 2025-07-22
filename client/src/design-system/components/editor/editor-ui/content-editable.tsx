@@ -7,16 +7,16 @@ type Props = {
   placeholderClassName?: string;
 };
 
-export function ContentEditable({
+export const ContentEditable = ({
   placeholder,
   className,
   placeholderClassName,
-}: Props): JSX.Element {
+}: Props): JSX.Element => {
   return (
     <LexicalContentEditable
       className={
         className ??
-        `ContentEditable__root relative block min-h-72 min-h-full overflow-auto px-8 py-4 focus:outline-none`
+        `relative block min-h-72 min-h-full overflow-auto px-8 py-4 focus:outline-none`
       }
       aria-placeholder={placeholder}
       placeholder={
@@ -31,4 +31,4 @@ export function ContentEditable({
       }
     />
   );
-}
+};
