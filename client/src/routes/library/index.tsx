@@ -14,7 +14,9 @@ const Component = () => {
   return games ? (
     <Library stories={games} />
   ) : (
-    <ErrorMessage text="Could not get your games. Please try again later" />
+    <ErrorMessage>
+      Could not get your games. Please try again later
+    </ErrorMessage>
   );
 };
 
