@@ -5,7 +5,7 @@ import { LibraryBigIcon } from "lucide-react";
 import { Scene, StoryProgress } from "@/lib/storage/domain";
 import { Divider } from "@/design-system/components/divider";
 import { Link } from "@tanstack/react-router";
-import { Reader } from "@/components/blocks/editor-00/reader";
+import { Reader } from "@/design-system/components/editor/blocks/reader";
 import { SerializedEditorState } from "lexical";
 
 type GameSceneProps = {

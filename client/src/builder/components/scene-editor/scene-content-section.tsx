@@ -10,7 +10,7 @@ import {
 import { UseFormReturn } from "react-hook-form";
 import { SceneSchema } from "./schema";
 import { SetFirstSceneSwitch } from "./set-first-scene-switch";
-import { Editor } from "@/components/blocks/editor-00/editor";
+import { Editor } from "@/design-system/components/editor/blocks/editor";
 import { SerializedEditorState } from "lexical";
 
 export const SceneContentSection = ({

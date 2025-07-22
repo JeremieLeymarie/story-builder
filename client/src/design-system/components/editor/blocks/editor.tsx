@@ -26,8 +26,7 @@ const editorConfig: InitialConfigType = {
   },
 };
 
-export function Editor({
-  editorState,
+export const Editor = ({
   editorSerializedState,
   onChange,
   onSerializedChange,
@@ -38,20 +37,19 @@ export function Editor({
   onChange?: (editorState: EditorState) => void;
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
   sceneKey: string;
-}) {
+}) => {
   // The key is used to force lexical to update its initial value.
   // We need it to change only when the editor state changes, to avoid de-synchronization issues
   // In the lifecycle, sceneKey (from global store) is updated before the scene content (from form);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const key = useMemo(() => sceneKey, [editorSerializedState, sceneKey]);
+  const key = useMemo(() => sceneKey, [editorSerializedState]);
 
   return (
-    <div className="bg-background max-h-75 overflow-y-auto rounded-lg border shadow">
+    <div className="bg-background max-h-75 min-h-25 overflow-y-auto rounded-lg border shadow">
       <LexicalComposer
         key={key}
         initialConfig={{
           ...editorConfig,
-          ...(editorState ? { editorState } : {}),
           ...(editorSerializedState
             ? { editorState: JSON.stringify(editorSerializedState) }
             : {}),
@@ -71,4 +69,4 @@ export function Editor({
       </LexicalComposer>
     </div>
   );
-}
+};

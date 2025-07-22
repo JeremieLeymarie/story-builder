@@ -23,8 +23,7 @@ const editorConfig: InitialConfigType = {
   },
 };
 
-export function Reader({
-  editorState,
+export const Reader = ({
   editorSerializedState,
   onChange,
   onSerializedChange,
@@ -33,14 +32,13 @@ export function Reader({
   editorSerializedState?: SerializedEditorState;
   onChange?: (editorState: EditorState) => void;
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
-}) {
+}) => {
   return (
     <div>
       <LexicalComposer
         key={JSON.stringify(editorSerializedState)}
         initialConfig={{
           ...editorConfig,
-          ...(editorState ? { editorState } : {}),
           ...(editorSerializedState
             ? { editorState: JSON.stringify(editorSerializedState) }
             : {}),
@@ -60,4 +58,4 @@ export function Reader({
       </LexicalComposer>
     </div>
   );
-}
+};
