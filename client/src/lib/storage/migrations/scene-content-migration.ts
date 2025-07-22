@@ -1,9 +1,10 @@
 import { makeSimpleSceneContent } from "@/lib/scene-content";
 import { db } from "../dexie/dexie-db";
+import { Migration } from ".";
 
-export const SCENE_CONTENT_MIGRATION_KEY = "SCENE_CONTENT_MIGRATION_KEY";
+const SCENE_CONTENT_MIGRATION_KEY = "SCENE_CONTENT_MIGRATION_KEY";
 
-export const migrate = async () => {
+const migrate = async () => {
   const stories = (await db.stories.toArray()).map((s) => s.key);
 
   const scenes = await db.scenes
@@ -21,4 +22,9 @@ export const migrate = async () => {
       },
     })),
   );
+};
+
+export const SceneContentMigration: Migration = {
+  key: SCENE_CONTENT_MIGRATION_KEY,
+  migrate,
 };
