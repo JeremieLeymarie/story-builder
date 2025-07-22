@@ -5,12 +5,14 @@ import {
   PropsWithChildren,
   RefObject,
   useContext,
+  useEffect,
   useRef,
 } from "react";
 import { BuilderNode } from "../types";
 import { Edge } from "@xyflow/react";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
 import { RefreshFunction } from "../components/types";
+import { useSceneEditorStore } from "../components/scene-editor/hooks/use-scene-editor-store";
 
 type BuilderContext = {
   refresh: RefreshFunction;
@@ -33,8 +35,14 @@ export const BuilderContextProvider = ({
   refresh: RefreshFunction;
 }>) => {
   const reactFlowRef = useRef<HTMLDivElement>(null);
+  const { close } = useSceneEditorStore();
 
   const [nodes, edges] = scenesToNodesAndEdgesAdapter({ scenes, story });
+
+  // Make sure that the scene editor is closed when another story is loaded in the builder
+  useEffect(() => {
+    close();
+  }, [close]);
 
   return (
     <BuilderContext.Provider
