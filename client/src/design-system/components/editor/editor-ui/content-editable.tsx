@@ -1,5 +1,6 @@
 import { JSX } from "react";
 import { ContentEditable as LexicalContentEditable } from "@lexical/react/LexicalContentEditable";
+import { cn } from "@/lib/style";
 
 type Props = {
   placeholder: string;
@@ -14,17 +15,17 @@ export const ContentEditable = ({
 }: Props): JSX.Element => {
   return (
     <LexicalContentEditable
-      className={
-        className ??
-        `relative block min-h-72 min-h-full overflow-auto px-8 py-4 focus:outline-none`
-      }
+      className={cn(
+        "relative block min-h-full overflow-auto px-4 py-4 focus:outline-none",
+        className,
+      )}
       aria-placeholder={placeholder}
       placeholder={
         <div
-          className={
-            placeholderClassName ??
-            `text-muted-foreground pointer-events-none absolute top-0 left-0 overflow-hidden px-8 py-[18px] text-ellipsis select-none`
-          }
+          className={cn(
+            "text-muted-foreground pointer-events-none absolute top-0 left-0 overflow-hidden px-4 py-[18px] text-ellipsis select-none",
+            placeholderClassName,
+          )}
         >
           {placeholder}
         </div>

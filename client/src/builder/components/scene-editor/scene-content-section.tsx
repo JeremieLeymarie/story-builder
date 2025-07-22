@@ -6,11 +6,12 @@ import {
   FormLabel,
   FormMessage,
   Input,
-  Textarea,
 } from "@/design-system/primitives";
 import { UseFormReturn } from "react-hook-form";
 import { SceneSchema } from "./schema";
 import { SetFirstSceneSwitch } from "./set-first-scene-switch";
+import { Editor } from "@/design-system/components/editor/blocks/editor";
+import { SerializedEditorState } from "lexical";
 
 export const SceneContentSection = ({
   form,
@@ -51,10 +52,15 @@ export const SceneContentSection = ({
           <FormItem>
             <FormLabel>Content</FormLabel>
             <FormControl>
-              <Textarea
-                placeholder="You're at a crossroads. On the left, the forest, on the right, the village."
-                className="min-h-[300px]"
-                {...field}
+              <Editor
+                editable={true}
+                sceneKey={sceneKey}
+                onSerializedChange={(data) => {
+                  field.onChange(data);
+                }}
+                editorSerializedState={
+                  field.value as unknown as SerializedEditorState
+                }
               />
             </FormControl>
             <FormDescription>The actual content of the scene.</FormDescription>
