@@ -5,14 +5,12 @@ import {
   PropsWithChildren,
   RefObject,
   useContext,
-  useEffect,
   useRef,
 } from "react";
 import { BuilderNode } from "../types";
 import { Edge } from "@xyflow/react";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
 import { RefreshFunction } from "../components/types";
-import { useSceneEditorStore } from "../components/scene-editor/hooks/use-scene-editor-store";
 
 type BuilderContext = {
   refresh: RefreshFunction;
@@ -24,6 +22,7 @@ type BuilderContext = {
 
 export const BuilderContext = createContext<BuilderContext | null>(null);
 
+// We have to be extra careful about the lifecycle of this component, as each re-render will trigger a rerender of the whole react flow interface
 export const BuilderContextProvider = ({
   children,
   scenes,
@@ -35,14 +34,8 @@ export const BuilderContextProvider = ({
   refresh: RefreshFunction;
 }>) => {
   const reactFlowRef = useRef<HTMLDivElement>(null);
-  const { close } = useSceneEditorStore();
 
   const [nodes, edges] = scenesToNodesAndEdgesAdapter({ scenes, story });
-
-  // Make sure that the scene editor is closed when another story is loaded in the builder
-  useEffect(() => {
-    close();
-  }, [close]);
 
   return (
     <BuilderContext.Provider
