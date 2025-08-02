@@ -9,10 +9,16 @@ type SceneEditorStore = {
   close: () => void;
 };
 
+export const EMPTY_STATE: Omit<SceneEditorStore, "open" | "close"> = {
+  scene: null,
+  isFirstScene: null,
+  isOpen: false,
+};
+
 export const useSceneEditorStore = create<SceneEditorStore>((set) => ({
   scene: null,
   isFirstScene: null,
   isOpen: false,
   open: ({ scene, isFirstScene }) => set({ isOpen: true, scene, isFirstScene }),
-  close: () => set({ isOpen: false, isFirstScene: null, scene: null }),
+  close: () => set(EMPTY_STATE),
 }));
