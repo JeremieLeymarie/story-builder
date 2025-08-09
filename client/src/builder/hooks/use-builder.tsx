@@ -19,7 +19,7 @@ export const useBuilder = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState(edgesFromContext);
 
   const builderService = getBuilderService();
-  const edgesProps = useBuilderEdges({
+  const { onConnect, onEdgesDelete } = useBuilderEdges({
     setEdges,
     sceneNodes: nodesFromContext,
   });
@@ -47,6 +47,7 @@ export const useBuilder = () => {
     onNodesChange,
     onEdgesChange,
     onNodesDelete,
-    ...edgesProps,
+    onConnect,
+    onEdgesDelete,
   };
 };

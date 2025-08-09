@@ -49,7 +49,17 @@ export const useBuilderEdges = ({
         actionIndex: sceneData.actionIndex,
       });
 
-      setEdges((eds) => addEdge(edge, eds));
+      // Add new edge in react flow & remove eventual existing edge coming from the same handle
+      setEdges((eds) => {
+        return addEdge(
+          edge,
+          eds.filter(
+            (ed) =>
+              ed.sourceHandle !==
+              `${sceneData.sceneToUpdate.key}-${sceneData.actionIndex}`,
+          ),
+        );
+      });
     },
     [getSceneToUpdate, setEdges],
   );
