@@ -6,7 +6,7 @@ import {
 } from "@/design-system/primitives/card";
 import { Handle, NodeProps, Position } from "@xyflow/react";
 import { EditIcon } from "lucide-react";
-import { SceneNodeType } from "../../types";
+import { SceneNodeType } from "../../../types";
 import { cn } from "@/lib/style";
 import { useSceneEditorStore } from "@/builder/components/scene-editor/hooks/use-scene-editor-store";
 import { Button } from "@/design-system/primitives";

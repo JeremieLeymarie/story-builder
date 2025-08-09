@@ -5,7 +5,7 @@ import {
   MiniMap,
   SelectionMode,
 } from "@xyflow/react";
-import { SceneNode } from "../nodes/scene/scene";
+import { SceneNode } from "./nodes/scene/scene";
 import { Toolbar } from "./toolbar";
 import { useBuilder } from "../hooks/use-builder";
 import { useBuilderContext } from "../hooks/use-builder-context";

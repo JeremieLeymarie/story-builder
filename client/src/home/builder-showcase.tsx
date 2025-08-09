@@ -1,4 +1,4 @@
-import { SceneNode } from "@/builder/nodes/scene/scene";
+import { SceneNode } from "@/builder/components/nodes/scene/scene";
 import { SceneNodeType } from "@/builder/types";
 import { Title } from "@/design-system/components";
 import { Button } from "@/design-system/primitives";
