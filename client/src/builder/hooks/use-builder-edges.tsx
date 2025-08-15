@@ -1,5 +1,12 @@
 import { Dispatch, SetStateAction, useCallback } from "react";
-import { Connection, Edge, Node, addEdge } from "@xyflow/react";
+import {
+  Connection,
+  Edge,
+  Node,
+  addEdge,
+  isEdge,
+  reconnectEdge,
+} from "@xyflow/react";
 import { SceneProps } from "../types";
 import { nodeToSceneAdapter } from "../adapters";
 import { getBuilderService } from "@/get-builder-service";
@@ -36,8 +43,13 @@ export const useBuilderEdges = ({
   );
 
   const onConnect = useCallback(
-    (edge: Edge | Connection) => {
-      const sceneData = getSceneToUpdate(edge);
+    (connection: Edge | Connection) => {
+      if (isEdge(connection))
+        throw new Error(
+          "In this context, we only expect a connection, not a fully created edge",
+        );
+
+      const sceneData = getSceneToUpdate(connection);
       if (!sceneData) {
         // TODO: Add toast
         return;
@@ -45,16 +57,20 @@ export const useBuilderEdges = ({
 
       getBuilderService().addSceneConnection({
         sourceScene: sceneData.sceneToUpdate,
-        destinationSceneKey: edge.target!,
+        destinationSceneKey: connection.target!,
         actionIndex: sceneData.actionIndex,
       });
 
       // Replace the existing edge if existed, otherwise simply add a new edge
       setEdges((prev) => {
-        const edges = prev.filter(
-          (ed) => ed.sourceHandle !== edge.sourceHandle,
+        const existingEdgeAtHandle = prev.find(
+          (ed) => ed.sourceHandle === connection.sourceHandle,
         );
-        return addEdge(edge, edges);
+        if (existingEdgeAtHandle)
+          return reconnectEdge(existingEdgeAtHandle, connection, prev, {
+            shouldReplaceId: false,
+          });
+        else return addEdge(connection, prev);
       });
     },
     [getSceneToUpdate, setEdges],
