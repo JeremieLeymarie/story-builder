@@ -49,16 +49,12 @@ export const useBuilderEdges = ({
         actionIndex: sceneData.actionIndex,
       });
 
-      // Add new edge in react flow & remove eventual existing edge coming from the same handle
-      setEdges((eds) => {
-        return addEdge(
-          edge,
-          eds.filter(
-            (ed) =>
-              ed.sourceHandle !==
-              `${sceneData.sceneToUpdate.key}-${sceneData.actionIndex}`,
-          ),
+      // Replace the existing edge if existed, otherwise simply add a new edge
+      setEdges((prev) => {
+        const edges = prev.filter(
+          (ed) => ed.sourceHandle !== edge.sourceHandle,
         );
+        return addEdge(edge, edges);
       });
     },
     [getSceneToUpdate, setEdges],
