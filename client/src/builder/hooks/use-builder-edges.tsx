@@ -1,12 +1,5 @@
 import { Dispatch, SetStateAction, useCallback } from "react";
-import {
-  Connection,
-  Edge,
-  Node,
-  addEdge,
-  isEdge,
-  reconnectEdge,
-} from "@xyflow/react";
+import { Connection, Edge, Node, addEdge, reconnectEdge } from "@xyflow/react";
 import { SceneProps } from "../types";
 import { nodeToSceneAdapter } from "../adapters";
 import { getBuilderService } from "@/get-builder-service";
@@ -43,12 +36,7 @@ export const useBuilderEdges = ({
   );
 
   const onConnect = useCallback(
-    (connection: Edge | Connection) => {
-      if (isEdge(connection))
-        throw new Error(
-          "In this context, we only expect a connection, not a fully created edge",
-        );
-
+    (connection: Connection) => {
       const sceneData = getSceneToUpdate(connection);
       if (!sceneData) {
         // TODO: Add toast
