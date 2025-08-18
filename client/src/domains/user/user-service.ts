@@ -40,6 +40,7 @@ const _getUserService = ({
           key: response.data.key,
           username: response.data.username,
         });
+        // Add author to wikis as well, maybe use event based pattern ?
       }
 
       return response;

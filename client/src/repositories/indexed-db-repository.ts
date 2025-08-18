@@ -13,6 +13,7 @@ const entityToDexieTableAdapter = (entity: Entity) => {
     scene: "scenes",
     user: "user",
     "story-progress": "storyProgresses",
+    wiki: "wikis",
   };
 
   return mapping[entity];
