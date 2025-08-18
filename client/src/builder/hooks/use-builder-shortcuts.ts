@@ -1,8 +1,8 @@
-import { useCallback, useEffect } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
 import { useTestStory } from "./use-test-story";
 import { useExportModalStore } from "./use-export-modal-store";
 import { useAddScene } from "./use-add-scene";
-import { makeSimpleSceneContent } from "@/lib/scene-content";
+import { SceneNodeType } from "../types";
 
 const isAnyInputFocused = () => {
   const isInputFocused = document.activeElement?.tagName === "INPUT";
@@ -18,10 +18,12 @@ const isAnyModalOpen = () => document.body.style.pointerEvents === "none";
 
 export const useBuilderShortCuts = ({
   firstSceneKey,
+  setNodes,
 }: {
   firstSceneKey: string;
+  setNodes: Dispatch<SetStateAction<SceneNodeType[]>>;
 }) => {
-  const { addScene } = useAddScene();
+  const { addScene } = useAddScene(setNodes);
   const { setOpen: openExportModal } = useExportModalStore();
   const { testStory } = useTestStory();
 
@@ -34,11 +36,7 @@ export const useBuilderShortCuts = ({
       switch (key) {
         case "n":
           if (isAnyModalOpen()) return;
-          addScene({
-            actions: [],
-            content: makeSimpleSceneContent(""),
-            title: "",
-          });
+          addScene();
           e.preventDefault();
           break;
         case "t":

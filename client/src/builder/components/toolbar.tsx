@@ -6,12 +6,17 @@ import { DeleteModal } from "./delete-modal";
 import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
 import { useBuilderContext } from "../hooks/use-builder-context";
 import { useAddScene } from "../hooks/use-add-scene";
-import { makeSimpleSceneContent } from "@/lib/scene-content";
+import { Dispatch, SetStateAction } from "react";
+import { SceneNodeType } from "../types";
 
-export const Toolbar = () => {
+export const Toolbar = ({
+  setNodes,
+}: {
+  setNodes: Dispatch<SetStateAction<SceneNodeType[]>>;
+}) => {
   const { story } = useBuilderContext();
   const { testStory, deleteStory } = useToolbar({ storyKey: story.key });
-  const { addScene } = useAddScene();
+  const { addScene } = useAddScene(setNodes);
 
   return (
     <div className="z-50 w-[250px] rounded border bg-white/80 p-4 shadow-sm">
@@ -21,11 +26,7 @@ export const Toolbar = () => {
           size="sm"
           className="flex w-full justify-start"
           onClick={() => {
-            addScene({
-              title: "",
-              content: makeSimpleSceneContent(""),
-              actions: [],
-            });
+            addScene();
           }}
         >
           <BookOpenTextIcon size="16px" />
