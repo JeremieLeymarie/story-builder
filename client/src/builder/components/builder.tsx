@@ -7,7 +7,7 @@ import {
 } from "@xyflow/react";
 import { SceneNode } from "./nodes/scene/scene";
 import { Toolbar } from "./toolbar";
-import { useBuilder } from "../hooks/use-builder";
+import { BuilderMeta, useBuilder } from "../hooks/use-builder";
 import { useBuilderContext } from "../hooks/use-builder-context";
 import { getUserOS } from "@/lib/get-os";
 import { ActionsBar } from "./actions-bar";
@@ -18,32 +18,14 @@ import { useBuilderActions } from "../hooks/use-builder-actions";
 
 const nodeTypes = { scene: SceneNode };
 
-const BuilderFlow = () => {
-  const {
-    edges,
-    nodes,
-    onConnect,
-    onEdgesChange,
-    onNodeMove,
-    onNodesChange,
-    onNodesDelete,
-    onEdgesDelete,
-  } = useBuilder();
-
+const BuilderFlow = ({ attributes }: BuilderMeta) => {
   const { reactFlowRef } = useBuilderContext();
   const { close: closeNewEditor } = useSceneEditorStore();
 
   return (
     <ReactFlow
       nodeTypes={nodeTypes}
-      nodes={nodes}
-      edges={edges}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      onNodeDragStop={onNodeMove}
-      onEdgesDelete={onEdgesDelete}
-      onNodesDelete={onNodesDelete}
+      {...attributes}
       minZoom={0.1}
       defaultEdgeOptions={{ zIndex: 10000 }}
       selectionMode={SelectionMode.Partial}
@@ -64,17 +46,18 @@ const BuilderFlow = () => {
 
 export const Builder = () => {
   const { updateScene } = useBuilderActions();
+  const builder = useBuilder();
 
   return (
     <div className="relative flex h-full w-full border">
       <div className="absolute top-5 left-5 flex flex-col gap-4">
-        <Toolbar />
+        <Toolbar setNodes={builder.setNodes} />
         <ActionsBar />
       </div>
       <div className="absolute top-5 right-5 flex flex-col gap-4">
         <SceneEditor onSave={updateScene} />
       </div>
-      <BuilderFlow />
+      <BuilderFlow {...builder} />
     </div>
   );
 };

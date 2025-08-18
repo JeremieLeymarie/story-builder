@@ -1,15 +1,27 @@
 import { Dispatch, SetStateAction, useCallback } from "react";
-import { Connection, Edge, Node, addEdge, reconnectEdge } from "@xyflow/react";
-import { SceneProps } from "../types";
+import {
+  Connection,
+  Edge,
+  FinalConnectionState,
+  Node,
+  addEdge,
+  reconnectEdge,
+} from "@xyflow/react";
+import { SceneNodeType, SceneProps } from "../types";
 import { nodeToSceneAdapter } from "../adapters";
 import { getBuilderService } from "@/get-builder-service";
+import { useAddScene } from "./use-add-scene";
+import { Story } from "@/lib/storage/domain";
 
 export const useBuilderEdges = ({
   sceneNodes,
   setEdges,
+  setNodes,
 }: {
   sceneNodes: Node<SceneProps, "scene">[];
+  story: Story;
   setEdges: Dispatch<SetStateAction<Edge[]>>;
+  setNodes: Dispatch<SetStateAction<SceneNodeType[]>>;
 }) => {
   const getSceneToUpdate = useCallback(
     (edge: Edge | Connection) => {
@@ -64,6 +76,29 @@ export const useBuilderEdges = ({
     [getSceneToUpdate, setEdges],
   );
 
+  const { addScene } = useAddScene(setNodes);
+  const onConnectEnd = useCallback(
+    async (
+      ev: MouseEvent | TouchEvent,
+      connectionState: FinalConnectionState,
+    ) => {
+      if (!connectionState.isValid) {
+        const event = "changedTouches" in ev ? ev.changedTouches[0] : ev;
+        const node = await addScene(
+          event ? { x: event.clientX, y: event.clientY } : undefined,
+        );
+        // Something has gone very wrong if any of those aren't defined, in which case there are probably *bigger* things to worry about.
+        onConnect({
+          source: connectionState.fromNode?.id ?? "",
+          target: node.id,
+          sourceHandle: connectionState.fromHandle?.id ?? "",
+          targetHandle: node.handles?.[0]?.id ?? "",
+        });
+      }
+    },
+    [addScene, onConnect],
+  );
+
   const onEdgesDelete = useCallback(
     (edges: Edge[]) => {
       edges.forEach((edge) => {
@@ -82,5 +117,5 @@ export const useBuilderEdges = ({
     [getSceneToUpdate],
   );
 
-  return { onConnect, onEdgesDelete };
+  return { onConnect, onConnectEnd, onEdgesDelete };
 };
