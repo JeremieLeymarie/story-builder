@@ -4,7 +4,7 @@ import { WikiServiceContext } from "../wiki-service";
 import { TEST_USER } from "@/lib/storage/dexie/test-db";
 
 export const getWikiServiceTestContext = (): WikiServiceContext => ({
-  userKey: TEST_USER.key,
+  getUser: () => Promise.resolve(TEST_USER),
 });
 
 export const getStubWikiRepository = (): WikiRepositoryPort => ({

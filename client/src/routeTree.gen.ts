@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as WikisIndexRouteImport } from './routes/wikis/index'
 import { Route as LibraryIndexRouteImport } from './routes/library/index'
 import { Route as LibraryStoryKeyRouteImport } from './routes/library/$storyKey'
 import { Route as BuilderStoriesRouteImport } from './routes/builder/stories'
@@ -26,6 +27,11 @@ const AboutRoute = AboutRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WikisIndexRoute = WikisIndexRouteImport.update({
+  id: '/wikis/',
+  path: '/wikis/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LibraryIndexRoute = LibraryIndexRouteImport.update({
@@ -66,6 +72,7 @@ export interface FileRoutesByFullPath {
   '/builder/stories': typeof BuilderStoriesRoute
   '/library/$storyKey': typeof LibraryStoryKeyRoute
   '/library': typeof LibraryIndexRoute
+  '/wikis': typeof WikisIndexRoute
   '/game/$gameKey/$sceneKey': typeof GameGameKeySceneKeyRoute
   '/game/test/$gameKey/$sceneKey': typeof GameTestGameKeySceneKeyRoute
 }
@@ -76,6 +83,7 @@ export interface FileRoutesByTo {
   '/builder/stories': typeof BuilderStoriesRoute
   '/library/$storyKey': typeof LibraryStoryKeyRoute
   '/library': typeof LibraryIndexRoute
+  '/wikis': typeof WikisIndexRoute
   '/game/$gameKey/$sceneKey': typeof GameGameKeySceneKeyRoute
   '/game/test/$gameKey/$sceneKey': typeof GameTestGameKeySceneKeyRoute
 }
@@ -87,6 +95,7 @@ export interface FileRoutesById {
   '/builder/stories': typeof BuilderStoriesRoute
   '/library/$storyKey': typeof LibraryStoryKeyRoute
   '/library/': typeof LibraryIndexRoute
+  '/wikis/': typeof WikisIndexRoute
   '/game/$gameKey/$sceneKey': typeof GameGameKeySceneKeyRoute
   '/game/test/$gameKey/$sceneKey': typeof GameTestGameKeySceneKeyRoute
 }
@@ -99,6 +108,7 @@ export interface FileRouteTypes {
     | '/builder/stories'
     | '/library/$storyKey'
     | '/library'
+    | '/wikis'
     | '/game/$gameKey/$sceneKey'
     | '/game/test/$gameKey/$sceneKey'
   fileRoutesByTo: FileRoutesByTo
@@ -109,6 +119,7 @@ export interface FileRouteTypes {
     | '/builder/stories'
     | '/library/$storyKey'
     | '/library'
+    | '/wikis'
     | '/game/$gameKey/$sceneKey'
     | '/game/test/$gameKey/$sceneKey'
   id:
@@ -119,6 +130,7 @@ export interface FileRouteTypes {
     | '/builder/stories'
     | '/library/$storyKey'
     | '/library/'
+    | '/wikis/'
     | '/game/$gameKey/$sceneKey'
     | '/game/test/$gameKey/$sceneKey'
   fileRoutesById: FileRoutesById
@@ -130,6 +142,7 @@ export interface RootRouteChildren {
   BuilderStoriesRoute: typeof BuilderStoriesRoute
   LibraryStoryKeyRoute: typeof LibraryStoryKeyRoute
   LibraryIndexRoute: typeof LibraryIndexRoute
+  WikisIndexRoute: typeof WikisIndexRoute
   GameGameKeySceneKeyRoute: typeof GameGameKeySceneKeyRoute
   GameTestGameKeySceneKeyRoute: typeof GameTestGameKeySceneKeyRoute
 }
@@ -148,6 +161,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wikis/': {
+      id: '/wikis/'
+      path: '/wikis'
+      fullPath: '/wikis'
+      preLoaderRoute: typeof WikisIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/library/': {
@@ -202,6 +222,7 @@ const rootRouteChildren: RootRouteChildren = {
   BuilderStoriesRoute: BuilderStoriesRoute,
   LibraryStoryKeyRoute: LibraryStoryKeyRoute,
   LibraryIndexRoute: LibraryIndexRoute,
+  WikisIndexRoute: WikisIndexRoute,
   GameGameKeySceneKeyRoute: GameGameKeySceneKeyRoute,
   GameTestGameKeySceneKeyRoute: GameTestGameKeySceneKeyRoute,
 }
