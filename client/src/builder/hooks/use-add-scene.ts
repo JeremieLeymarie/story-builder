@@ -1,11 +1,10 @@
 import { useBuilderContext } from "./use-builder-context";
-import { useReactFlow, XYPosition, Node } from "@xyflow/react";
+import { useReactFlow, XYPosition } from "@xyflow/react";
 import { getBuilderService } from "@/get-builder-service";
 import { SceneSchema } from "../components/scene-editor/schema";
 import { makeSimpleSceneContent } from "@/lib/scene-content";
 import { sceneToNodeAdapter } from "../adapters";
-import { Dispatch, SetStateAction } from "react";
-import { SceneNodeType } from "../types";
+import { Scene } from "@/lib/storage/domain";
 
 export const DEFAULT_SCENE: SceneSchema = {
   title: "",
@@ -13,13 +12,11 @@ export const DEFAULT_SCENE: SceneSchema = {
   actions: [],
 };
 
-export const useAddScene = (
-  setNodes: Dispatch<SetStateAction<SceneNodeType[]>>,
-) => {
+export const useAddScene = () => {
   const builderService = getBuilderService();
   const { story } = useBuilderContext();
 
-  const { screenToFlowPosition } = useReactFlow();
+  const { screenToFlowPosition, setNodes } = useReactFlow();
   const { reactFlowRef } = useBuilderContext();
 
   const getCenterPosition = () => {
@@ -33,21 +30,17 @@ export const useAddScene = (
     return position;
   };
 
-  // FUTURE: this is a bit slow, is there way to render the new node first and then add it to the db?
   const addScene = async (
     position: XYPosition = getCenterPosition(),
-    scene: SceneSchema = DEFAULT_SCENE,
-  ): Promise<Node> => {
-    const node = sceneToNodeAdapter({
-      scene: await builderService.addScene({
-        ...scene,
-        storyKey: story.key,
-        builderParams: { position: screenToFlowPosition(position) },
-      }),
-      story,
+    keyless_scene: SceneSchema = DEFAULT_SCENE,
+  ): Promise<Scene> => {
+    const scene = await builderService.addScene({
+      ...keyless_scene,
+      storyKey: story.key,
+      builderParams: { position: screenToFlowPosition(position) },
     });
-    setNodes((nds) => nds.concat(node));
-    return node;
+    setNodes((nds) => [...nds, sceneToNodeAdapter({ scene, story })]);
+    return scene;
   };
 
   return { addScene };

@@ -6,17 +6,11 @@ import { DeleteModal } from "./delete-modal";
 import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
 import { useBuilderContext } from "../hooks/use-builder-context";
 import { useAddScene } from "../hooks/use-add-scene";
-import { Dispatch, SetStateAction } from "react";
-import { SceneNodeType } from "../types";
 
-export const Toolbar = ({
-  setNodes,
-}: {
-  setNodes: Dispatch<SetStateAction<SceneNodeType[]>>;
-}) => {
+export const Toolbar = () => {
   const { story } = useBuilderContext();
   const { testStory, deleteStory } = useToolbar({ storyKey: story.key });
-  const { addScene } = useAddScene(setNodes);
+  const { addScene } = useAddScene();
 
   return (
     <div className="z-50 w-[250px] rounded border bg-white/80 p-4 shadow-sm">
