@@ -7,21 +7,20 @@ import {
   addEdge,
   reconnectEdge,
 } from "@xyflow/react";
-import { SceneNodeType, SceneProps } from "../types";
-import { nodeToSceneAdapter } from "../adapters";
+import { SceneProps } from "../types";
+import { nodeToSceneAdapter, sceneToNodeAdapter } from "../adapters";
 import { getBuilderService } from "@/get-builder-service";
 import { useAddScene } from "./use-add-scene";
 import { Story } from "@/lib/storage/domain";
 
 export const useBuilderEdges = ({
   sceneNodes,
+  story,
   setEdges,
-  setNodes,
 }: {
   sceneNodes: Node<SceneProps, "scene">[];
   story: Story;
   setEdges: Dispatch<SetStateAction<Edge[]>>;
-  setNodes: Dispatch<SetStateAction<SceneNodeType[]>>;
 }) => {
   const getSceneToUpdate = useCallback(
     (edge: Edge | Connection) => {
@@ -76,27 +75,31 @@ export const useBuilderEdges = ({
     [getSceneToUpdate, setEdges],
   );
 
-  const { addScene } = useAddScene(setNodes);
+  const { addScene } = useAddScene();
   const onConnectEnd = useCallback(
     async (
       ev: MouseEvent | TouchEvent,
       connectionState: FinalConnectionState,
     ) => {
-      if (!connectionState.isValid) {
+      // create a node on edge drop
+      if (
+        !connectionState.isValid &&
+        connectionState.fromNode &&
+        connectionState.fromHandle?.id
+      ) {
         const event = "changedTouches" in ev ? ev.changedTouches[0] : ev;
-        const node = await addScene(
-          event ? { x: event.clientX, y: event.clientY } : undefined,
-        );
-        // Something has gone very wrong if any of those aren't defined, in which case there are probably *bigger* things to worry about.
+        if (!event) return;
+        const scene = await addScene({ x: event.clientX, y: event.clientY });
+        const node = sceneToNodeAdapter({ scene, story });
         onConnect({
-          source: connectionState.fromNode?.id ?? "",
+          source: connectionState.fromNode.id,
+          sourceHandle: connectionState.fromHandle.id,
           target: node.id,
-          sourceHandle: connectionState.fromHandle?.id ?? "",
-          targetHandle: node.handles?.[0]?.id ?? "",
+          targetHandle: null,
         });
       }
     },
-    [addScene, onConnect],
+    [addScene, onConnect, story],
   );
 
   const onEdgesDelete = useCallback(
