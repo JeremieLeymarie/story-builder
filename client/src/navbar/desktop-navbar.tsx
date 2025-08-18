@@ -48,6 +48,11 @@ export const DesktopNavbar = ({
             Builder
           </NavButton>
         </Link>
+        <Link to="/wikis" className="block">
+          <NavButton isCurrentState={pathname.includes("wikis")}>
+            Wikis
+          </NavButton>
+        </Link>
         <Link to="/about" className="block">
           <NavButton isCurrentState={pathname === "/about"}>About</NavButton>
         </Link>

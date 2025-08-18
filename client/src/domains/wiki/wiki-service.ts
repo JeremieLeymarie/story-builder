@@ -1,4 +1,4 @@
-import { Wiki } from "@/lib/storage/domain";
+import { User, Wiki } from "@/lib/storage/domain";
 import { getDexieWikiRepository, WikiRepositoryPort } from "./wiki-repository";
 import { getUser } from "@/lib/auth";
 
@@ -7,7 +7,7 @@ export type WikiServicePort = {
 };
 
 export type WikiServiceContext = {
-  userKey: string | undefined;
+  getUser: () => Promise<User | null>;
 };
 
 export const _getWikiService = ({
@@ -19,7 +19,8 @@ export const _getWikiService = ({
 }): WikiServicePort => {
   return {
     getAllWikis: async () => {
-      return repository.getUserWikis(context.userKey);
+      const user = await context.getUser();
+      return repository.getUserWikis(user?.key);
     },
   };
 };
@@ -27,8 +28,6 @@ export const _getWikiService = ({
 export const getWikiService = async () => {
   return _getWikiService({
     repository: getDexieWikiRepository(),
-    context: {
-      userKey: (await getUser())?.key,
-    },
+    context: { getUser },
   });
 };
