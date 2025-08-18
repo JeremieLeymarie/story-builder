@@ -34,7 +34,7 @@ const ImportPreview = ({
           <p>
             Written by{" "}
             {storyFromImport.story.author?.username ??
-              ANONYMOUS_AUTHOR.username}{" "}
+              ANONYMOUS_AUTHOR.username}
           </p>
           <div className="flex gap-2">
             {storyFromImport.story.genres.map((genre) => (
