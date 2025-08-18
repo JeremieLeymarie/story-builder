@@ -39,9 +39,10 @@ const _getUserService = ({
     username: string;
     key: string;
   }) => {
-    // After authenticating for the first time, we need to set the author field in
+    // After authenticating, we need to set the author field in
     // - stories
     // - wikis
+    // That had an undefined author field
     await Promise.all([
       localRepository.addAuthorToStories({ key, username }),
       wikiService.addAuthorToWikis({ key, username }),

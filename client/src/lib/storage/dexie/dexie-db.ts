@@ -15,7 +15,7 @@ export type Database = Dexie & Tables;
 
 export const db = new Dexie("story-builder") as Database;
 
-export const tables: Record<keyof Tables, string> = {
+const tables: Record<keyof Tables, string> = {
   user: "&key, username, email",
   stories:
     "&key, firstSceneKey, title, description, image, status, genres, publicationDate, creationDate, author, finished",
