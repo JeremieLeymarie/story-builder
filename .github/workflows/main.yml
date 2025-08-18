@@ -32,6 +32,10 @@ jobs:
       - name: Test
         run: bun run test:single
 
+      - name: Format
+        run: bun prettier --check --ignore-unknown .
+
+
   server:
     runs-on: ubuntu-latest
 
