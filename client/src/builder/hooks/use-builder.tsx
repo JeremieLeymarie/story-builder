@@ -5,9 +5,7 @@ import { BuilderNode } from "../types";
 import { useBuilderShortCuts } from "./use-builder-shortcuts";
 import { useBuilderContext } from "./use-builder-context";
 import { getBuilderService } from "@/get-builder-service";
-
-// For now state is entirely dictated by the local dexie-db, but this could be a performance
-// issue in very large stories
+import { useBuilderError } from "./use-builder-error";
 
 export const useBuilder = () => {
   const {
@@ -18,6 +16,7 @@ export const useBuilder = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(nodesFromContext);
   const [edges, setEdges, onEdgesChange] = useEdgesState(edgesFromContext);
 
+  const { handleError } = useBuilderError();
   const builderService = getBuilderService();
   const { onConnect, onConnectEnd, onEdgesDelete } = useBuilderEdges();
 
@@ -29,12 +28,16 @@ export const useBuilder = () => {
   }, [setNodes, edgesFromContext, nodesFromContext, setEdges]);
 
   const onNodeDragStop = (_: MouseEvent, node: BuilderNode) => {
-    builderService.updateSceneBuilderPosition(node.data.key, node.position);
+    builderService
+      .updateSceneBuilderPosition(node.data.key, node.position)
+      .catch(handleError);
     // TODO: handle service errors
   };
 
   const onNodesDelete = (nodes: BuilderNode[]) => {
-    builderService.deleteScenes(nodes.map(({ data: { key } }) => key));
+    builderService
+      .deleteScenes(nodes.map(({ data: { key } }) => key))
+      .catch(handleError);
   };
 
   return {

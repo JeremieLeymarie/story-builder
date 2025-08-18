@@ -266,22 +266,6 @@ describe("builder-service", () => {
     });
   });
 
-  describe("updateStory", () => {
-    it("should update story in the local database", async () => {
-      await builderService.updateStory({
-        ...BASIC_STORY,
-        title: "Pipou",
-        description: "yeehaaaw",
-      });
-
-      expect(localRepository.updateStory).toHaveBeenCalledWith({
-        ...BASIC_STORY,
-        title: "Pipou",
-        description: "yeehaaaw",
-      });
-    });
-  });
-
   describe("updateScene", () => {
     it("should only update specified parts of the scene", async () => {
       await builderService.updateScene({

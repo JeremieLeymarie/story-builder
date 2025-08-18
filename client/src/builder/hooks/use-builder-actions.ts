@@ -12,7 +12,7 @@ export const useBuilderActions = () => {
 
   const builderService = getBuilderService();
 
-  const updateSceneContent = async (scene: SceneUpdatePayload) => {
+  const updateScene = async (scene: SceneUpdatePayload) => {
     builderService.updateScene(scene).catch(handleError);
 
     setNodes((prev) =>
@@ -43,7 +43,7 @@ export const useBuilderActions = () => {
   };
 
   return {
-    updateScene: updateSceneContent,
+    updateScene,
     setFirstScene,
   };
 };
