@@ -11,13 +11,19 @@ import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 import { WithoutKey } from "@/types";
 import { contentSchema } from "@/lib/scene-content";
 
+export const ANONYMOUS_AUTHOR = {
+  key: "ANONYMOUS_AUTHOR_KEY",
+  username: "Anonymous Author",
+};
+
 export const TEMPORARY_NULL_KEY = "TEMPORARY_NULL_KEY";
 
 export const storyFromImportSchema = z.object({
   story: z.object(
     {
-      description: z.string({ message: "Description is required" }),
       key: z.string({ message: "storyKey is required" }),
+      title: z.string({ message: "Title is required" }),
+      description: z.string({ message: "Description is required" }),
       firstSceneKey: z.string({ message: "FirstSceneKey is required" }),
       creationDate: z
         .string({ message: "creationDate is required" })
@@ -27,15 +33,16 @@ export const storyFromImportSchema = z.object({
         .transform((val) => new Date(val))
         .optional(),
       genres: z.array(z.enum(STORY_GENRES)),
-      author: z.object({
-        username: z.string(),
-        key: z.string(),
-      }),
+      author: z
+        .object({
+          username: z.string(),
+          key: z.string(),
+        })
+        .optional(),
       image: z.string().url({ message: "Image has to be a valid URL" }),
       type: z.enum(STORY_TYPE, {
         message: "Type has to be a valid StoryType",
       }),
-      title: z.string({ message: "Title is required" }),
     },
     { message: "Story is required" },
   ),
@@ -174,6 +181,8 @@ export const _getImportService = ({
         storyPayload.author = user
           ? { username: user.username, key: user.key }
           : undefined;
+      } else if (!storyPayload.author) {
+        storyPayload.author = ANONYMOUS_AUTHOR;
       }
 
       const story = await localRepository.createStory(storyPayload);
