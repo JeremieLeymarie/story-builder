@@ -5,6 +5,7 @@ import { SceneSchema } from "../components/scene-editor/schema";
 import { makeSimpleSceneContent } from "@/lib/scene-content";
 import { sceneToNodeAdapter } from "../adapters";
 import { Scene } from "@/lib/storage/domain";
+import { useBuilderError } from "./use-builder-error";
 
 export const DEFAULT_SCENE: SceneSchema = {
   title: "",
@@ -15,6 +16,7 @@ export const DEFAULT_SCENE: SceneSchema = {
 export const useAddScene = () => {
   const builderService = getBuilderService();
   const { story } = useBuilderContext();
+  const { handleError } = useBuilderError();
 
   // TODO: does this re-render whenever the viewport changes
   const { screenToFlowPosition, setNodes } = useReactFlow();
@@ -34,14 +36,19 @@ export const useAddScene = () => {
   const addScene = async (
     position: XYPosition = getCenterPosition(),
     keylessScene: SceneSchema = DEFAULT_SCENE,
-  ): Promise<Scene> => {
-    const scene = await builderService.addScene({
-      ...keylessScene,
-      storyKey: story.key,
-      builderParams: { position },
-    });
-    setNodes((nds) => [...nds, sceneToNodeAdapter({ scene, story })]);
-    return scene;
+  ): Promise<Scene | null> => {
+    try {
+      const scene = await builderService.addScene({
+        ...keylessScene,
+        storyKey: story.key,
+        builderParams: { position },
+      });
+      setNodes((nds) => [...nds, sceneToNodeAdapter({ scene, story })]);
+      return scene;
+    } catch (err) {
+      handleError(err);
+      return null;
+    }
   };
 
   return { addScene };
