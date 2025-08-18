@@ -10,9 +10,11 @@ import { nodeToSceneAdapter } from "../adapters";
 import { getBuilderService } from "@/get-builder-service";
 import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
 import { BuilderNode } from "../types";
+import { useBuilderError } from "./use-builder-error";
 
 export const useBuilderEdges = () => {
   const { getNodes, setEdges } = useReactFlow<BuilderNode>();
+  const { handleError } = useBuilderError();
 
   const getSceneToUpdate = (edge: Edge | Connection) => {
     const sourceScene = getNodes().find((scene) => scene.id === edge.source);
@@ -35,11 +37,13 @@ export const useBuilderEdges = () => {
       return;
     }
 
-    getBuilderService().addSceneConnection({
-      sourceScene: sceneData.sceneToUpdate,
-      destinationSceneKey: connection.target,
-      actionIndex: sceneData.actionIndex,
-    });
+    getBuilderService()
+      .addSceneConnection({
+        sourceScene: sceneData.sceneToUpdate,
+        destinationSceneKey: connection.target,
+        actionIndex: sceneData.actionIndex,
+      })
+      .catch(handleError);
 
     // Replace the existing edge if existed, otherwise simply add a new edge
     setEdges((prev) => {
@@ -86,7 +90,10 @@ export const useBuilderEdges = () => {
               ],
             },
       );
+
+      if (!scene) return;
       const fromNode = connectionState.fromNode.id;
+
       const toNode = scene.key;
       const toHandle = `${toNode}-0`;
       setTimeout(() => {
@@ -108,10 +115,12 @@ export const useBuilderEdges = () => {
         return;
       }
 
-      getBuilderService().removeSceneConnection({
-        sourceScene: sceneData.sceneToUpdate,
-        actionIndex: sceneData.actionIndex,
-      });
+      getBuilderService()
+        .removeSceneConnection({
+          sourceScene: sceneData.sceneToUpdate,
+          actionIndex: sceneData.actionIndex,
+        })
+        .catch(handleError);
     });
   };
 
