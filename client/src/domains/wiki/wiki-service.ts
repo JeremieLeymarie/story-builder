@@ -4,6 +4,10 @@ import { getUser } from "@/lib/auth";
 
 export type WikiServicePort = {
   getAllWikis: () => Promise<Wiki[]>;
+  addAuthorToWikis: (userInfo: {
+    username: string;
+    key: string;
+  }) => Promise<void>;
 };
 
 export type WikiServiceContext = {
@@ -17,15 +21,26 @@ export const _getWikiService = ({
   repository: WikiRepositoryPort;
   context: WikiServiceContext;
 }): WikiServicePort => {
+  const getAllWikis = async () => {
+    const user = await context.getUser();
+    return repository.getUserWikis(user?.key);
+  };
+
   return {
-    getAllWikis: async () => {
-      const user = await context.getUser();
-      return repository.getUserWikis(user?.key);
+    getAllWikis,
+
+    addAuthorToWikis: async ({ username, key }) => {
+      const wikis = (await getAllWikis()).filter(
+        (wiki) => wiki.author === undefined,
+      );
+      await repository.bulkUpdate(
+        wikis.map((wiki) => ({ key: wiki.key, author: { username, key } })),
+      );
     },
   };
 };
 
-export const getWikiService = async () => {
+export const getWikiService = () => {
   return _getWikiService({
     repository: getDexieWikiRepository(),
     context: { getUser },
