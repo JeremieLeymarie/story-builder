@@ -33,7 +33,7 @@ jobs:
         run: bun run test:single
 
       - name: Format
-        run: bun prettier --check --ignore-unknown .
+        run: bun run format:check
 
 
   server:
