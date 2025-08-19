@@ -5,113 +5,73 @@ import {
 } from "../wiki-repository";
 import { getTestDatabase, TEST_USER } from "@/lib/storage/dexie/test-db";
 import { Database } from "@/lib/storage/dexie/dexie-db";
+import { Factory, getTestFactory } from "@/lib/testing/factory";
 
 const DATE = new Date();
 
 describe("wiki repository", () => {
   let repo: WikiRepositoryPort;
   let testDB: Database;
+  let factory: Factory;
 
   beforeEach(async () => {
     testDB = await getTestDatabase();
     repo = _getDexieWikiRepository(testDB);
+    factory = getTestFactory();
   });
 
   describe("get user wikis", () => {
     test("should get all wikis of specified user", async () => {
-      const wiki1 = await testDB.wikis.add({
-        image: "image.fr",
-        name: "wiki #1",
+      const wiki1 = factory.wiki({
         author: { username: TEST_USER.username, key: TEST_USER.key },
-        description: "description",
         type: "created",
-        createdAt: DATE,
       });
-      const wiki2 = await testDB.wikis.add({
-        image: "photo.fr",
-        name: "wiki #2",
-        author: undefined,
-        description: "vrouuuum",
-        type: "created",
-        createdAt: DATE,
-      });
-      // Other author
-      await testDB.wikis.add({
-        image: "wallpaper.fr",
-        name: "wiki #3",
+      const wiki2 = factory.wiki({ author: undefined, type: "created" });
+      const wiki3 = factory.wiki({
+        // Other author
         author: {
           username: "peter_peter",
           key: "peter-peter",
         },
-        description: "pas mon wiki",
         type: "created",
-        createdAt: DATE,
       });
-      // Imported wiki
-      await testDB.wikis.add({
-        image: "wallpaper.fr",
-        name: "wiki #4",
+      const wiki4 = factory.wiki({
+        // Imported
         author: { username: TEST_USER.username, key: TEST_USER.key },
-        description: "mon wiki, mais importé, pas créé",
         type: "imported",
-        createdAt: DATE,
       });
 
+      const key1 = await testDB.wikis.add(wiki1);
+      const key2 = await testDB.wikis.add(wiki2);
+      await testDB.wikis.add(wiki3);
+      await testDB.wikis.add(wiki4);
+
       const wikis = await repo.getUserWikis(TEST_USER.key);
+      const keys = wikis.map(({ key }) => key);
       expect(wikis).toHaveLength(2);
-      expect(wikis).toContainEqual({
-        image: "image.fr",
-        name: "wiki #1",
-        author: { username: TEST_USER.username, key: TEST_USER.key },
-        description: "description",
-        key: wiki1,
-        type: "created",
-        createdAt: DATE,
-      });
-      expect(wikis).toContainEqual({
-        image: "photo.fr",
-        name: "wiki #2",
-        author: undefined,
-        description: "vrouuuum",
-        key: wiki2,
-        type: "created",
-        createdAt: DATE,
-      });
+      expect(keys).toContain(key1);
+      expect(keys).toContain(key2);
     });
 
     test("should get all wikis without account", async () => {
-      const wiki1 = await testDB.wikis.add({
-        image: "image.fr",
-        name: "wiki #1",
-        author: undefined,
-        description: "description",
-        type: "created",
-        createdAt: DATE,
-      });
+      const wiki1 = await testDB.wikis.add(
+        factory.wiki({ author: undefined, type: "created" }),
+      );
+
       // Other author
-      await testDB.wikis.add({
-        image: "wallpaper.fr",
-        name: "wiki #2",
-        author: {
-          username: "peter_peter",
-          key: "peter-peter",
-        },
-        description: "pas mon wiki",
-        type: "created",
-        createdAt: DATE,
-      });
+      await testDB.wikis.add(
+        factory.wiki({
+          author: {
+            username: "peter_peter",
+            key: "peter-peter",
+          },
+          type: "created",
+        }),
+      );
 
       const wikis = await repo.getUserWikis(undefined);
       expect(wikis).toHaveLength(1);
-      expect(wikis).toContainEqual({
-        image: "image.fr",
-        name: "wiki #1",
-        author: undefined,
-        description: "description",
-        key: wiki1,
-        type: "created",
-        createdAt: DATE,
-      });
+      expect(wikis[0]!.key).toStrictEqual(wiki1);
     });
   });
 
@@ -201,5 +161,22 @@ describe("wiki repository", () => {
       async () =>
         await repo.bulkUpdate([{ key: "a" }, { key: "b" }, { key: "a" }]),
     ).rejects.toThrowError("Each wiki can only be present once in the input");
+  });
+
+  describe("create", () => {
+    test("should create wiki", async () => {
+      const existingWiki = factory.wiki();
+      await testDB.wikis.add(existingWiki);
+
+      const wikiToAdd = factory.wiki();
+      const wikiKey = await repo.create(wikiToAdd);
+
+      const allWikis = await testDB.wikis.toArray();
+      expect(allWikis).toHaveLength(2);
+      expect(await testDB.wikis.get(wikiKey)).toStrictEqual({
+        ...wikiToAdd,
+        key: wikiKey,
+      });
+    });
   });
 });

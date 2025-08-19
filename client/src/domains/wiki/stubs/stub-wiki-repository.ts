@@ -10,4 +10,5 @@ export const getWikiServiceTestContext = (): WikiServiceContext => ({
 export const getStubWikiRepository = (): WikiRepositoryPort => ({
   getUserWikis: vi.fn(async () => Promise.resolve([])),
   bulkUpdate: vi.fn(async () => Promise.resolve()),
+  create: vi.fn(async () => Promise.resolve("KEY")),
 });
