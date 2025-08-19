@@ -21,7 +21,7 @@ export const useBuilderShortCuts = ({
   firstSceneKey: string;
 }) => {
   const { addScene } = useAddScene();
-  const { setOpen: openExportModal } = useExportModalStore();
+  const openExportModal = useExportModalStore((state) => state.setOpen);
   const { testStory } = useTestStory();
 
   // Exhaustive-deps rules doesn't work well with the compiler, see: https://github.com/reactwg/react-compiler/discussions/18
