@@ -75,6 +75,22 @@ class MongoSynchronizationRepository(
             make_synchronization_story_progress(sp) for sp in mongo_story_progresses
         ]
 
+    def delete_story_progress(
+        self, progress_key: str, *, user_key: str
+    ) -> Result:
+        try:
+            result = self.story_progresses.delete_one({
+                "key": progress_key, 
+                "userKey": user_key
+            })
+            
+            if result.deleted_count == 0:
+                return Result(success=False)
+                
+            return Result(success=True)
+        except Exception:
+            return Result(success=False)
+
     def _save_stories_transaction(
         self, stories: list[MongoStory], /, *, user_key: str
     ) -> None:

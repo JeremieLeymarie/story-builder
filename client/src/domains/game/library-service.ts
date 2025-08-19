@@ -215,6 +215,10 @@ export const _getLibraryService = ({
       );
     },
 
+    deleteStoryProgress: async (progressKey: string) => {
+      await localRepository.deleteStoryProgresses([progressKey]);
+    },
+
     loadLibraryState: async ({
       progresses,
       libraryStories,
