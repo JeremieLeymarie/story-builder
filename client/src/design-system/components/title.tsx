@@ -11,7 +11,7 @@ const titleVariants = cva("w-max break-words leading-none tracking-tight", {
       article: "text-4xl font-semibold max-md:text-2xl text-primary",
       section: "max-md:text-md bg-primary px-2 text-lg font-bold uppercase",
       "sub-section":
-        "max-md:text-md text-primary text-lg underline underline-offset-8 font-semibold",
+        "max-md:text-md decoration-primary text-lg font-semibold underline decoration-4 underline-offset-4",
     },
   },
   defaultVariants: {

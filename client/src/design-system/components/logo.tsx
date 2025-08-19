@@ -1,0 +1,34 @@
+export const Logo = ({
+  height,
+  width,
+  className,
+}: {
+  height?: number;
+  width?: number;
+  className?: string;
+}) => {
+  return (
+    <svg
+      id="eLh1v594IBi1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      viewBox="0 0 24 24"
+      shape-rendering="geometricPrecision"
+      text-rendering="geometricPrecision"
+      project-id="d5efa89474144b96abbc7806a612dc9c"
+      export-id="a73353bcaebf4ea1a7eef7dbc69dcd64"
+      height={height}
+      width={width}
+      className={className}
+    >
+      <path
+        d="M11.25,5.99813v13.90997c0,.71-.72,1.2-1.37.93-1.86-.78-4.17-1.46-5.81-1.68l-.31-.04c-.97-.12-1.76-1.01-1.76-1.98L2,5.24813c0-1.2.97-2.17001,2.17-2.17001h.07c1.88.16,4.65,1.04001,6.48,2.03001.33.18.53.50999.53.89Z"
+        fill="#292d32"
+      />
+      <path
+        d="M19.83,3.07812h-.06c-.24.02-.5.05001-.77.10001-1.23.2-2.69.62-4,1.14-.62.25-1.2.52-1.71.79-.33.18-.54.52-.54.89v13.90997c0,.71.72,1.2,1.37.93c1.86-.78,4.17-1.46,5.81-1.68l.31-.04c.97-.12,1.76-1.01,1.76-1.98v-11.88997c0-1.2-.97-2.17001-2.17-2.17001ZM19.27,13.7281c0,.39-.28.56-.62.37l-1.06-.59c-.11-.06-.29-.06-.41,0l-1.06.59c-.34.19-.62.02-.62-.37v-3.07c0-.46.38-.83998.84-.83998h2.1c.46,0,.84.37998.84.83998v3.07h-.01Z"
+        fill="#facc15"
+      />
+    </svg>
+  );
+};

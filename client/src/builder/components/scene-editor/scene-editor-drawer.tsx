@@ -11,6 +11,7 @@ import { SceneUpdatePayload } from "./schema";
 import { ActionsSection } from "./actions-section";
 import { useBuilderActions } from "@/builder/hooks/use-builder-actions";
 import { useSceneEditorForm } from "./hooks/use-scene-editor-form";
+import { Bar } from "@/design-system/components/bar";
 
 export const SceneEditor = ({
   onSave,
@@ -43,7 +44,7 @@ const SceneEditorContent = ({
   const form = useSceneEditorForm({ onSave, scene });
 
   return (
-    <div className="z-50 min-w-[450px] rounded border bg-white/95 p-4 shadow-sm">
+    <Bar className="min-w-[450px]">
       <Form {...form}>
         <form className="w-full">
           <Tabs defaultValue="scene" className="w-full">
@@ -66,6 +67,6 @@ const SceneEditorContent = ({
           </Tabs>
         </form>
       </Form>
-    </div>
+    </Bar>
   );
 };
