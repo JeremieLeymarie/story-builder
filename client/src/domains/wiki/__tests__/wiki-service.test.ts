@@ -7,6 +7,8 @@ import {
 import { _getWikiService } from "../wiki-service";
 import { TEST_USER } from "@/lib/storage/dexie/test-db";
 
+const DATE = new Date();
+
 describe("wiki service", () => {
   describe("get all wikis", () => {
     test("should return user's wikis", async () => {
@@ -23,6 +25,7 @@ describe("wiki service", () => {
             description: "description",
             key: "key",
             type: "created" as const,
+            createdAt: DATE,
           },
         ]);
       });
@@ -41,6 +44,7 @@ describe("wiki service", () => {
         description: "description",
         key: "key",
         type: "created",
+        createdAt: DATE,
       });
     });
   });
@@ -59,6 +63,7 @@ describe("wiki service", () => {
             description: "description",
             key: "key-1",
             type: "created" as const,
+            createdAt: DATE,
           },
           {
             image: "photo.fr",
@@ -67,6 +72,7 @@ describe("wiki service", () => {
             description: "other description",
             key: "key-2",
             type: "created" as const,
+            createdAt: DATE,
           },
           {
             image: "photo.fr",
@@ -75,6 +81,7 @@ describe("wiki service", () => {
             description: "tutu",
             key: "key-3",
             type: "imported" as const,
+            createdAt: DATE,
           },
         ]);
       });
