@@ -152,7 +152,9 @@ const indexedDBRepository: LocalRepositoryPort = {
   addAuthorToStories: async (author) => {
     db.transaction("readwrite", "stories", async () => {
       const storiesToUpdate = (await db.stories
-        .filter((story) => story.author === undefined)
+        .filter(
+          (story) => story.author === undefined && story.type === "builder",
+        )
         .keys()) as string[];
 
       const payload = storiesToUpdate.map((key) => ({
