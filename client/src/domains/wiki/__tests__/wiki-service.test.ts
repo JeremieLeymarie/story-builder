@@ -5,8 +5,11 @@ import {
 } from "../stubs/stub-wiki-repository";
 import { _getWikiService } from "../wiki-service";
 import { TEST_USER } from "@/lib/storage/dexie/test-db";
+import { getTestFactory } from "@/lib/testing/factory";
 
 const DATE = new Date();
+
+const factory = getTestFactory();
 
 describe("wiki service", () => {
   beforeEach(() => {
@@ -132,6 +135,26 @@ describe("wiki service", () => {
         description: "Super wiki",
         image: "http://super-image.fr",
       });
+    });
+  });
+
+  describe("get wiki", () => {
+    test("should call repo with correct args", async () => {
+      const wiki = factory.wiki();
+      const repository = getStubWikiRepository();
+      repository.get = vi.fn((key) => {
+        expect(key).toStrictEqual("ZIOUM");
+
+        return Promise.resolve({ ...wiki, key: "ZIOUM" });
+      });
+
+      const svc = _getWikiService({
+        repository,
+        context: getWikiServiceTestContext(),
+      });
+
+      const wikiData = await svc.getWikiData("ZIOUM");
+      expect(wikiData).toStrictEqual({ ...wiki, key: "ZIOUM" });
     });
   });
 });
