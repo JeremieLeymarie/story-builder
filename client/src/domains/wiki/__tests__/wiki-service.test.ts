@@ -40,6 +40,7 @@ describe("wiki service", () => {
         author: { username: "bob_bidou", key: "userKey" },
         description: "description",
         key: "key",
+        type: "created",
       });
     });
   });
