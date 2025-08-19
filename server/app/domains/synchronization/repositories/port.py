@@ -23,3 +23,7 @@ class SynchronizationRepositoryPort(Protocol):
     def get_story_progresses(
         self, user_key: str
     ) -> list[SynchronizationStoryProgress]: ...
+
+    def delete_story_progress(
+        self, progress_key: str, *, user_key: str
+    ) -> Result: ...

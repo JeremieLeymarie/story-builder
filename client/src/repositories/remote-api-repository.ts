@@ -93,6 +93,28 @@ const _getRemoteAPIRepository = (
 
       return { error: parseError(error) };
     },
+
+    deleteStoryProgress: async (progressKey, user) => {
+      try {
+        const response = await fetch(`/api/progress/${progressKey}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': formatTokenHeader(user.token),
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          return { data };
+        } else {
+          const error = await response.text();
+          return { error: parseError(error) };
+        }
+      } catch (_error) {
+        return { error: parseError(UNKNOWN_ERROR) };
+      }
+    },
   };
 };
 

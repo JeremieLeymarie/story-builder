@@ -10,6 +10,7 @@ from domains.auth.type_defs import AuthUser, FullUser
 from endpoints.synchronization.load import SynchronizationLoadHandler
 from endpoints.synchronization.save_stories import StorySynchronizationHandler
 from endpoints.synchronization.save_progress import ProgressSynchronizationHandler
+from endpoints.synchronization.delete_progress import ProgressDeletionHandler
 from endpoints.synchronization.type_defs import (
     FullStoriesRequest,
     StoryProgress,
@@ -127,3 +128,13 @@ async def synchronize_progress(payload: list[StoryProgress]):
 )
 async def save_stories(body: FullStoriesRequest):
     return StorySynchronizationHandler().handle(body)
+
+
+@app.delete(
+    "/api/progress/{progress_key}",
+    status_code=HTTPStatus.OK,
+    response_model=GenericAPIResponse,
+    dependencies=[Depends(check_auth)],
+)
+async def delete_progress(progress_key: str):
+    return ProgressDeletionHandler().handle(progress_key)
