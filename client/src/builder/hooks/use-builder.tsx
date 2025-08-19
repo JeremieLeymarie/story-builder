@@ -20,7 +20,6 @@ export const useBuilder = () => {
 
   const builderService = getBuilderService();
   const { onConnect, onConnectEnd, onEdgesDelete } = useBuilderEdges({
-    sceneNodes: nodesFromContext,
     story,
     setEdges,
   });
