@@ -12,7 +12,11 @@ export const _getDexieWikiRepository = (db: Database): WikiRepositoryPort => {
   return {
     getUserWikis: async (userKey) => {
       return await db.wikis
-        .filter((wiki) => [userKey, undefined].includes(wiki.author?.key))
+        .filter(
+          (wiki) =>
+            [userKey, undefined].includes(wiki.author?.key) &&
+            wiki.type === "created",
+        )
         .toArray();
     },
     bulkUpdate: async (wikis) => {

@@ -80,6 +80,7 @@ export type StoryProgress = {
 export type Wiki = {
   key: string;
   author?: Author;
+  type: "imported" | "created";
   name: string;
   description?: string;
   image: string;

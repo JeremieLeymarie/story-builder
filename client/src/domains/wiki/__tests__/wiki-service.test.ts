@@ -22,6 +22,7 @@ describe("wiki service", () => {
             author: { username: "bob_bidou", key: "userKey" },
             description: "description",
             key: "key",
+            type: "created" as const,
           },
         ]);
       });
@@ -56,6 +57,7 @@ describe("wiki service", () => {
             author: { username: "bob_bidou", key: "userKey" },
             description: "description",
             key: "key-1",
+            type: "created" as const,
           },
           {
             image: "photo.fr",
@@ -63,6 +65,15 @@ describe("wiki service", () => {
             author: undefined,
             description: "other description",
             key: "key-2",
+            type: "created" as const,
+          },
+          {
+            image: "photo.fr",
+            name: "Imported wiki",
+            author: undefined,
+            description: "tutu",
+            key: "key-3",
+            type: "imported" as const,
           },
         ]);
       });
