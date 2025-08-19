@@ -31,7 +31,7 @@ export const _getWikiService = ({
 
     addAuthorToWikis: async ({ username, key }) => {
       const wikis = (await getAllWikis()).filter(
-        (wiki) => wiki.author === undefined,
+        (wiki) => wiki.author === undefined && wiki.type === "created",
       );
       await repository.bulkUpdate(
         wikis.map((wiki) => ({ key: wiki.key, author: { username, key } })),

@@ -22,12 +22,14 @@ describe("wiki repository", () => {
         name: "wiki #1",
         author: { username: TEST_USER.username, key: TEST_USER.key },
         description: "description",
+        type: "created",
       });
       const wiki2 = await testDB.wikis.add({
         image: "photo.fr",
         name: "wiki #2",
         author: undefined,
         description: "vrouuuum",
+        type: "created",
       });
       // Other author
       await testDB.wikis.add({
@@ -38,6 +40,15 @@ describe("wiki repository", () => {
           key: "peter-peter",
         },
         description: "pas mon wiki",
+        type: "created",
+      });
+      // Imported wiki
+      await testDB.wikis.add({
+        image: "wallpaper.fr",
+        name: "wiki #4",
+        author: { username: TEST_USER.username, key: TEST_USER.key },
+        description: "mon wiki, mais importé, pas créé",
+        type: "imported",
       });
 
       const wikis = await repo.getUserWikis(TEST_USER.key);
@@ -48,6 +59,7 @@ describe("wiki repository", () => {
         author: { username: TEST_USER.username, key: TEST_USER.key },
         description: "description",
         key: wiki1,
+        type: "created",
       });
       expect(wikis).toContainEqual({
         image: "photo.fr",
@@ -55,6 +67,7 @@ describe("wiki repository", () => {
         author: undefined,
         description: "vrouuuum",
         key: wiki2,
+        type: "created",
       });
     });
 
@@ -64,6 +77,7 @@ describe("wiki repository", () => {
         name: "wiki #1",
         author: undefined,
         description: "description",
+        type: "created",
       });
       // Other author
       await testDB.wikis.add({
@@ -74,6 +88,7 @@ describe("wiki repository", () => {
           key: "peter-peter",
         },
         description: "pas mon wiki",
+        type: "created",
       });
 
       const wikis = await repo.getUserWikis(undefined);
@@ -84,6 +99,7 @@ describe("wiki repository", () => {
         author: undefined,
         description: "description",
         key: wiki1,
+        type: "created",
       });
     });
   });
@@ -96,6 +112,7 @@ describe("wiki repository", () => {
         author: { username: TEST_USER.username, key: TEST_USER.key },
         description: "description",
         key: "wiki1-key",
+        type: "created",
       },
       {
         image: "photo.fr",
@@ -103,6 +120,7 @@ describe("wiki repository", () => {
         author: undefined,
         description: "vrouuuum",
         key: "wiki2-key",
+        type: "imported",
       },
       {
         image: "avion.png",
@@ -110,6 +128,7 @@ describe("wiki repository", () => {
         author: { username: TEST_USER.username, key: TEST_USER.key },
         description: "pas modifié",
         key: "wiki3-key",
+        type: "created",
       },
     ]);
     expect(await testDB.wikis.toArray()).toHaveLength(3);
@@ -140,6 +159,7 @@ describe("wiki repository", () => {
       author: { username: TEST_USER.username, key: TEST_USER.key },
       description: "une autre description",
       key: "wiki1-key",
+      type: "created",
     });
     expect(wikis).toContainEqual({
       image: "photo.fr",
@@ -147,6 +167,7 @@ describe("wiki repository", () => {
       author: { key: "peter-key", username: "peter_peter" },
       description: "vrouuuum",
       key: "wiki2-key",
+      type: "imported",
     });
     expect(wikis).toContainEqual({
       image: "avion.png",
@@ -154,6 +175,7 @@ describe("wiki repository", () => {
       author: { username: TEST_USER.username, key: TEST_USER.key },
       description: "pas modifié",
       key: "wiki3-key",
+      type: "created",
     });
   });
 
