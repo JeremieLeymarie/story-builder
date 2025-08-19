@@ -36,6 +36,11 @@ class BaseMockSynchronizationRepository(SynchronizationRepositoryPort):
     ) -> Result:
         raise NotImplementedError
 
+    def delete_story_progress(
+        self, progress_key: str, *, user_key: str
+    ) -> Result:
+        raise NotImplementedError
+
 
 def test_get_synchronization_data() -> None:
     class MockSyncRepository(BaseMockSynchronizationRepository):
