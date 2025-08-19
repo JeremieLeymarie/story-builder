@@ -10,6 +10,7 @@ export type WikiServicePort = {
     key: string;
   }) => Promise<void>;
   createWiki: (payload: WikiSchema) => Promise<string>;
+  getWikiData: (wikiKey: string) => Promise<Wiki | null>;
 };
 
 export type WikiServiceContext = {
@@ -51,6 +52,10 @@ export const _getWikiService = ({
       });
 
       return key;
+    },
+
+    getWikiData: async (wikiKey) => {
+      return await repository.get(wikiKey);
     },
   };
 };

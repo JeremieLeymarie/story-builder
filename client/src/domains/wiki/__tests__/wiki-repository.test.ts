@@ -179,4 +179,29 @@ describe("wiki repository", () => {
       });
     });
   });
+
+  describe("get", () => {
+    test("should get wiki from key", async () => {
+      await testDB.wikis.add(factory.wiki());
+      const expected = factory.wiki();
+      const key = await testDB.wikis.add(expected);
+      await testDB.wikis.add(factory.wiki());
+
+      const wiki = await repo.get(key);
+
+      expect(wiki).toStrictEqual({ ...expected, key });
+    });
+
+    test("should return null if not found", async () => {
+      await testDB.wikis.bulkAdd([
+        factory.wiki(),
+        factory.wiki(),
+        factory.wiki(),
+      ]);
+
+      const wiki = await repo.get("zioummm");
+
+      expect(wiki).toBeNull();
+    });
+  });
 });

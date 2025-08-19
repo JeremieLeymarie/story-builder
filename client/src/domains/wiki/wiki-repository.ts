@@ -8,6 +8,7 @@ export type WikiRepositoryPort = {
     wikis: ({ key: string } & Partial<Omit<Wiki, "key">>)[],
   ) => Promise<void>;
   create: (wiki: WithoutKey<Wiki>) => Promise<string>;
+  get: (wikiKey: string) => Promise<Wiki | null>;
 };
 
 export const _getDexieWikiRepository = (db: Database): WikiRepositoryPort => {
@@ -34,6 +35,10 @@ export const _getDexieWikiRepository = (db: Database): WikiRepositoryPort => {
 
     create: async (wiki) => {
       return await db.wikis.add(wiki);
+    },
+
+    get: async (wikiKey) => {
+      return (await db.wikis.get(wikiKey)) ?? null;
     },
   };
 };
