@@ -84,6 +84,7 @@ export type Wiki = {
   name: string;
   description?: string;
   image: string;
+  createdAt: Date;
 };
 
 export const ENTITIES = [

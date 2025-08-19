@@ -6,6 +6,8 @@ import {
 import { getTestDatabase, TEST_USER } from "@/lib/storage/dexie/test-db";
 import { Database } from "@/lib/storage/dexie/dexie-db";
 
+const DATE = new Date();
+
 describe("wiki repository", () => {
   let repo: WikiRepositoryPort;
   let testDB: Database;
@@ -23,6 +25,7 @@ describe("wiki repository", () => {
         author: { username: TEST_USER.username, key: TEST_USER.key },
         description: "description",
         type: "created",
+        createdAt: DATE,
       });
       const wiki2 = await testDB.wikis.add({
         image: "photo.fr",
@@ -30,6 +33,7 @@ describe("wiki repository", () => {
         author: undefined,
         description: "vrouuuum",
         type: "created",
+        createdAt: DATE,
       });
       // Other author
       await testDB.wikis.add({
@@ -41,6 +45,7 @@ describe("wiki repository", () => {
         },
         description: "pas mon wiki",
         type: "created",
+        createdAt: DATE,
       });
       // Imported wiki
       await testDB.wikis.add({
@@ -49,6 +54,7 @@ describe("wiki repository", () => {
         author: { username: TEST_USER.username, key: TEST_USER.key },
         description: "mon wiki, mais importé, pas créé",
         type: "imported",
+        createdAt: DATE,
       });
 
       const wikis = await repo.getUserWikis(TEST_USER.key);
@@ -60,6 +66,7 @@ describe("wiki repository", () => {
         description: "description",
         key: wiki1,
         type: "created",
+        createdAt: DATE,
       });
       expect(wikis).toContainEqual({
         image: "photo.fr",
@@ -68,6 +75,7 @@ describe("wiki repository", () => {
         description: "vrouuuum",
         key: wiki2,
         type: "created",
+        createdAt: DATE,
       });
     });
 
@@ -78,6 +86,7 @@ describe("wiki repository", () => {
         author: undefined,
         description: "description",
         type: "created",
+        createdAt: DATE,
       });
       // Other author
       await testDB.wikis.add({
@@ -89,6 +98,7 @@ describe("wiki repository", () => {
         },
         description: "pas mon wiki",
         type: "created",
+        createdAt: DATE,
       });
 
       const wikis = await repo.getUserWikis(undefined);
@@ -100,6 +110,7 @@ describe("wiki repository", () => {
         description: "description",
         key: wiki1,
         type: "created",
+        createdAt: DATE,
       });
     });
   });
@@ -113,6 +124,7 @@ describe("wiki repository", () => {
         description: "description",
         key: "wiki1-key",
         type: "created",
+        createdAt: DATE,
       },
       {
         image: "photo.fr",
@@ -121,6 +133,7 @@ describe("wiki repository", () => {
         description: "vrouuuum",
         key: "wiki2-key",
         type: "imported",
+        createdAt: DATE,
       },
       {
         image: "avion.png",
@@ -129,6 +142,7 @@ describe("wiki repository", () => {
         description: "pas modifié",
         key: "wiki3-key",
         type: "created",
+        createdAt: DATE,
       },
     ]);
     expect(await testDB.wikis.toArray()).toHaveLength(3);
@@ -160,6 +174,7 @@ describe("wiki repository", () => {
       description: "une autre description",
       key: "wiki1-key",
       type: "created",
+      createdAt: DATE,
     });
     expect(wikis).toContainEqual({
       image: "photo.fr",
@@ -168,6 +183,7 @@ describe("wiki repository", () => {
       description: "vrouuuum",
       key: "wiki2-key",
       type: "imported",
+      createdAt: DATE,
     });
     expect(wikis).toContainEqual({
       image: "avion.png",
@@ -176,6 +192,7 @@ describe("wiki repository", () => {
       description: "pas modifié",
       key: "wiki3-key",
       type: "created",
+      createdAt: DATE,
     });
   });
 
