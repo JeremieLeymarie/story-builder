@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect } from "react";
+import { MouseEvent } from "react";
 import { useNodesState, useEdgesState } from "@xyflow/react";
 import { useBuilderEdges } from "./use-builder-edges";
 import { BuilderNode } from "../types";
@@ -13,19 +13,14 @@ export const useBuilder = () => {
     nodes: nodesFromContext,
     story,
   } = useBuilderContext();
-  const [nodes, setNodes, onNodesChange] = useNodesState(nodesFromContext);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(edgesFromContext);
+  const [nodes, _setNodes, onNodesChange] = useNodesState(nodesFromContext);
+  const [edges, _setEdges, onEdgesChange] = useEdgesState(edgesFromContext);
 
   const { handleError } = useBuilderError();
   const builderService = getBuilderService();
   const { onConnect, onConnectEnd, onEdgesDelete } = useBuilderEdges();
 
   useBuilderShortCuts({ firstSceneKey: story.firstSceneKey });
-
-  useEffect(() => {
-    setNodes(nodesFromContext);
-    setEdges(edgesFromContext);
-  }, [setNodes, edgesFromContext, nodesFromContext, setEdges]);
 
   const onNodeDragStop = (_: MouseEvent, node: BuilderNode) => {
     builderService
