@@ -1,5 +1,4 @@
-import { describe } from "node:test";
-import { expect, test, vi } from "vitest";
+import { expect, test, vi, describe, beforeEach } from "vitest";
 import {
   getStubWikiRepository,
   getWikiServiceTestContext,
@@ -10,6 +9,10 @@ import { TEST_USER } from "@/lib/storage/dexie/test-db";
 const DATE = new Date();
 
 describe("wiki service", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
   describe("get all wikis", () => {
     test("should return user's wikis", async () => {
       const repository = getStubWikiRepository();
@@ -99,6 +102,36 @@ describe("wiki service", () => {
         context: getWikiServiceTestContext(),
       });
       await svc.addAuthorToWikis({ username: "bob_bidou", key: "bob-key" });
+    });
+  });
+
+  describe("create wiki", () => {
+    test("should create wiki", async () => {
+      const repository = getStubWikiRepository();
+
+      repository.create = vi.fn((wiki) => {
+        expect(wiki).toStrictEqual({
+          name: "Wiki",
+          description: "Super wiki",
+          image: "http://super-image.fr",
+          createdAt: new Date(),
+          type: "created",
+          author: { username: TEST_USER.username, key: TEST_USER.key },
+        });
+
+        return Promise.resolve("KEY");
+      });
+
+      const svc = _getWikiService({
+        repository,
+        context: getWikiServiceTestContext(),
+      });
+
+      await svc.createWiki({
+        name: "Wiki",
+        description: "Super wiki",
+        image: "http://super-image.fr",
+      });
     });
   });
 });
