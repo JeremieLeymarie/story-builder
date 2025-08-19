@@ -18,30 +18,31 @@ import {
 } from "@/design-system/primitives";
 import { WithoutKey } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback, useState, type JSX } from "react";
+import { ReactNode, useState } from "react";
 import { useForm } from "react-hook-form";
 import { StoryGenreCombobox } from "./story-genre-combobox";
 import { schema, Schema } from "./schema";
 import { Story } from "@/lib/storage/domain";
 
-export const StoryFormDialog = (
-  props: Omit<StoryFormProps, "trigger"> & { trigger: JSX.Element },
-) => {
-  const [open, setOpen] = useState(false);
-
-  return <ControlledStoryFormDialog {...props} open={open} setOpen={setOpen} />;
-};
-
 export type OnSubmitStoryFormProps = Omit<
   WithoutKey<Story>,
   "firstSceneKey" | "author" | "type" | "publicationDate" | "creationDate"
 > & { firstSceneKey?: string };
+
 type StoryFormProps = {
   onSubmit: (props: OnSubmitStoryFormProps) => void;
-  trigger?: JSX.Element;
+  trigger?: ReactNode;
   defaultValues?: Schema;
   title: string;
   description: string;
+};
+
+export const StoryFormDialog = (
+  props: Omit<StoryFormProps, "trigger"> & { trigger: ReactNode },
+) => {
+  const [open, setOpen] = useState(false);
+
+  return <ControlledStoryFormDialog {...props} open={open} setOpen={setOpen} />;
 };
 
 export const ControlledStoryFormDialog = ({
@@ -62,13 +63,10 @@ export const ControlledStoryFormDialog = ({
     },
   });
 
-  const handleOpen = useCallback(
-    (open: boolean) => {
-      setOpen(open);
-      if (!open) form.reset();
-    },
-    [form, setOpen],
-  );
+  const handleOpen = (open: boolean) => {
+    setOpen(open);
+    if (!open) form.reset();
+  };
 
   const submit = (data: Schema) => {
     onSubmit?.({ ...data });

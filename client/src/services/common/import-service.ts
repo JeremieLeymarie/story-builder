@@ -39,7 +39,7 @@ export const storyFromImportSchema = z.object({
           key: z.string(),
         })
         .optional(),
-      image: z.string().url({ message: "Image has to be a valid URL" }),
+      image: z.url({ message: "Image has to be a valid URL" }),
       type: z.enum(STORY_TYPE, {
         message: "Type has to be a valid StoryType",
       }),
