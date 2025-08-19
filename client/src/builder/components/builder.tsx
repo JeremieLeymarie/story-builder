@@ -21,12 +21,30 @@ const nodeTypes = { scene: SceneNode };
 const BuilderFlow = () => {
   const { reactFlowRef } = useBuilderContext();
   const { close: closeNewEditor } = useSceneEditorStore();
-  const { props } = useBuilder();
+  const {
+    nodes,
+    edges,
+    onConnect,
+    onConnectEnd,
+    onEdgesChange,
+    onEdgesDelete,
+    onNodeDragStop,
+    onNodesChange,
+    onNodesDelete,
+  } = useBuilder();
 
   return (
     <ReactFlow
       nodeTypes={nodeTypes}
-      {...props}
+      nodes={nodes}
+      edges={edges}
+      onConnect={onConnect}
+      onConnectEnd={onConnectEnd}
+      onEdgesChange={onEdgesChange}
+      onEdgesDelete={onEdgesDelete}
+      onNodeDragStop={onNodeDragStop}
+      onNodesChange={onNodesChange}
+      onNodesDelete={onNodesDelete}
       nodeOrigin={[0, 0.5]}
       minZoom={0.1}
       defaultEdgeOptions={{ zIndex: 10000 }}

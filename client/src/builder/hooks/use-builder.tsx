@@ -41,16 +41,14 @@ export const useBuilder = () => {
   };
 
   return {
-    props: {
-      nodes: nodes.map((node) => ({ ...node, selectable: true })),
-      edges,
-      onNodeDragStop,
-      onNodesChange,
-      onEdgesChange,
-      onNodesDelete,
-      onConnect,
-      onConnectEnd,
-      onEdgesDelete,
-    },
+    nodes: nodes.map((node) => ({ ...node, selectable: true })),
+    edges,
+    onNodeDragStop,
+    onNodesChange,
+    onEdgesChange,
+    onNodesDelete,
+    onConnect,
+    onConnectEnd,
+    onEdgesDelete,
   };
 };

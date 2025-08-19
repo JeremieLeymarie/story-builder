@@ -7,14 +7,13 @@ import {
   reconnectEdge,
   useReactFlow,
 } from "@xyflow/react";
-import { nodeToSceneAdapter, sceneToNodeAdapter } from "../adapters";
+import { nodeToSceneAdapter } from "../adapters";
 import { getBuilderService } from "@/get-builder-service";
-import { useAddScene } from "./use-add-scene";
+import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
 import { Story } from "@/lib/storage/domain";
 import { BuilderNode } from "../types";
 
 export const useBuilderEdges = ({
-  story,
   setEdges,
 }: {
   story: Story;
@@ -76,30 +75,52 @@ export const useBuilderEdges = ({
   );
 
   const { addScene } = useAddScene();
+  const { screenToFlowPosition } = useReactFlow();
   const onConnectEnd = useCallback(
     async (
       ev: MouseEvent | TouchEvent,
       connectionState: FinalConnectionState,
     ) => {
       // create a node on edge drop
-      if (
-        !connectionState.isValid &&
-        connectionState.fromNode &&
-        connectionState.fromHandle?.id
-      ) {
+      if (!connectionState.isValid && connectionState.fromNode) {
         const event = "changedTouches" in ev ? ev.changedTouches[0] : ev;
         if (!event) return;
-        const scene = await addScene({ x: event.clientX, y: event.clientY });
-        const node = sceneToNodeAdapter({ scene, story });
-        onConnect({
-          source: connectionState.fromNode.id,
-          sourceHandle: connectionState.fromHandle.id,
-          target: node.id,
-          targetHandle: null,
+        // truthy when the handle is a source handle
+        const fromHandle = connectionState.fromHandle?.id ?? null;
+        const position = screenToFlowPosition({
+          x: event.clientX,
+          y: event.clientY,
         });
+        // TODO: unify constants regarding the scene component in a single place
+        // Magic values to hover right over the correct handle:
+        const offset = fromHandle ? { x: 0, y: 0 } : { x: 375 - 16, y: 27.5 };
+        const scene = await addScene(
+          { x: position.x - offset.x, y: position.y - offset.y },
+          fromHandle
+            ? DEFAULT_SCENE
+            : {
+                ...DEFAULT_SCENE,
+                actions: [
+                  {
+                    text: "...",
+                  },
+                ],
+              },
+        );
+        const fromNode = connectionState.fromNode.id;
+        const toNode = scene.key;
+        const toHandle = `${toNode}-0`;
+        setTimeout(() => {
+          onConnect({
+            source: fromHandle ? fromNode : toNode,
+            target: fromHandle ? toNode : fromNode,
+            sourceHandle: fromHandle ?? toHandle,
+            targetHandle: null,
+          });
+        }, 0);
       }
     },
-    [addScene, onConnect, story],
+    [addScene, onConnect, screenToFlowPosition],
   );
 
   const onEdgesDelete = useCallback(

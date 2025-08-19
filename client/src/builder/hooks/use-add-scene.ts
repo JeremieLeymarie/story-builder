@@ -27,17 +27,17 @@ export const useAddScene = () => {
       x: rect.x + rect.width / 2,
       y: rect.y + rect.height / 2,
     };
-    return position;
+    return screenToFlowPosition(position);
   };
 
   const addScene = async (
     position: XYPosition = getCenterPosition(),
-    keyless_scene: SceneSchema = DEFAULT_SCENE,
+    keylessScene: SceneSchema = DEFAULT_SCENE,
   ): Promise<Scene> => {
     const scene = await builderService.addScene({
-      ...keyless_scene,
+      ...keylessScene,
       storyKey: story.key,
-      builderParams: { position: screenToFlowPosition(position) },
+      builderParams: { position },
     });
     setNodes((nds) => [...nds, sceneToNodeAdapter({ scene, story })]);
     return scene;
