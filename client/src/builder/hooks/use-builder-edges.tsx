@@ -3,28 +3,28 @@ import {
   Connection,
   Edge,
   FinalConnectionState,
-  Node,
   addEdge,
   reconnectEdge,
+  useReactFlow,
 } from "@xyflow/react";
-import { SceneProps } from "../types";
 import { nodeToSceneAdapter, sceneToNodeAdapter } from "../adapters";
 import { getBuilderService } from "@/get-builder-service";
 import { useAddScene } from "./use-add-scene";
 import { Story } from "@/lib/storage/domain";
+import { BuilderNode } from "../types";
 
 export const useBuilderEdges = ({
-  sceneNodes,
   story,
   setEdges,
 }: {
-  sceneNodes: Node<SceneProps, "scene">[];
   story: Story;
   setEdges: Dispatch<SetStateAction<Edge[]>>;
 }) => {
+  const { getNodes } = useReactFlow<BuilderNode>();
+
   const getSceneToUpdate = useCallback(
     (edge: Edge | Connection) => {
-      const sourceScene = sceneNodes.find((scene) => scene.id === edge.source);
+      const sourceScene = getNodes().find((scene) => scene.id === edge.source);
 
       const actionIndex = parseInt(
         edge.sourceHandle?.split("-").at(-1) ?? "-1",
@@ -43,14 +43,14 @@ export const useBuilderEdges = ({
 
       return { sceneToUpdate, actionIndex };
     },
-    [sceneNodes],
+    [getNodes],
   );
 
   const onConnect = useCallback(
     (connection: Connection) => {
       const sceneData = getSceneToUpdate(connection);
       if (!sceneData) {
-        // TODO: Add toast
+        console.error("Connection error: scene data is null");
         return;
       }
 
