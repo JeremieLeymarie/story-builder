@@ -28,6 +28,7 @@ export const useBuilderEdges = () => {
       }
 
       const sceneToUpdate = nodeToSceneAdapter(sourceScene);
+
       return { sceneToUpdate, actionIndex };
     },
     [getNodes],

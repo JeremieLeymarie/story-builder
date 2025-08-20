@@ -4,8 +4,6 @@ import {
   BackgroundVariant,
   MiniMap,
   SelectionMode,
-  ReactFlowProps,
-  Edge,
 } from "@xyflow/react";
 import { SceneNode } from "./nodes/scene/scene";
 import { Toolbar } from "./toolbar";
@@ -17,17 +15,10 @@ import { FIT_VIEW_DURATION } from "../constants";
 import { SceneEditor } from "./scene-editor/scene-editor-drawer";
 import { useSceneEditorStore } from "./scene-editor/hooks/use-scene-editor-store";
 import { useBuilderActions } from "../hooks/use-builder-actions";
-import { SceneNodeType } from "../types";
 
 const nodeTypes = { scene: SceneNode };
 
-export const BuilderFlow = ({
-  propsOverride,
-  showcaseMode,
-}: {
-  propsOverride?: ReactFlowProps<SceneNodeType, Edge>;
-  showcaseMode?: boolean;
-}) => {
+const BuilderFlow = () => {
   const { reactFlowRef } = useBuilderContext();
   const { close: closeNewEditor } = useSceneEditorStore();
   const {
@@ -59,15 +50,15 @@ export const BuilderFlow = ({
       defaultEdgeOptions={{ zIndex: 10000 }}
       selectionMode={SelectionMode.Partial}
       nodesFocusable
+      selectionOnDrag
       selectNodesOnDrag
       ref={reactFlowRef}
       fitView
       multiSelectionKeyCode={getUserOS() === "Mac" ? "Meta" : "ControlLeft"}
       fitViewOptions={{ duration: FIT_VIEW_DURATION }}
       onPaneClick={closeNewEditor}
-      {...propsOverride}
     >
-      {!showcaseMode && <MiniMap position="bottom-left" />}
+      <MiniMap position="bottom-left" />
       <Background variant={BackgroundVariant.Dots} gap={25} size={1.5} />
     </ReactFlow>
   );
