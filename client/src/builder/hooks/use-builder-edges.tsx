@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback } from "react";
+import { useCallback } from "react";
 import {
   Connection,
   Edge,
@@ -10,36 +10,24 @@ import {
 import { nodeToSceneAdapter } from "../adapters";
 import { getBuilderService } from "@/get-builder-service";
 import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
-import { Story } from "@/lib/storage/domain";
 import { BuilderNode } from "../types";
 
-export const useBuilderEdges = ({
-  setEdges,
-}: {
-  story: Story;
-  setEdges: Dispatch<SetStateAction<Edge[]>>;
-}) => {
-  const { getNodes } = useReactFlow<BuilderNode>();
+export const useBuilderEdges = () => {
+  const { getNodes, setEdges } = useReactFlow<BuilderNode>();
 
   const getSceneToUpdate = useCallback(
     (edge: Edge | Connection) => {
       const sourceScene = getNodes().find((scene) => scene.id === edge.source);
 
       const actionIndex = parseInt(
-        edge.sourceHandle?.split("-").at(-1) ?? "-1",
+        edge.sourceHandle?.split("-").at(-1) ?? "NaN",
       );
 
-      if (
-        !sourceScene ||
-        edge.target === null ||
-        actionIndex === -1 ||
-        Number.isNaN(actionIndex)
-      ) {
+      if (!sourceScene || Number.isNaN(actionIndex)) {
         return null;
       }
 
       const sceneToUpdate = nodeToSceneAdapter(sourceScene);
-
       return { sceneToUpdate, actionIndex };
     },
     [getNodes],
@@ -55,7 +43,7 @@ export const useBuilderEdges = ({
 
       getBuilderService().addSceneConnection({
         sourceScene: sceneData.sceneToUpdate,
-        destinationSceneKey: connection.target!,
+        destinationSceneKey: connection.target,
         actionIndex: sceneData.actionIndex,
       });
 
