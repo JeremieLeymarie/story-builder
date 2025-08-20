@@ -1,18 +1,22 @@
+import { SceneNode } from "@/builder/components/nodes/scene/scene";
 import { SceneNodeType } from "@/builder/types";
 import { Title } from "@/design-system/components";
 import { Button } from "@/design-system/primitives";
 import { Link } from "@tanstack/react-router";
 import { MoveRightIcon } from "lucide-react";
 import {
+  ReactFlow,
+  Background,
+  BackgroundVariant,
   Edge,
   useEdgesState,
   useNodesState,
-  ReactFlowProvider,
 } from "@xyflow/react";
 import { BuilderContextProvider } from "@/builder/hooks/use-builder-context";
 import { Story } from "@/lib/storage/domain";
 import { makeSimpleSceneContent } from "@/lib/scene-content";
-import { BuilderFlow } from "@/builder/components/builder";
+
+const nodeTypes = { scene: SceneNode };
 
 const NODES: SceneNodeType[] = [
   {
@@ -126,31 +130,21 @@ export const BuilderShowcase = () => {
           story={MOCK_STORY}
           scenes={[]}
         >
-          <ReactFlowProvider>
-            <BuilderFlow
-              propsOverride={{
-                nodes,
-                edges,
-                onNodesChange: (changes) =>
-                  onNodesChange(
-                    changes.filter((change) => change.type !== "add"),
-                  ),
-                onConnectEnd: undefined,
-                onEdgesChange,
-                panOnScroll: false,
-                preventScrolling: false,
-                panOnDrag: false,
-                panActivationKeyCode: null,
-                autoPanOnNodeDrag: false,
-                autoPanOnConnect: false,
-                zoomOnScroll: false,
-                zoomOnDoubleClick: false,
-                zoomOnPinch: false,
-                zoomActivationKeyCode: null,
-              }}
-              showcaseMode={true}
-            />
-          </ReactFlowProvider>
+          <ReactFlow
+            nodeTypes={nodeTypes}
+            nodes={nodes}
+            onNodesChange={onNodesChange}
+            edges={edges}
+            onEdgesChange={onEdgesChange}
+            minZoom={0.05}
+            zoomOnScroll={false}
+            panOnScroll={false}
+            defaultEdgeOptions={{ zIndex: 10000 }}
+            preventScrolling={false}
+            fitView
+          >
+            <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+          </ReactFlow>
         </BuilderContextProvider>
       </div>
     </div>
