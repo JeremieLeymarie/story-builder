@@ -19,10 +19,7 @@ export const useBuilder = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState(edgesFromContext);
 
   const builderService = getBuilderService();
-  const { onConnect, onConnectEnd, onEdgesDelete } = useBuilderEdges({
-    story,
-    setEdges,
-  });
+  const { onConnect, onConnectEnd, onEdgesDelete } = useBuilderEdges();
 
   useBuilderShortCuts({ firstSceneKey: story.firstSceneKey });
 
