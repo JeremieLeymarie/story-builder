@@ -15,6 +15,8 @@ import { useBuilderError } from "./use-builder-error";
 export const useBuilderEdges = () => {
   const { getNodes, setEdges } = useReactFlow<BuilderNode>();
   const { handleError } = useBuilderError();
+  const { addScene } = useAddScene();
+  const { screenToFlowPosition } = useReactFlow();
 
   const getSceneToUpdate = (edge: Edge | Connection) => {
     const sourceScene = getNodes().find((scene) => scene.id === edge.source);
@@ -45,7 +47,7 @@ export const useBuilderEdges = () => {
       })
       .catch(handleError);
 
-    // Replace the existing edge if existed, otherwise simply add a new edge
+    // Optimistic update: replace the existing edge if existed, otherwise simply add a new edge
     setEdges((prev) => {
       const existingEdgeAtHandle = prev.find(
         (ed) => ed.sourceHandle === connection.sourceHandle,
@@ -58,8 +60,6 @@ export const useBuilderEdges = () => {
     });
   };
 
-  const { addScene } = useAddScene();
-  const { screenToFlowPosition } = useReactFlow();
   const onConnectEnd = async (
     ev: MouseEvent | TouchEvent,
     connectionState: FinalConnectionState,
@@ -90,11 +90,11 @@ export const useBuilderEdges = () => {
               ],
             },
       );
-
       if (!scene) return;
-      const fromNode = connectionState.fromNode.id;
 
+      const fromNode = connectionState.fromNode.id;
       const toNode = scene.key;
+
       const toHandle = `${toNode}-0`;
       setTimeout(() => {
         onConnect({
@@ -111,7 +111,7 @@ export const useBuilderEdges = () => {
     edges.forEach((edge) => {
       const sceneData = getSceneToUpdate(edge);
       if (!sceneData) {
-        // TODO: Add toast
+        console.error("Connection error: scene data is null");
         return;
       }
 
