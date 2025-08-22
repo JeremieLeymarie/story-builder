@@ -15,10 +15,8 @@ export const DEFAULT_SCENE: SceneSchema = {
 
 export const useAddScene = () => {
   const builderService = getBuilderService();
-  const { story } = useBuilderContext();
   const { handleError } = useBuilderError();
-
-  // TODO: does this re-render whenever the viewport changes
+  const { story } = useBuilderContext();
   const { screenToFlowPosition, setNodes } = useReactFlow();
   const { reactFlowRef } = useBuilderContext();
 
