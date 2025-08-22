@@ -26,7 +26,6 @@ export const useBuilder = () => {
     builderService
       .updateSceneBuilderPosition(node.data.key, node.position)
       .catch(handleError);
-    // TODO: handle service errors
   };
 
   const onNodesDelete = (nodes: BuilderNode[]) => {
