@@ -16,38 +16,32 @@ import { SceneEditor } from "./scene-editor/scene-editor-drawer";
 import { useSceneEditorStore } from "./scene-editor/hooks/use-scene-editor-store";
 import { useBuilderActions } from "../hooks/use-builder-actions";
 
-const nodeTypes = { scene: SceneNode };
+const nodeTypes = { scene: SceneNode } as const;
 
 const BuilderFlow = () => {
-  const { reactFlowRef } = useBuilderContext();
+  const { reactFlowRef, initialNodes, initialEdges } = useBuilderContext();
   const closeActiveEditor = useSceneEditorStore((state) => state.close);
   const {
-    nodes,
-    edges,
     onConnect,
     onConnectEnd,
-    onEdgesChange,
     onEdgesDelete,
     onNodeDragStop,
-    onNodesChange,
     onNodesDelete,
   } = useBuilder();
 
   return (
     <ReactFlow
       nodeTypes={nodeTypes}
-      nodes={nodes}
-      edges={edges}
+      defaultNodes={initialNodes}
+      defaultEdges={initialEdges}
+      defaultEdgeOptions={{ zIndex: 10000 }}
       onConnect={onConnect}
       onConnectEnd={onConnectEnd}
-      onEdgesChange={onEdgesChange}
       onEdgesDelete={onEdgesDelete}
       onNodeDragStop={onNodeDragStop}
-      onNodesChange={onNodesChange}
       onNodesDelete={onNodesDelete}
       nodeOrigin={[0, 0.5]}
       minZoom={0.1}
-      defaultEdgeOptions={{ zIndex: 10000 }}
       selectionMode={SelectionMode.Partial}
       nodesFocusable
       selectionOnDrag
