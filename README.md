@@ -17,7 +17,6 @@ The usual workflow should look like this:
 You need on your system:
 
 - Bun
-- Docker
 - Python 3
 - pre-commit
 - uv
