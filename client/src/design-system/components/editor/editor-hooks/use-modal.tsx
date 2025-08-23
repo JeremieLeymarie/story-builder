@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { JSX, useCallback, useState } from "react";
+import { JSX, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -42,9 +42,9 @@ export const useEditorModal = (): [
 ] => {
   const [modalContent, setModalContent] = useState<null | ModalContent>(null);
 
-  const onClose = useCallback(() => {
+  const onClose = () => {
     setModalContent(null);
-  }, []);
+  };
 
   const showModal = (
     title: string,

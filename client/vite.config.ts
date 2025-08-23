@@ -11,7 +11,7 @@ export default defineConfig({
     "process.env": process.env,
   },
   plugins: [
-    react(),
+    react({ babel: { plugins: ["babel-plugin-react-compiler"] } }),
     TanStackRouterVite(),
     tailwindcss(),
     VitePWA({

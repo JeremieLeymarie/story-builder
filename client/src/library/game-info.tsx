@@ -3,7 +3,6 @@ import { Story } from "@/lib/storage/domain";
 import { GameLink } from "./game-link";
 import { Button } from "@/design-system/primitives";
 import { SwordIcon } from "lucide-react";
-import { useMemo } from "react";
 import { ExtendedProgress } from "./types";
 
 export const GameInfo = ({
@@ -17,12 +16,8 @@ export const GameInfo = ({
   otherProgresses: ExtendedProgress[];
   startNewGame: () => void;
 }) => {
-  const areAllSavesFinished = useMemo(
-    () =>
-      [currentProgress, ...otherProgresses].every(
-        (progress) => progress.finished,
-      ),
-    [currentProgress, otherProgresses],
+  const areAllSavesFinished = [currentProgress, ...otherProgresses].every(
+    (progress) => progress.finished,
   );
 
   return (
