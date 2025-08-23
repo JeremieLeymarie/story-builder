@@ -15,7 +15,7 @@ export type SceneNodeProps = NodeProps<SceneNodeType>;
 
 export const SceneNode = ({ data, selected }: SceneNodeProps) => {
   const isEditable = data.isEditable !== undefined ? data.isEditable : true;
-  const { open: openEditor } = useSceneEditorStore();
+  const openEditor = useSceneEditorStore((state) => state.open);
 
   return (
     <Card

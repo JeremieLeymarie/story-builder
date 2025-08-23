@@ -7,5 +7,7 @@ type ExportModalStore = {
 
 export const useExportModalStore = create<ExportModalStore>((set) => ({
   isOpen: false,
-  setOpen: (isOpen) => set({ isOpen }),
+  setOpen(isOpen) {
+    set({ isOpen });
+  },
 }));

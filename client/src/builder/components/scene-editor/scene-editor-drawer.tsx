@@ -17,7 +17,11 @@ export const SceneEditor = ({
 }: {
   onSave: (scene: SceneUpdatePayload) => void;
 }) => {
-  const { isOpen, scene, isFirstScene } = useSceneEditorStore();
+  const [isOpen, scene, isFirstScene] = useSceneEditorStore((state) => [
+    state.isOpen,
+    state.scene,
+    state.isFirstScene,
+  ]);
 
   if (!scene || !isOpen || isFirstScene === null) return null;
 
@@ -45,7 +49,13 @@ const SceneEditorContent = ({
   return (
     <div className="z-50 min-w-[450px] rounded border bg-white/95 p-4 shadow-sm">
       <Form {...form}>
-        <form className="w-full">
+        <form
+          className="w-full"
+          onSubmit={(ev) => {
+            ev.preventDefault();
+            onSave(scene);
+          }}
+        >
           <Tabs defaultValue="scene" className="w-full">
             <TabsList>
               <TabsTrigger value="scene">Scene</TabsTrigger>

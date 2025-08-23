@@ -20,7 +20,7 @@ const nodeTypes = { scene: SceneNode };
 
 const BuilderFlow = () => {
   const { reactFlowRef } = useBuilderContext();
-  const { close: closeNewEditor } = useSceneEditorStore();
+  const closeActiveEditor = useSceneEditorStore((state) => state.close);
   const {
     nodes,
     edges,
@@ -56,7 +56,7 @@ const BuilderFlow = () => {
       fitView
       multiSelectionKeyCode={getUserOS() === "Mac" ? "Meta" : "ControlLeft"}
       fitViewOptions={{ duration: FIT_VIEW_DURATION }}
-      onPaneClick={closeNewEditor}
+      onPaneClick={closeActiveEditor}
     >
       <MiniMap position="bottom-left" />
       <Background variant={BackgroundVariant.Dots} gap={25} size={1.5} />

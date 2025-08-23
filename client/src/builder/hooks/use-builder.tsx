@@ -35,7 +35,7 @@ export const useBuilder = () => {
   };
 
   return {
-    nodes: nodes.map((node) => ({ ...node, selectable: true })),
+    nodes,
     edges,
     onNodeDragStop,
     onNodesChange,
