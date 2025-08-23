@@ -17,7 +17,7 @@ export const useAddScene = () => {
   const builderService = getBuilderService();
   const { handleError } = useBuilderError();
   const { story } = useBuilderContext();
-  const { screenToFlowPosition, setNodes } = useReactFlow();
+  const { screenToFlowPosition, addNodes } = useReactFlow();
   const { reactFlowRef } = useBuilderContext();
 
   const getCenterPosition = () => {
@@ -41,7 +41,7 @@ export const useAddScene = () => {
         storyKey: story.key,
         builderParams: { position },
       });
-      setNodes((nds) => [...nds, sceneToNodeAdapter({ scene, story })]);
+      addNodes([sceneToNodeAdapter({ scene, story })]);
       return scene;
     } catch (err) {
       handleError(err);
