@@ -5,7 +5,7 @@ import { Title } from "@/design-system/components";
 import { ExtendedProgress } from "./types";
 import { cn } from "@/lib/style";
 import { GameLink } from "./game-link";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 export const SavesDetail = ({
   startNewGame,
@@ -19,15 +19,9 @@ export const SavesDetail = ({
   const PROGRESSES_BY_PAGE = 3;
   const [endProgressIndex, setEndProgressIndex] = useState(PROGRESSES_BY_PAGE);
 
-  const progresses = useMemo(
-    () => [currentProgress, ...otherProgresses],
-    [currentProgress, otherProgresses],
-  );
+  const progresses = [currentProgress, ...otherProgresses];
 
-  const slicedProgresses = useMemo(
-    () => progresses.slice(0, endProgressIndex),
-    [endProgressIndex, progresses],
-  );
+  const slicedProgresses = progresses.slice(0, endProgressIndex);
 
   return (
     <div className="space-y-6">

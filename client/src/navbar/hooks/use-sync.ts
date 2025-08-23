@@ -1,5 +1,5 @@
 import { getSyncService } from "@/domains/synchronization/sync-service";
-import { useCallback, useMemo, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 export type SynchronizationState = {
@@ -10,9 +10,9 @@ export type SynchronizationState = {
 
 export const useSync = () => {
   const [state, setState] = useState<SynchronizationState>({ loading: false });
-  const syncService = useMemo(getSyncService, []);
+  const syncService = getSyncService();
 
-  const load = useCallback(async () => {
+  const load = async () => {
     setState({ loading: true });
 
     const [{ error }] = await Promise.all([
@@ -26,15 +26,15 @@ export const useSync = () => {
     }
     setState({ loading: false, success: true });
     toast.success("Successfully loaded cloud data!");
-  }, [syncService]);
+  };
 
-  const save = useCallback(async () => {
+  const save = async () => {
     const result = await syncService.save();
     if (result?.success) toast.success("Successfully saved data to the cloud!");
     else {
       toast.error(`Could not save data to the cloud. ${result?.cause ?? ""}`);
     }
-  }, [syncService]);
+  };
 
   return { state, load, save };
 };

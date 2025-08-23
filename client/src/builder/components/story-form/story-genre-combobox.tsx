@@ -11,7 +11,7 @@ import {
   PopoverTrigger,
 } from "@/design-system/primitives";
 import { cn } from "@/lib/style";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { CommandList } from "cmdk";
 import { capitalize } from "@/lib/string";
 import { StoryGenreBadge } from "@/design-system/components";
@@ -27,24 +27,21 @@ export const StoryGenreCombobox = ({
 }) => {
   const [open, setOpen] = useState(false);
 
-  const handleSelect = useCallback(
-    (value: StoryGenre) => {
-      const idx = values.indexOf(value);
+  const handleSelect = (value: StoryGenre) => {
+    const idx = values.indexOf(value);
 
-      // If present, remove the value
-      if (idx !== -1) {
-        const copiedValues = [...values];
-        copiedValues.splice(idx, 1);
+    // If present, remove the value
+    if (idx !== -1) {
+      const copiedValues = [...values];
+      copiedValues.splice(idx, 1);
 
-        onChange(copiedValues);
-        return;
-      }
+      onChange(copiedValues);
+      return;
+    }
 
-      // Otherwise, add it
-      onChange([...values, value]);
-    },
-    [onChange, values],
-  );
+    // Otherwise, add it
+    onChange([...values, value]);
+  };
 
   return (
     <>
