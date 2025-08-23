@@ -1,6 +1,6 @@
 import { getGameService } from "@/domains/game/game-service";
 import { Scene, StoryProgress } from "@/lib/storage/domain";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 
 type Props = {
   scene?: Scene | null;
@@ -18,17 +18,17 @@ type Props = {
 export const useUpdateStoryProgress = ({ scene, storyProgress }: Props) => {
   const gameService = getGameService();
 
-  const updateStoryProgress = useCallback(
-    async (progress: StoryProgress, scene: Scene) => {
+  useEffect(() => {
+    const updateStoryProgress = async (
+      progress: StoryProgress,
+      scene: Scene,
+    ) => {
       await gameService.saveProgress(progress, {
         currentSceneKey: scene.key,
         sceneActions: scene.actions,
       });
-    },
-    [gameService],
-  );
+    };
 
-  useEffect(() => {
     if (storyProgress && scene) updateStoryProgress(storyProgress, scene);
-  }, [storyProgress, scene, updateStoryProgress]);
+  }, [storyProgress, scene, gameService]);
 };

@@ -16,6 +16,7 @@ export const useAddScene = () => {
   const builderService = getBuilderService();
   const { story } = useBuilderContext();
 
+  // TODO: does this re-render whenever the viewport changes
   const { screenToFlowPosition, setNodes } = useReactFlow();
   const { reactFlowRef } = useBuilderContext();
 
