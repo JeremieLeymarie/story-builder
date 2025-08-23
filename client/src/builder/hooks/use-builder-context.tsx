@@ -16,8 +16,8 @@ type BuilderContext = {
   refresh: RefreshFunction;
   reactFlowRef: RefObject<HTMLDivElement | null>;
   story: Story;
-  nodes: BuilderNode[];
-  edges: Edge[];
+  initialNodes: BuilderNode[];
+  initialEdges: Edge[];
 };
 
 export const BuilderContext = createContext<BuilderContext | null>(null);
@@ -35,14 +35,17 @@ export const BuilderContextProvider = ({
 }>) => {
   const reactFlowRef = useRef<HTMLDivElement>(null);
 
-  const [nodes, edges] = scenesToNodesAndEdgesAdapter({ scenes, story });
+  const [initialNodes, initialEdges] = scenesToNodesAndEdgesAdapter({
+    scenes,
+    story,
+  });
 
   return (
     <BuilderContext.Provider
       value={{
         reactFlowRef,
-        nodes,
-        edges,
+        initialNodes,
+        initialEdges,
         story,
         refresh,
       }}
