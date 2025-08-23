@@ -1,4 +1,5 @@
-import { create } from "zustand";
+import { createWithEqualityFn } from "zustand/traditional";
+import { shallow } from "zustand/shallow";
 import { SceneUpdatePayload } from "../schema";
 
 type SceneEditorStore = {
@@ -15,10 +16,17 @@ export const EMPTY_STATE: Omit<SceneEditorStore, "open" | "close"> = {
   isOpen: false,
 };
 
-export const useSceneEditorStore = create<SceneEditorStore>((set) => ({
-  scene: null,
-  isFirstScene: null,
-  isOpen: false,
-  open: ({ scene, isFirstScene }) => set({ isOpen: true, scene, isFirstScene }),
-  close: () => set(EMPTY_STATE),
-}));
+export const useSceneEditorStore = createWithEqualityFn<SceneEditorStore>(
+  (set) => ({
+    scene: null,
+    isFirstScene: null,
+    isOpen: false,
+    open({ scene, isFirstScene }) {
+      set({ isOpen: true, scene, isFirstScene });
+    },
+    close() {
+      set(EMPTY_STATE);
+    },
+  }),
+  shallow,
+);
