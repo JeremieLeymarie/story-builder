@@ -12,15 +12,14 @@ import { useBuilderContext } from "../hooks/use-builder-context";
 import { getUserOS } from "@/lib/get-os";
 import { ActionsBar } from "./actions-bar";
 import { FIT_VIEW_DURATION } from "../constants";
-import { SceneEditor } from "./scene-editor/scene-editor-drawer";
-import { useSceneEditorStore } from "./scene-editor/hooks/use-scene-editor-store";
-import { useBuilderActions } from "../hooks/use-builder-actions";
+import { EditorBar } from "./builder-editors/editor-bar";
+import { useBuilderEditorStore } from "./builder-editors/hooks/use-scene-editor-store";
 
 const nodeTypes = { scene: SceneNode } as const;
 
 const BuilderFlow = () => {
   const { reactFlowRef, initialNodes, initialEdges } = useBuilderContext();
-  const closeActiveEditor = useSceneEditorStore((state) => state.close);
+  const closeActiveEditor = useBuilderEditorStore((state) => state.close);
   const {
     onConnect,
     onConnectEnd,
@@ -59,8 +58,6 @@ const BuilderFlow = () => {
 };
 
 export const Builder = () => {
-  const { updateScene } = useBuilderActions();
-
   return (
     <div className="relative flex h-full w-full border">
       <div className="absolute top-5 left-5 flex flex-col gap-4">
@@ -68,7 +65,7 @@ export const Builder = () => {
         <ActionsBar />
       </div>
       <div className="absolute top-5 right-5 flex flex-col gap-4">
-        <SceneEditor onSave={updateScene} />
+        <EditorBar />
       </div>
       <BuilderFlow />
     </div>

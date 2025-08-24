@@ -2,8 +2,8 @@ import { useReactFlow } from "@xyflow/react";
 import { BuilderNode } from "../types";
 import { useBuilderContext } from "./use-builder-context";
 import { getBuilderService } from "@/get-builder-service";
-import { SceneUpdatePayload } from "../components/scene-editor/schema";
 import { useBuilderError } from "./use-builder-error";
+import { SceneUpdatePayload } from "../components/builder-editors/scene-editor/schema";
 
 export const useBuilderActions = () => {
   const { story } = useBuilderContext();
