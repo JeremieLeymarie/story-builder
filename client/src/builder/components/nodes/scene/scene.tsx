@@ -8,14 +8,14 @@ import { Handle, NodeProps, Position } from "@xyflow/react";
 import { EditIcon } from "lucide-react";
 import { SceneNodeType } from "../../../types";
 import { cn } from "@/lib/style";
-import { useSceneEditorStore } from "@/builder/components/scene-editor/hooks/use-scene-editor-store";
 import { Button } from "@/design-system/primitives";
+import { useBuilderEditorStore } from "../../builder-editors/hooks/use-scene-editor-store";
 
 export type SceneNodeProps = NodeProps<SceneNodeType>;
 
 export const SceneNode = ({ data, selected }: SceneNodeProps) => {
   const isEditable = data.isEditable !== undefined ? data.isEditable : true;
-  const openEditor = useSceneEditorStore((state) => state.open);
+  const openEditor = useBuilderEditorStore((state) => state.open);
 
   return (
     <Card
@@ -26,14 +26,17 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
       )}
       onDoubleClick={() => {
         openEditor({
-          scene: {
-            actions: data.actions,
-            content: data.content,
-            key: data.key,
-            storyKey: data.storyKey,
-            title: data.title,
+          type: "scene-editor",
+          payload: {
+            scene: {
+              actions: data.actions,
+              content: data.content,
+              key: data.key,
+              storyKey: data.storyKey,
+              title: data.title,
+            },
+            isFirstScene: data.isFirstScene,
           },
-          isFirstScene: data.isFirstScene,
         });
       }}
     >
@@ -53,14 +56,17 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
               variant="ghost"
               onClick={() =>
                 openEditor({
-                  scene: {
-                    actions: data.actions,
-                    content: data.content,
-                    key: data.key,
-                    storyKey: data.storyKey,
-                    title: data.title,
+                  type: "scene-editor",
+                  payload: {
+                    scene: {
+                      actions: data.actions,
+                      content: data.content,
+                      key: data.key,
+                      storyKey: data.storyKey,
+                      title: data.title,
+                    },
+                    isFirstScene: data.isFirstScene,
                   },
-                  isFirstScene: data.isFirstScene,
                 })
               }
             >

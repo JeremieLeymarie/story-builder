@@ -1,11 +1,11 @@
 import { useBuilderContext } from "./use-builder-context";
 import { useReactFlow, XYPosition } from "@xyflow/react";
 import { getBuilderService } from "@/get-builder-service";
-import { SceneSchema } from "../components/scene-editor/schema";
 import { makeSimpleSceneContent } from "@/lib/scene-content";
 import { sceneToNodeAdapter } from "../adapters";
 import { Scene } from "@/lib/storage/domain";
 import { useBuilderError } from "./use-builder-error";
+import { SceneSchema } from "../components/builder-editors/scene-editor/schema";
 
 export const DEFAULT_SCENE: SceneSchema = {
   title: "",
