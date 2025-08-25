@@ -1,6 +1,9 @@
 import { ToolbarPlugin } from "@/design-system/components/editor/plugins/toolbar/toolbar-plugin";
 import { FontFormatToolbarPlugin } from "@/design-system/components/editor/plugins/toolbar/font-format-toolbar-plugin";
 import { BasePlugins } from "./base-plugins";
+import { BlockInsertPlugin } from "./block-insert-plugin";
+import { InsertImage } from "@/design-system/components/editor/plugins/toolbar/block-insert/insert-image";
+import { ImagesPlugin } from "@/design-system/components/editor/plugins/images-plugin";
 
 export const EditorPlugins = ({ editable }: { editable: boolean }) => {
   return (
@@ -12,9 +15,13 @@ export const EditorPlugins = ({ editable }: { editable: boolean }) => {
             <FontFormatToolbarPlugin format="italic" />
             <FontFormatToolbarPlugin format="underline" />
             <FontFormatToolbarPlugin format="strikethrough" />
+            <BlockInsertPlugin>
+              <InsertImage />
+            </BlockInsertPlugin>
           </div>
         )}
       </ToolbarPlugin>
+      <ImagesPlugin />
       <BasePlugins editable={editable} />
     </>
   );

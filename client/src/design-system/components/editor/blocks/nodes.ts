@@ -6,6 +6,7 @@ import {
   ParagraphNode,
   TextNode,
 } from "lexical";
+import { ImageNode } from "../nodes/image-node";
 
 export const nodes: ReadonlyArray<Klass<LexicalNode> | LexicalNodeReplacement> =
-  [HeadingNode, ParagraphNode, TextNode, QuoteNode];
+  [HeadingNode, ParagraphNode, TextNode, QuoteNode, ImageNode];

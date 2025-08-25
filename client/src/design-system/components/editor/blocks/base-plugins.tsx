@@ -18,11 +18,13 @@ export const BasePlugins = ({ editable }: { editable: boolean }) => {
   return (
     <RichTextPlugin
       contentEditable={
-        <div ref={onRef} className="relative">
-          <ContentEditable
-            className={cn(editable ? "max-w-[400px] px-4" : "px-0")}
-            placeholder={"Start typing ..."}
-          />
+        <div>
+          <div ref={onRef} className="relative">
+            <ContentEditable
+              className={cn(editable ? "max-w-[400px] px-4" : "px-0")}
+              placeholder={"Start typing ..."}
+            />
+          </div>
         </div>
       }
       ErrorBoundary={LexicalErrorBoundary}

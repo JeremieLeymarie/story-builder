@@ -36,6 +36,8 @@ export const FontFormatToolbarPlugin = ({
 
   const $updateToolbar = (selection: BaseSelection) => {
     if ($isRangeSelection(selection) || $isTableSelection(selection)) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       setIsSelected(selection.hasFormat(format as TextFormatType));
     }
   };

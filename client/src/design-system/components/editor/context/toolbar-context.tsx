@@ -3,15 +3,31 @@ import { LexicalEditor } from "lexical";
 
 const Context = createContext<{
   activeEditor: LexicalEditor;
+  $updateToolbar: () => void;
+  blockType: string;
+  setBlockType: (blockType: string) => void;
+  showModal: (
+    title: string,
+    showModal: (onClose: () => void) => JSX.Element,
+  ) => void;
 }>({
   activeEditor: {} as LexicalEditor,
+  $updateToolbar: () => {},
+  blockType: "paragraph",
+  setBlockType: () => {},
+  showModal: () => {},
 });
 
 export const ToolbarContext = ({
   activeEditor,
+  $updateToolbar,
+  blockType,
+  setBlockType,
+  showModal,
   children,
 }: {
   activeEditor: LexicalEditor;
+  $updateToolbar: () => void;
   blockType: string;
   setBlockType: (blockType: string) => void;
   showModal: (
@@ -24,6 +40,10 @@ export const ToolbarContext = ({
     <Context.Provider
       value={{
         activeEditor,
+        $updateToolbar,
+        blockType,
+        setBlockType,
+        showModal,
       }}
     >
       {children}
