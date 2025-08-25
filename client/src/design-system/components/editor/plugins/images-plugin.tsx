@@ -105,7 +105,7 @@ export const InsertImageUploadedDialogBody = ({
 
   const loadImage = (files: FileList | null) => {
     const reader = new FileReader();
-    reader.onload = function () {
+    reader.onload = () => {
       if (typeof reader.result === "string") {
         setSrc(reader.result);
       }
@@ -349,7 +349,7 @@ declare global {
   }
 }
 
-function canDropImage(event: DragEvent): boolean {
+const canDropImage = (event: DragEvent): boolean => {
   const target = event.target;
   return !!(
     target &&
@@ -358,9 +358,9 @@ function canDropImage(event: DragEvent): boolean {
     target.parentElement &&
     target.parentElement.closest("div.ContentEditable__root")
   );
-}
+};
 
-function getDragSelection(event: DragEvent): Range | null | undefined {
+const getDragSelection = (event: DragEvent): Range | null | undefined => {
   let range;
   const target = event.target as null | Element | Document;
   const targetWindow =
@@ -380,4 +380,4 @@ function getDragSelection(event: DragEvent): Range | null | undefined {
   }
 
   return range;
-}
+};
