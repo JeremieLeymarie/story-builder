@@ -45,7 +45,7 @@ export const _getLibraryService = ({
 
   const _getLibrary = async () => {
     const user = await localRepository.getUser();
-    // 1. Retrieving all the storyProgresses of the current user in the database
+    // Retrieving all the storyProgresses of the current user in the database
     const storyProgresses = await localRepository.getUserStoryProgresses(
       user?.key,
     );
