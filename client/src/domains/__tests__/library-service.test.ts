@@ -20,6 +20,7 @@ import {
   MOCK_IMPORTED_STORY,
 } from "./data/imported-story-mocks";
 import { makeSimpleSceneContent } from "@/lib/scene-content";
+import { BuilderStory } from "@/lib/storage/domain";
 
 describe("library-service", () => {
   let libraryService: ReturnType<typeof _getLibraryService>;
@@ -49,20 +50,85 @@ describe("library-service", () => {
   });
 
   describe("getLibrary", () => {
-    it("should get all library data", async () => {
+    it("should get all library data, sorted by last played save", async () => {
+      const storyProgressA = {
+        key: "key-1",
+        storyKey: "story-key-1",
+        userKey: undefined,
+        history: [],
+        currentSceneKey: "not-relevant",
+        lastPlayedAt: new Date("2025/05/01"),
+      };
+
+      const storyProgressB = {
+        key: "key-2",
+        storyKey: "story-key-2",
+        userKey: undefined,
+        history: [],
+        currentSceneKey: "not-relevant",
+        lastPlayedAt: new Date("2025/06/01"),
+      };
+
+      const storyProgressC = {
+        key: "key-3",
+        storyKey: "story-key-2",
+        userKey: undefined,
+        history: [],
+        currentSceneKey: "not-relevant",
+        lastPlayedAt: new Date("2025/01/01"),
+      };
+
+      localRepository.getUserStoryProgresses = vi.fn(() => {
+        return Promise.resolve([
+          storyProgressA,
+          storyProgressB,
+          storyProgressC,
+        ]);
+      });
+
+      // Story creation dates should be taken into account when getting sorted library data
+      const storyA: BuilderStory = {
+        key: "story-key-1",
+        title: "not-relevant",
+        description: "not-relevant",
+        image: "not-relevant",
+        firstSceneKey: "not-relevant",
+        genres: [],
+        creationDate: new Date("2025/10/01"),
+        type: "builder",
+      };
+
+      const storyB: BuilderStory = {
+        key: "story-key-2",
+        title: "not-relevant",
+        description: "not-relevant",
+        image: "not-relevant",
+        firstSceneKey: "not-relevant",
+        genres: [],
+        creationDate: new Date("2025/01/01"),
+        type: "builder",
+      };
+
+      localRepository.getStoriesByKeys = vi.fn(() => {
+        return Promise.resolve([storyA, storyB]);
+      });
+
       const data = await libraryService.getLibrary();
 
       expect(localRepository.getUser).toHaveBeenCalled();
       expect(localRepository.getUserStoryProgresses).toHaveBeenCalledWith(
         BASIC_USER.key,
       );
-      expect(localRepository.getStoriesByKeys).toHaveBeenCalledWith([
-        BASIC_STORY_PROGRESS.storyKey,
-      ]);
+
+      // Vitest doesn't allow to check parameters without checking order, so this is the only way I found to do it
+      const args = localRepository.getStoriesByKeys.mock.calls[0];
+      const sortedArgs = args?.[0].sort();
+      expect(sortedArgs).toStrictEqual(["story-key-1", "story-key-2"]);
+
       expect(localRepository.getFinishedGameKeys).toHaveBeenCalled();
 
       expect(data).toStrictEqual({
-        games: [BASIC_STORY],
+        games: [storyB, storyA],
         finishedGameKeys: ["key"],
       });
     });
