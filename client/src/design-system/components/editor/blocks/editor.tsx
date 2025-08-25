@@ -43,11 +43,13 @@ export const Editor = ({
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
   sceneKey: string;
 }) => {
+  // TODO: this is horrible, we should find another way to be reactive
   // The key is used to force lexical to update its initial value.
   // We need it to change only when the editor state changes, to avoid de-synchronization issues
   // In the lifecycle, sceneKey (from global store) is updated before the scene content (from form);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const key = useMemo(() => sceneKey, [editorSerializedState]);
+
   return (
     <div
       className={cn(

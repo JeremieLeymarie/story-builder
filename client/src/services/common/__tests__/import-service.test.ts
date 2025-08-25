@@ -112,7 +112,7 @@ describe("import-service", () => {
   });
 
   describe("createStory", () => {
-    it("should create story", async () => {
+    it("should create story (imported)", async () => {
       const result = await importService.createStory({
         story: parsed,
         type: "imported",
@@ -131,6 +131,36 @@ describe("import-service", () => {
         author: {
           username: "author",
           key: "author-key",
+        },
+      });
+
+      expect(result).toStrictEqual({
+        data: BASIC_STORY, // From repository stub
+      });
+    });
+
+    it("should create story with anonymous author", async () => {
+      const result = await importService.createStory({
+        story: {
+          story: { ...parsed.story, author: undefined },
+          scenes: parsed.scenes,
+        },
+        type: "imported",
+      });
+
+      expect(localRepository.createStory).toHaveBeenCalledWith({
+        type: "imported",
+        originalStoryKey: "bloup",
+        title: "The Great Journey To The Green River",
+        description: "A wonderful epic tale through the world of Penthetir. ",
+        image:
+          "https://b2-backblaze-stackpath.b-cdn.net/2178699/c5jpvq_12e7c09178a6a75a5979d117f779bb07ff07f8f9.jpg",
+        genres: ["adventure" as const, "fantasy" as const],
+        creationDate: importedStory.creationDate,
+        firstSceneKey: TEMPORARY_NULL_KEY,
+        author: {
+          username: "Anonymous Author",
+          key: "ANONYMOUS_AUTHOR_KEY",
         },
       });
 

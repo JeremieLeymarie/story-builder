@@ -26,6 +26,7 @@ import {
   LogOutIcon,
   MenuIcon,
   NetworkIcon,
+  ScrollTextIcon,
 } from "lucide-react";
 import { AuthModalForm } from "@/components/auth-modal-form";
 import { toast } from "sonner";
@@ -192,6 +193,14 @@ export const MobileNavbar = ({
               icon={<NetworkIcon size="20px" />}
             >
               Builder
+            </NavButton>
+          </Link>
+          <Link to="/wikis" className="block">
+            <NavButton
+              isCurrentState={pathname.includes("wikis")}
+              icon={<ScrollTextIcon size="20px" />}
+            >
+              Wikis
             </NavButton>
           </Link>
           <Link to="/about" className="block">

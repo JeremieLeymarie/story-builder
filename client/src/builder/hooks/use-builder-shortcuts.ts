@@ -1,8 +1,7 @@
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { useTestStory } from "./use-test-story";
 import { useExportModalStore } from "./use-export-modal-store";
 import { useAddScene } from "./use-add-scene";
-import { makeSimpleSceneContent } from "@/lib/scene-content";
 
 const isAnyInputFocused = () => {
   const isInputFocused = document.activeElement?.tagName === "INPUT";
@@ -22,38 +21,33 @@ export const useBuilderShortCuts = ({
   firstSceneKey: string;
 }) => {
   const { addScene } = useAddScene();
-  const { setOpen: openExportModal } = useExportModalStore();
+  const openExportModal = useExportModalStore((state) => state.setOpen);
   const { testStory } = useTestStory();
 
-  const handleKeyPress = useCallback(
-    (e: KeyboardEvent) => {
-      if (isAnyInputFocused()) return;
+  // Exhaustive-deps rules doesn't work well with the compiler, see: https://github.com/reactwg/react-compiler/discussions/18
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleKeyPress = (e: KeyboardEvent) => {
+    if (isAnyInputFocused()) return;
 
-      const key = e.key.toLocaleLowerCase();
+    const key = e.key.toLocaleLowerCase();
 
-      switch (key) {
-        case "n":
-          if (isAnyModalOpen()) return;
-          addScene({
-            actions: [],
-            content: makeSimpleSceneContent(""),
-            title: "",
-          });
-          e.preventDefault();
-          break;
-        case "t":
-          testStory(firstSceneKey);
-          e.preventDefault();
-          break;
-        case "e":
-          if (isAnyModalOpen()) return;
-          openExportModal(true);
-          e.preventDefault();
-          break;
-      }
-    },
-    [addScene, firstSceneKey, openExportModal, testStory],
-  );
+    switch (key) {
+      case "n":
+        if (isAnyModalOpen()) return;
+        addScene();
+        e.preventDefault();
+        break;
+      case "t":
+        testStory(firstSceneKey);
+        e.preventDefault();
+        break;
+      case "e":
+        if (isAnyModalOpen()) return;
+        openExportModal(true);
+        e.preventDefault();
+        break;
+    }
+  };
 
   useEffect(() => {
     window.addEventListener("keypress", handleKeyPress);

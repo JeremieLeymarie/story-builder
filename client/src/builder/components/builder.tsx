@@ -16,36 +16,32 @@ import { SceneEditor } from "./scene-editor/scene-editor-drawer";
 import { useSceneEditorStore } from "./scene-editor/hooks/use-scene-editor-store";
 import { useBuilderActions } from "../hooks/use-builder-actions";
 
-const nodeTypes = { scene: SceneNode };
+const nodeTypes = { scene: SceneNode } as const;
 
 const BuilderFlow = () => {
+  const { reactFlowRef, initialNodes, initialEdges } = useBuilderContext();
+  const closeActiveEditor = useSceneEditorStore((state) => state.close);
   const {
-    edges,
-    nodes,
     onConnect,
-    onEdgesChange,
-    onNodeMove,
-    onNodesChange,
-    onNodesDelete,
+    onConnectEnd,
     onEdgesDelete,
+    onNodeDragStop,
+    onNodesDelete,
   } = useBuilder();
-
-  const { reactFlowRef } = useBuilderContext();
-  const { close: closeNewEditor } = useSceneEditorStore();
 
   return (
     <ReactFlow
       nodeTypes={nodeTypes}
-      nodes={nodes}
-      edges={edges}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      onNodeDragStop={onNodeMove}
-      onEdgesDelete={onEdgesDelete}
-      onNodesDelete={onNodesDelete}
-      minZoom={0.1}
+      defaultNodes={initialNodes}
+      defaultEdges={initialEdges}
       defaultEdgeOptions={{ zIndex: 10000 }}
+      onConnect={onConnect}
+      onConnectEnd={onConnectEnd}
+      onEdgesDelete={onEdgesDelete}
+      onNodeDragStop={onNodeDragStop}
+      onNodesDelete={onNodesDelete}
+      nodeOrigin={[0, 0.5]}
+      minZoom={0.1}
       selectionMode={SelectionMode.Partial}
       nodesFocusable
       selectionOnDrag
@@ -54,7 +50,7 @@ const BuilderFlow = () => {
       fitView
       multiSelectionKeyCode={getUserOS() === "Mac" ? "Meta" : "ControlLeft"}
       fitViewOptions={{ duration: FIT_VIEW_DURATION }}
-      onPaneClick={closeNewEditor}
+      onPaneClick={closeActiveEditor}
     >
       <MiniMap position="bottom-left" />
       <Background variant={BackgroundVariant.Dots} gap={25} size={1.5} />

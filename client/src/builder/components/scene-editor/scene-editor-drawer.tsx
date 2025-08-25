@@ -11,13 +11,18 @@ import { SceneUpdatePayload } from "./schema";
 import { ActionsSection } from "./actions-section";
 import { useBuilderActions } from "@/builder/hooks/use-builder-actions";
 import { useSceneEditorForm } from "./hooks/use-scene-editor-form";
+import { Bar } from "@/design-system/components/bar";
 
 export const SceneEditor = ({
   onSave,
 }: {
   onSave: (scene: SceneUpdatePayload) => void;
 }) => {
-  const { isOpen, scene, isFirstScene } = useSceneEditorStore();
+  const [isOpen, scene, isFirstScene] = useSceneEditorStore((state) => [
+    state.isOpen,
+    state.scene,
+    state.isFirstScene,
+  ]);
 
   if (!scene || !isOpen || isFirstScene === null) return null;
 
@@ -43,9 +48,15 @@ const SceneEditorContent = ({
   const form = useSceneEditorForm({ onSave, scene });
 
   return (
-    <div className="z-50 min-w-[450px] rounded border bg-white/95 p-4 shadow-sm">
+    <Bar className="min-w-[450px]">
       <Form {...form}>
-        <form className="w-full">
+        <form
+          className="w-full"
+          onSubmit={(ev) => {
+            ev.preventDefault();
+            onSave(scene);
+          }}
+        >
           <Tabs defaultValue="scene" className="w-full">
             <TabsList>
               <TabsTrigger value="scene">Scene</TabsTrigger>
@@ -66,6 +77,6 @@ const SceneEditorContent = ({
           </Tabs>
         </form>
       </Form>
-    </div>
+    </Bar>
   );
 };

@@ -7,13 +7,16 @@ import {
 } from "@/repositories";
 import { WithoutKey } from "@/types";
 import { nanoid } from "nanoid";
+import { getWikiService, WikiServicePort } from "../wiki/wiki-service";
 
 const _getUserService = ({
   localRepository,
   remoteRepository,
+  wikiService,
 }: {
   localRepository: LocalRepositoryPort;
   remoteRepository: RemoteRepositoryPort;
+  wikiService: WikiServicePort;
 }) => {
   const _createLocalUser = async (user: WithoutKey<User>) => {
     const userCount = await localRepository.getUserCount();
@@ -29,16 +32,33 @@ const _getUserService = ({
     return createdUser;
   };
 
+  const _afterAuth = async ({
+    username,
+    key,
+  }: {
+    username: string;
+    key: string;
+  }) => {
+    // After authenticating, we need to set the author field in
+    // - stories
+    // - wikis
+    // That had an undefined author field
+    await Promise.all([
+      localRepository.addAuthorToStories({ key, username }),
+      wikiService.addAuthorToWikis({ key, username }),
+    ]);
+  };
+
   return {
     login: async (usernameOrEmail: string, password: string) => {
       const response = await remoteRepository.login(usernameOrEmail, password);
 
       if (response.data) {
         _createLocalUser(response.data);
-        // Side effect: once a user is logged in, update all of his or her existing stories' authorKey
-        await localRepository.addAuthorToStories({
-          key: response.data.key,
+        // Side effects
+        _afterAuth({
           username: response.data.username,
+          key: response.data.key,
         });
       }
 
@@ -57,11 +77,8 @@ const _getUserService = ({
 
       if (response.data) {
         const createdUser = await _createLocalUser(response.data);
-        // Side effect: once a user is logged in, update all of his or her existing stories' authorKey
-        localRepository.addAuthorToStories({
-          key: createdUser.key,
-          username: createdUser.username,
-        });
+        // Side effects
+        _afterAuth({ username: createdUser.username, key: createdUser.key });
       }
 
       return response;
@@ -84,4 +101,5 @@ export const getUserService = () =>
   _getUserService({
     localRepository: getLocalRepository(),
     remoteRepository: getRemoteAPIRepository(),
+    wikiService: getWikiService(),
   });
