@@ -8,7 +8,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/design-system/primitives";
-import { StoryFromImport } from "@/services/common/import-service";
+import {
+  ANONYMOUS_AUTHOR,
+  StoryFromImport,
+} from "@/services/common/import-service";
 import { ReactNode, useState } from "react";
 import { Badge } from "../primitives/badge";
 import { StoryGenreBadge } from "./story-genre-badge";
@@ -28,7 +31,11 @@ const ImportPreview = ({
         />
         <div>
           <p className="font-semibold">{storyFromImport.story.title}</p>
-          <p>Written by {storyFromImport.story.author.username}</p>
+          <p>
+            Written by{" "}
+            {storyFromImport.story.author?.username ??
+              ANONYMOUS_AUTHOR.username}
+          </p>
           <div className="flex gap-2">
             {storyFromImport.story.genres.map((genre) => (
               <StoryGenreBadge key={genre} variant={genre} size="sm" />

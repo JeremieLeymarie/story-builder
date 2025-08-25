@@ -26,12 +26,14 @@ export type User = {
 export const STORY_TYPE = ["builder", "published", "imported"] as const;
 export type StoryType = (typeof STORY_TYPE)[number];
 
+type Author = {
+  key: string;
+  username: string;
+};
+
 type StoryBase = {
   key: string;
-  author?: {
-    key: string;
-    username: string;
-  };
+  author?: Author;
   title: string;
   description: string;
   image: string;
@@ -75,5 +77,21 @@ export type StoryProgress = {
   finished?: boolean;
 };
 
-export const ENTITIES = ["story", "scene", "user", "story-progress"] as const;
+export type Wiki = {
+  key: string;
+  author?: Author;
+  type: "imported" | "created";
+  name: string;
+  description?: string;
+  image: string;
+  createdAt: Date;
+};
+
+export const ENTITIES = [
+  "story",
+  "scene",
+  "user",
+  "story-progress",
+  "wiki",
+] as const;
 export type Entity = (typeof ENTITIES)[number];

@@ -23,15 +23,9 @@ export const SavesDetail = ({
   const [endProgressIndex, setEndProgressIndex] = useState(PROGRESSES_BY_PAGE);
   const { deleteProgress, isDeleting } = useDeleteProgress();
 
-  const progresses = useMemo(
-    () => [currentProgress, ...otherProgresses],
-    [currentProgress, otherProgresses],
-  );
+  const progresses = [currentProgress, ...otherProgresses];
 
-  const slicedProgresses = useMemo(
-    () => progresses.slice(0, endProgressIndex),
-    [endProgressIndex, progresses],
-  );
+  const slicedProgresses = progresses.slice(0, endProgressIndex);
 
   const handleDeleteProgress = async (
     event: React.MouseEvent,

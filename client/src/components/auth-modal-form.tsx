@@ -15,7 +15,7 @@ import {
   Input,
 } from "@/design-system/primitives";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
@@ -38,10 +38,6 @@ export const AuthModalForm = ({
 }) => {
   const [form, setForm] = useState<"sign-in" | "sign-up">("sign-up");
 
-  const handleSuccess = useCallback(async () => {
-    onSuccess();
-  }, [onSuccess]);
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
@@ -55,9 +51,9 @@ export const AuthModalForm = ({
           </DialogDescription>
         </DialogHeader>
         {form === "sign-up" ? (
-          <SignUpForm onSuccess={handleSuccess} onError={onError} />
+          <SignUpForm onSuccess={onSuccess} onError={onError} />
         ) : (
-          <SignInForm onSuccess={handleSuccess} onError={onError} />
+          <SignInForm onSuccess={onSuccess} onError={onError} />
         )}
         <p className="text-muted-foreground text-sm">
           {form === "sign-up" ? (
@@ -92,7 +88,7 @@ const signUpSchema = z.object({
     .string()
     .min(2, { message: "Username must be at least 2 characters long." })
     .max(25, { message: "Username cannot be more than 25 characters long." }),
-  email: z.string().email({ message: "Email must be a valid email address" }),
+  email: z.email({ message: "Email must be a valid email address" }),
   password: z
     .string()
     .min(3, { message: "Password must be at least 3 characters long." })

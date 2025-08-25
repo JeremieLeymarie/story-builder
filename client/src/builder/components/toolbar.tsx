@@ -6,7 +6,7 @@ import { DeleteModal } from "./delete-modal";
 import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
 import { useBuilderContext } from "../hooks/use-builder-context";
 import { useAddScene } from "../hooks/use-add-scene";
-import { makeSimpleSceneContent } from "@/lib/scene-content";
+import { Bar } from "@/design-system/components/bar";
 
 export const Toolbar = () => {
   const { story } = useBuilderContext();
@@ -14,18 +14,14 @@ export const Toolbar = () => {
   const { addScene } = useAddScene();
 
   return (
-    <div className="z-50 w-[250px] rounded border bg-white/80 p-4 shadow-sm">
+    <Bar className="w-[250px]">
       <p className="text-primary text-2xl font-semibold">TOOLS</p>
       <div className="mt-2 flex w-full flex-col gap-2">
         <Button
           size="sm"
           className="flex w-full justify-start"
           onClick={() => {
-            addScene({
-              title: "",
-              content: makeSimpleSceneContent(""),
-              actions: [],
-            });
+            addScene();
           }}
         >
           <BookOpenTextIcon size="16px" />
@@ -45,6 +41,6 @@ export const Toolbar = () => {
         <ExportModal storyKey={story.key} />
         <DeleteModal deleteStory={deleteStory} />
       </div>
-    </div>
+    </Bar>
   );
 };

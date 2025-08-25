@@ -4,6 +4,7 @@ import { fixupConfigRules } from "@eslint/compat";
 import tsParser from "@typescript-eslint/parser";
 import reactRefresh from "eslint-plugin-react-refresh";
 import js from "@eslint/js";
+import reactHooks from "eslint-plugin-react-hooks";
 
 import { FlatCompat } from "@eslint/eslintrc";
 
@@ -29,7 +30,6 @@ export default defineConfig([
       compat.extends(
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
-        "plugin:react-hooks/recommended",
         "prettier",
       ),
     ),
@@ -64,4 +64,5 @@ export default defineConfig([
       "no-unused-vars": "off",
     },
   },
+  reactHooks.configs.recommended,
 ]);
