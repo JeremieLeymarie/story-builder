@@ -3,7 +3,7 @@ import { BuilderNode } from "../types";
 import { useBuilderContext } from "./use-builder-context";
 import { getBuilderService } from "@/get-builder-service";
 import { useBuilderError } from "./use-builder-error";
-import { SceneUpdatePayload } from "../components/builder-editors/scene-editor/schema";
+import { SceneUpdatePayload } from "../components/builder-editor-bar/scene-editor/schema";
 
 export const useBuilderActions = () => {
   const { story } = useBuilderContext();

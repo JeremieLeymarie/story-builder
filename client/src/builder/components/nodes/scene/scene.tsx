@@ -9,7 +9,7 @@ import { EditIcon } from "lucide-react";
 import { SceneNodeType } from "../../../types";
 import { cn } from "@/lib/style";
 import { Button } from "@/design-system/primitives";
-import { useBuilderEditorStore } from "../../builder-editors/hooks/use-scene-editor-store";
+import { useBuilderEditorStore } from "@/builder/hooks/use-scene-editor-store";
 
 export type SceneNodeProps = NodeProps<SceneNodeType>;
 

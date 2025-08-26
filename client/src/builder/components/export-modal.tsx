@@ -24,9 +24,13 @@ export const ExportModal = ({ storyKey }: { storyKey: string }) => {
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full justify-start" size="sm">
-          <DownloadIcon size="16px" />
-          &nbsp; Export
+        <Button
+          variant="outline"
+          className="w-full justify-start gap-4"
+          size="sm"
+        >
+          <DownloadIcon />
+          Export
           <ButtonShortCutDoc doc="E" />
         </Button>
       </DialogTrigger>

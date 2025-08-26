@@ -16,23 +16,17 @@ import {
   Input,
   Textarea,
 } from "@/design-system/primitives";
-import { WithoutKey } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReactNode, useState } from "react";
 import { useForm } from "react-hook-form";
-import { StoryGenreCombobox } from "./story-genre-combobox";
-import { schema, Schema } from "./schema";
-import { Story } from "@/lib/storage/domain";
-
-export type OnSubmitStoryFormProps = Omit<
-  WithoutKey<Story>,
-  "firstSceneKey" | "author" | "type" | "publicationDate" | "creationDate"
-> & { firstSceneKey?: string };
+import { storySchema, StorySchema } from "./story-schema";
+import { StoryGenreCombobox } from "@/design-system/components/story-genre-combobox";
+import { CreateStoryPayload } from "../hooks/use-builder-stories";
 
 type StoryFormProps = {
-  onSubmit: (props: OnSubmitStoryFormProps) => void;
+  onSubmit: (props: CreateStoryPayload) => void;
   trigger?: ReactNode;
-  defaultValues?: Schema;
+  defaultValues?: StorySchema;
   title: string;
   description: string;
 };
@@ -54,8 +48,8 @@ export const ControlledStoryFormDialog = ({
   title,
   description,
 }: StoryFormProps & { open: boolean; setOpen: (open: boolean) => void }) => {
-  const form = useForm<Schema>({
-    resolver: zodResolver(schema),
+  const form = useForm<StorySchema>({
+    resolver: zodResolver(storySchema),
     defaultValues: defaultValues ?? {
       title: "",
       description: "",
@@ -68,8 +62,8 @@ export const ControlledStoryFormDialog = ({
     if (!open) form.reset();
   };
 
-  const submit = (data: Schema) => {
-    onSubmit?.({ ...data });
+  const submit = (data: StorySchema) => {
+    onSubmit({ ...data });
     handleOpen(false);
   };
 

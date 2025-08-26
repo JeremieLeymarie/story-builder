@@ -28,6 +28,9 @@ import {
   BASIC_USER,
   BASIC_STORY,
 } from "@/repositories/stubs/data";
+import { getTestFactory } from "@/lib/testing/factory";
+
+const factory = getTestFactory();
 
 describe("builder-service", () => {
   let builderService: ReturnType<typeof _getBuilderService>;
@@ -672,7 +675,10 @@ describe("builder-service", () => {
 
   describe("updateStory", () => {
     it("should update scene using repository", async () => {
-      await builderService.updateStory("schplong", {
+      const mockStory = factory.story.builder();
+      builderStoryRepository.update = vi.fn(() => Promise.resolve(mockStory));
+
+      const story = await builderService.updateStory("schplong", {
         author: { key: "key", username: "bob_bidou" },
         title: "A new title",
       });
@@ -684,6 +690,8 @@ describe("builder-service", () => {
           title: "A new title",
         },
       );
+
+      expect(story).toStrictEqual(mockStory);
     });
   });
 });

@@ -58,12 +58,10 @@ describe("builder story repository", () => {
     });
 
     test("should partially update story", async () => {
-      await repo.update(storyB.key, {
+      const story = await repo.update(storyB.key, {
         author: { key: "key", username: "bob_bidou" },
         title: "A new title",
       });
-
-      const story = await testDB.stories.get(storyB.key);
 
       expect(story).toStrictEqual({
         ...storyB,

@@ -5,7 +5,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/design-system/primitives";
-import { StoryFormDialog } from "./story-form/story-form-dialog";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { BracesIcon, MoveRightIcon, PlusIcon } from "lucide-react";
 import { useBuilderStories } from "../hooks/use-builder-stories";
@@ -13,6 +12,7 @@ import { StoryCard } from "@/design-system/components/story-card";
 import { Story } from "@/lib/storage/domain";
 import { Title } from "@/design-system/components";
 import { ImportModal } from "@/design-system/components/import-modal";
+import { StoryFormDialog } from "./story-form-dialog";
 
 type BuilderHomeProps = {
   stories: Story[];
@@ -20,8 +20,7 @@ type BuilderHomeProps = {
 
 export const BuilderStories = ({ stories }: BuilderHomeProps) => {
   const navigate = useNavigate();
-  const { handleCreateStory, handleImportFromJSON, parseFile } =
-    useBuilderStories();
+  const { createStory, handleImportFromJSON, parseFile } = useBuilderStories();
 
   return (
     <div className="flex flex-col items-center space-y-8 px-16 py-8 sm:items-start sm:px-32">
@@ -36,7 +35,7 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center gap-2">
             <StoryFormDialog
-              onSubmit={handleCreateStory}
+              onSubmit={createStory}
               trigger={
                 <Button size="sm">
                   <PlusIcon size="16px" /> &nbsp;Build your own story

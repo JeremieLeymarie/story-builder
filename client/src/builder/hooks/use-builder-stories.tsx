@@ -1,17 +1,23 @@
 import { useNavigate } from "@tanstack/react-router";
-import { OnSubmitStoryFormProps } from "../components/story-form/story-form-dialog";
 import { toast } from "sonner";
 import { getBuilderService } from "@/get-builder-service";
 import {
   getImportService,
   StoryFromImport,
 } from "@/services/common/import-service";
+import { Story } from "@/lib/storage/domain";
+import { WithoutKey } from "@/types";
+
+export type CreateStoryPayload = Omit<
+  WithoutKey<Story>,
+  "firstSceneKey" | "author" | "type" | "publicationDate" | "creationDate"
+> & { firstSceneKey?: string };
 
 export const useBuilderStories = () => {
   const navigate = useNavigate();
   const builderService = getBuilderService();
 
-  const handleCreateStory = async (storyData: OnSubmitStoryFormProps) => {
+  const createStory = async (storyData: CreateStoryPayload) => {
     const result = await builderService.createStoryWithFirstScene(storyData);
 
     if (!result) {
@@ -54,5 +60,5 @@ export const useBuilderStories = () => {
     return result.data;
   };
 
-  return { handleCreateStory, parseFile, handleImportFromJSON };
+  return { createStory, parseFile, handleImportFromJSON };
 };

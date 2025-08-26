@@ -6,14 +6,14 @@ import {
   SelectionMode,
 } from "@xyflow/react";
 import { SceneNode } from "./nodes/scene/scene";
-import { Toolbar } from "./toolbar";
 import { useBuilder } from "../hooks/use-builder";
 import { useBuilderContext } from "../hooks/use-builder-context";
 import { getUserOS } from "@/lib/get-os";
 import { ActionsBar } from "./actions-bar";
 import { FIT_VIEW_DURATION } from "../constants";
-import { EditorBar } from "./builder-editors/editor-bar";
-import { useBuilderEditorStore } from "./builder-editors/hooks/use-scene-editor-store";
+import { useBuilderEditorStore } from "../hooks/use-scene-editor-store";
+import { BuilderMenu } from "./builder-menu";
+import { EditorBar } from "./builder-editor-bar/editor-bar";
 
 const nodeTypes = { scene: SceneNode } as const;
 
@@ -61,7 +61,7 @@ export const Builder = () => {
   return (
     <div className="relative flex h-full w-full border">
       <div className="absolute top-5 left-5 flex flex-col gap-4">
-        <Toolbar />
+        <BuilderMenu />
         <ActionsBar />
       </div>
       <div className="absolute top-5 right-5 flex flex-col gap-4">
