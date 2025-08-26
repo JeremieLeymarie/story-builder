@@ -1,9 +1,9 @@
 import { vi } from "vitest";
 import { ImportServicePort } from "../import-service";
-import { MockService } from "../../../types";
+import { MockPort } from "../../../types";
 import { BASIC_SCENE, BASIC_STORY } from "@/repositories/stubs/data";
 
-export type MockImportService = MockService<ImportServicePort>;
+export type MockImportService = MockPort<ImportServicePort>;
 
 export const getImportServiceStub = (): MockImportService => {
   return {

@@ -1,13 +1,7 @@
 import { BuilderNode } from "@/builder/types";
 import { Edge } from "@xyflow/react";
 import ELK from "elkjs/lib/elk.bundled.js";
-
-export type LayoutServicePort = {
-  computeAutoLayout: (props: {
-    nodes: BuilderNode[];
-    edges: Edge[];
-  }) => Promise<BuilderNode[]>;
-};
+import { LayoutServicePort } from "./ports/layout-service-port";
 
 // TODO: find a way to test this without ELK time out
 const _getLayoutService = (): LayoutServicePort => {

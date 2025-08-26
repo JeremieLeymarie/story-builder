@@ -6,12 +6,12 @@ import {
   BASIC_STORY_PROGRESS,
   BASIC_USER,
 } from "./data";
-import { MockService } from "@/types";
+import { MockPort } from "@/types";
 
 const mock = <T>(returnValue?: T) =>
   vi.fn(() => new Promise<T>((res) => res(returnValue as T)));
 
-export type MockLocalRepository = MockService<LocalRepositoryPort>;
+export type MockLocalRepository = MockPort<LocalRepositoryPort>;
 
 export const getLocalRepositoryStub = (): MockLocalRepository => {
   return {

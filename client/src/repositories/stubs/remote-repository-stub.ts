@@ -9,7 +9,7 @@ import {
   BASIC_STORY_PROGRESS,
   BASIC_USER,
 } from "./data";
-import { MockService } from "@/types";
+import { MockPort } from "@/types";
 
 const P = <T>(returnValue: T) =>
   vi.fn(
@@ -19,7 +19,7 @@ const P = <T>(returnValue: T) =>
       ),
   );
 
-export type MockRemoteRepository = MockService<RemoteRepositoryPort>;
+export type MockRemoteRepository = MockPort<RemoteRepositoryPort>;
 
 export const getRemoteRepositoryStub = (): MockRemoteRepository => {
   return {
