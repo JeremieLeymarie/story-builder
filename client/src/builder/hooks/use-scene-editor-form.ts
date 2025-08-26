@@ -1,8 +1,12 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import { SceneSchema, sceneSchema, SceneUpdatePayload } from "../schema";
 import { useDebouncer } from "@tanstack/react-pacer/debouncer";
+import {
+  SceneUpdatePayload,
+  SceneSchema,
+  sceneSchema,
+} from "../components/builder-editor-bar/scene-editor/schema";
 
 export const useSceneEditorForm = ({
   scene,

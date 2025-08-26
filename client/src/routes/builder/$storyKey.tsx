@@ -2,7 +2,7 @@ import { BuilderContainer } from "@/builder/components/builder-container";
 import {
   EMPTY_BUILDER_EDITOR_STATE,
   useBuilderEditorStore,
-} from "@/builder/components/builder-editors/hooks/use-scene-editor-store";
+} from "@/builder/hooks/use-scene-editor-store";
 import { BackdropLoader, ErrorMessage } from "@/design-system/components";
 import { getBuilderService } from "@/get-builder-service";
 import { useQuery } from "@tanstack/react-query";

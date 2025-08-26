@@ -5,7 +5,7 @@ import { makeSimpleSceneContent } from "@/lib/scene-content";
 import { sceneToNodeAdapter } from "../adapters";
 import { Scene } from "@/lib/storage/domain";
 import { useBuilderError } from "./use-builder-error";
-import { SceneSchema } from "../components/builder-editors/scene-editor/schema";
+import { SceneSchema } from "../components/builder-editor-bar/scene-editor/schema";
 
 export const DEFAULT_SCENE: SceneSchema = {
   title: "",

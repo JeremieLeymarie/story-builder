@@ -53,5 +53,5 @@ export type BuilderServicePort = {
   updateStory: (
     storyKey: string,
     payload: Partial<BuilderStory>,
-  ) => Promise<void>;
+  ) => Promise<BuilderStory>;
 };

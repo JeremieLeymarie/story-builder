@@ -9,9 +9,9 @@ import { Form } from "@/design-system/primitives";
 import { SceneUpdatePayload } from "./schema";
 import { ActionsSection } from "./actions-section";
 import { useBuilderActions } from "@/builder/hooks/use-builder-actions";
-import { useSceneEditorForm } from "./hooks/use-scene-editor-form";
+import { useSceneEditorForm } from "@/builder/hooks/use-scene-editor-form";
 
-export const SceneEditorContent = ({
+export const SceneForm = ({
   scene,
   isFirstScene,
 }: {

@@ -1,6 +1,6 @@
 import { createWithEqualityFn } from "zustand/traditional";
 import { shallow } from "zustand/shallow";
-import { SceneUpdatePayload } from "../scene-editor/schema";
+import { SceneUpdatePayload } from "../components/builder-editor-bar/scene-editor/schema";
 
 type EditorBase<Type, Payload> = {
   type: Type;
@@ -12,7 +12,11 @@ type SceneEditorStore = EditorBase<
   { scene: SceneUpdatePayload; isFirstScene: boolean }
 >;
 
-type Editors = SceneEditorStore | EditorBase<null, null>;
+type StoryEditorStore = EditorBase<"story-editor", null>;
+
+type ClosedEditor = EditorBase<null, null>;
+
+type Editors = SceneEditorStore | StoryEditorStore | ClosedEditor;
 
 type BuilderStore = {
   open: (props: Exclude<Editors, { type: null }>) => void;
@@ -29,6 +33,7 @@ export const useBuilderEditorStore = createWithEqualityFn<BuilderStore>(
     type: null,
     payload: null,
     open({ type, payload }) {
+      // @ts-expect-error Zustand can't handle the discriminated union here
       set({ type, payload });
     },
     close() {

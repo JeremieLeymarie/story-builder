@@ -1,6 +1,22 @@
 import { cn } from "@/lib/style";
+import { cva, VariantProps } from "class-variance-authority";
 
-export const SimpleLoader = ({ className }: { className?: string }) => {
+const loaderVariants = cva("animate-spin", {
+  variants: {
+    variant: {
+      primary: "text-primary",
+      secondary: "text-white",
+    },
+  },
+  defaultVariants: {
+    variant: "primary",
+  },
+});
+
+export const SimpleLoader = ({
+  className,
+  variant,
+}: { className?: string } & VariantProps<typeof loaderVariants>) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -12,7 +28,7 @@ export const SimpleLoader = ({ className }: { className?: string }) => {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={cn("text-primary animate-spin", className)}
+      className={cn(loaderVariants({ className, variant }))}
     >
       <path d="M21 12a9 9 0 1 1-6.219-8.56" />
     </svg>

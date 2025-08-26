@@ -10,5 +10,5 @@ const factory = getTestFactory();
 export const getStubBuilderStoryRepository =
   (): MockBuilderStoryRepository => ({
     get: vi.fn(() => Promise.resolve(factory.story.builder())),
-    update: vi.fn(() => Promise.resolve()),
+    update: vi.fn(() => Promise.resolve(factory.story.builder())),
   });

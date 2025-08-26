@@ -1,7 +1,7 @@
 import { STORY_TYPE, STORY_GENRES } from "@/lib/storage/domain";
 import { z } from "zod";
 
-export const schema = z.object({
+export const storySchema = z.object({
   title: z
     .string()
     .min(2, { message: "Title must be at least 2 characters long" }),
@@ -14,4 +14,4 @@ export const schema = z.object({
   firstSceneKey: z.string().optional(),
 });
 
-export type Schema = z.infer<typeof schema>;
+export type StorySchema = z.infer<typeof storySchema>;

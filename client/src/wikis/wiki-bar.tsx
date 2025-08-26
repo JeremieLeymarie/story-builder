@@ -1,5 +1,5 @@
 import { Title } from "@/design-system/components";
-import { Bar } from "@/design-system/components/bar";
+import { Toolbar } from "@/design-system/components/toolbar";
 import { Input } from "@/design-system/primitives";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
 import { SearchIcon } from "lucide-react";
@@ -27,7 +27,7 @@ const Section = ({ title }: { title: string }) => {
 
 export const WikiBar = () => {
   return (
-    <Bar className="w-[300px] space-y-3">
+    <Toolbar className="w-[300px] space-y-3">
       <div className="relative">
         <SearchIcon className="text-muted-foreground absolute top-2.5 left-2 h-4" />
         <Input placeholder="Search" className="pl-9" />
@@ -42,6 +42,6 @@ export const WikiBar = () => {
           <Section title="Culture" />
         </ScrollArea>
       </div>
-    </Bar>
+    </Toolbar>
   );
 };

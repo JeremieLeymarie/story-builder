@@ -20,8 +20,12 @@ export const DeleteModal = ({
         open={open}
         setOpen={setOpen}
         trigger={
-          <Button variant="destructive" className="w-full gap-2" size="sm">
-            <Trash2Icon size="16px" />
+          <Button
+            variant="destructive"
+            className="w-full justify-start gap-4"
+            size="sm"
+          >
+            <Trash2Icon />
             Delete
           </Button>
         }
