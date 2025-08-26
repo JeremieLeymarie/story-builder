@@ -1,10 +1,5 @@
-import { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { LexicalNestedComposer } from "@lexical/react/LexicalNestedComposer";
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
 import { useLexicalNodeSelection } from "@lexical/react/useLexicalNodeSelection";
 import { mergeRegister } from "@lexical/utils";
@@ -18,7 +13,6 @@ import {
   $getNodeByKey,
   $getSelection,
   $isNodeSelection,
-  $isRangeSelection,
   $setSelection,
   CLICK_COMMAND,
   COMMAND_PRIORITY_LOW,
@@ -28,14 +22,9 @@ import {
   KEY_DELETE_COMMAND,
   KEY_ENTER_COMMAND,
   KEY_ESCAPE_COMMAND,
-  ParagraphNode,
-  RootNode,
   SELECTION_CHANGE_COMMAND,
-  TextNode,
 } from "lexical";
 
-// import brokenImage from '@/registry/new-york-v4/editor/images/image-broken.svg';
-import { ContentEditable } from "@/design-system/components/editor/editor-ui/content-editable";
 import { ImageResizer } from "@/design-system/components/editor/editor-ui/image-resizer";
 import { $isImageNode } from "@/design-system/components/editor/nodes/image-node";
 
@@ -112,7 +101,7 @@ const BrokenImage = () => {
   );
 };
 
-export default function ImageComponent({
+const ImageComponent = ({
   src,
   altText,
   nodeKey,
@@ -120,7 +109,6 @@ export default function ImageComponent({
   height,
   maxWidth,
   resizable,
-  showCaption,
   caption,
   captionsEnabled,
 }: {
@@ -134,7 +122,7 @@ export default function ImageComponent({
   src: string;
   width: "inherit" | number;
   captionsEnabled: boolean;
-}) {
+}) => {
   const imageRef = useRef<null | HTMLImageElement>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [isSelected, setSelected, clearSelection] =
@@ -146,125 +134,79 @@ export default function ImageComponent({
   const [isLoadError, setIsLoadError] = useState<boolean>(false);
   const isEditable = useLexicalEditable();
 
-  const $onDelete = useCallback(
-    (payload: KeyboardEvent) => {
-      const deleteSelection = $getSelection();
-      if (isSelected && $isNodeSelection(deleteSelection)) {
-        const event: KeyboardEvent = payload;
-        event.preventDefault();
-        editor.update(() => {
-          deleteSelection.getNodes().forEach((node) => {
-            if ($isImageNode(node)) {
-              node.remove();
-            }
-          });
-        });
-      }
-      return false;
-    },
-    [editor, isSelected],
-  );
-
-  const $onEnter = useCallback(
-    (event: KeyboardEvent) => {
-      const latestSelection = $getSelection();
-      const buttonElem = buttonRef.current;
-      if (
-        isSelected &&
-        $isNodeSelection(latestSelection) &&
-        latestSelection.getNodes().length === 1
-      ) {
-        if (showCaption) {
-          // Move focus into nested editor
-          $setSelection(null);
-          event.preventDefault();
-          caption.focus();
-          return true;
-        } else if (
-          buttonElem !== null &&
-          buttonElem !== document.activeElement
-        ) {
-          event.preventDefault();
-          buttonElem.focus();
-          return true;
-        }
-      }
-      return false;
-    },
-    [caption, isSelected, showCaption],
-  );
-
-  const $onEscape = useCallback(
-    (event: KeyboardEvent) => {
-      if (
-        activeEditorRef.current === caption ||
-        buttonRef.current === event.target
-      ) {
-        $setSelection(null);
-        editor.update(() => {
-          setSelected(true);
-          const parentRootElement = editor.getRootElement();
-          if (parentRootElement !== null) {
-            parentRootElement.focus();
+  const $onDelete = (event: KeyboardEvent) => {
+    const deleteSelection = $getSelection();
+    if (isSelected && $isNodeSelection(deleteSelection)) {
+      event.preventDefault();
+      editor.update(() => {
+        deleteSelection.getNodes().forEach((node) => {
+          if ($isImageNode(node)) {
+            node.remove();
           }
         });
+      });
+    }
+    return false;
+  };
+
+  const $onEnter = (event: KeyboardEvent) => {
+    const latestSelection = $getSelection();
+    const buttonElem = buttonRef.current;
+    if (
+      isSelected &&
+      $isNodeSelection(latestSelection) &&
+      latestSelection.getNodes().length === 1
+    ) {
+      if (buttonElem !== null && buttonElem !== document.activeElement) {
+        event.preventDefault();
+        buttonElem.focus();
         return true;
       }
-      return false;
-    },
-    [caption, editor, setSelected],
-  );
+    }
+    return false;
+  };
 
-  const onClick = useCallback(
-    (payload: MouseEvent) => {
-      const event = payload;
-
-      if (isResizing) {
-        return true;
-      }
-      if (event.target === imageRef.current) {
-        if (event.shiftKey) {
-          setSelected(!isSelected);
-        } else {
-          clearSelection();
-          setSelected(true);
-        }
-        return true;
-      }
-
-      return false;
-    },
-    [isResizing, isSelected, setSelected, clearSelection],
-  );
-
-  const onRightClick = useCallback(
-    (event: MouseEvent): void => {
-      editor.getEditorState().read(() => {
-        const latestSelection = $getSelection();
-        const domElement = event.target as HTMLElement;
-        if (
-          domElement.tagName === "IMG" &&
-          $isRangeSelection(latestSelection) &&
-          latestSelection.getNodes().length === 1
-        ) {
-          editor.dispatchCommand(
-            RIGHT_CLICK_IMAGE_COMMAND,
-            event as MouseEvent,
-          );
+  const $onEscape = (event: KeyboardEvent) => {
+    if (
+      activeEditorRef.current === caption ||
+      buttonRef.current === event.target
+    ) {
+      $setSelection(null);
+      editor.update(() => {
+        setSelected(true);
+        const parentRootElement = editor.getRootElement();
+        if (parentRootElement !== null) {
+          parentRootElement.focus();
         }
       });
-    },
-    [editor],
-  );
+      return true;
+    }
+    return false;
+  };
+
+  const onClick = (payload: MouseEvent) => {
+    const event = payload;
+
+    if (isResizing) {
+      return true;
+    }
+    if (event.target === imageRef.current) {
+      if (event.shiftKey) {
+        setSelected(!isSelected);
+      } else {
+        clearSelection();
+        setSelected(true);
+      }
+      return true;
+    }
+
+    return false;
+  };
 
   useEffect(() => {
-    let isMounted = true;
-    const rootElement = editor.getRootElement();
     const unregister = mergeRegister(
       editor.registerUpdateListener(({ editorState }) => {
-        if (isMounted) {
-          setSelection(editorState.read(() => $getSelection()));
-        }
+        setSelection(editorState.read(() => $getSelection()));
       }),
       editor.registerCommand(
         SELECTION_CHANGE_COMMAND,
@@ -315,12 +257,8 @@ export default function ImageComponent({
       ),
     );
 
-    rootElement?.addEventListener("contextmenu", onRightClick);
-
     return () => {
-      isMounted = false;
       unregister();
-      rootElement?.removeEventListener("contextmenu", onRightClick);
     };
   }, [
     clearSelection,
@@ -332,18 +270,8 @@ export default function ImageComponent({
     $onEnter,
     $onEscape,
     onClick,
-    onRightClick,
     setSelected,
   ]);
-
-  const setShowCaption = () => {
-    editor.update(() => {
-      const node = $getNodeByKey(nodeKey);
-      if ($isImageNode(node)) {
-        node.setShowCaption(true);
-      }
-    });
-  };
 
   const onResizeEnd = (
     nextWidth: "inherit" | number,
@@ -392,31 +320,8 @@ export default function ImageComponent({
           )}
         </div>
 
-        {showCaption && (
-          <div className="image-caption-container absolute right-0 bottom-1 left-0 m-0 block min-w-[100px] overflow-hidden border-t bg-white/90 p-0">
-            <LexicalNestedComposer
-              initialEditor={caption}
-              initialNodes={[RootNode, TextNode, ParagraphNode]}
-            >
-              <AutoFocusPlugin />
-              <HistoryPlugin />
-              <RichTextPlugin
-                contentEditable={
-                  <ContentEditable
-                    className="ImageNode__contentEditable user-select-text word-break-break-word caret-primary relative block min-h-5 w-[calc(100%-20px)] cursor-text resize-none border-0 p-2.5 text-sm whitespace-pre-wrap outline-none"
-                    placeholderClassName="ImageNode__placeholder text-sm text-muted-foreground overflow-hidden absolute top-2.5 left-2.5 pointer-events-none text-ellipsis user-select-none whitespace-nowrap inline-block"
-                    placeholder="Enter a caption..."
-                  />
-                }
-                ErrorBoundary={LexicalErrorBoundary}
-              />
-            </LexicalNestedComposer>
-          </div>
-        )}
         {resizable && $isNodeSelection(selection) && isFocused && (
           <ImageResizer
-            showCaption={showCaption}
-            setShowCaption={setShowCaption}
             editor={editor}
             buttonRef={buttonRef}
             imageRef={imageRef}
@@ -429,4 +334,5 @@ export default function ImageComponent({
       </span>
     </Suspense>
   );
-}
+};
+export default ImageComponent;
