@@ -1,4 +1,3 @@
-import * as React from "react";
 import { JSX, Suspense } from "react";
 import type {
   DOMConversionMap,
@@ -13,6 +12,7 @@ import type {
   Spread,
 } from "lexical";
 import { $applyNodeReplacement, createEditor, DecoratorNode } from "lexical";
+import React from "react";
 
 const ImageComponent = React.lazy(() => import("../editor-ui/image-component"));
 
@@ -204,7 +204,7 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     return this.__altText;
   }
 
-  decorate(): JSX.Element {
+  decorate() {
     return (
       <Suspense fallback={null}>
         <ImageComponent

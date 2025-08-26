@@ -1,4 +1,4 @@
-import { JSX, Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
@@ -79,7 +79,7 @@ const LazyImage = ({
   src: string;
   width: "inherit" | number;
   onError: () => void;
-}): JSX.Element => {
+}) => {
   useSuspenseImage(src);
   return (
     <img
@@ -98,7 +98,7 @@ const LazyImage = ({
   );
 };
 
-const BrokenImage = (): JSX.Element => {
+const BrokenImage = () => {
   return (
     <img
       src={""}
@@ -134,7 +134,7 @@ export default function ImageComponent({
   src: string;
   width: "inherit" | number;
   captionsEnabled: boolean;
-}): JSX.Element {
+}) {
   const imageRef = useRef<null | HTMLImageElement>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [isSelected, setSelected, clearSelection] =

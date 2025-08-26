@@ -1,4 +1,4 @@
-import { JSX, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $wrapNodeInElement, mergeRegister } from "@lexical/utils";
 import {
@@ -158,7 +158,7 @@ export const InsertImageDialog = ({
 }: {
   activeEditor: LexicalEditor;
   onClose: () => void;
-}): JSX.Element => {
+}) => {
   const hasModifier = useRef(false);
 
   useEffect(() => {
@@ -201,7 +201,7 @@ export const ImagesPlugin = ({
   captionsEnabled,
 }: {
   captionsEnabled?: boolean;
-}): JSX.Element | null => {
+}) => {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {

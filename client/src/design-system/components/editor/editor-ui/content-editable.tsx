@@ -1,4 +1,3 @@
-import { JSX } from "react";
 import { ContentEditable as LexicalContentEditable } from "@lexical/react/LexicalContentEditable";
 import { cn } from "@/lib/style";
 
@@ -12,7 +11,7 @@ export const ContentEditable = ({
   placeholder,
   className,
   placeholderClassName,
-}: Props): JSX.Element => {
+}: Props) => {
   return (
     <LexicalContentEditable
       className={cn(
