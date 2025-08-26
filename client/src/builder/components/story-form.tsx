@@ -1,3 +1,4 @@
+import { StoryGenreCombobox } from "@/design-system/components/story-genre-combobox";
 import {
   Button,
   Form,
@@ -10,37 +11,21 @@ import {
   Input,
   Textarea,
 } from "@/design-system/primitives";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { StoryGenreCombobox } from "@/design-system/components/story-genre-combobox";
-import { StorySchema, storySchema } from "../../story-schema";
-import { useUpdateStory } from "@/builder/hooks/use-update-story";
-import { useBuilderContext } from "@/builder/hooks/use-builder-context";
+import { StorySchema } from "./story-schema";
+import { StoryFormType } from "../hooks/use-story-form";
 
-type StoryFormProps = {
-  defaultValues: StorySchema;
-};
-
-export const StoryForm = ({ defaultValues }: StoryFormProps) => {
-  const form = useForm<StorySchema>({
-    resolver: zodResolver(storySchema),
-    defaultValues: defaultValues ?? {
-      title: "",
-      description: "",
-      image: "",
-    },
-  });
-  const { story } = useBuilderContext();
-  const { updateStory, isPending } = useUpdateStory();
-
+export const StoryForm = ({
+  onSubmit,
+  form,
+  isSubmitting = false,
+}: {
+  onSubmit: (data: StorySchema) => void;
+  isSubmitting?: boolean;
+  form: StoryFormType;
+}) => {
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit((data) =>
-          updateStory({ key: story.key, payload: data }),
-        )}
-        className="space-y-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="title"
@@ -109,7 +94,7 @@ export const StoryForm = ({ defaultValues }: StoryFormProps) => {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isPending}>
+        <Button type="submit" disabled={isSubmitting}>
           Save
         </Button>
       </form>

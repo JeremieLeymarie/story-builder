@@ -2,14 +2,12 @@ import { match } from "ts-pattern";
 import { cn } from "@/lib/style";
 import { SceneForm } from "./scene-editor/scene-form";
 import { useBuilderEditorStore } from "@/builder/hooks/use-scene-editor-store";
-import { StoryForm } from "./story-editor/story-form";
-import { useBuilderContext } from "@/builder/hooks/use-builder-context";
 import { Toolbar, ToolbarTitle } from "@/design-system/components/toolbar";
+import { StoryEditor } from "./story-editor/story-editor";
 
 export const EditorBar = () => {
   // Here TS discriminated union won't work if we don't select the whole state
   const state = useBuilderEditorStore();
-  const { story } = useBuilderContext();
 
   if (!state.type) return null;
 
@@ -28,9 +26,7 @@ export const EditorBar = () => {
             scene={payload.scene}
           />
         ))
-        .with({ type: "story-editor" }, () => (
-          <StoryForm defaultValues={story} />
-        ))
+        .with({ type: "story-editor" }, () => <StoryEditor />)
         .exhaustive()}
     </Toolbar>
   );

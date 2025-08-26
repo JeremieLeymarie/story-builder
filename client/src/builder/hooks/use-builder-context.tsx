@@ -39,7 +39,6 @@ export const BuilderContextProvider = ({
   const reactFlowRef = useRef<HTMLDivElement>(null);
   const [story, setStory] = useState(story_);
 
-  console.log({ story });
   const [initialNodes, initialEdges] = scenesToNodesAndEdgesAdapter({
     scenes,
     story: story_,
