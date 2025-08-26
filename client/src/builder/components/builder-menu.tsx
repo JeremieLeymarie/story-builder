@@ -19,6 +19,9 @@ export const BuilderMenu = () => {
   return (
     <Toolbar className="w-[250px]">
       <ToolbarTitle>Tools</ToolbarTitle>
+      <p className="text-muted-foreground mb-2 truncate italic">
+        {story.title}
+      </p>
       <div className="mt-2 flex w-full flex-col gap-2">
         <Button
           size="sm"
