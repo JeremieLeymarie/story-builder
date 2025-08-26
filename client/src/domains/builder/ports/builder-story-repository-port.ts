@@ -6,5 +6,5 @@ export type BuilderStoryRepositoryPort = {
   update: (
     key: string,
     story: Partial<WithoutKey<BuilderStory>>,
-  ) => Promise<void>;
+  ) => Promise<BuilderStory>;
 };

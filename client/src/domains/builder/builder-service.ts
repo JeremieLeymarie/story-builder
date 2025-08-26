@@ -276,7 +276,7 @@ export const _getBuilderService = ({
     },
 
     updateStory: async (key, payload) => {
-      await builderStoryRepository.update(key, payload);
+      return builderStoryRepository.update(key, payload);
     },
   };
 };
