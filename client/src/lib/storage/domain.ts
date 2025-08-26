@@ -31,7 +31,7 @@ type Author = {
   username: string;
 };
 
-type StoryBase = {
+export type StoryBase = {
   key: string;
   author?: Author;
   title: string;
@@ -42,14 +42,14 @@ type StoryBase = {
   creationDate: Date;
 };
 
-export type ImportedStory = StoryBase & {
+export type LibraryStory = StoryBase & {
   originalStoryKey?: string;
   type: "imported";
 };
 
 export type BuilderStory = StoryBase & { type: "builder" };
 
-export type Story = ImportedStory | BuilderStory;
+export type Story = LibraryStory | BuilderStory;
 
 export type Action = {
   text: string;

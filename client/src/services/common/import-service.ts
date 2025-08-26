@@ -1,7 +1,7 @@
 import * as z from "zod/v4";
 import {
   BuilderStory,
-  ImportedStory,
+  LibraryStory,
   Scene,
   Story,
   STORY_GENRES,
@@ -168,7 +168,7 @@ export const _getImportService = ({
     createStory: async ({ story: storyFromImport, type }) => {
       const { key: importedStoryKey, ...importedStory } = storyFromImport.story;
 
-      const storyPayload: WithoutKey<ImportedStory> | WithoutKey<BuilderStory> =
+      const storyPayload: WithoutKey<LibraryStory> | WithoutKey<BuilderStory> =
         {
           ...importedStory,
           type,
