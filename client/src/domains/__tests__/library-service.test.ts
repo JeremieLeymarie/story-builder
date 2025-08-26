@@ -20,7 +20,9 @@ import {
   MOCK_IMPORTED_STORY,
 } from "./data/imported-story-mocks";
 import { makeSimpleSceneContent } from "@/lib/scene-content";
-import { BuilderStory } from "@/lib/storage/domain";
+import { getTestFactory } from "@/lib/testing/factory";
+
+const factory = getTestFactory();
 
 describe("library-service", () => {
   let libraryService: ReturnType<typeof _getLibraryService>;
@@ -51,33 +53,21 @@ describe("library-service", () => {
 
   describe("getLibrary", () => {
     it("should get all library data, sorted by last played save", async () => {
-      const storyProgressA = {
+      const storyProgressA = factory.storyProgress({
         key: "key-1",
         storyKey: "story-key-1",
-        userKey: undefined,
-        history: [],
-        currentSceneKey: "not-relevant",
         lastPlayedAt: new Date("2025/05/01"),
-      };
-
-      const storyProgressB = {
+      });
+      const storyProgressB = factory.storyProgress({
         key: "key-2",
         storyKey: "story-key-2",
-        userKey: undefined,
-        history: [],
-        currentSceneKey: "not-relevant",
         lastPlayedAt: new Date("2025/06/01"),
-      };
-
-      const storyProgressC = {
+      });
+      const storyProgressC = factory.storyProgress({
         key: "key-3",
         storyKey: "story-key-2",
-        userKey: undefined,
-        history: [],
-        currentSceneKey: "not-relevant",
         lastPlayedAt: new Date("2025/01/01"),
-      };
-
+      });
       localRepository.getUserStoryProgresses = vi.fn(() => {
         return Promise.resolve([
           storyProgressA,
@@ -86,29 +76,15 @@ describe("library-service", () => {
         ]);
       });
 
-      // Story creation dates should be taken into account when getting sorted library data
-      const storyA: BuilderStory = {
+      // Story creation dates shouldn't be taken into account when getting sorted library data
+      const storyA = factory.story.library({
         key: "story-key-1",
-        title: "not-relevant",
-        description: "not-relevant",
-        image: "not-relevant",
-        firstSceneKey: "not-relevant",
-        genres: [],
         creationDate: new Date("2025/10/01"),
-        type: "builder",
-      };
-
-      const storyB: BuilderStory = {
+      });
+      const storyB = factory.story.library({
         key: "story-key-2",
-        title: "not-relevant",
-        description: "not-relevant",
-        image: "not-relevant",
-        firstSceneKey: "not-relevant",
-        genres: [],
         creationDate: new Date("2025/01/01"),
-        type: "builder",
-      };
-
+      });
       localRepository.getStoriesByKeys = vi.fn(() => {
         return Promise.resolve([storyA, storyB]);
       });
