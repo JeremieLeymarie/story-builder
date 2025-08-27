@@ -37,7 +37,7 @@ export type StoryBase = {
   title: string;
   description: string;
   image: string;
-  firstSceneKey: string;
+  firstSceneKey: string; // FIXME: the first scene can be deleted, maybe make this nullable?
   genres: StoryGenre[];
   creationDate: Date;
   wikiKey?: string;

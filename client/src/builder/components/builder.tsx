@@ -50,6 +50,7 @@ const BuilderFlow = () => {
       multiSelectionKeyCode={getUserOS() === "Mac" ? "Meta" : "ControlLeft"}
       fitViewOptions={{ duration: FIT_VIEW_DURATION }}
       onPaneClick={closeActiveEditor}
+      tabIndex={0}
     >
       <MiniMap position="bottom-left" />
       <Background variant={BackgroundVariant.Dots} gap={25} size={1.5} />
