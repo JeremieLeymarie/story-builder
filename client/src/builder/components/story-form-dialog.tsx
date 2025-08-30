@@ -20,6 +20,7 @@ type StoryFormProps = {
   description: string;
 };
 
+// This version of the component is uncontrolled and needs a trigger to open it
 export const StoryFormDialog = (
   props: Omit<StoryFormProps, "trigger"> & { trigger: ReactNode },
 ) => {
@@ -28,6 +29,7 @@ export const StoryFormDialog = (
   return <ControlledStoryFormDialog {...props} open={open} setOpen={setOpen} />;
 };
 
+// This version of the component is controlled and its state can be managed from the outside
 export const ControlledStoryFormDialog = ({
   onSubmit,
   trigger,
