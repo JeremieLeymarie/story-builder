@@ -14,14 +14,13 @@ type SceneEditorStore = EditorBase<
 
 type StoryEditorStore = EditorBase<"story-editor", null>;
 
-type ClosedEditor = EditorBase<null, null>;
-
-type Editors = SceneEditorStore | StoryEditorStore | ClosedEditor;
+type Editors = SceneEditorStore | StoryEditorStore | null;
 
 type BuilderStore = {
-  open: (props: Exclude<Editors, { type: null }>) => void;
+  open: (editor: Exclude<Editors, null>) => void;
   close: () => void;
-} & Editors;
+  editor: Editors;
+};
 
 export const EMPTY_BUILDER_EDITOR_STATE: EditorBase<null, null> = {
   type: null,
@@ -30,14 +29,12 @@ export const EMPTY_BUILDER_EDITOR_STATE: EditorBase<null, null> = {
 
 export const useBuilderEditorStore = createWithEqualityFn<BuilderStore>(
   (set) => ({
-    type: null,
-    payload: null,
-    open({ type, payload }) {
-      // @ts-expect-error Zustand can't handle the discriminated union here
-      set({ type, payload });
+    editor: null,
+    open(editor) {
+      set({ editor });
     },
     close() {
-      set(EMPTY_BUILDER_EDITOR_STATE);
+      set({ editor: null });
     },
   }),
   shallow,
