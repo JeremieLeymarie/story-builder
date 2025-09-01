@@ -30,42 +30,41 @@ const editorConfig: InitialConfigType = {
 };
 
 export const Editor = ({
-  editorSerializedState,
+  initialState,
   onChange,
   onSerializedChange,
   editable,
+  className,
 }: {
+  className?: string;
   editable: boolean;
-  editorSerializedState?: SerializedEditorState;
+  initialState?: SerializedEditorState;
   onChange?: (editorState: EditorState) => void;
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
 }) => {
   // This allow lexical to refresh it's initial state when the content changes from the outside
-  const key = JSON.stringify(editorSerializedState);
+  const key = JSON.stringify(initialState);
 
   return (
     <div
       className={cn(
-        editable &&
-          "bg-background max-h-75 min-h-25 overflow-y-auto rounded-lg border shadow",
+        editable && "bg-background min-h-25 rounded-lg border shadow",
+        "focus-within:border-ring focus-within:ring-ring/10 focus-within:ring-[3px]", // The focus style is the same as the input's & textarea's
       )}
     >
       <LexicalComposer
         key={key}
         initialConfig={{
           ...editorConfig,
-          ...(editorSerializedState
-            ? { editorState: JSON.stringify(editorSerializedState) }
+          ...(initialState
+            ? { editorState: JSON.stringify(initialState) }
             : {}),
           editable,
         }}
       >
         <TooltipProvider>
-          {editable ? (
-            <EditorPlugins editable={editable} />
-          ) : (
-            <BasePlugins editable={editable} />
-          )}
+          {editable && <EditorPlugins />}
+          <BasePlugins className={className} editable />
 
           <OnChangePlugin
             ignoreSelectionChange={true}

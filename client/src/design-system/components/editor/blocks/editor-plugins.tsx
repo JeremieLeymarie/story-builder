@@ -1,9 +1,8 @@
 import { ToolbarPlugin } from "@/design-system/components/editor/plugins/toolbar/toolbar-plugin";
 import { FontFormatToolbarPlugin } from "@/design-system/components/editor/plugins/toolbar/font-format-toolbar-plugin";
-import { BasePlugins } from "./base-plugins";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 
-export const EditorPlugins = ({ editable }: { editable: boolean }) => {
+export const EditorPlugins = () => {
   return (
     <>
       <ToolbarPlugin>
@@ -17,7 +16,6 @@ export const EditorPlugins = ({ editable }: { editable: boolean }) => {
         )}
       </ToolbarPlugin>
       <HistoryPlugin />
-      <BasePlugins editable={editable} />
     </>
   );
 };
