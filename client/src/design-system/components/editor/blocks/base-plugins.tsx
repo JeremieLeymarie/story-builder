@@ -1,11 +1,18 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 
 import { ContentEditable } from "@/design-system/components/editor/editor-ui/content-editable";
 import { cn } from "@/lib/style";
+import { ScrollArea } from "@/design-system/primitives/scroll-area";
 
-export const BasePlugins = ({ editable }: { editable: boolean }) => {
+export const BasePlugins = ({
+  editable,
+  className,
+}: {
+  editable: boolean;
+  className?: string;
+}) => {
   const [_floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
 
@@ -14,16 +21,24 @@ export const BasePlugins = ({ editable }: { editable: boolean }) => {
       setFloatingAnchorElem(_floatingAnchorElem);
     }
   };
+  const contentRef = useRef<HTMLDivElement>(null);
 
   return (
     <RichTextPlugin
       contentEditable={
-        <div ref={onRef} className="relative">
+        <ScrollArea
+          ref={onRef}
+          className={cn("relative my-0.5 mr-0.5", className)}
+          onClick={() => {
+            contentRef.current?.focus();
+          }}
+        >
           <ContentEditable
-            className={cn(editable ? "max-w-[400px] px-4" : "px-0")}
+            className={cn(editable && "px-4")}
             placeholder={"Start typing ..."}
+            ref={contentRef}
           />
-        </div>
+        </ScrollArea>
       }
       ErrorBoundary={LexicalErrorBoundary}
     />

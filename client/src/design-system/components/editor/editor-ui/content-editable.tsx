@@ -1,4 +1,4 @@
-import { JSX } from "react";
+import { JSX, RefObject } from "react";
 import { ContentEditable as LexicalContentEditable } from "@lexical/react/LexicalContentEditable";
 import { cn } from "@/lib/style";
 
@@ -6,17 +6,20 @@ type Props = {
   placeholder: string;
   className?: string;
   placeholderClassName?: string;
+  ref: RefObject<HTMLDivElement | null>;
 };
 
 export const ContentEditable = ({
   placeholder,
   className,
   placeholderClassName,
+  ref,
 }: Props): JSX.Element => {
   return (
     <LexicalContentEditable
+      ref={ref}
       className={cn(
-        "relative block min-h-full overflow-auto px-4 py-4 focus:outline-none",
+        "relative block min-h-full overflow-auto py-4 focus:outline-none",
         className,
       )}
       aria-placeholder={placeholder}

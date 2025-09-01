@@ -1,6 +1,5 @@
 import {
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -24,7 +23,6 @@ export const SceneContentSection = ({
   isFirstScene: boolean;
   setFirstScene: () => void;
 }) => {
-  console.log({ scenePayload });
   return (
     <div className="space-y-4">
       <SetFirstSceneSwitch
@@ -41,7 +39,6 @@ export const SceneContentSection = ({
             <FormControl>
               <Input placeholder="A very suspicious crossroads" {...field} />
             </FormControl>
-            <FormDescription>The displayed title of the scene</FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -55,13 +52,13 @@ export const SceneContentSection = ({
             <FormControl>
               <Editor
                 onSerializedChange={field.onChange}
-                editorSerializedState={
+                initialState={
                   scenePayload.content as unknown as SerializedEditorState
                 }
                 editable
+                className="h-[300px] max-w-[450px]"
               />
             </FormControl>
-            <FormDescription>The actual content of the scene.</FormDescription>
             <FormMessage />
           </FormItem>
         )}
