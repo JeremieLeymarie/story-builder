@@ -9,7 +9,6 @@ import { TooltipProvider } from "@/design-system/primitives/tooltip";
 
 import { nodes } from "./nodes";
 import { EditorPlugins } from "./editor-plugins";
-import { useMemo } from "react";
 import { BasePlugins } from "./base-plugins";
 import { cn } from "@/lib/style";
 
@@ -34,21 +33,15 @@ export const Editor = ({
   editorSerializedState,
   onChange,
   onSerializedChange,
-  sceneKey,
   editable,
 }: {
   editable: boolean;
   editorSerializedState?: SerializedEditorState;
   onChange?: (editorState: EditorState) => void;
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
-  sceneKey: string;
 }) => {
-  // TODO: this is horrible, we should find another way to be reactive
-  // The key is used to force lexical to update its initial value.
-  // We need it to change only when the editor state changes, to avoid de-synchronization issues
-  // In the lifecycle, sceneKey (from global store) is updated before the scene content (from form);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const key = useMemo(() => sceneKey, [editorSerializedState]);
+  // This allow lexical to refresh it's initial state when the content changes from the outside
+  const key = JSON.stringify(editorSerializedState);
 
   return (
     <div
