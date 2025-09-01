@@ -1,6 +1,7 @@
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/design-system/primitives/card";
@@ -10,6 +11,8 @@ import { SceneNodeType } from "../../../types";
 import { cn } from "@/lib/style";
 import { Button } from "@/design-system/primitives";
 import { useBuilderEditorStore } from "@/builder/hooks/use-scene-editor-store";
+import { Editor } from "@/design-system/components/editor/blocks/editor";
+import { sceneConsts } from "./scene-constants";
 
 export type SceneNodeProps = NodeProps<SceneNodeType>;
 
@@ -19,8 +22,9 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
 
   return (
     <Card
+      style={{ width: sceneConsts.width }}
       className={cn(
-        "group w-[375px]",
+        "group",
         data.isFirstScene && "bg-primary/60",
         selected && "border border-black",
       )}
@@ -28,20 +32,14 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
         openEditor({
           type: "scene-editor",
           payload: {
-            scene: {
-              actions: data.actions,
-              content: data.content,
-              key: data.key,
-              storyKey: data.storyKey,
-              title: data.title,
-            },
+            scene: data,
             isFirstScene: data.isFirstScene,
           },
         });
       }}
     >
       <CardHeader>
-        <div className="flex justify-between gap-1">
+        <div className="flex items-center justify-between">
           {data.title ? (
             <CardTitle>{data.title}</CardTitle>
           ) : (
@@ -58,45 +56,46 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
                 openEditor({
                   type: "scene-editor",
                   payload: {
-                    scene: {
-                      actions: data.actions,
-                      content: data.content,
-                      key: data.key,
-                      storyKey: data.storyKey,
-                      title: data.title,
-                    },
+                    scene: data,
                     isFirstScene: data.isFirstScene,
                   },
                 })
               }
             >
-              <EditIcon size="20px" />
+              <EditIcon size={sceneConsts.editIconSize + "px"} />
             </Button>
           )}
         </div>
-        {/* <CardDescription>{data.content}</CardDescription> */}
+        <CardDescription>
+          <Editor
+            sceneKey={data.key}
+            editable={false}
+            editorSerializedState={data.content}
+          />
+        </CardDescription>
       </CardHeader>
       {data.actions.length > 0 && (
-        <CardContent className="flex flex-col gap-2">
+        <CardContent className={`gap-${sceneConsts.actionGap} flex flex-col`}>
           {data.actions.map(({ text }, i) => (
-            // TODO: empty action state
-            <div className="border-primary relative border p-2" key={text}>
-              {text}
+            <div
+              style={{ padding: sceneConsts.actionInnerPadding + "px" }}
+              className={cn(
+                "border-primary relative border",
+                !text && "text-muted-foreground italic",
+              )}
+              key={text || "..."}
+            >
+              {text || "..."}
               <Handle
                 type="source"
                 id={`${data.key}-${i}`}
                 position={Position.Right}
-                className="absolute !right-[-10px] !h-[15px] !w-[15px]"
               />
             </div>
           ))}
         </CardContent>
       )}
-      <Handle
-        type="target"
-        position={Position.Left}
-        className="!right-[-10px] !h-[15px] !w-[15px]"
-      />
+      <Handle type="target" position={Position.Left} />
     </Card>
   );
 };

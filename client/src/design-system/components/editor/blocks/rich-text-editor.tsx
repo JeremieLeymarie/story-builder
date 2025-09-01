@@ -43,7 +43,7 @@ export const RichText = ({
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
 }) => {
   // This allow lexical to refresh it's initial state when the content changes from the outside
-  const key = JSON.stringify(initialState);
+  const state = JSON.stringify(initialState);
 
   return (
     <div
@@ -54,12 +54,9 @@ export const RichText = ({
       )}
     >
       <LexicalComposer
-        key={key}
         initialConfig={{
           ...editorConfig,
-          ...(initialState
-            ? { editorState: JSON.stringify(initialState) }
-            : {}),
+          editorState: state,
           editable,
         }}
       >

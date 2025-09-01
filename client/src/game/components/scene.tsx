@@ -5,7 +5,6 @@ import { LibraryBigIcon } from "lucide-react";
 import { Scene, StoryProgress } from "@/lib/storage/domain";
 import { Divider } from "@/design-system/components/divider";
 import { Link } from "@tanstack/react-router";
-import { SerializedEditorState } from "lexical";
 import { RichText } from "@/design-system/components/editor/blocks/rich-text-editor";
 
 type GameSceneProps = {
@@ -28,10 +27,7 @@ export const GameScene = ({
               {title}
             </h1>
             <p className="leading-7 wrap-break-word not-first:mt-6">
-              <RichText
-                editable={false}
-                initialState={content as unknown as SerializedEditorState}
-              />
+              <RichText editable={false} initialState={content} />
             </p>
             <div className="mt-4 flex w-full flex-wrap gap-3">
               {actions.map((action) => (

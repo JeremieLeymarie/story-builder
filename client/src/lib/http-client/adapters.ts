@@ -23,7 +23,7 @@ const fromAPISceneAdapter = (
   return {
     ...scene,
     actions: fromAPIActionsAdapter(scene.actions),
-  };
+  } as unknown as Scene;
 };
 
 const fromAPIScenesAdapter = (
@@ -141,7 +141,7 @@ const fromClientFullStoryAdapter = (
 ): components["schemas"]["FullStory"] => {
   return {
     ...fromClientStoryAdapter(story, userKey),
-    scenes,
+    scenes: scenes as unknown as components["schemas"]["FullStory"]["scenes"],
   };
 };
 

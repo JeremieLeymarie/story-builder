@@ -51,6 +51,7 @@ const BuilderFlow = () => {
       fitViewOptions={{ duration: FIT_VIEW_DURATION }}
       onPaneClick={closeActiveEditor}
       tabIndex={0}
+      autoFocus
     >
       <MiniMap position="bottom-left" />
       <Background variant={BackgroundVariant.Dots} gap={25} size={1.5} />
