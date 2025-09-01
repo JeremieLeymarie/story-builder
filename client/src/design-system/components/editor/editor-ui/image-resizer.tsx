@@ -27,7 +27,6 @@ export const ImageResizer = ({
   maxWidth?: number;
   onResizeEnd: (width: "inherit" | number, height: "inherit" | number) => void;
   onResizeStart: () => void;
-  captionsEnabled: boolean;
 }) => {
   const controlWrapperRef = useRef<HTMLDivElement>(null);
   const userSelect = useRef({

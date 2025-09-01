@@ -27,6 +27,7 @@ import {
 
 import { ImageResizer } from "@/design-system/components/editor/editor-ui/image-resizer";
 import { $isImageNode } from "@/design-system/components/editor/nodes/image-node";
+import { SimpleLoader } from "../../simple-loader";
 
 const imageCache = new Set();
 
@@ -34,7 +35,8 @@ const imageCache = new Set();
 export const RIGHT_CLICK_IMAGE_COMMAND: LexicalCommand<MouseEvent> =
   createCommand("RIGHT_CLICK_IMAGE_COMMAND");
 
-const useSuspenseImage = (src: string) => {
+const useSuspenseImage = async (src: string) => {
+  await new Promise((res) => setTimeout(res, 5000));
   if (!imageCache.has(src)) {
     throw new Promise((resolve) => {
       const img = new Image();
@@ -109,19 +111,14 @@ const ImageComponent = ({
   height,
   maxWidth,
   resizable,
-  caption,
-  captionsEnabled,
 }: {
   altText: string;
-  caption: LexicalEditor;
   height: "inherit" | number;
   maxWidth: number;
   nodeKey: NodeKey;
   resizable: boolean;
-  showCaption: boolean;
   src: string;
   width: "inherit" | number;
-  captionsEnabled: boolean;
 }) => {
   const imageRef = useRef<null | HTMLImageElement>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -167,10 +164,7 @@ const ImageComponent = ({
   };
 
   const $onEscape = (event: KeyboardEvent) => {
-    if (
-      activeEditorRef.current === caption ||
-      buttonRef.current === event.target
-    ) {
+    if (buttonRef.current === event.target) {
       $setSelection(null);
       editor.update(() => {
         setSelected(true);
@@ -297,7 +291,7 @@ const ImageComponent = ({
   const draggable = isSelected && $isNodeSelection(selection) && !isResizing;
   const isFocused = (isSelected || isResizing) && isEditable;
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<SimpleLoader />}>
       <span className="user-select-none editor-image relative inline-block cursor-default">
         <div draggable={draggable}>
           {isLoadError ? (
@@ -328,7 +322,6 @@ const ImageComponent = ({
             maxWidth={maxWidth}
             onResizeStart={onResizeStart}
             onResizeEnd={onResizeEnd}
-            captionsEnabled={!isLoadError && captionsEnabled}
           />
         )}
       </span>
