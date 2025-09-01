@@ -6,6 +6,7 @@ import {
 import { _getWikiService } from "../wiki-service";
 import { TEST_USER } from "@/lib/storage/dexie/test-db";
 import { getTestFactory } from "@/lib/testing/factory";
+import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 
 const DATE = new Date();
 
@@ -155,6 +156,36 @@ describe("wiki service", () => {
 
       const wikiData = await svc.getWikiData("ZIOUM");
       expect(wikiData).toStrictEqual({ ...wiki, key: "ZIOUM" });
+    });
+  });
+
+  describe("create wiki article", () => {
+    test("should create wiki article without category", async () => {
+      const repository = getStubWikiRepository();
+
+      repository.createArticle = vi.fn((wiki) => {
+        expect(wiki).toStrictEqual({
+          title: "Article",
+          content: makeSimpleLexicalContent("content"),
+          image: "http://super-image.fr",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+
+        return Promise.resolve("KEY");
+      });
+
+      const svc = _getWikiService({
+        repository,
+        context: getWikiServiceTestContext(),
+      });
+
+      const key = await svc.createArticle({
+        title: "Article",
+        content: makeSimpleLexicalContent("content"),
+        image: "http://super-image.fr",
+      });
+      expect(key).toStrictEqual("KEY");
     });
   });
 });
