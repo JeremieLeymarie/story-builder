@@ -1,4 +1,4 @@
-import { makeSimpleSceneContent } from "@/lib/scene-content";
+import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 
 export const MOCK_IMPORTED_STORY = {
   key: "bloup",
@@ -20,7 +20,7 @@ export const MOCK_IMPORTED_SCENE = {
   key: "skibidi",
   storyKey: "bloup",
   title: "Your first scene",
-  content: makeSimpleSceneContent(
+  content: makeSimpleLexicalContent(
     "This is a placeholder content for your first scene",
   ),
   actions: [

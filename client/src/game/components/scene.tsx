@@ -16,7 +16,7 @@ type GameSceneProps = {
 
 export const GameScene = ({
   progress,
-  scene: { key, content, title, actions, storyKey },
+  scene: { content, title, actions, storyKey },
   isLastScene,
 }: GameSceneProps) => {
   return (
@@ -29,7 +29,6 @@ export const GameScene = ({
             </h1>
             <p className="leading-7 wrap-break-word not-first:mt-6">
               <Editor
-                sceneKey={key}
                 editable={false}
                 editorSerializedState={
                   content as unknown as SerializedEditorState

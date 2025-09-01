@@ -1,15 +1,15 @@
 import { useBuilderContext } from "./use-builder-context";
 import { useReactFlow, XYPosition } from "@xyflow/react";
 import { getBuilderService } from "@/get-builder-service";
-import { makeSimpleSceneContent } from "@/lib/scene-content";
 import { sceneToNodeAdapter } from "../adapters";
 import { Scene } from "@/lib/storage/domain";
 import { useBuilderError } from "./use-builder-error";
+import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { SceneSchema } from "../components/builder-editor-bar/scene-editor/schema";
 
 export const DEFAULT_SCENE: SceneSchema = {
   title: "",
-  content: makeSimpleSceneContent(""),
+  content: makeSimpleLexicalContent(""),
   actions: [],
 };
 

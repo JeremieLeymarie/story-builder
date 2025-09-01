@@ -1,4 +1,4 @@
-import { makeSimpleSceneContent } from "@/lib/scene-content";
+import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { db } from "../dexie/dexie-db";
 import { Migration } from "./types";
 
@@ -18,7 +18,7 @@ const migrate = async () => {
     scenes.map((scene) => ({
       key: scene.key,
       changes: {
-        content: makeSimpleSceneContent(scene.content as unknown as string),
+        content: makeSimpleLexicalContent(scene.content as unknown as string),
       },
     })),
   );

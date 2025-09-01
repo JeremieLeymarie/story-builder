@@ -9,25 +9,25 @@ import {
   getImportServiceStub,
   MockImportService,
 } from "@/services/common/stubs/stub-import-service";
-import { makeSimpleSceneContent } from "@/lib/scene-content";
-import { _getBuilderService } from "../builder-service";
-import {
-  getStubLayoutService,
-  MockLayoutService,
-} from "../stubs/stub-layout-service";
-import {
-  getStubBuilderStoryRepository,
-  MockBuilderStoryRepository,
-} from "../stubs/stub-builder-story-repository";
-import {
-  MOCK_IMPORTED_STORY,
-  MOCK_IMPORTED_SCENE,
-} from "@/domains/__tests__/data/imported-story-mocks";
+import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import {
   BASIC_SCENE,
   BASIC_USER,
   BASIC_STORY,
 } from "@/repositories/stubs/data";
+import { _getBuilderService } from "../builder-service";
+import {
+  MockBuilderStoryRepository,
+  getStubBuilderStoryRepository,
+} from "../stubs/stub-builder-story-repository";
+import {
+  MockLayoutService,
+  getStubLayoutService,
+} from "../stubs/stub-layout-service";
+import {
+  MOCK_IMPORTED_STORY,
+  MOCK_IMPORTED_SCENE,
+} from "@/domains/__tests__/data/imported-story-mocks";
 import { getTestFactory } from "@/lib/testing/factory";
 
 const factory = getTestFactory();
@@ -214,7 +214,7 @@ describe("builder-service", () => {
         },
         firstScene: {
           builderParams: { position: { x: 0, y: 0 } },
-          content: makeSimpleSceneContent(
+          content: makeSimpleLexicalContent(
             "This is a placeholder content for your first scene",
           ),
           title: "Your first scene",
@@ -251,7 +251,7 @@ describe("builder-service", () => {
         },
         firstScene: {
           builderParams: { position: { x: 0, y: 0 } },
-          content: makeSimpleSceneContent(
+          content: makeSimpleLexicalContent(
             "This is a placeholder content for your first scene",
           ),
           title: "Your first scene",
@@ -279,14 +279,14 @@ describe("builder-service", () => {
   describe("updateScene", () => {
     it("should only update specified parts of the scene", async () => {
       await builderService.updateScene({
-        content: makeSimpleSceneContent("tututu"),
+        content: makeSimpleLexicalContent("tututu"),
         key: "blabla",
       });
 
       expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
         "blabla",
         {
-          content: makeSimpleSceneContent("tututu"),
+          content: makeSimpleLexicalContent("tututu"),
         },
       );
     });
@@ -422,7 +422,7 @@ describe("builder-service", () => {
         {
           data: {
             title: "A mysterious crossroads",
-            content: makeSimpleSceneContent(
+            content: makeSimpleLexicalContent(
               "You arrive at a crossroads. On the left, a sinuous dirt path leads to a tree mass. The road on the right is a well-maintained paved trail that runs towards a little village in the hills.",
             ),
             actions: [
@@ -442,7 +442,7 @@ describe("builder-service", () => {
         {
           data: {
             title: "The Forest",
-            content: makeSimpleSceneContent(
+            content: makeSimpleLexicalContent(
               "After half an hour of walking under the bright sun, you come close to the trees. As the air gets colder, you start hearing birds and other creatures of the forest",
             ),
             actions: [],
@@ -459,7 +459,7 @@ describe("builder-service", () => {
         {
           data: {
             title: "The Road to the Village",
-            content: makeSimpleSceneContent(
+            content: makeSimpleLexicalContent(
               "You walk alongside an - for most of it - even path that leads you under the protecting shadows of the hills. You maintain a quick pace. After a moment, you begin feeling like something is watching you.",
             ),
             actions: [],
@@ -506,7 +506,7 @@ describe("builder-service", () => {
           key: "first-fake-scene-key",
           actions: [],
           builderParams: { position: { x: 1111, y: 1111 } },
-          content: makeSimpleSceneContent("content"),
+          content: makeSimpleLexicalContent("content"),
           storyKey: "fake-story-key",
           title: "title",
         },
@@ -514,7 +514,7 @@ describe("builder-service", () => {
           key: "forest-fake-scene-key",
           actions: [],
           builderParams: { position: { x: 2222, y: 2222 } },
-          content: makeSimpleSceneContent("content"),
+          content: makeSimpleLexicalContent("content"),
           storyKey: "fake-story-key",
           title: "title",
         },
@@ -522,7 +522,7 @@ describe("builder-service", () => {
           key: "village-fake-scene-key",
           actions: [],
           builderParams: { position: { x: 3333, y: 3333 } },
-          content: makeSimpleSceneContent("content"),
+          content: makeSimpleLexicalContent("content"),
           storyKey: "fake-story-key",
           title: "title",
         },
@@ -534,7 +534,7 @@ describe("builder-service", () => {
         {
           data: {
             title: "A mysterious crossroads",
-            content: makeSimpleSceneContent(
+            content: makeSimpleLexicalContent(
               "You arrive at a crossroads. On the left, a sinuous dirt path leads to a tree mass. The road on the right is a well-maintained paved trail that runs towards a little village in the hills.",
             ),
             actions: [
@@ -554,7 +554,7 @@ describe("builder-service", () => {
         {
           data: {
             title: "The Forest",
-            content: makeSimpleSceneContent(
+            content: makeSimpleLexicalContent(
               "After half an hour of walking under the bright sun, you come close to the trees. As the air gets colder, you start hearing birds and other creatures of the forest",
             ),
             actions: [],
@@ -571,7 +571,7 @@ describe("builder-service", () => {
         {
           data: {
             title: "The Road to the Village",
-            content: makeSimpleSceneContent(
+            content: makeSimpleLexicalContent(
               "You walk alongside an - for most of it - even path that leads you under the protecting shadows of the hills. You maintain a quick pace. After a moment, you begin feeling like something is watching you.",
             ),
             actions: [],
@@ -598,7 +598,7 @@ describe("builder-service", () => {
           key: "first-fake-scene-key",
           actions: [],
           builderParams: { position: { x: 1111, y: 1111 } },
-          content: makeSimpleSceneContent("content"),
+          content: makeSimpleLexicalContent("content"),
           storyKey: "fake-story-key",
           title: "title",
         },
@@ -606,7 +606,7 @@ describe("builder-service", () => {
           key: "forest-fake-scene-key",
           actions: [],
           builderParams: { position: { x: 2222, y: 2222 } },
-          content: makeSimpleSceneContent("content"),
+          content: makeSimpleLexicalContent("content"),
           storyKey: "fake-story-key",
           title: "title",
         },
@@ -614,7 +614,7 @@ describe("builder-service", () => {
           key: "village-fake-scene-key",
           actions: [],
           builderParams: { position: { x: 3333, y: 3333 } },
-          content: makeSimpleSceneContent("content"),
+          content: makeSimpleLexicalContent("content"),
           storyKey: "fake-story-key",
           title: "title",
         },
@@ -624,7 +624,7 @@ describe("builder-service", () => {
           key: "first-fake-scene-key",
           actions: [],
           builderParams: { position: { x: 1, y: 1 } },
-          content: makeSimpleSceneContent("content"),
+          content: makeSimpleLexicalContent("content"),
           storyKey: "fake-story-key",
           title: "title",
         },
@@ -632,7 +632,7 @@ describe("builder-service", () => {
           key: "forest-fake-scene-key",
           actions: [],
           builderParams: { position: { x: 2, y: 2 } },
-          content: makeSimpleSceneContent("content"),
+          content: makeSimpleLexicalContent("content"),
           storyKey: "fake-story-key",
           title: "title",
         },
@@ -640,7 +640,7 @@ describe("builder-service", () => {
           key: "village-fake-scene-key",
           actions: [],
           builderParams: { position: { x: 3, y: 3 } },
-          content: makeSimpleSceneContent("content"),
+          content: makeSimpleLexicalContent("content"),
           storyKey: "fake-story-key",
           title: "title",
         },

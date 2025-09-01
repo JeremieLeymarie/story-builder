@@ -1,4 +1,4 @@
-import { makeSimpleSceneContent } from "@/lib/scene-content";
+import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { Scene, Story } from "../domain";
 import { StoryFromImport } from "@/services/common/import-service";
 
@@ -22,7 +22,7 @@ export const DEMO_SCENES: Scene[] = [
         y: -117.68450914552545,
       },
     },
-    content: makeSimpleSceneContent(
+    content: makeSimpleLexicalContent(
       "You find yourself at the foot of the legendary mount Leybaudt which is said to be home to a feerical kingdom in which lives a mysterious wizard. The mountain in all of it's majesty pierces the sky and disappears on the night sky. What do you do ? ",
     ),
     title: "At the foot of the mountain",
@@ -47,7 +47,7 @@ export const DEMO_SCENES: Scene[] = [
   },
   {
     title: "Glitter Lake ",
-    content: makeSimpleSceneContent(
+    content: makeSimpleLexicalContent(
       "You tread past the ancient grove towards the end of the trees you finally arrive at your destination and the view takes you breath away. The moonlight and the stars relflect their light on the surface of the lake giving it a mystical and eerie feeling.",
     ),
     actions: [
@@ -71,7 +71,7 @@ export const DEMO_SCENES: Scene[] = [
   },
   {
     title: "An entrancing voice",
-    content: makeSimpleSceneContent(
+    content: makeSimpleLexicalContent(
       "You hear a song, a sweet melody that seems to lull you in ",
     ),
     actions: [
@@ -95,7 +95,7 @@ export const DEMO_SCENES: Scene[] = [
   },
   {
     title: "A lonlely island",
-    content: makeSimpleSceneContent(
+    content: makeSimpleLexicalContent(
       "You reach an island of very small stature in which you can see a distant silouhette",
     ),
     actions: [
@@ -119,7 +119,7 @@ export const DEMO_SCENES: Scene[] = [
   },
   {
     title: "A way in ",
-    content: makeSimpleSceneContent(
+    content: makeSimpleLexicalContent(
       "You see a small embarcation which is gonna help you go towards the center of the Lake ",
     ),
     actions: [
@@ -143,7 +143,7 @@ export const DEMO_SCENES: Scene[] = [
   },
   {
     title: "END OF CHAPTER ONE ",
-    content: makeSimpleSceneContent("END OF CHAPTER ONE "),
+    content: makeSimpleLexicalContent("END OF CHAPTER ONE "),
     actions: [],
     storyKey: "mcDZQvTdmUCJ7laL8yyLq",
     builderParams: {
@@ -156,7 +156,7 @@ export const DEMO_SCENES: Scene[] = [
   },
   {
     title: "An ancient grove",
-    content: makeSimpleSceneContent(
+    content: makeSimpleLexicalContent(
       "When heading towards you arrive in a millenial grove which is enlightened by the moonlight ",
     ),
     actions: [
@@ -184,7 +184,7 @@ export const DEMO_SCENES: Scene[] = [
   },
   {
     title: "A peculiar being",
-    content: makeSimpleSceneContent(
+    content: makeSimpleLexicalContent(
       "You keep walking and you stop dead on your tracks because you can finally see the provenance of those songs. It's a chimerical being half woman with long aubrun hair and half fish with a long tail which end in a large fin. A CREATURE OF LEGENDS, A SIREN.",
     ),
     actions: [
@@ -208,7 +208,7 @@ export const DEMO_SCENES: Scene[] = [
   },
   {
     title: "A foggy path ",
-    content: makeSimpleSceneContent(
+    content: makeSimpleLexicalContent(
       "Continuing to walk towards the mountain the fog becomes thicker and thicker. ",
     ),
     actions: [
@@ -236,7 +236,7 @@ export const DEMO_SCENES: Scene[] = [
   },
   {
     title: "Friend or foe ?",
-    content: makeSimpleSceneContent(
+    content: makeSimpleLexicalContent(
       "You're now very close to the siren you can have a close-up of it's peculiar attributes as the color of her scales which is a shimery azure blue and it's golden eyes in which a vertical slit can be seen.",
     ),
     actions: [
@@ -260,7 +260,7 @@ export const DEMO_SCENES: Scene[] = [
   },
   {
     title: "An unexpected exchange",
-    content: makeSimpleSceneContent(
+    content: makeSimpleLexicalContent(
       "You ask her what she is currently doing here and what her name is ?",
     ),
     actions: [

@@ -19,8 +19,8 @@ import {
   MOCK_IMPORTED_SCENE,
   MOCK_IMPORTED_STORY,
 } from "./data/imported-story-mocks";
-import { makeSimpleSceneContent } from "@/lib/scene-content";
 import { getTestFactory } from "@/lib/testing/factory";
+import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 
 const factory = getTestFactory();
 
@@ -143,7 +143,7 @@ describe("library-service", () => {
       key: "most-recent-vroum",
       actions: [{ text: "action A" }, { text: "action B" }],
       builderParams: { position: { x: 0, y: 0 } },
-      content: makeSimpleSceneContent("pas content"),
+      content: makeSimpleLexicalContent("pas content"),
       storyKey: "zut",
       title: "flûte",
     };
@@ -152,7 +152,7 @@ describe("library-service", () => {
       key: "older-vroum",
       actions: [{ text: "action A" }, { text: "action B" }],
       builderParams: { position: { x: 0, y: 0 } },
-      content: makeSimpleSceneContent("pas content"),
+      content: makeSimpleLexicalContent("pas content"),
       storyKey: "zut",
       title: "flûte",
     };
@@ -160,7 +160,7 @@ describe("library-service", () => {
       key: "finished-vroum",
       actions: [{ text: "action A" }, { text: "action B" }],
       builderParams: { position: { x: 0, y: 0 } },
-      content: makeSimpleSceneContent("pas content"),
+      content: makeSimpleLexicalContent("pas content"),
       storyKey: "zut",
       title: "flûte",
     };
