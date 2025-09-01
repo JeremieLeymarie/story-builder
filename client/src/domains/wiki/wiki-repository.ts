@@ -1,5 +1,5 @@
 import { Database, db } from "@/lib/storage/dexie/dexie-db";
-import { Wiki } from "@/lib/storage/domain";
+import { Wiki, WikiArticle } from "@/lib/storage/domain";
 import { WithoutKey } from "@/types";
 
 export type WikiRepositoryPort = {
@@ -9,6 +9,7 @@ export type WikiRepositoryPort = {
   ) => Promise<void>;
   create: (wiki: WithoutKey<Wiki>) => Promise<string>;
   get: (wikiKey: string) => Promise<Wiki | null>;
+  createArticle: (payload: WithoutKey<WikiArticle>) => Promise<string>;
 };
 
 export const _getDexieWikiRepository = (db: Database): WikiRepositoryPort => {
@@ -39,6 +40,10 @@ export const _getDexieWikiRepository = (db: Database): WikiRepositoryPort => {
 
     get: async (wikiKey) => {
       return (await db.wikis.get(wikiKey)) ?? null;
+    },
+
+    createArticle: async (payload) => {
+      return await db.wikiArticles.add(payload);
     },
   };
 };

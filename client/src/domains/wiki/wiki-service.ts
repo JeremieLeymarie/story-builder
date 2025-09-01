@@ -2,6 +2,7 @@ import { User, Wiki } from "@/lib/storage/domain";
 import { getDexieWikiRepository, WikiRepositoryPort } from "./wiki-repository";
 import { getUser } from "@/lib/auth";
 import { WikiSchema } from "@/wikis/wiki-form";
+import { ArticleSchema } from "@/wikis/schema";
 
 export type WikiServicePort = {
   getAllWikis: () => Promise<Wiki[]>;
@@ -11,6 +12,7 @@ export type WikiServicePort = {
   }) => Promise<void>;
   createWiki: (payload: WikiSchema) => Promise<string>;
   getWikiData: (wikiKey: string) => Promise<Wiki | null>;
+  createArticle: (payload: ArticleSchema) => Promise<string>;
 };
 
 export type WikiServiceContext = {
@@ -56,6 +58,17 @@ export const _getWikiService = ({
 
     getWikiData: async (wikiKey) => {
       return await repository.get(wikiKey);
+    },
+
+    createArticle: async (payload) => {
+      return await repository.createArticle({
+        title: payload.title,
+        content: payload.content,
+        image: payload.image,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        ...(payload.categoryKey ? { categoryKey: payload.categoryKey } : {}),
+      });
     },
   };
 };

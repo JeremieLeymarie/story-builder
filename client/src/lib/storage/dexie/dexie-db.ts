@@ -1,6 +1,13 @@
 import Dexie, { type EntityTable } from "dexie";
 import { nanoid } from "nanoid";
-import { User, Story, Scene, StoryProgress, Wiki } from "../domain";
+import {
+  User,
+  Story,
+  Scene,
+  StoryProgress,
+  Wiki,
+  WikiArticle,
+} from "../domain";
 import { DEMO_IMPORTED_STORY, DEMO_SCENES, DEMO_STORY } from "./seed";
 import { getLibraryService } from "@/domains/game/library-service";
 
@@ -10,6 +17,7 @@ type Tables = {
   scenes: EntityTable<Scene, "key">;
   storyProgresses: EntityTable<StoryProgress, "key">;
   wikis: EntityTable<Wiki, "key">;
+  wikiArticles: EntityTable<WikiArticle, "key">;
 };
 export type Database = Dexie & Tables;
 
@@ -23,6 +31,7 @@ const tables: Record<keyof Tables, string> = {
   storyProgresses:
     "&key, storyKey, userKey, currentSceneKey, character, inventory, history, lastPlayedAt",
   wikis: "&key, userKey",
+  wikiArticles: "&key, categoryKey, title",
 };
 export const TABLE_NAMES = Object.keys(tables);
 

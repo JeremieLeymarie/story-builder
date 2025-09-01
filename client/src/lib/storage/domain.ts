@@ -87,6 +87,16 @@ export type Wiki = {
   createdAt: Date;
 };
 
+export type WikiArticle = {
+  key: string;
+  title: string;
+  content: Record<string, unknown>;
+  image: string;
+  createdAt: Date;
+  updatedAt: Date;
+  categoryKey?: string;
+};
+
 export const ENTITIES = [
   "story",
   "scene",

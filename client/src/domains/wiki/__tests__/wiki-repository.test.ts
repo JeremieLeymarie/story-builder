@@ -203,5 +203,22 @@ describe("wiki repository", () => {
 
       expect(wiki).toBeNull();
     });
+
+    describe("create article", () => {
+      test("should create wiki article", async () => {
+        const existingArticle = factory.wikiArticle();
+        await testDB.wikiArticles.add(existingArticle);
+
+        const articleToAdd = factory.wikiArticle();
+        const articleKey = await repo.createArticle(articleToAdd);
+
+        const allArticles = await testDB.wikiArticles.toArray();
+        expect(allArticles).toHaveLength(2);
+        expect(await testDB.wikiArticles.get(articleKey)).toStrictEqual({
+          ...articleToAdd,
+          key: articleKey,
+        });
+      });
+    });
   });
 });
