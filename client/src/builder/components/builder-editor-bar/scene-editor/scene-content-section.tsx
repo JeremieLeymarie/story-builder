@@ -8,28 +8,29 @@ import {
   Input,
 } from "@/design-system/primitives";
 import { UseFormReturn } from "react-hook-form";
-import { SceneSchema } from "./schema";
+import { SceneSchema, SceneUpdatePayload } from "./schema";
 import { SetFirstSceneSwitch } from "./set-first-scene-switch";
 import { Editor } from "@/design-system/components/editor/blocks/editor";
 import { SerializedEditorState } from "lexical";
 
 export const SceneContentSection = ({
   form,
-  sceneKey,
+  scenePayload,
   isFirstScene,
   setFirstScene,
 }: {
   form: UseFormReturn<SceneSchema>;
-  sceneKey: string;
+  scenePayload: SceneUpdatePayload;
   isFirstScene: boolean;
   setFirstScene: () => void;
 }) => {
+  console.log({ scenePayload });
   return (
     <div className="space-y-4">
       <SetFirstSceneSwitch
         isFirstScene={isFirstScene}
         setFirstScene={setFirstScene}
-        sceneKey={sceneKey}
+        sceneKey={scenePayload.key}
       />
       <FormField
         control={form.control}
@@ -53,14 +54,11 @@ export const SceneContentSection = ({
             <FormLabel>Content</FormLabel>
             <FormControl>
               <Editor
-                editable={true}
-                sceneKey={sceneKey}
-                onSerializedChange={(data) => {
-                  field.onChange(data);
-                }}
+                onSerializedChange={field.onChange}
                 editorSerializedState={
-                  field.value as unknown as SerializedEditorState
+                  scenePayload.content as unknown as SerializedEditorState
                 }
+                editable
               />
             </FormControl>
             <FormDescription>The actual content of the scene.</FormDescription>
