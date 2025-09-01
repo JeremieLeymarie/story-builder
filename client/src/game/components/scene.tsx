@@ -34,7 +34,6 @@ export const GameScene = ({
                 initialState={content as unknown as SerializedEditorState}
                 editorNodes={[WikiNode]}
               />
-            </p>
             <div className="mt-4 flex w-full flex-wrap gap-3">
               {actions.map((action) => (
                 <SceneAction

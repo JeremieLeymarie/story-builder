@@ -1,6 +1,7 @@
+import { SceneContent } from "@/lib/scene-content";
 import { Scene, Story, StoryProgress, User } from "@/lib/storage/domain";
 
-export const BASIC_SCENE_CONTENT = {
+export const BASIC_SCENE_CONTENT: SceneContent = {
   root: {
     children: [
       {

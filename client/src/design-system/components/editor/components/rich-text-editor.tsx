@@ -39,7 +39,7 @@ export const RichText = ({
   editorNodes?: EditorNode[];
 }) => {
   // This allow lexical to refresh it's initial state when the content changes from the outside
-  const key = JSON.stringify(initialState);
+  const state = JSON.stringify(initialState);
 
   return (
     <div
@@ -50,7 +50,6 @@ export const RichText = ({
       )}
     >
       <LexicalComposer
-        key={key}
         initialConfig={{
           namespace: "Editor",
           theme: {
