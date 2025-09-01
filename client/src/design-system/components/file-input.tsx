@@ -4,8 +4,10 @@ import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
 
 const useFileUpload = ({
   onReadFile,
+  readAs,
 }: {
   onReadFile: (content: string) => void;
+  readAs: ReadAs;
 }) => {
   const reader = useRef(new FileReader());
 
@@ -23,19 +25,30 @@ const useFileUpload = ({
   }, [onReadFile]);
 
   const readFile = (file: File) => {
-    reader.current.readAsText(file);
+    if (readAs === "text") reader.current.readAsText(file);
+    else reader.current.readAsDataURL(file);
   };
 
   return { readFile };
 };
 
+type ReadAs = "text" | "dataURL";
+
 type FileInputProps = {
   accept?: string;
   onUploadFile: (content: string) => void;
+  readAs: ReadAs;
 };
 
-export const FileDropInput = ({ onUploadFile, accept }: FileInputProps) => {
-  const { readFile } = useFileUpload({ onReadFile: onUploadFile });
+export const FileDropInput = ({
+  onUploadFile,
+  accept,
+  readAs,
+}: FileInputProps) => {
+  const { readFile } = useFileUpload({
+    onReadFile: onUploadFile,
+    readAs,
+  });
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
