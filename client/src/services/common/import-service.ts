@@ -9,7 +9,7 @@ import {
 } from "@/lib/storage/domain";
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 import { WithoutKey } from "@/types";
-import { contentSchema } from "@/lib/scene-content";
+import { lexicalContentSchema } from "@/lib/lexical-content";
 
 export const ANONYMOUS_AUTHOR = {
   key: "ANONYMOUS_AUTHOR_KEY",
@@ -51,7 +51,7 @@ export const storyFromImportSchema = z.object({
       key: z.string({ message: "Key is required" }),
       storyKey: z.string({ message: "StoryKey is required" }),
       title: z.string({ message: "Title is required" }),
-      content: contentSchema,
+      content: lexicalContentSchema,
       actions: z.array(
         z.object({
           text: z.string({ message: "Text is required" }),

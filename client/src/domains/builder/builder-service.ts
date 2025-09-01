@@ -7,10 +7,10 @@ import {
   StoryFromImport,
 } from "@/services/common/import-service";
 import { WithoutKey } from "@/types";
-import { makeSimpleSceneContent } from "@/lib/scene-content";
+import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { BuilderServicePort } from "./ports/builder-service-port";
-import { LayoutServicePort } from "./ports/layout-service-port";
 import { BuilderStoryRepositoryPort } from "./ports/builder-story-repository-port";
+import { LayoutServicePort } from "./ports/layout-service-port";
 
 export const _getBuilderService = ({
   localRepository,
@@ -122,7 +122,7 @@ export const _getBuilderService = ({
         },
         firstScene: {
           builderParams: { position: { x: 0, y: 0 } },
-          content: makeSimpleSceneContent(
+          content: makeSimpleLexicalContent(
             "This is a placeholder content for your first scene",
           ),
           title: "Your first scene",

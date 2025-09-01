@@ -1,12 +1,12 @@
-import { contentSchema } from "@/lib/scene-content";
+import { lexicalContentSchema } from "@/lib/lexical-content";
 import { Scene } from "@/lib/storage/domain";
 import * as z from "zod/v4";
 
 export const sceneSchema = z.object({
   title: z
     .string()
-    .max(250, { message: "Title has to be less than 50 characters" }),
-  content: contentSchema,
+    .max(250, { message: "Title has to be less than 250 characters" }),
+  content: lexicalContentSchema,
   actions: z.array(
     z.object({
       text: z.string(),
