@@ -6,7 +6,6 @@ import type {
   EditorConfig,
   LexicalNode,
   NodeKey,
-  SerializedEditor,
   SerializedLexicalNode,
   Spread,
 } from "lexical";

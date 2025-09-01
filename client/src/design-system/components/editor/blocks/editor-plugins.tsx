@@ -3,7 +3,7 @@ import { FontFormatToolbarPlugin } from "@/design-system/components/editor/plugi
 import { BasePlugins } from "./base-plugins";
 import { BlockInsertPlugin } from "./block-insert-plugin";
 import { InsertImage } from "@/design-system/components/editor/plugins/toolbar/block-insert/insert-image";
-import { ImagesPlugin } from "@/design-system/components/editor/plugins/images-plugin";
+import { ImagesPlugin } from "../plugins/images-plugin/plugin";
 
 export const EditorPlugins = ({ editable }: { editable: boolean }) => {
   return (
