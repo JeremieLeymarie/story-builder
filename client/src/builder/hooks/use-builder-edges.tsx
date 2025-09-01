@@ -8,14 +8,15 @@ import {
 } from "@xyflow/react";
 import { nodeToSceneAdapter } from "../adapters";
 import { getBuilderService } from "@/get-builder-service";
-import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
+import { DEFAULT_SCENE, useAddScenes } from "./use-add-scenes";
 import { BuilderNode } from "../types";
 import { useBuilderError } from "./use-builder-error";
+import { sceneConsts } from "../components/nodes/scene/scene-constants";
 
 export const useBuilderEdges = () => {
   const { getNodes, setEdges } = useReactFlow<BuilderNode>();
   const { handleError } = useBuilderError();
-  const { addScene } = useAddScene();
+  const { addScenes } = useAddScenes();
   const { screenToFlowPosition } = useReactFlow();
 
   const getSceneToUpdate = (edge: Edge | Connection) => {
@@ -60,7 +61,7 @@ export const useBuilderEdges = () => {
     });
   };
 
-  const onConnectEnd = async (
+  const onConnectEnd = (
     ev: MouseEvent | TouchEvent,
     connectionState: FinalConnectionState,
   ) => {
@@ -74,26 +75,25 @@ export const useBuilderEdges = () => {
         x: event.clientX,
         y: event.clientY,
       });
-      // TODO: unify constants regarding the scene component in a single place
-      // Magic values to hover right over the correct handle:
-      const offset = fromHandle ? { x: 0, y: 0 } : { x: 375 - 16, y: 27.5 };
-      const scene = await addScene(
+      // Places the node over the correct handle:
+      const offset = fromHandle
+        ? { x: 0, y: 0 }
+        : {
+            x: sceneConsts.width - sceneConsts.itemPadding,
+            y: sceneConsts.text2xl / 2 + sceneConsts.itemPadding,
+          };
+      const scene = addScenes(
+        [
+          fromHandle
+            ? DEFAULT_SCENE
+            : { ...DEFAULT_SCENE, actions: [{ text: "" }] },
+        ],
         { x: position.x - offset.x, y: position.y - offset.y },
-        fromHandle
-          ? DEFAULT_SCENE
-          : {
-              ...DEFAULT_SCENE,
-              actions: [
-                {
-                  text: "...",
-                },
-              ],
-            },
       );
       if (!scene) return;
 
       const fromNode = connectionState.fromNode.id;
-      const toNode = scene.key;
+      const toNode = scene[0]!.key;
 
       const toHandle = `${toNode}-0`;
       setTimeout(() => {

@@ -1,3 +1,5 @@
+import { SceneContent } from "../scene-content";
+
 export const STORY_GENRES = [
   "adventure",
   "children",
@@ -37,7 +39,7 @@ export type StoryBase = {
   title: string;
   description: string;
   image: string;
-  firstSceneKey: string; // FIXME: the first scene can be deleted, maybe make this nullable?
+  firstSceneKey: string; // FIXME: the first scene can be deleted (#273)
   genres: StoryGenre[];
   creationDate: Date;
   wikiKey?: string;
@@ -61,7 +63,7 @@ export type Scene = {
   key: string;
   storyKey: string;
   title: string;
-  content: Record<string, unknown>;
+  content: SceneContent;
   actions: Action[];
   builderParams: { position: { x: number; y: number } };
 };

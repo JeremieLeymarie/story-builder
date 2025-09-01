@@ -1,11 +1,12 @@
 import { useTestStory } from "./use-test-story";
 import { useExportModalStore } from "./use-export-modal-store";
-import { useAddScene } from "./use-add-scene";
-import { useReactFlow } from "@xyflow/react";
+import { useReactFlow, useStoreApi } from "@xyflow/react";
 import { useBuilderContext } from "./use-builder-context";
 import { nodeToSceneAdapter } from "../adapters";
 import { BuilderNode } from "../types";
 import { sceneSchema } from "../components/scene-editor/schema";
+import z from "zod";
+import { NewScene, useAddScenes } from "./use-add-scenes";
 
 export const useBuilderShortCuts = ({
   firstSceneKey,
@@ -13,32 +14,51 @@ export const useBuilderShortCuts = ({
   firstSceneKey: string;
 }) => {
   const { reactFlowRef } = useBuilderContext();
-  const { addScene } = useAddScene();
+  const { addScenes } = useAddScenes();
   const openExportModal = useExportModalStore((state) => state.setOpen);
   const { testStory } = useTestStory();
   const { getNodes, deleteElements } = useReactFlow<BuilderNode>();
+  const { addSelectedNodes } = useStoreApi().getState();
 
   if (!reactFlowRef.current) return;
 
+  const shortcuts: Record<string, (e: KeyboardEvent) => void> = {
+    ["n"]() {
+      addScenes();
+    },
+    ["t"]() {
+      testStory(firstSceneKey);
+    },
+    ["e"]() {
+      openExportModal(true);
+    },
+    ["ctrl+a"]() {
+      addSelectedNodes(getNodes().map((node) => node.id));
+    },
+  };
+
   const handleKeyPress = (e: KeyboardEvent) => {
-    if (e.repeat || e.isComposing) return;
+    if (e.isComposing) return;
     const key = e.key.toLocaleLowerCase();
 
-    switch (key) {
-      case "n":
-        addScene();
-        e.preventDefault();
-        break;
-      case "t":
-        testStory(firstSceneKey);
-        e.preventDefault();
-        break;
-      case "e":
-        openExportModal(true);
-        e.preventDefault();
-        break;
+    for (const binding of Object.keys(shortcuts)) {
+      if (!binding.endsWith(key)) continue;
+      e.preventDefault();
+      if (e.repeat) return;
+      if (binding.match("ctrl") && !e.ctrlKey) continue;
+      if (binding.match("shift") && !e.shiftKey) continue;
+      if (binding.match("alt") && !e.altKey) continue;
+      shortcuts[binding]!(e);
     }
   };
+
+  const clipboardSchema = z.array(
+    sceneSchema.extend({
+      builderParams: z.object({
+        position: z.object({ x: z.number(), y: z.number() }),
+      }),
+    }),
+  );
 
   const handleClipboard = (ev: ClipboardEvent) => {
     reactFlowRef.current?.focus();
@@ -46,12 +66,10 @@ export const useBuilderShortCuts = ({
 
     if (ev.type === "paste") {
       const json = JSON.parse(ev.clipboardData?.getData("text") ?? "[]");
-      const scenes = sceneSchema.array().safeParse(json);
+      const scenes = clipboardSchema.safeParse(json);
 
       if (!scenes.success) return;
-      for (const scene of scenes.data) {
-        addScene(undefined, scene);
-      }
+      addScenes(scenes.data);
       return;
     }
 
@@ -59,9 +77,24 @@ export const useBuilderShortCuts = ({
     if (!nodes.length) return;
 
     if (ev.type === "copy" || ev.type === "cut") {
+      const id2idx = new Map(nodes.map((node, i) => [node.id, i]));
       ev.clipboardData?.setData(
         "text/plain",
-        JSON.stringify(nodes.map((node) => nodeToSceneAdapter(node))),
+        JSON.stringify(
+          nodes.map((node): NewScene => {
+            const scene = nodeToSceneAdapter(node);
+            return {
+              title: scene.title,
+              content: scene.content,
+              actions: scene.actions.map((action) => {
+                const idx = id2idx.get(action.sceneKey ?? "");
+                if (idx !== undefined) action.sceneKey = "=" + idx;
+                return action;
+              }),
+              builderParams: scene.builderParams,
+            };
+          }),
+        ),
       );
     }
 

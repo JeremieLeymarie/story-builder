@@ -33,8 +33,8 @@ export const BasePlugins = ({
           }}
         >
           <ContentEditable
-            className={cn(editable && "px-4")}
-            placeholder={"Start typing..."}
+            className={cn(editable ? "max-w-[400px] px-4" : "px-0 py-0")}
+            placeholder={editable ? "Once upon a time..." : ""}
             ref={contentRef}
           />
         </ScrollArea>
