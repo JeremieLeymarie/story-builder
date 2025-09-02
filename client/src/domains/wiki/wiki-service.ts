@@ -1,8 +1,9 @@
-import { User, Wiki } from "@/lib/storage/domain";
+import { User, Wiki, WikiArticle } from "@/lib/storage/domain";
 import { getDexieWikiRepository, WikiRepositoryPort } from "./wiki-repository";
 import { getUser } from "@/lib/auth";
 import { WikiSchema } from "@/wikis/wiki-form";
 import { ArticleSchema } from "@/wikis/schema";
+import { WikiData } from "./types";
 
 export type WikiServicePort = {
   getAllWikis: () => Promise<Wiki[]>;
@@ -11,8 +12,9 @@ export type WikiServicePort = {
     key: string;
   }) => Promise<void>;
   createWiki: (payload: WikiSchema) => Promise<string>;
-  getWikiData: (wikiKey: string) => Promise<Wiki | null>;
-  createArticle: (payload: ArticleSchema) => Promise<string>;
+  getWikiData: (wikiKey: string) => Promise<WikiData | null>;
+  createArticle: (wikiKey: string, payload: ArticleSchema) => Promise<string>;
+  getArticle: (articleKey: string) => Promise<WikiArticle | null>;
 };
 
 export type WikiServiceContext = {
@@ -60,8 +62,9 @@ export const _getWikiService = ({
       return await repository.get(wikiKey);
     },
 
-    createArticle: async (payload) => {
+    createArticle: async (wikiKey, payload) => {
       return await repository.createArticle({
+        wikiKey: wikiKey,
         title: payload.title,
         content: payload.content,
         image: payload.image,
@@ -69,6 +72,10 @@ export const _getWikiService = ({
         updatedAt: new Date(),
         ...(payload.categoryKey ? { categoryKey: payload.categoryKey } : {}),
       });
+    },
+
+    getArticle: async (articleKey: string) => {
+      return await repository.getArticle(articleKey);
     },
   };
 };

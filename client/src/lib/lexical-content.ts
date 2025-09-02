@@ -1,7 +1,7 @@
 import * as z from "zod/v4";
 
 export const lexicalContentSchema = z.custom<Record<string, unknown>>(
-  z.record(z.string(), z.any()).parse,
+  (data) => z.record(z.string(), z.any()).safeParse(data).success,
 );
 
 export const makeSimpleLexicalContent = (

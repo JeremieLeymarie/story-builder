@@ -23,6 +23,7 @@ export const BasePlugins = ({
   };
   const contentRef = useRef<HTMLDivElement>(null);
 
+  console.log({ editable });
   return (
     <RichTextPlugin
       contentEditable={
@@ -35,7 +36,7 @@ export const BasePlugins = ({
         >
           <ContentEditable
             className={cn(editable && "px-4")}
-            placeholder={"Start typing ..."}
+            placeholder={"Start typing..."}
             ref={contentRef}
           />
         </ScrollArea>

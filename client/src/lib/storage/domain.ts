@@ -89,12 +89,18 @@ export type Wiki = {
 
 export type WikiArticle = {
   key: string;
+  wikiKey: string;
   title: string;
   content: Record<string, unknown>;
   image: string;
   createdAt: Date;
   updatedAt: Date;
   categoryKey?: string;
+};
+
+export type WikiCategory = {
+  key: string;
+  name: string;
 };
 
 export const ENTITIES = [

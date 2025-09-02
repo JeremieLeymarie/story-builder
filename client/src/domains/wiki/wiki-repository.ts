@@ -1,6 +1,7 @@
 import { Database, db } from "@/lib/storage/dexie/dexie-db";
 import { Wiki, WikiArticle } from "@/lib/storage/domain";
 import { WithoutKey } from "@/types";
+import { WikiData } from "./types";
 
 export type WikiRepositoryPort = {
   getUserWikis: (userKey: string | undefined) => Promise<Wiki[]>;
@@ -8,8 +9,9 @@ export type WikiRepositoryPort = {
     wikis: ({ key: string } & Partial<Omit<Wiki, "key">>)[],
   ) => Promise<void>;
   create: (wiki: WithoutKey<Wiki>) => Promise<string>;
-  get: (wikiKey: string) => Promise<Wiki | null>;
+  get: (wikiKey: string) => Promise<WikiData | null>;
   createArticle: (payload: WithoutKey<WikiArticle>) => Promise<string>;
+  getArticle: (articleKey: string) => Promise<WikiArticle | null>;
 };
 
 export const _getDexieWikiRepository = (db: Database): WikiRepositoryPort => {
@@ -39,11 +41,48 @@ export const _getDexieWikiRepository = (db: Database): WikiRepositoryPort => {
     },
 
     get: async (wikiKey) => {
-      return (await db.wikis.get(wikiKey)) ?? null;
+      const wiki = await db.wikis.get(wikiKey);
+      if (!wiki) return null;
+
+      const NO_CATEGORY = "NO_CATEGORY";
+      const articlesByCategoryKey: {
+        [categoryKey: string]: WikiArticle[];
+      } = {};
+      await db.wikiArticles.where({ wikiKey }).each((article) => {
+        const key = article.categoryKey ?? NO_CATEGORY;
+        if (articlesByCategoryKey[key]) {
+          articlesByCategoryKey[key].push(article);
+        } else {
+          articlesByCategoryKey[key] = [article];
+        }
+      });
+
+      const categoryKeys = Object.keys(articlesByCategoryKey).filter(
+        (key) => key !== NO_CATEGORY,
+      );
+      const categories = await db.wikiCategories.bulkGet(categoryKeys);
+
+      const sections = Object.entries(articlesByCategoryKey).map(
+        ([categoryKey, articles]) => {
+          const category =
+            categories.find((cat) => cat?.key === categoryKey) ?? null;
+
+          return {
+            category,
+            articles,
+          };
+        },
+      );
+
+      return { wiki, sections };
     },
 
     createArticle: async (payload) => {
       return await db.wikiArticles.add(payload);
+    },
+
+    getArticle: async (articleKey) => {
+      return (await db.wikiArticles.get(articleKey)) ?? null;
     },
   };
 };

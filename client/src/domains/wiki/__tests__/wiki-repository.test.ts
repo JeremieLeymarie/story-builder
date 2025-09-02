@@ -6,6 +6,7 @@ import {
 import { getTestDatabase, TEST_USER } from "@/lib/storage/dexie/test-db";
 import { Database } from "@/lib/storage/dexie/dexie-db";
 import { Factory, getTestFactory } from "@/lib/testing/factory";
+import { WikiSection } from "../types";
 
 const DATE = new Date();
 
@@ -183,13 +184,65 @@ describe("wiki repository", () => {
   describe("get", () => {
     test("should get wiki from key", async () => {
       await testDB.wikis.add(factory.wiki());
-      const expected = factory.wiki();
-      const key = await testDB.wikis.add(expected);
+      const wiki = factory.wiki();
+      await testDB.wikis.add(wiki);
       await testDB.wikis.add(factory.wiki());
 
-      const wiki = await repo.get(key);
+      const categories = [
+        factory.wikiCategory(),
+        factory.wikiCategory(),
+        factory.wikiCategory(),
+      ];
+      const art1 = factory.wikiArticle({
+        wikiKey: wiki.key,
+        categoryKey: categories[0]?.key,
+      });
+      const art2 = factory.wikiArticle({
+        wikiKey: wiki.key,
+        categoryKey: categories[1]?.key,
+      });
+      const art3 = factory.wikiArticle({
+        wikiKey: wiki.key,
+        categoryKey: categories[1]?.key,
+      });
+      const art4 = factory.wikiArticle({
+        wikiKey: wiki.key,
+        categoryKey: undefined,
+      });
+      const art5 = factory.wikiArticle();
+      await testDB.wikiCategories.bulkAdd(categories);
+      await testDB.wikiArticles.bulkAdd([art1, art2, art3, art4, art5]);
 
-      expect(wiki).toStrictEqual({ ...expected, key });
+      const wikiData = await repo.get(wiki.key);
+
+      // TODO: this is horrible, we should find a more idiomatic way to deeply compare arrays in tests without taking order into account
+      const _sort = (data: WikiSection[]) => {
+        return data
+          .sort((a, b) =>
+            (a.category?.key ?? "").localeCompare(b.category?.key ?? ""),
+          )
+          .map(({ articles, ...rest }) => ({
+            ...rest,
+            articles: articles.sort((a, b) => a.key.localeCompare(b.key)),
+          }));
+      };
+
+      expect(wikiData?.wiki).toStrictEqual(wiki);
+      expect(wikiData?.sections).toHaveLength(3);
+
+      expect(_sort(wikiData!.sections)).toStrictEqual(
+        _sort([
+          {
+            category: { name: categories[0]!.name, key: categories[0]!.key },
+            articles: [art1],
+          },
+          {
+            category: { name: categories[1]!.name, key: categories[1]!.key },
+            articles: [art2, art3],
+          },
+          { category: null, articles: [art4] },
+        ]),
+      );
     });
 
     test("should return null if not found", async () => {
@@ -203,22 +256,47 @@ describe("wiki repository", () => {
 
       expect(wiki).toBeNull();
     });
+  });
 
-    describe("create article", () => {
-      test("should create wiki article", async () => {
-        const existingArticle = factory.wikiArticle();
-        await testDB.wikiArticles.add(existingArticle);
+  describe("create article", () => {
+    test("should create wiki article", async () => {
+      const existingArticle = factory.wikiArticle();
+      await testDB.wikiArticles.add(existingArticle);
 
-        const articleToAdd = factory.wikiArticle();
-        const articleKey = await repo.createArticle(articleToAdd);
+      const articleToAdd = factory.wikiArticle();
+      const articleKey = await repo.createArticle(articleToAdd);
 
-        const allArticles = await testDB.wikiArticles.toArray();
-        expect(allArticles).toHaveLength(2);
-        expect(await testDB.wikiArticles.get(articleKey)).toStrictEqual({
-          ...articleToAdd,
-          key: articleKey,
-        });
+      const allArticles = await testDB.wikiArticles.toArray();
+      expect(allArticles).toHaveLength(2);
+      expect(await testDB.wikiArticles.get(articleKey)).toStrictEqual({
+        ...articleToAdd,
+        key: articleKey,
       });
+    });
+  });
+
+  describe("get article", () => {
+    test("should get article from key", async () => {
+      await testDB.wikiArticles.add(factory.wikiArticle());
+      const expected = factory.wikiArticle();
+      await testDB.wikiArticles.add(expected);
+      await testDB.wikiArticles.add(factory.wikiArticle());
+
+      const article = await repo.getArticle(expected.key);
+
+      expect(article).toStrictEqual(expected);
+    });
+
+    test("should return null if not found", async () => {
+      await testDB.wikiArticles.bulkAdd([
+        factory.wikiArticle(),
+        factory.wikiArticle(),
+        factory.wikiArticle(),
+      ]);
+
+      const article = await repo.getArticle("zioummm");
+
+      expect(article).toBeNull();
     });
   });
 });

@@ -6,6 +6,7 @@ import {
   StoryProgress,
   Wiki,
   WikiArticle,
+  WikiCategory,
 } from "../storage/domain";
 import { faker } from "@faker-js/faker";
 import { nanoid } from "nanoid";
@@ -50,12 +51,21 @@ const _wikiFactory = {
 type WikiArticleFactory = _BaseFactory<WikiArticle>;
 const _wikiArticleFactory = {
   key: nanoid,
+  wikiKey: nanoid,
   title: faker.book.title,
   content: () => makeSimpleLexicalContent(faker.word.words(50)),
   image: faker.image.url,
   createdAt: faker.date.anytime,
   updatedAt: faker.date.anytime,
+  categoryKey: nanoid,
 } satisfies WikiArticleFactory;
+
+type WikiCategoryFactory = _BaseFactory<WikiCategory>;
+const _wikiCategoryFactory = {
+  key: nanoid,
+  name: () =>
+    faker.helpers.arrayElement(["culture", "people", "event", "geography"]),
+} satisfies WikiCategoryFactory;
 
 type StoryBaseFactory = _BaseFactory<StoryBase>;
 const _baseStoryFactory = {
@@ -99,6 +109,10 @@ export const getTestFactory = () => {
 
     wikiArticle: (partial: Partial<WikiArticle> = {}) => {
       return makeRandomEntity(_wikiArticleFactory, partial);
+    },
+
+    wikiCategory: (partial: Partial<WikiCategory> = {}) => {
+      return makeRandomEntity(_wikiCategoryFactory, partial);
     },
 
     story: {

@@ -40,7 +40,7 @@ export const SceneForm = ({
           <TabsContent value="scene">
             <SceneContentSection
               form={form}
-              sceneKey={scene.key}
+              scenePayload={scene}
               isFirstScene={isFirstScene}
               setFirstScene={() => setFirstScene(scene.key)}
             />
