@@ -1,7 +1,8 @@
-import * as React from "react";
 import { useRef } from "react";
 import { calculateZoomLevel } from "@lexical/utils";
 import type { LexicalEditor } from "lexical";
+import { getEditorContainerInfo } from "@/design-system/components/editor/helpers/getEditorContainerDimensions";
+import { setResizeCursor } from "@/design-system/components/editor/helpers/setResizeCursor";
 
 const clamp = (value: number, min: number, max: number) => {
   return Math.min(Math.max(value, min), max);
@@ -54,56 +55,10 @@ export const ImageResizer = ({
     startX: 0,
     startY: 0,
   });
-  const editorRootElement = editor.getRootElement();
-  // Find max width, accounting for editor padding.
-  const maxWidthContainer = maxWidth
-    ? maxWidth
-    : editorRootElement !== null
-      ? editorRootElement.getBoundingClientRect().width - 20
-      : 100;
-  const maxHeightContainer =
-    editorRootElement !== null
-      ? editorRootElement.getBoundingClientRect().height - 20
-      : 100;
-
+  const { maxWidthContainer, maxHeightContainer, editorRootElement } =
+    getEditorContainerInfo(editor, maxWidth);
   const minWidth = 100;
   const minHeight = 100;
-  const setStartCursor = (direction: number) => {
-    const ew = direction === Direction.east || direction === Direction.west;
-    const ns = direction === Direction.north || direction === Direction.south;
-    const nwse =
-      (direction & Direction.north && direction & Direction.west) ||
-      (direction & Direction.south && direction & Direction.east);
-
-    const cursorDir = ew ? "ew" : ns ? "ns" : nwse ? "nwse" : "nesw";
-
-    if (editorRootElement !== null) {
-      editorRootElement.style.setProperty(
-        "cursor",
-        `${cursorDir}-resize`,
-        "important",
-      );
-    }
-    if (document.body !== null) {
-      document.body.style.setProperty(
-        "cursor",
-        `${cursorDir}-resize`,
-        "important",
-      );
-      userSelect.current.value = document.body.style.getPropertyValue(
-        "-webkit-user-select",
-      );
-      userSelect.current.priority = document.body.style.getPropertyPriority(
-        "-webkit-user-select",
-      );
-      document.body.style.setProperty(
-        "-webkit-user-select",
-        `none`,
-        "important",
-      );
-    }
-  };
-
   const setEndCursor = () => {
     if (editorRootElement !== null) {
       editorRootElement.style.setProperty("cursor", "text");
@@ -144,7 +99,7 @@ export const ImageResizer = ({
       positioning.isResizing = true;
       positioning.direction = direction;
 
-      setStartCursor(direction);
+      setResizeCursor(direction, editorRootElement, userSelect.current);
       onResizeStart();
 
       controlWrapper.classList.add("touch-action-none");

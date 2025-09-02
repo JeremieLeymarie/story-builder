@@ -50,20 +50,6 @@ export const InsertImageDialog = ({
   activeEditor: LexicalEditor;
   onClose: () => void;
 }) => {
-  // const hasModifier = useRef(false);
-
-  // // TODO: what's this????
-  // useEffect(() => {
-  //   hasModifier.current = false;
-  //   const handler = (e: KeyboardEvent) => {
-  //     hasModifier.current = e.altKey;
-  //   };
-  //   document.addEventListener("keydown", handler);
-  //   return () => {
-  //     document.removeEventListener("keydown", handler);
-  //   };
-  // }, [activeEditor]);
-
   const form = useForm({
     resolver: zodResolver(imageSchema),
     defaultValues: {

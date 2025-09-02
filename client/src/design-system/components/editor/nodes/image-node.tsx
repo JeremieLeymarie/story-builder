@@ -23,18 +23,9 @@ export interface ImagePayload {
   width?: number;
 }
 
-const isGoogleDocCheckboxImg = (img: HTMLImageElement): boolean => {
-  return (
-    img.parentElement !== null &&
-    img.parentElement.tagName === "LI" &&
-    img.previousSibling === null &&
-    img.getAttribute("aria-roledescription") === "checkbox"
-  );
-};
-
 const $convertImageElement = (domNode: Node): null | DOMConversionOutput => {
   const img = domNode as HTMLImageElement;
-  if (img.src.startsWith("file:///") || isGoogleDocCheckboxImg(img)) {
+  if (img.src.startsWith("file:///")) {
     return null;
   }
   const { alt: altText, src, width, height } = img;

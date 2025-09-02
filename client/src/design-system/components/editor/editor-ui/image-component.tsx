@@ -29,28 +29,9 @@ import { ImageResizer } from "@/design-system/components/editor/editor-ui/image-
 import { $isImageNode } from "@/design-system/components/editor/nodes/image-node";
 import { SimpleLoader } from "../../simple-loader";
 
-const imageCache = new Set();
-
 // eslint-disable-next-line react-refresh/only-export-components
 export const RIGHT_CLICK_IMAGE_COMMAND: LexicalCommand<MouseEvent> =
   createCommand("RIGHT_CLICK_IMAGE_COMMAND");
-
-const useSuspenseImage = async (src: string) => {
-  await new Promise((res) => setTimeout(res, 5000));
-  if (!imageCache.has(src)) {
-    throw new Promise((resolve) => {
-      const img = new Image();
-      img.src = src;
-      img.onload = () => {
-        imageCache.add(src);
-        resolve(null);
-      };
-      img.onerror = () => {
-        imageCache.add(src);
-      };
-    });
-  }
-};
 
 const LazyImage = ({
   altText,
@@ -71,7 +52,6 @@ const LazyImage = ({
   width: "inherit" | number;
   onError: () => void;
 }) => {
-  useSuspenseImage(src);
   return (
     <img
       className={className || undefined}
