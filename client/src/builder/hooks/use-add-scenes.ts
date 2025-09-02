@@ -8,7 +8,7 @@ import { useMousePosition } from "@/hooks/use-mouse-position";
 import { Scene } from "@/lib/storage/domain";
 import { WithoutKey } from "@/types";
 import { nanoid } from "nanoid";
-import { useSceneEditorStore } from "../components/scene-editor/hooks/use-scene-editor-store";
+import { useBuilderEditorStore } from "./use-scene-editor-store";
 
 export type NewScene = Omit<WithoutKey<Scene>, "storyKey">;
 
@@ -31,7 +31,7 @@ export const useAddScenes = () => {
   const { unselectNodesAndEdges } = getState();
   const { reactFlowRef } = useBuilderContext();
   const { getMousePosition } = useMousePosition();
-  const openSceneEditor = useSceneEditorStore((state) => state.open);
+  const openSceneEditor = useBuilderEditorStore((state) => state.open);
 
   const getCenterPosition = () => {
     if (!reactFlowRef.current) return { x: 0, y: 0 };
@@ -120,8 +120,11 @@ export const useAddScenes = () => {
       if (scenes.length === 1) {
         const scene = scenes[0]!;
         openSceneEditor({
-          scene,
-          isFirstScene: story.firstSceneKey === scene.key,
+          type: "scene-editor",
+          payload: {
+            scene,
+            isFirstScene: story.firstSceneKey === scene.key,
+          },
         });
       }
 
