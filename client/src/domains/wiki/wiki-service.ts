@@ -3,7 +3,8 @@ import { getDexieWikiRepository, WikiRepositoryPort } from "./wiki-repository";
 import { getUser } from "@/lib/auth";
 import { WikiSchema } from "@/wikis/wiki-form";
 import { ArticleSchema } from "@/wikis/schema";
-import { WikiData } from "./types";
+import { ArticleUpdatePayload, WikiData } from "./types";
+import { EntityNotExistError } from "../errors";
 
 export type WikiServicePort = {
   getAllWikis: () => Promise<Wiki[]>;
@@ -15,6 +16,10 @@ export type WikiServicePort = {
   getWikiData: (wikiKey: string) => Promise<WikiData | null>;
   createArticle: (wikiKey: string, payload: ArticleSchema) => Promise<string>;
   getArticle: (articleKey: string) => Promise<WikiArticle | null>;
+  updateArticle: (
+    articleKey: string,
+    payload: ArticleUpdatePayload,
+  ) => Promise<void>;
 };
 
 export type WikiServiceContext = {
@@ -74,8 +79,15 @@ export const _getWikiService = ({
       });
     },
 
-    getArticle: async (articleKey: string) => {
+    getArticle: async (articleKey) => {
       return await repository.getArticle(articleKey);
+    },
+
+    updateArticle: async (articleKey, payload) => {
+      const article = await repository.getArticle(articleKey);
+      if (!article) throw new EntityNotExistError("wiki-article", articleKey);
+
+      return await repository.updateArticle(articleKey, payload);
     },
   };
 };

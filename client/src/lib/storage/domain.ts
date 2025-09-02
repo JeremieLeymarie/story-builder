@@ -109,5 +109,7 @@ export const ENTITIES = [
   "user",
   "story-progress",
   "wiki",
+  "wiki-article",
+  "wiki-category",
 ] as const;
 export type Entity = (typeof ENTITIES)[number];

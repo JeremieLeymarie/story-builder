@@ -10,10 +10,16 @@ import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { WikiSection } from "../types";
 import { faker } from "@faker-js/faker";
 import { nanoid } from "nanoid";
+import { EntityNotExistError } from "@/domains/errors";
 
 const DATE = new Date();
 
 const factory = getTestFactory();
+const repository = getStubWikiRepository();
+const svc = _getWikiService({
+  repository,
+  context: getWikiServiceTestContext(),
+});
 
 describe("wiki service", () => {
   beforeEach(() => {
@@ -22,8 +28,6 @@ describe("wiki service", () => {
 
   describe("get all wikis", () => {
     test("should return user's wikis", async () => {
-      const repository = getStubWikiRepository();
-
       repository.getUserWikis = vi.fn((userKey) => {
         expect(userKey).toStrictEqual(TEST_USER.key);
 
@@ -40,10 +44,6 @@ describe("wiki service", () => {
         ]);
       });
 
-      const svc = _getWikiService({
-        repository,
-        context: getWikiServiceTestContext(),
-      });
       const wikis = await svc.getAllWikis();
 
       expect(wikis).toHaveLength(1);
@@ -61,7 +61,6 @@ describe("wiki service", () => {
 
   describe("add author to wikis", () => {
     test("should update wikis", async () => {
-      const repository = getStubWikiRepository();
       repository.getUserWikis = vi.fn((userKey) => {
         expect(userKey).toStrictEqual(TEST_USER.key);
 
@@ -104,18 +103,12 @@ describe("wiki service", () => {
         return Promise.resolve();
       });
 
-      const svc = _getWikiService({
-        repository,
-        context: getWikiServiceTestContext(),
-      });
       await svc.addAuthorToWikis({ username: "bob_bidou", key: "bob-key" });
     });
   });
 
   describe("create wiki", () => {
     test("should create wiki", async () => {
-      const repository = getStubWikiRepository();
-
       repository.create = vi.fn((wiki) => {
         expect(wiki).toStrictEqual({
           name: "Wiki",
@@ -127,11 +120,6 @@ describe("wiki service", () => {
         });
 
         return Promise.resolve("KEY");
-      });
-
-      const svc = _getWikiService({
-        repository,
-        context: getWikiServiceTestContext(),
       });
 
       await svc.createWiki({
@@ -151,16 +139,11 @@ describe("wiki service", () => {
           articles: [{ title: faker.book.title(), key: nanoid() }],
         },
       ];
-      const repository = getStubWikiRepository();
+
       repository.get = vi.fn((key) => {
         expect(key).toStrictEqual(wiki.key);
 
         return Promise.resolve({ wiki, sections });
-      });
-
-      const svc = _getWikiService({
-        repository,
-        context: getWikiServiceTestContext(),
       });
 
       const wikiData = await svc.getWikiData(wiki.key);
@@ -170,10 +153,8 @@ describe("wiki service", () => {
 
   describe("create wiki article", () => {
     test("should create wiki article without category", async () => {
-      const repository = getStubWikiRepository();
-
-      repository.createArticle = vi.fn((wiki) => {
-        expect(wiki).toStrictEqual({
+      repository.createArticle = vi.fn((article) => {
+        expect(article).toStrictEqual({
           title: "Article",
           content: makeSimpleLexicalContent("content"),
           image: "http://super-image.fr",
@@ -185,11 +166,6 @@ describe("wiki service", () => {
         return Promise.resolve("KEY");
       });
 
-      const svc = _getWikiService({
-        repository,
-        context: getWikiServiceTestContext(),
-      });
-
       const key = await svc.createArticle("wiki-key", {
         title: "Article",
         content: makeSimpleLexicalContent("content"),
@@ -199,19 +175,44 @@ describe("wiki service", () => {
     });
   });
 
+  describe("update wiki article", () => {
+    test("should update wiki article", async () => {
+      repository.updateArticle = vi.fn(async (key, payload) => {
+        expect(key).toStrictEqual("article-key");
+        expect(payload).toStrictEqual({
+          title: "another title",
+          categoryKey: "cat-key",
+        });
+      });
+
+      await svc.updateArticle("article-key", {
+        title: "another title",
+        categoryKey: "cat-key",
+      });
+    });
+
+    test("should throw error for invalid article key", async () => {
+      repository.getArticle = vi.fn(() => {
+        return Promise.resolve(null);
+      });
+
+      await expect(
+        svc.updateArticle("article-key", {
+          title: "another title",
+          categoryKey: "cat-key",
+        }),
+      ).rejects.toThrowError(EntityNotExistError);
+    });
+  });
+
   describe("get wiki article", () => {
     test("should call repo with correct args", async () => {
       const article = factory.wikiArticle();
-      const repository = getStubWikiRepository();
+
       repository.getArticle = vi.fn((key) => {
         expect(key).toStrictEqual("ZIOUM");
 
         return Promise.resolve({ ...article, key: "ZIOUM" });
-      });
-
-      const svc = _getWikiService({
-        repository,
-        context: getWikiServiceTestContext(),
       });
 
       const articleData = await svc.getArticle("ZIOUM");
