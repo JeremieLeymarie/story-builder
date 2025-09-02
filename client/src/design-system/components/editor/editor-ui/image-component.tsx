@@ -29,7 +29,9 @@ import { ImageResizer } from "@/design-system/components/editor/editor-ui/image-
 import { $isImageNode } from "@/design-system/components/editor/nodes/image-node";
 import { SimpleLoader } from "../../simple-loader";
 
-// eslint-disable-next-line react-refresh/only-export-components
+// Exhaustive-deps rules doesn't work well with the compiler, see: https://github.com/reactwg/react-compiler/discussions/18
+// eslint-disable-next-line react-hooks/exhaustive-deps
+
 export const RIGHT_CLICK_IMAGE_COMMAND: LexicalCommand<MouseEvent> =
   createCommand("RIGHT_CLICK_IMAGE_COMMAND");
 
