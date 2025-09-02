@@ -1,8 +1,8 @@
 import { useRef } from "react";
 import { calculateZoomLevel } from "@lexical/utils";
 import type { LexicalEditor } from "lexical";
-import { getEditorContainerInfo } from "@/design-system/components/editor/helpers/getEditorContainerDimensions";
-import { setResizeCursor } from "@/design-system/components/editor/helpers/setResizeCursor";
+import { getEditorContainerInfo } from "@/design-system/components/editor/helpers/get-editor-container-dimensions";
+import { setResizeCursor } from "@/design-system/components/editor/helpers/set-resize-cursor";
 
 const clamp = (value: number, min: number, max: number) => {
   return Math.min(Math.max(value, min), max);
