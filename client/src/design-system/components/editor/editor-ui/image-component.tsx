@@ -1,6 +1,3 @@
-// Exhaustive-deps rules doesn't work well with the compiler, see: https://github.com/reactwg/react-compiler/discussions/18
-// eslint-disable react-hooks/exhaustive-deps
-
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
@@ -32,6 +29,7 @@ import { ImageResizer } from "@/design-system/components/editor/editor-ui/image-
 import { $isImageNode } from "@/design-system/components/editor/nodes/image-node";
 import { SimpleLoader } from "../../simple-loader";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const RIGHT_CLICK_IMAGE_COMMAND: LexicalCommand<MouseEvent> =
   createCommand("RIGHT_CLICK_IMAGE_COMMAND");
 
@@ -113,6 +111,8 @@ const ImageComponent = ({
   const [isLoadError, setIsLoadError] = useState<boolean>(false);
   const isEditable = useLexicalEditable();
 
+  // Exhaustive-deps rules doesn't work well with the compiler, see: https://github.com/reactwg/react-compiler/discussions/18
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const $onDelete = (event: KeyboardEvent) => {
     const deleteSelection = $getSelection();
     if (isSelected && $isNodeSelection(deleteSelection)) {
@@ -128,6 +128,8 @@ const ImageComponent = ({
     return false;
   };
 
+  // Exhaustive-deps rules doesn't work well with the compiler, see: https://github.com/reactwg/react-compiler/discussions/18
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const $onEnter = (event: KeyboardEvent) => {
     const latestSelection = $getSelection();
     const buttonElem = buttonRef.current;
@@ -145,6 +147,8 @@ const ImageComponent = ({
     return false;
   };
 
+  // Exhaustive-deps rules doesn't work well with the compiler, see: https://github.com/reactwg/react-compiler/discussions/18
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const $onEscape = (event: KeyboardEvent) => {
     if (buttonRef.current === event.target) {
       $setSelection(null);
@@ -160,6 +164,8 @@ const ImageComponent = ({
     return false;
   };
 
+  // Exhaustive-deps rules doesn't work well with the compiler, see: https://github.com/reactwg/react-compiler/discussions/18
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const onClick = (payload: MouseEvent) => {
     const event = payload;
 
