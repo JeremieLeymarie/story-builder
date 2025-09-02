@@ -4,9 +4,9 @@ import { useReactFlow, useStoreApi } from "@xyflow/react";
 import { useBuilderContext } from "./use-builder-context";
 import { nodeToSceneAdapter } from "../adapters";
 import { BuilderNode } from "../types";
-import { sceneSchema } from "../components/scene-editor/schema";
 import z from "zod";
 import { NewScene, useAddScenes } from "./use-add-scenes";
+import { sceneSchema } from "../components/builder-editor-bar/scene-editor/schema";
 
 export const useBuilderShortCuts = ({
   firstSceneKey,
