@@ -28,5 +28,6 @@ export const getStubWikiRepository = (): WikiRepositoryPort => ({
     }),
   ),
   createArticle: vi.fn(async () => Promise.resolve(nanoid())),
+  updateArticle: vi.fn(async () => Promise.resolve()),
   getArticle: vi.fn(async () => Promise.resolve(factory.wikiArticle())),
 });

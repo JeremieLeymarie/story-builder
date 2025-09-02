@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import {
   _getDexieWikiRepository,
   WikiRepositoryPort,
@@ -297,6 +297,32 @@ describe("wiki repository", () => {
       const article = await repo.getArticle("zioummm");
 
       expect(article).toBeNull();
+    });
+  });
+
+  describe("update article", () => {
+    test("should update article", async () => {
+      vi.setSystemTime(new Date());
+
+      const art1 = factory.wikiArticle();
+      const art2 = factory.wikiArticle();
+      await testDB.wikiArticles.bulkAdd([art1, art2]);
+      const category = factory.wikiCategory();
+
+      await repo.updateArticle(art2.key, {
+        title: "A new title",
+        categoryKey: category.key,
+      });
+
+      const art1FromDB = await testDB.wikiArticles.get(art1.key);
+      const art2FromDB = await testDB.wikiArticles.get(art2.key);
+      expect(art1FromDB).toEqual(art1); // Unchanged
+      expect(art2FromDB).toEqual({
+        ...art2,
+        title: "A new title",
+        categoryKey: category.key,
+        updatedAt: new Date(),
+      });
     });
   });
 });

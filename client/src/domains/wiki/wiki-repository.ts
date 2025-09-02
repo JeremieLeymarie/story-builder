@@ -1,7 +1,7 @@
 import { Database, db } from "@/lib/storage/dexie/dexie-db";
 import { Wiki, WikiArticle } from "@/lib/storage/domain";
 import { WithoutKey } from "@/types";
-import { WikiData } from "./types";
+import { ArticleUpdatePayload, WikiData } from "./types";
 
 export type WikiRepositoryPort = {
   getUserWikis: (userKey: string | undefined) => Promise<Wiki[]>;
@@ -11,6 +11,10 @@ export type WikiRepositoryPort = {
   create: (wiki: WithoutKey<Wiki>) => Promise<string>;
   get: (wikiKey: string) => Promise<WikiData | null>;
   createArticle: (payload: WithoutKey<WikiArticle>) => Promise<string>;
+  updateArticle: (
+    articleKey: string,
+    payload: ArticleUpdatePayload,
+  ) => Promise<void>;
   getArticle: (articleKey: string) => Promise<WikiArticle | null>;
 };
 
@@ -79,6 +83,13 @@ export const _getDexieWikiRepository = (db: Database): WikiRepositoryPort => {
 
     createArticle: async (payload) => {
       return await db.wikiArticles.add(payload);
+    },
+
+    updateArticle: async (articleKey, payload) => {
+      await db.wikiArticles.update(articleKey, {
+        ...payload,
+        updatedAt: new Date(),
+      });
     },
 
     getArticle: async (articleKey) => {

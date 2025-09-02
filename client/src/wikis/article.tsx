@@ -59,7 +59,7 @@ export const Article = ({
         </div>
         <img
           src={article.image}
-          className="border-primary w-[400px] rounded border-2 shadow-lg"
+          className="border-primary w-[500px] rounded border-3 shadow-lg"
         />
       </div>
       <article>

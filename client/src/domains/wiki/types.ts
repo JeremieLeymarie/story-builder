@@ -9,3 +9,10 @@ export type WikiData = {
   wiki: Wiki;
   sections: WikiSection[];
 };
+
+export type ArticleUpdatePayload = {
+  title?: string;
+  content?: Record<string, unknown>;
+  image?: string;
+  categoryKey?: string;
+};
