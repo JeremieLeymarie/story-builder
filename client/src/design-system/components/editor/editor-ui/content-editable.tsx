@@ -19,14 +19,14 @@ export const ContentEditable = ({
     <LexicalContentEditable
       ref={ref}
       className={cn(
-        "relative block min-h-full overflow-auto py-4 focus:outline-none",
+        "relative block min-h-full py-4 focus:outline-none",
         className,
       )}
       aria-placeholder={placeholder}
       placeholder={
         <div
           className={cn(
-            "text-muted-foreground pointer-events-none absolute top-0 left-0 overflow-hidden px-4 py-[18px] text-ellipsis select-none",
+            "text-muted-foreground pointer-events-none absolute top-0 left-0 overflow-hidden px-4 py-4 text-ellipsis select-none",
             placeholderClassName,
           )}
         >

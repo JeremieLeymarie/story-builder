@@ -7,6 +7,9 @@ import { _getWikiService } from "../wiki-service";
 import { TEST_USER } from "@/lib/storage/dexie/test-db";
 import { getTestFactory } from "@/lib/testing/factory";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
+import { WikiSection } from "../types";
+import { faker } from "@faker-js/faker";
+import { nanoid } from "nanoid";
 
 const DATE = new Date();
 
@@ -142,11 +145,17 @@ describe("wiki service", () => {
   describe("get wiki", () => {
     test("should call repo with correct args", async () => {
       const wiki = factory.wiki();
+      const sections: WikiSection[] = [
+        {
+          category: factory.wikiCategory(),
+          articles: [{ title: faker.book.title(), key: nanoid() }],
+        },
+      ];
       const repository = getStubWikiRepository();
       repository.get = vi.fn((key) => {
-        expect(key).toStrictEqual("ZIOUM");
+        expect(key).toStrictEqual(wiki.key);
 
-        return Promise.resolve({ ...wiki, key: "ZIOUM" });
+        return Promise.resolve({ wiki, sections });
       });
 
       const svc = _getWikiService({
@@ -154,8 +163,8 @@ describe("wiki service", () => {
         context: getWikiServiceTestContext(),
       });
 
-      const wikiData = await svc.getWikiData("ZIOUM");
-      expect(wikiData).toStrictEqual({ ...wiki, key: "ZIOUM" });
+      const wikiData = await svc.getWikiData(wiki.key);
+      expect(wikiData).toStrictEqual({ wiki, sections });
     });
   });
 
@@ -168,6 +177,7 @@ describe("wiki service", () => {
           title: "Article",
           content: makeSimpleLexicalContent("content"),
           image: "http://super-image.fr",
+          wikiKey: "wiki-key",
           createdAt: new Date(),
           updatedAt: new Date(),
         });
@@ -180,12 +190,32 @@ describe("wiki service", () => {
         context: getWikiServiceTestContext(),
       });
 
-      const key = await svc.createArticle({
+      const key = await svc.createArticle("wiki-key", {
         title: "Article",
         content: makeSimpleLexicalContent("content"),
         image: "http://super-image.fr",
       });
       expect(key).toStrictEqual("KEY");
+    });
+  });
+
+  describe("get wiki article", () => {
+    test("should call repo with correct args", async () => {
+      const article = factory.wikiArticle();
+      const repository = getStubWikiRepository();
+      repository.getArticle = vi.fn((key) => {
+        expect(key).toStrictEqual("ZIOUM");
+
+        return Promise.resolve({ ...article, key: "ZIOUM" });
+      });
+
+      const svc = _getWikiService({
+        repository,
+        context: getWikiServiceTestContext(),
+      });
+
+      const articleData = await svc.getArticle("ZIOUM");
+      expect(articleData).toStrictEqual({ ...article, key: "ZIOUM" });
     });
   });
 });

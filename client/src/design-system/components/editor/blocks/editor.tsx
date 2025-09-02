@@ -50,6 +50,7 @@ export const Editor = ({
       className={cn(
         editable && "bg-background min-h-25 rounded-lg border shadow",
         "focus-within:border-ring focus-within:ring-ring/10 focus-within:ring-[3px]", // The focus style is the same as the input's & textarea's
+        // TODO: handle error state like other inputs
       )}
     >
       <LexicalComposer
@@ -64,7 +65,7 @@ export const Editor = ({
       >
         <TooltipProvider>
           {editable && <EditorPlugins />}
-          <BasePlugins className={className} editable />
+          <BasePlugins className={className} editable={editable} />
 
           <OnChangePlugin
             ignoreSelectionChange={true}

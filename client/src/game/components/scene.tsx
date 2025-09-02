@@ -30,9 +30,7 @@ export const GameScene = ({
             <p className="leading-7 wrap-break-word not-first:mt-6">
               <Editor
                 editable={false}
-                editorSerializedState={
-                  content as unknown as SerializedEditorState
-                }
+                initialState={content as unknown as SerializedEditorState}
               />
             </p>
             <div className="mt-4 flex w-full flex-wrap gap-3">

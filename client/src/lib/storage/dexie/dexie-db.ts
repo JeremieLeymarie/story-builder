@@ -7,6 +7,7 @@ import {
   StoryProgress,
   Wiki,
   WikiArticle,
+  WikiCategory,
 } from "../domain";
 import { DEMO_IMPORTED_STORY, DEMO_SCENES, DEMO_STORY } from "./seed";
 import { getLibraryService } from "@/domains/game/library-service";
@@ -18,6 +19,7 @@ type Tables = {
   storyProgresses: EntityTable<StoryProgress, "key">;
   wikis: EntityTable<Wiki, "key">;
   wikiArticles: EntityTable<WikiArticle, "key">;
+  wikiCategories: EntityTable<WikiCategory, "key">;
 };
 export type Database = Dexie & Tables;
 
@@ -31,12 +33,13 @@ const tables: Record<keyof Tables, string> = {
   storyProgresses:
     "&key, storyKey, userKey, currentSceneKey, character, inventory, history, lastPlayedAt",
   wikis: "&key, userKey",
-  wikiArticles: "&key, categoryKey, title",
+  wikiArticles: "&key, wikiKey, categoryKey, title",
+  wikiCategories: "&key, name",
 };
 export const TABLE_NAMES = Object.keys(tables);
 
 export const createDb = (db: Database) => {
-  db.version(1).stores(tables);
+  db.version(2).stores(tables);
 
   db.on("populate", async () => {
     // Add story to builder
