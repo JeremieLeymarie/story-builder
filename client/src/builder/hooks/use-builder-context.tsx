@@ -2,10 +2,13 @@
 import { Scene, Story } from "@/lib/storage/domain";
 import {
   createContext,
+  Dispatch,
   PropsWithChildren,
   RefObject,
+  SetStateAction,
   useContext,
   useRef,
+  useState,
 } from "react";
 import { BuilderNode } from "../types";
 import { Edge } from "@xyflow/react";
@@ -16,17 +19,17 @@ type BuilderContext = {
   refresh: RefreshFunction;
   reactFlowRef: RefObject<HTMLDivElement | null>;
   story: Story;
+  setStory: Dispatch<SetStateAction<Story>>;
   initialNodes: BuilderNode[];
   initialEdges: Edge[];
 };
 
 export const BuilderContext = createContext<BuilderContext | null>(null);
 
-// We have to be extra careful about the lifecycle of this component, as each re-render will trigger a rerender of the whole react flow interface
 export const BuilderContextProvider = ({
   children,
   scenes,
-  story,
+  story: story_,
   refresh,
 }: PropsWithChildren<{
   scenes: Scene[];
@@ -34,10 +37,11 @@ export const BuilderContextProvider = ({
   refresh: RefreshFunction;
 }>) => {
   const reactFlowRef = useRef<HTMLDivElement>(null);
+  const [story, setStory] = useState(story_);
 
   const [initialNodes, initialEdges] = scenesToNodesAndEdgesAdapter({
     scenes,
-    story,
+    story: story_,
   });
 
   return (
@@ -47,6 +51,7 @@ export const BuilderContextProvider = ({
         initialNodes,
         initialEdges,
         story,
+        setStory,
         refresh,
       }}
     >

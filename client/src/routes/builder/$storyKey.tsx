@@ -1,8 +1,5 @@
 import { BuilderContainer } from "@/builder/components/builder-container";
-import {
-  EMPTY_STATE,
-  useSceneEditorStore,
-} from "@/builder/components/scene-editor/hooks/use-scene-editor-store";
+import { useBuilderEditorStore } from "@/builder/hooks/use-scene-editor-store";
 import { BackdropLoader, ErrorMessage } from "@/design-system/components";
 import { getBuilderService } from "@/get-builder-service";
 import { useQuery } from "@tanstack/react-query";
@@ -43,6 +40,6 @@ const Page = () => {
 export const Route = createFileRoute("/builder/$storyKey")({
   component: Page,
   onLeave: () => {
-    useSceneEditorStore.setState(EMPTY_STATE);
+    useBuilderEditorStore.setState({ editor: null });
   },
 });

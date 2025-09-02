@@ -1,5 +1,5 @@
 import { Mock, vi } from "vitest";
-import { LayoutServicePort } from "./layout-service";
+import { LayoutServicePort } from "../ports/layout-service-port";
 
 export type MockLayoutService = {
   [K in keyof LayoutServicePort]: Mock<LayoutServicePort[K]>;

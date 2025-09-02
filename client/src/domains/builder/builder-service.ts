@@ -2,23 +2,27 @@ import { Scene, Story } from "@/lib/storage/domain";
 import { LocalRepositoryPort } from "@/repositories/local-repository-port";
 import { BuilderNode } from "@/builder/types";
 import { Edge } from "@xyflow/react";
-import { LayoutServicePort } from "./layout-service";
 import {
   ImportServicePort,
   StoryFromImport,
 } from "@/services/common/import-service";
 import { WithoutKey } from "@/types";
 import { makeSimpleSceneContent } from "@/lib/scene-content";
+import { BuilderServicePort } from "./ports/builder-service-port";
+import { LayoutServicePort } from "./ports/layout-service-port";
+import { BuilderStoryRepositoryPort } from "./ports/builder-story-repository-port";
 
 export const _getBuilderService = ({
   localRepository,
   layoutService,
   importService,
+  builderStoryRepository,
 }: {
   layoutService: LayoutServicePort;
-  localRepository: LocalRepositoryPort;
   importService: ImportServicePort;
-}) => {
+  localRepository: LocalRepositoryPort;
+  builderStoryRepository: BuilderStoryRepositoryPort;
+}): BuilderServicePort => {
   const getUserBuilderStories = async () => {
     const user = await localRepository.getUser();
 
@@ -135,8 +139,6 @@ export const _getBuilderService = ({
 
       return result;
     },
-
-    // TODO: update all user stories on login
 
     addScene: async (scene: WithoutKey<Scene>) => {
       return await localRepository.createScene(scene);
@@ -271,6 +273,10 @@ export const _getBuilderService = ({
       );
 
       return { error: null, data: { storyKey } };
+    },
+
+    updateStory: async (key, payload) => {
+      return builderStoryRepository.update(key, payload);
     },
   };
 };

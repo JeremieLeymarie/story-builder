@@ -20,6 +20,9 @@ import {
   MOCK_IMPORTED_STORY,
 } from "./data/imported-story-mocks";
 import { makeSimpleSceneContent } from "@/lib/scene-content";
+import { getTestFactory } from "@/lib/testing/factory";
+
+const factory = getTestFactory();
 
 describe("library-service", () => {
   let libraryService: ReturnType<typeof _getLibraryService>;
@@ -49,20 +52,59 @@ describe("library-service", () => {
   });
 
   describe("getLibrary", () => {
-    it("should get all library data", async () => {
+    it("should get all library data, sorted by last played save", async () => {
+      const storyProgressA = factory.storyProgress({
+        key: "key-1",
+        storyKey: "story-key-1",
+        lastPlayedAt: new Date("2025/05/01"),
+      });
+      const storyProgressB = factory.storyProgress({
+        key: "key-2",
+        storyKey: "story-key-2",
+        lastPlayedAt: new Date("2025/06/01"),
+      });
+      const storyProgressC = factory.storyProgress({
+        key: "key-3",
+        storyKey: "story-key-2",
+        lastPlayedAt: new Date("2025/01/01"),
+      });
+      localRepository.getUserStoryProgresses = vi.fn(() => {
+        return Promise.resolve([
+          storyProgressA,
+          storyProgressB,
+          storyProgressC,
+        ]);
+      });
+
+      // Story creation dates shouldn't be taken into account when getting sorted library data
+      const storyA = factory.story.library({
+        key: "story-key-1",
+        creationDate: new Date("2025/10/01"),
+      });
+      const storyB = factory.story.library({
+        key: "story-key-2",
+        creationDate: new Date("2025/01/01"),
+      });
+      localRepository.getStoriesByKeys = vi.fn(() => {
+        return Promise.resolve([storyA, storyB]);
+      });
+
       const data = await libraryService.getLibrary();
 
       expect(localRepository.getUser).toHaveBeenCalled();
       expect(localRepository.getUserStoryProgresses).toHaveBeenCalledWith(
         BASIC_USER.key,
       );
-      expect(localRepository.getStoriesByKeys).toHaveBeenCalledWith([
-        BASIC_STORY_PROGRESS.storyKey,
-      ]);
+
+      // Vitest doesn't allow to check parameters without checking order, so this is the only way I found to do it
+      const args = localRepository.getStoriesByKeys.mock.calls[0];
+      const sortedArgs = args?.[0].sort();
+      expect(sortedArgs).toStrictEqual(["story-key-1", "story-key-2"]);
+
       expect(localRepository.getFinishedGameKeys).toHaveBeenCalled();
 
       expect(data).toStrictEqual({
-        games: [BASIC_STORY],
+        games: [storyB, storyA],
         finishedGameKeys: ["key"],
       });
     });

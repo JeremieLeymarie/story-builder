@@ -1,46 +1,63 @@
 import { Button } from "@/design-system/primitives";
-import { BookOpenTextIcon, TestTubesIcon } from "lucide-react";
+import { BookOpenTextIcon, SettingsIcon, TestTubesIcon } from "lucide-react";
 import { useToolbar } from "../hooks/use-toolbar";
 import { ExportModal } from "./export-modal";
 import { DeleteModal } from "./delete-modal";
 import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
 import { useBuilderContext } from "../hooks/use-builder-context";
 import { useAddScene } from "../hooks/use-add-scene";
-import { Bar } from "@/design-system/components/bar";
+import { useBuilderEditorStore } from "../hooks/use-scene-editor-store";
+import { Toolbar, ToolbarTitle } from "@/design-system/components/toolbar";
 
-export const Toolbar = () => {
+export const BuilderMenu = () => {
   const { story } = useBuilderContext();
   const { testStory, deleteStory } = useToolbar({ storyKey: story.key });
   const { addScene } = useAddScene();
+  const openBuilderEditor = useBuilderEditorStore((state) => state.open);
 
+  const btnClassname = "flex w-full justify-start gap-4";
   return (
-    <Bar className="w-[250px]">
-      <p className="text-primary text-2xl font-semibold">TOOLS</p>
+    <Toolbar className="w-[250px]">
+      <ToolbarTitle>Tools</ToolbarTitle>
+      <p className="text-muted-foreground mb-2 truncate italic">
+        {story.title}
+      </p>
       <div className="mt-2 flex w-full flex-col gap-2">
         <Button
           size="sm"
-          className="flex w-full justify-start"
+          className={btnClassname}
           onClick={() => {
             addScene();
           }}
         >
-          <BookOpenTextIcon size="16px" />
-          &nbsp; Add a scene
+          <BookOpenTextIcon />
+          Add a scene
           <ButtonShortCutDoc doc="N" />
         </Button>
         <Button
           size="sm"
           variant="outline"
-          className="flex w-full justify-start"
+          className={btnClassname}
           onClick={() => testStory(story.firstSceneKey)}
         >
-          <TestTubesIcon size="16px" />
-          &nbsp; Test
+          <TestTubesIcon />
+          Test
           <ButtonShortCutDoc doc="T" />
         </Button>
         <ExportModal storyKey={story.key} />
+        <Button
+          className={btnClassname}
+          size="sm"
+          variant="outline"
+          onClick={() =>
+            openBuilderEditor({ type: "story-editor", payload: null })
+          }
+        >
+          <SettingsIcon />
+          Edit story
+        </Button>
         <DeleteModal deleteStory={deleteStory} />
       </div>
-    </Bar>
+    </Toolbar>
   );
 };

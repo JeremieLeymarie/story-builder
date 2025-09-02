@@ -3,33 +3,41 @@ import {
   getLocalRepositoryStub,
   MockLocalRepository,
 } from "@/repositories/stubs/local-repository-stub";
-import {
-  BASIC_SCENE,
-  BASIC_USER,
-  BASIC_STORY,
-} from "../../repositories/stubs/data";
 import { BuilderNode } from "@/builder/types";
 import { Edge } from "@xyflow/react";
-import {
-  getStubLayoutService,
-  MockLayoutService,
-} from "../builder/stub-layout-service";
-import { _getBuilderService } from "../builder/builder-service";
 import {
   getImportServiceStub,
   MockImportService,
 } from "@/services/common/stubs/stub-import-service";
-import {
-  MOCK_IMPORTED_SCENE,
-  MOCK_IMPORTED_STORY,
-} from "./data/imported-story-mocks";
 import { makeSimpleSceneContent } from "@/lib/scene-content";
+import { _getBuilderService } from "../builder-service";
+import {
+  getStubLayoutService,
+  MockLayoutService,
+} from "../stubs/stub-layout-service";
+import {
+  getStubBuilderStoryRepository,
+  MockBuilderStoryRepository,
+} from "../stubs/stub-builder-story-repository";
+import {
+  MOCK_IMPORTED_STORY,
+  MOCK_IMPORTED_SCENE,
+} from "@/domains/__tests__/data/imported-story-mocks";
+import {
+  BASIC_SCENE,
+  BASIC_USER,
+  BASIC_STORY,
+} from "@/repositories/stubs/data";
+import { getTestFactory } from "@/lib/testing/factory";
+
+const factory = getTestFactory();
 
 describe("builder-service", () => {
   let builderService: ReturnType<typeof _getBuilderService>;
   let localRepository: MockLocalRepository;
   let layoutService: MockLayoutService;
   let importService: MockImportService;
+  let builderStoryRepository: MockBuilderStoryRepository;
 
   beforeAll(() => {
     vi.useFakeTimers();
@@ -39,11 +47,13 @@ describe("builder-service", () => {
     localRepository = getLocalRepositoryStub();
     layoutService = getStubLayoutService();
     importService = getImportServiceStub();
+    builderStoryRepository = getStubBuilderStoryRepository();
 
     builderService = _getBuilderService({
       localRepository,
       importService,
       layoutService,
+      builderStoryRepository,
     });
   });
 
@@ -660,6 +670,28 @@ describe("builder-service", () => {
           data: { storyKey: BASIC_STORY.key },
         });
       });
+    });
+  });
+
+  describe("updateStory", () => {
+    it("should update scene using repository", async () => {
+      const mockStory = factory.story.builder();
+      builderStoryRepository.update = vi.fn(() => Promise.resolve(mockStory));
+
+      const story = await builderService.updateStory("schplong", {
+        author: { key: "key", username: "bob_bidou" },
+        title: "A new title",
+      });
+
+      expect(builderStoryRepository.update).toHaveBeenCalledExactlyOnceWith(
+        "schplong",
+        {
+          author: { key: "key", username: "bob_bidou" },
+          title: "A new title",
+        },
+      );
+
+      expect(story).toStrictEqual(mockStory);
     });
   });
 });
