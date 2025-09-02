@@ -15,6 +15,18 @@ const Direction = {
   west: 1 << 2,
 };
 
+const DEFAULT_POSITIONING = {
+  currentHeight: 0,
+  currentWidth: 0,
+  direction: 0,
+  isResizing: false,
+  ratio: 0,
+  startHeight: 0,
+  startWidth: 0,
+  startX: 0,
+  startY: 0,
+};
+
 export const ImageResizer = ({
   onResizeStart,
   onResizeEnd,
@@ -44,17 +56,7 @@ export const ImageResizer = ({
     startWidth: number;
     startX: number;
     startY: number;
-  }>({
-    currentHeight: 0,
-    currentWidth: 0,
-    direction: 0,
-    isResizing: false,
-    ratio: 0,
-    startHeight: 0,
-    startWidth: 0,
-    startX: 0,
-    startY: 0,
-  });
+  }>(DEFAULT_POSITIONING);
   const { maxWidthContainer, maxHeightContainer, editorRootElement } =
     getEditorContainerInfo(editor, maxWidth);
   const minWidth = 100;
@@ -171,14 +173,7 @@ export const ImageResizer = ({
     if (image !== null && controlWrapper !== null && positioning.isResizing) {
       const width = positioning.currentWidth;
       const height = positioning.currentHeight;
-      positioning.startWidth = 0;
-      positioning.startHeight = 0;
-      positioning.ratio = 0;
-      positioning.startX = 0;
-      positioning.startY = 0;
-      positioning.currentWidth = 0;
-      positioning.currentHeight = 0;
-      positioning.isResizing = false;
+      positioningRef.current = DEFAULT_POSITIONING;
 
       controlWrapper.classList.remove("touch-action-none");
 

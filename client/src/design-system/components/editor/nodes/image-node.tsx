@@ -14,14 +14,14 @@ import React from "react";
 
 const ImageComponent = React.lazy(() => import("../editor-ui/image-component"));
 
-export interface ImagePayload {
+export type ImagePayload = {
   altText: string;
   height?: number;
   key?: NodeKey;
   maxWidth?: number;
   src: string;
   width?: number;
-}
+};
 
 const $convertImageElement = (domNode: Node): null | DOMConversionOutput => {
   const img = domNode as HTMLImageElement;
