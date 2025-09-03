@@ -6,9 +6,7 @@
 // - Hard to maintain
 // - Runtime overhead (although so far has not been significant)
 //
-// Possible improvement, use another editor library that has better typing?
-// (Maybe worth looking into alternatives like slate, editorjs, summernote, quill, prosemirror, etc etc)
-// If runtime checking is a problem, see faster validators like ArkType
+// If runtime checking is a problem, it would maybe worth investing in faster validators like ArkType
 
 import {
   SerializedEditorState,
