@@ -33,35 +33,27 @@ export const useAddScenes = () => {
   const { getMousePosition } = useMousePosition();
   const openSceneEditor = useBuilderEditorStore((state) => state.open);
 
-  const getCenterPosition = () => {
-    if (!reactFlowRef.current) return { x: 0, y: 0 };
+  const getInitialPlacement = () => {
+    if (reactFlowRef.current?.matches(":hover")) {
+      return screenToFlowPosition(getMousePosition());
+    } else {
+      if (!reactFlowRef.current) return { x: 0, y: 0 };
 
-    const rect = reactFlowRef.current.getBoundingClientRect();
-    const position = {
-      x: rect.x + rect.width / 2,
-      y: rect.y + rect.height / 2,
-    };
-    return screenToFlowPosition(position);
+      const rect = reactFlowRef.current.getBoundingClientRect();
+      const position = {
+        x: rect.x + rect.width / 2,
+        y: rect.y + rect.height / 2,
+      };
+      return screenToFlowPosition(position);
+    }
   };
 
-  const addScenes = (
+  const computeEfficientPlacement = (
     newScenes: NewScene[],
-    worldPosition?: XYPosition,
-  ): Scene[] | null => {
-    if (!newScenes.length) return [];
-
-    // figure out a nice place to put the nodes
-    let position;
-    if (worldPosition) {
-      position = worldPosition;
-    } else if (reactFlowRef.current?.matches(":hover")) {
-      position = screenToFlowPosition(getMousePosition());
-    } else {
-      position = getCenterPosition();
-    }
-
-    // offsets the placement in case we already placed something close
+    position: XYPosition,
+  ) => {
     if (Math.hypot(position.x - last.x, position.y - last.y) < 40) {
+      // offsets the placement in case we already placed something close
       position.x = lastPlacement.x + 40;
       position.y = lastPlacement.y + 40;
     } else {
@@ -78,8 +70,16 @@ export const useAddScenes = () => {
       topX = Math.min(topX, scene.builderParams.position.x);
       topY = Math.min(topY, scene.builderParams.position.y);
     });
-    if (!Number.isFinite(topX)) topX = 0;
-    if (!Number.isFinite(topY)) topY = 0;
+    if (Number.isFinite(topX)) position.x -= topX;
+    if (Number.isFinite(topY)) position.y -= topY;
+  };
+
+  const addScenes = (
+    newScenes: NewScene[],
+    position: XYPosition = getInitialPlacement(),
+  ): Scene[] | null => {
+    if (!newScenes.length) return [];
+    computeEfficientPlacement(newScenes, position);
 
     try {
       // promote the new scenes into future resident of the database
@@ -90,8 +90,8 @@ export const useAddScenes = () => {
         scene.storyKey = story.key;
         // relative position to absolute position
         scene.builderParams.position = {
-          x: scene.builderParams.position.x - topX + position.x,
-          y: scene.builderParams.position.y - topY + position.y,
+          x: scene.builderParams.position.x + position.x,
+          y: scene.builderParams.position.y + position.y,
         };
         // in case the sceneKeys were defined relative to other scenes in the batch,
         // promote the relative indicies to absolute keys
@@ -130,7 +130,6 @@ export const useAddScenes = () => {
 
       // the scenes move to their new homes
       builderService.bulkUpdateScenes({ scenes });
-      // TODO: toast in case of errors
 
       return scenes;
     } catch (err) {

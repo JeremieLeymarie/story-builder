@@ -3,7 +3,7 @@ import {
   LexicalComposer,
 } from "@lexical/react/LexicalComposer";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { EditorState } from "lexical";
+import { EditorState, SerializedEditorState } from "lexical";
 
 import { TooltipProvider } from "@/design-system/primitives/tooltip";
 
@@ -11,7 +11,7 @@ import { nodes } from "./nodes";
 import { EditorPlugins } from "./editor-plugins";
 import { BasePlugins } from "./base-plugins";
 import { cn } from "@/lib/style";
-import { contentSchema, SceneContent } from "@/lib/scene-content";
+import { SceneContent } from "@/lib/scene-content";
 
 const editorConfig: InitialConfigType = {
   namespace: "Editor",
@@ -41,7 +41,7 @@ export const Editor = ({
   editable: boolean;
   initialState?: SceneContent;
   onChange?: (editorState: EditorState) => void;
-  onSerializedChange?: (editorSerializedState: SceneContent) => void;
+  onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
 }) => {
   // This allow lexical to refresh it's initial state when the content changes from the outside
   const state = JSON.stringify(initialState);
@@ -69,14 +69,7 @@ export const Editor = ({
             ignoreSelectionChange={true}
             onChange={(editorState) => {
               onChange?.(editorState);
-              const serialized = editorState.toJSON();
-              try {
-                const sceneContent = contentSchema.parse(serialized);
-                onSerializedChange?.(sceneContent);
-              } catch (error) {
-                console.error("Invalid content update", serialized);
-                throw error;
-              }
+              onSerializedChange?.(editorState.toJSON());
             }}
           />
         </TooltipProvider>
