@@ -5,7 +5,7 @@ import { useBuilderContext } from "./use-builder-context";
 import { nodeToSceneAdapter } from "../adapters";
 import { BuilderNode } from "../types";
 import z from "zod";
-import { NewScene, useAddScenes } from "./use-add-scenes";
+import { DEFAULT_SCENE, NewScene, useAddScenes } from "./use-add-scenes";
 import { sceneSchema } from "../components/builder-editor-bar/scene-editor/schema";
 
 export const useBuilderShortCuts = ({
@@ -24,7 +24,7 @@ export const useBuilderShortCuts = ({
 
   const shortcuts: Record<string, (e: KeyboardEvent) => void> = {
     ["n"]() {
-      addScenes();
+      addScenes([DEFAULT_SCENE]);
     },
     ["t"]() {
       testStory(firstSceneKey);

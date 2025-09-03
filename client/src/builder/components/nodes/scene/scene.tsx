@@ -12,29 +12,25 @@ import { cn } from "@/lib/style";
 import { Button } from "@/design-system/primitives";
 import { useBuilderEditorStore } from "@/builder/hooks/use-scene-editor-store";
 import { Editor } from "@/design-system/components/editor/blocks/editor";
-import { sceneConsts } from "./scene-constants";
 
 export type SceneNodeProps = NodeProps<SceneNodeType>;
 
 export const SceneNode = ({ data, selected }: SceneNodeProps) => {
-  const isEditable = data.isEditable !== undefined ? data.isEditable : true;
   const openEditor = useBuilderEditorStore((state) => state.open);
+  const { isFirstScene, builderParams, isEditable, ...scene } = data;
+  const editable = data.isEditable !== undefined ? data.isEditable : true;
 
   return (
     <Card
-      style={{ width: sceneConsts.width }}
       className={cn(
-        "group",
-        data.isFirstScene && "bg-primary/60",
+        "group w-[375px]",
+        isFirstScene && "bg-primary/60",
         selected && "border border-black",
       )}
       onDoubleClick={() => {
         openEditor({
           type: "scene-editor",
-          payload: {
-            scene: data,
-            isFirstScene: data.isFirstScene,
-          },
+          payload: { scene, isFirstScene },
         });
       }}
     >
@@ -47,7 +43,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
               Empty Scene
             </CardTitle>
           )}
-          {isEditable && (
+          {editable && (
             <Button
               className="invisible aspect-square group-hover:visible"
               size="icon"
@@ -55,32 +51,24 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
               onClick={() =>
                 openEditor({
                   type: "scene-editor",
-                  payload: {
-                    scene: data,
-                    isFirstScene: data.isFirstScene,
-                  },
+                  payload: { scene, isFirstScene },
                 })
               }
             >
-              <EditIcon size={sceneConsts.editIconSize + "px"} />
+              <EditIcon size="20px" />
             </Button>
           )}
         </div>
         <CardDescription>
-          <Editor
-            sceneKey={data.key}
-            editable={false}
-            editorSerializedState={data.content}
-          />
+          <Editor editable={false} initialState={data.content} />
         </CardDescription>
       </CardHeader>
       {data.actions.length > 0 && (
-        <CardContent className={`gap-${sceneConsts.actionGap} flex flex-col`}>
+        <CardContent className="flex flex-col gap-2">
           {data.actions.map(({ text }, i) => (
             <div
-              style={{ padding: sceneConsts.actionInnerPadding + "px" }}
               className={cn(
-                "border-primary relative border",
+                "border-primary relative border p-2",
                 !text && "text-muted-foreground italic",
               )}
               key={text || "..."}
@@ -90,12 +78,17 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
                 type="source"
                 id={`${data.key}-${i}`}
                 position={Position.Right}
+                className="!h-[15px] !w-[15px]"
               />
             </div>
           ))}
         </CardContent>
       )}
-      <Handle type="target" position={Position.Left} />
+      <Handle
+        type="target"
+        position={Position.Left}
+        className="!h-[15px] !w-[15px]"
+      />
     </Card>
   );
 };

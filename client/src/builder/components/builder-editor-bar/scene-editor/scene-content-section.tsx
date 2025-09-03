@@ -9,12 +9,10 @@ import {
 import { UseFormReturn } from "react-hook-form";
 import { SceneSchema, SceneUpdatePayload } from "./schema";
 import { SetFirstSceneSwitch } from "./set-first-scene-switch";
-import { SerializedEditorState } from "lexical";
-import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
+import { Editor } from "@/design-system/components/editor/components/rich-text-editor";
 import { WikiNode } from "@/design-system/components/editor/nodes/wiki-node";
 import { WikiPlugin } from "./wiki-lexical-plugin";
 import { useBuilderContext } from "@/builder/hooks/use-builder-context";
-
 export const SceneContentSection = ({
   form,
   scenePayload,
@@ -55,11 +53,9 @@ export const SceneContentSection = ({
           <FormItem>
             <FormLabel>Content</FormLabel>
             <FormControl>
-              <RichText
+              <Editor
                 onSerializedChange={field.onChange}
-                initialState={
-                  scenePayload.content as unknown as SerializedEditorState
-                }
+                initialState={scenePayload.content}
                 editable
                 className="h-[300px] max-w-[450px]"
                 // Disabled until the feature is finished
