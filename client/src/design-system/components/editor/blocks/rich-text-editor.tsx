@@ -3,7 +3,7 @@ import {
   LexicalComposer,
 } from "@lexical/react/LexicalComposer";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { EditorState, SerializedEditorState } from "lexical";
+import { EditorState } from "lexical";
 
 import { TooltipProvider } from "@/design-system/primitives/tooltip";
 
@@ -11,6 +11,7 @@ import { nodes } from "./nodes";
 import { EditorPlugins } from "./editor-plugins";
 import { BasePlugins } from "./base-plugins";
 import { cn } from "@/lib/style";
+import { contentSchema, SceneContent } from "@/lib/scene-content";
 
 const editorConfig: InitialConfigType = {
   namespace: "Editor",
@@ -29,22 +30,21 @@ const editorConfig: InitialConfigType = {
   },
 };
 
-export const RichText = ({
-  initialState,
+export const Editor = ({
   onChange,
   onSerializedChange,
+  initialState,
   editable,
   className,
 }: {
   className?: string;
   editable: boolean;
-  initialState?: SerializedEditorState;
+  initialState?: SceneContent;
   onChange?: (editorState: EditorState) => void;
-  onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
+  onSerializedChange?: (editorSerializedState: SceneContent) => void;
 }) => {
   // This allow lexical to refresh it's initial state when the content changes from the outside
   const state = JSON.stringify(initialState);
-
   return (
     <div
       className={cn(
@@ -54,6 +54,7 @@ export const RichText = ({
       )}
     >
       <LexicalComposer
+        key={state}
         initialConfig={{
           ...editorConfig,
           editorState: state,
@@ -68,7 +69,14 @@ export const RichText = ({
             ignoreSelectionChange={true}
             onChange={(editorState) => {
               onChange?.(editorState);
-              onSerializedChange?.(editorState.toJSON());
+              const serialized = editorState.toJSON();
+              try {
+                const sceneContent = contentSchema.parse(serialized);
+                onSerializedChange?.(sceneContent);
+              } catch (error) {
+                console.error("Invalid content update", serialized);
+                throw error;
+              }
             }}
           />
         </TooltipProvider>

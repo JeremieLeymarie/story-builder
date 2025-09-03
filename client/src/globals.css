@@ -165,8 +165,6 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
-
-  --xy-handle-size: 14px;
 }
 
 @layer base {
@@ -176,13 +174,4 @@
   body {
     @apply bg-background text-foreground;
   }
-}
-
-/* Prevents some rendering issue when zoomed back */
-.react-flow__handle {
-  width: var(--xy-handle-size);
-  height: var(--xy-handle-size);
-  border: none;
-  outline: 1px solid
-    var(--xy-handle-border-color, var(--xy-handle-border-color-default));
 }
