@@ -18,7 +18,7 @@ import { BasePlugins } from "../plugins/base-plugins";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ImageNode } from "../nodes/image-node";
 import { ReactNode } from "react";
-import { contentSchema, SceneContent } from "@/lib/scene-content";
+import { SceneContent } from "@/lib/scene-content";
 
 type EditorNode = KlassConstructor<typeof LexicalNode> | LexicalNodeReplacement;
 
@@ -88,14 +88,7 @@ export const Editor = ({
             ignoreSelectionChange={true}
             onChange={(editorState) => {
               onChange?.(editorState);
-              const serialized = editorState.toJSON();
-              try {
-                const sceneContent = contentSchema.parse(serialized);
-                onSerializedChange?.(sceneContent);
-              } catch (error) {
-                console.error("Invalid content update", serialized);
-                throw error;
-              }
+              onSerializedChange?.(editorState.toJSON());
             }}
           />
         </TooltipProvider>
