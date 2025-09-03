@@ -5,7 +5,7 @@ import { ExportModal } from "./export-modal";
 import { DeleteModal } from "./delete-modal";
 import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
 import { useBuilderContext } from "../hooks/use-builder-context";
-import { useAddScenes } from "../hooks/use-add-scenes";
+import { DEFAULT_SCENE, useAddScenes } from "../hooks/use-add-scenes";
 import { useBuilderEditorStore } from "../hooks/use-scene-editor-store";
 import { Toolbar, ToolbarTitle } from "@/design-system/components/toolbar";
 
@@ -27,7 +27,7 @@ export const BuilderMenu = () => {
           size="sm"
           className={btnClassname}
           onClick={() => {
-            addScenes();
+            addScenes([DEFAULT_SCENE]);
           }}
         >
           <BookOpenTextIcon />

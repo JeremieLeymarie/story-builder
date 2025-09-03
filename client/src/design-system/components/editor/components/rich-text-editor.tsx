@@ -18,13 +18,14 @@ import { BasePlugins } from "../plugins/base-plugins";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ImageNode } from "../nodes/image-node";
 import { ReactNode } from "react";
+import { contentSchema, SceneContent } from "@/lib/scene-content";
 
 type EditorNode = KlassConstructor<typeof LexicalNode> | LexicalNodeReplacement;
 
-export const RichText = ({
-  initialState,
+export const Editor = ({
   onChange,
   onSerializedChange,
+  initialState,
   editable,
   className,
   toolbarPlugins,
@@ -32,7 +33,7 @@ export const RichText = ({
 }: {
   className?: string;
   editable: boolean;
-  initialState?: SerializedEditorState;
+  initialState?: SceneContent;
   onChange?: (editorState: EditorState) => void;
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
   toolbarPlugins?: ReactNode[];
@@ -40,7 +41,6 @@ export const RichText = ({
 }) => {
   // This allow lexical to refresh it's initial state when the content changes from the outside
   const state = JSON.stringify(initialState);
-
   return (
     <div
       className={cn(
@@ -50,6 +50,7 @@ export const RichText = ({
       )}
     >
       <LexicalComposer
+        key={state}
         initialConfig={{
           namespace: "Editor",
           theme: {
@@ -87,7 +88,14 @@ export const RichText = ({
             ignoreSelectionChange={true}
             onChange={(editorState) => {
               onChange?.(editorState);
-              onSerializedChange?.(editorState.toJSON());
+              const serialized = editorState.toJSON();
+              try {
+                const sceneContent = contentSchema.parse(serialized);
+                onSerializedChange?.(sceneContent);
+              } catch (error) {
+                console.error("Invalid content update", serialized);
+                throw error;
+              }
             }}
           />
         </TooltipProvider>

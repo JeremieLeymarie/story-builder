@@ -45,7 +45,7 @@ export const useAddScenes = () => {
   };
 
   const addScenes = (
-    newScenes: NewScene[] = [DEFAULT_SCENE],
+    newScenes: NewScene[],
     worldPosition?: XYPosition,
   ): Scene[] | null => {
     if (!newScenes.length) return [];

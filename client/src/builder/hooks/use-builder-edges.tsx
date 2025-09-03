@@ -11,7 +11,6 @@ import { getBuilderService } from "@/get-builder-service";
 import { DEFAULT_SCENE, useAddScenes } from "./use-add-scenes";
 import { BuilderNode } from "../types";
 import { useBuilderError } from "./use-builder-error";
-import { sceneConsts } from "../components/nodes/scene/scene-constants";
 
 export const useBuilderEdges = () => {
   const { getNodes, setEdges } = useReactFlow<BuilderNode>();
@@ -75,13 +74,8 @@ export const useBuilderEdges = () => {
         x: event.clientX,
         y: event.clientY,
       });
-      // Places the node over the correct handle:
-      const offset = fromHandle
-        ? { x: 0, y: 0 }
-        : {
-            x: sceneConsts.width - sceneConsts.itemPadding,
-            y: sceneConsts.text2xl / 2 + sceneConsts.itemPadding,
-          };
+      // Magic values that places the node over the correct handle:
+      const offset = fromHandle ? { x: 0, y: 0 } : { x: 375 - 16, y: 27.5 };
       const scene = addScenes(
         [
           fromHandle
