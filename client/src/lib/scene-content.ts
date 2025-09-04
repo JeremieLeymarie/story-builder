@@ -1,5 +1,5 @@
-// EXPERIMENTAL: Hard typing on scene content
-// Pro:
+// EXPERIMENTAL: Hard typing on scene content, remove me if I bother too much
+// Pros:
 // - Catches database corruptions
 // - Good developer experience
 // Cons:
@@ -29,7 +29,7 @@ type Paragraph<T extends SerializedLexicalNode> = Pick<
 export type SceneContent = SerializedEditorState<
   Paragraph<SerializedTextNode | SerializedLineBreakNode | SerializedTabNode>
 >;
-// export type SceneContent = Object<
+// export type SceneContent = Record<string, unknwon>;
 
 const node = (name: string) =>
   z.object({
