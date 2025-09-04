@@ -48,13 +48,15 @@ export const useCopyPaste = () => {
   const onPaste = (ev: ClipboardEvent) => {
     ev.preventDefault();
     const text = ev.clipboardData?.getData("text") ?? "[]";
-    const scenes = clipboardSchema.safeParse(JSON.parse(text));
 
-    addScenes(
-      scenes.success
-        ? scenes.data
-        : [{ ...DEFAULT_SCENE, content: makeSimpleSceneContent(text) }],
-    );
+    let scenes;
+    try {
+      scenes = clipboardSchema.parse(JSON.parse(text));
+    } catch {
+      scenes = [{ ...DEFAULT_SCENE, content: makeSimpleSceneContent(text) }];
+    }
+
+    addScenes(scenes);
   };
 
   return {
