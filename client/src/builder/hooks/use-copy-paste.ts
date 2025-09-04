@@ -1,9 +1,29 @@
 import z from "zod/v4";
-import { NewScene, useAddScenes } from "./use-add-scenes";
+import { DEFAULT_SCENE, NewScene, useAddScenes } from "./use-add-scenes";
 import { sceneSchema } from "../components/builder-editor-bar/scene-editor/schema";
 import { useReactFlow } from "@xyflow/react";
 import { nodeToSceneAdapter } from "../adapters";
 import { BuilderNode } from "../types";
+import { makeSimpleSceneContent } from "@/lib/scene-content";
+
+export const deserialize = (nodes: BuilderNode[]): string => {
+  const keys = new Map(nodes.map((node, i) => [node.data.key, i]));
+  return JSON.stringify(
+    nodes.map((node): NewScene => {
+      const scene = nodeToSceneAdapter(node);
+      return {
+        title: scene.title,
+        content: scene.content,
+        actions: scene.actions.map((action) => {
+          const idx = keys.get(action.sceneKey ?? "");
+          if (idx !== undefined) action.sceneKey = "=" + idx;
+          return action;
+        }),
+        builderParams: scene.builderParams,
+      };
+    }),
+  );
+};
 
 export const useCopyPaste = () => {
   const { addScenes } = useAddScenes();
@@ -16,44 +36,29 @@ export const useCopyPaste = () => {
       }),
     }),
   );
-  const handleClipboard = (ev: ClipboardEvent) => {
+
+  const onCopyOrCut = (ev: ClipboardEvent) => {
     ev.preventDefault();
-
-    if (ev.type === "paste") {
-      const json = JSON.parse(ev.clipboardData?.getData("text") ?? "[]");
-      const scenes = clipboardSchema.safeParse(json);
-
-      if (!scenes.success) return;
-      addScenes(scenes.data);
-      return;
-    }
-
     const nodes = getNodes().filter((nodes) => nodes.selected);
     if (!nodes.length) return;
-
-    if (ev.type === "copy" || ev.type === "cut") {
-      const id2idx = new Map(nodes.map((node, i) => [node.id, i]));
-      ev.clipboardData?.setData(
-        "text/plain",
-        JSON.stringify(
-          nodes.map((node): NewScene => {
-            const scene = nodeToSceneAdapter(node);
-            return {
-              title: scene.title,
-              content: scene.content,
-              actions: scene.actions.map((action) => {
-                const idx = id2idx.get(action.sceneKey ?? "");
-                if (idx !== undefined) action.sceneKey = "=" + idx;
-                return action;
-              }),
-              builderParams: scene.builderParams,
-            };
-          }),
-        ),
-      );
-    }
+    ev.clipboardData?.setData("text/plain", deserialize(nodes));
     if (ev.type === "cut") deleteElements({ nodes });
   };
 
-  return handleClipboard;
+  const onPaste = (ev: ClipboardEvent) => {
+    ev.preventDefault();
+    const text = ev.clipboardData?.getData("text") ?? "[]";
+    const scenes = clipboardSchema.safeParse(JSON.parse(text));
+
+    addScenes(
+      scenes.success
+        ? scenes.data
+        : [{ ...DEFAULT_SCENE, content: makeSimpleSceneContent(text) }],
+    );
+  };
+
+  return {
+    onCopyOrCut,
+    onPaste,
+  };
 };

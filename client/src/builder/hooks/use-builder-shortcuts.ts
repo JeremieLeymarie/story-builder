@@ -1,26 +1,23 @@
 import { useTestStory } from "./use-test-story";
 import { useExportModalStore } from "./use-export-modal-store";
 import { useReactFlow, useStoreApi } from "@xyflow/react";
-import { useBuilderContext } from "./use-builder-context";
-import { nodeToSceneAdapter } from "../adapters";
 import { BuilderNode } from "../types";
-import z from "zod";
-import { DEFAULT_SCENE, NewScene, useAddScenes } from "./use-add-scenes";
-import { sceneSchema } from "../components/builder-editor-bar/scene-editor/schema";
+import { DEFAULT_SCENE, useAddScenes } from "./use-add-scenes";
+import { getUserOS } from "@/lib/get-os";
+import { useCopyPaste } from "./use-copy-paste";
+import { useEffect } from "react";
 
 export const useBuilderShortCuts = ({
   firstSceneKey,
 }: {
   firstSceneKey: string;
 }) => {
-  const { reactFlowRef } = useBuilderContext();
   const { addScenes } = useAddScenes();
   const openExportModal = useExportModalStore((state) => state.setOpen);
   const { testStory } = useTestStory();
-  const { getNodes, deleteElements } = useReactFlow<BuilderNode>();
+  const { getNodes } = useReactFlow<BuilderNode>();
   const { addSelectedNodes } = useStoreApi().getState();
-
-  if (!reactFlowRef.current) return;
+  const { onCopyOrCut, onPaste } = useCopyPaste();
 
   const shortcuts: Record<string, (e: KeyboardEvent) => void> = {
     ["n"]() {
@@ -37,7 +34,7 @@ export const useBuilderShortCuts = ({
     },
   };
 
-  const handleKeyPress = (e: KeyboardEvent) => {
+  const handleKeyDown = (e: KeyboardEvent) => {
     if (e.isComposing) return;
     const key = e.key.toLocaleLowerCase();
 
@@ -45,64 +42,27 @@ export const useBuilderShortCuts = ({
       if (!binding.endsWith(key)) continue;
       e.preventDefault();
       if (e.repeat) return;
-      if (binding.match("ctrl") && !e.ctrlKey) continue;
+      if (
+        binding.match("ctrl") &&
+        (getUserOS() === "Mac" ? !e.metaKey : !e.ctrlKey)
+      )
+        continue;
       if (binding.match("shift") && !e.shiftKey) continue;
       if (binding.match("alt") && !e.altKey) continue;
       shortcuts[binding]!(e);
     }
   };
 
-  const clipboardSchema = z.array(
-    sceneSchema.extend({
-      builderParams: z.object({
-        position: z.object({ x: z.number(), y: z.number() }),
-      }),
-    }),
-  );
-
-  const handleClipboard = (ev: ClipboardEvent) => {
-    reactFlowRef.current?.focus();
-    ev.preventDefault();
-
-    if (ev.type === "paste") {
-      const json = JSON.parse(ev.clipboardData?.getData("text") ?? "[]");
-      const scenes = clipboardSchema.safeParse(json);
-
-      if (!scenes.success) return;
-      addScenes(scenes.data);
-      return;
-    }
-
-    const nodes = getNodes().filter((nodes) => nodes.selected);
-    if (!nodes.length) return;
-
-    if (ev.type === "copy" || ev.type === "cut") {
-      const id2idx = new Map(nodes.map((node, i) => [node.id, i]));
-      ev.clipboardData?.setData(
-        "text/plain",
-        JSON.stringify(
-          nodes.map((node): NewScene => {
-            const scene = nodeToSceneAdapter(node);
-            return {
-              title: scene.title,
-              content: scene.content,
-              actions: scene.actions.map((action) => {
-                const idx = id2idx.get(action.sceneKey ?? "");
-                if (idx !== undefined) action.sceneKey = "=" + idx;
-                return action;
-              }),
-              builderParams: scene.builderParams,
-            };
-          }),
-        ),
-      );
-    }
-
-    if (ev.type === "cut") deleteElements({ nodes });
-  };
-
-  reactFlowRef.current.onkeydown = handleKeyPress;
-  reactFlowRef.current.onpaste = handleClipboard;
-  reactFlowRef.current.oncopy = handleClipboard;
-  reactFlowRef.current.oncut = handleClipboard;
+  useEffect(() => {
+    document.body.addEventListener("keydown", handleKeyDown);
+    document.body.addEventListener("copy", onCopyOrCut);
+    document.body.addEventListener("cut", onCopyOrCut);
+    document.body.addEventListener("paste", onPaste);
+    return () => {
+      document.body.removeEventListener("keydown", handleKeyDown);
+      document.body.removeEventListener("copy", onCopyOrCut);
+      document.body.removeEventListener("cut", onCopyOrCut);
+      document.body.removeEventListener("paste", onPaste);
+    };
+  });
 };

@@ -4,11 +4,11 @@ import { getBuilderService } from "@/get-builder-service";
 import { makeSimpleSceneContent } from "@/lib/scene-content";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
 import { useBuilderError } from "./use-builder-error";
-import { useMousePosition } from "@/hooks/use-mouse-position";
 import { Scene } from "@/lib/storage/domain";
 import { WithoutKey } from "@/types";
 import { nanoid } from "nanoid";
 import { useBuilderEditorStore } from "./use-scene-editor-store";
+import { useMousePosition } from "@/hooks/use-mouse-position";
 
 export type NewScene = Omit<WithoutKey<Scene>, "storyKey">;
 
@@ -25,17 +25,16 @@ const lastPlacement = { x: Infinity, y: Infinity };
 export const useAddScenes = () => {
   const builderService = getBuilderService();
   const { handleError } = useBuilderError();
-  const { story } = useBuilderContext();
   const { screenToFlowPosition, addNodes, addEdges } = useReactFlow();
   const { getState, setState } = useStoreApi();
   const { unselectNodesAndEdges } = getState();
-  const { reactFlowRef } = useBuilderContext();
-  const { getMousePosition } = useMousePosition();
+  const { reactFlowRef, story } = useBuilderContext();
+  const mousePosition = useMousePosition();
   const openSceneEditor = useBuilderEditorStore((state) => state.open);
 
   const getInitialPlacement = () => {
     if (reactFlowRef.current?.matches(":hover")) {
-      return screenToFlowPosition(getMousePosition());
+      return screenToFlowPosition(mousePosition);
     } else {
       if (!reactFlowRef.current) return { x: 0, y: 0 };
 
@@ -84,9 +83,9 @@ export const useAddScenes = () => {
     try {
       // promote the new scenes into future resident of the database
       const scenes = structuredClone(newScenes) as Scene[];
-      const idx2id = scenes.map(() => nanoid());
+      const keys = scenes.map(() => nanoid());
       scenes.forEach((scene, i) => {
-        scene.key = idx2id[i]!;
+        scene.key = keys[i]!;
         scene.storyKey = story.key;
         // relative position to absolute position
         scene.builderParams.position = {
@@ -98,10 +97,11 @@ export const useAddScenes = () => {
         scene.actions.forEach((action) => {
           if (action.sceneKey && action.sceneKey[0] === "=") {
             const sceneKey = parseInt(action.sceneKey.slice(1));
-            if (Number.isSafeInteger(sceneKey) && sceneKey < idx2id.length)
-              action.sceneKey = idx2id[sceneKey];
+            if (Number.isSafeInteger(sceneKey) && sceneKey < keys.length)
+              action.sceneKey = keys[sceneKey];
           }
         });
+        // FIXME: self referential nodes aren't resolved
       });
 
       // update reactflow
@@ -115,7 +115,6 @@ export const useAddScenes = () => {
       unselectNodesAndEdges();
       addNodes(newNodes);
       addEdges(newEdges);
-      setState({ nodesSelectionActive: true });
 
       if (scenes.length === 1) {
         const scene = scenes[0]!;
@@ -126,6 +125,11 @@ export const useAddScenes = () => {
             isFirstScene: story.firstSceneKey === scene.key,
           },
         });
+      } else {
+        // FIXME: This triggers *before* the scenes are added to the dom
+        // This is a problem because XYDrag expects the nodes to instantiated to listen for mouse events
+        // As such it is not yet possible to immediatly drag newly added nodes
+        setState({ nodesSelectionActive: true });
       }
 
       // the scenes move to their new homes
