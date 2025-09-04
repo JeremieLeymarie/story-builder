@@ -6,6 +6,7 @@ import { DEFAULT_SCENE, useAddScenes } from "./use-add-scenes";
 import { getUserOS } from "@/lib/get-os";
 import { useCopyPaste } from "./use-copy-paste";
 import { useEffect } from "react";
+import { useBuilderContext } from "./use-builder-context";
 
 export const useBuilderShortCuts = ({
   firstSceneKey,
@@ -18,6 +19,7 @@ export const useBuilderShortCuts = ({
   const { getNodes } = useReactFlow<BuilderNode>();
   const { addSelectedNodes } = useStoreApi().getState();
   const { onCopyOrCut, onPaste } = useCopyPaste();
+  const { reactFlowRef } = useBuilderContext();
 
   const shortcuts: Record<string, (e: KeyboardEvent) => void> = {
     ["n"]() {
@@ -35,7 +37,7 @@ export const useBuilderShortCuts = ({
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.isComposing) return;
+    if (e.isComposing || !reactFlowRef.current?.matches(":hover")) return;
     const key = e.key.toLocaleLowerCase();
 
     for (const binding of Object.keys(shortcuts)) {
