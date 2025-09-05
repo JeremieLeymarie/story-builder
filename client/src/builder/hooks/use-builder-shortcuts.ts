@@ -7,6 +7,7 @@ import { getUserOS } from "@/lib/get-os";
 import { useCopyPaste } from "./use-copy-paste";
 import { useEffect } from "react";
 import { useBuilderContext } from "./use-builder-context";
+import { useBuilderEditorStore } from "./use-scene-editor-store";
 
 export const useBuilderShortCuts = ({
   firstSceneKey,
@@ -17,8 +18,9 @@ export const useBuilderShortCuts = ({
   const openExportModal = useExportModalStore((state) => state.setOpen);
   const { testStory } = useTestStory();
   const { getNodes } = useReactFlow<BuilderNode>();
-  const { addSelectedNodes } = useStoreApi().getState();
+  const { addSelectedNodes, unselectNodesAndEdges } = useStoreApi().getState();
   const { onCopyOrCut, onPaste } = useCopyPaste();
+  const closeEditor = useBuilderEditorStore((state) => state.close);
   const { reactFlowRef } = useBuilderContext();
 
   const shortcuts: Record<string, (e: KeyboardEvent) => void> = {
@@ -34,12 +36,15 @@ export const useBuilderShortCuts = ({
     ["ctrl+a"]() {
       addSelectedNodes(getNodes().map((node) => node.id));
     },
+    ["escape"]() {
+      unselectNodesAndEdges();
+      closeEditor();
+    },
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.isComposing || !reactFlowRef.current?.matches(":hover")) return;
     const key = e.key.toLocaleLowerCase();
-
     for (const binding of Object.keys(shortcuts)) {
       if (!binding.endsWith(key)) continue;
       e.preventDefault();
