@@ -18,7 +18,7 @@ export const useBuilderShortCuts = ({
   const openExportModal = useExportModalStore((state) => state.setOpen);
   const { testStory } = useTestStory();
   const { getNodes } = useReactFlow<BuilderNode>();
-  const { addSelectedNodes, unselectNodesAndEdges } = useStoreApi().getState();
+  const { addSelectedNodes, resetSelectedElements } = useStoreApi().getState();
   const { onCopyOrCut, onPaste } = useCopyPaste();
   const closeEditor = useBuilderEditorStore((state) => state.close);
   const { reactFlowRef } = useBuilderContext();
@@ -37,7 +37,7 @@ export const useBuilderShortCuts = ({
       addSelectedNodes(getNodes().map((node) => node.id));
     },
     ["escape"]() {
-      unselectNodesAndEdges();
+      resetSelectedElements();
       closeEditor();
     },
   };
