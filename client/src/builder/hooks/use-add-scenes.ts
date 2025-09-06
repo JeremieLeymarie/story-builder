@@ -27,7 +27,7 @@ export const useAddScenes = () => {
   const { handleError } = useBuilderError();
   const { screenToFlowPosition, addNodes, addEdges } = useReactFlow();
   const { getState, setState } = useStoreApi();
-  const { unselectNodesAndEdges } = getState();
+  const { resetSelectedElements } = getState();
   const { reactFlowRef, story } = useBuilderContext();
   const mousePosition = useMousePosition();
   const openSceneEditor = useBuilderEditorStore((state) => state.open);
@@ -104,7 +104,7 @@ export const useAddScenes = () => {
 
   const updateFrontend = (scenes: Scene[]) => {
     const [nodes, edges] = scenesToNodesAndEdgesAdapter({ scenes, story });
-    unselectNodesAndEdges();
+    resetSelectedElements();
     nodes.forEach((node) => {
       node.selected = true;
     });
