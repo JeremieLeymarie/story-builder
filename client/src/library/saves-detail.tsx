@@ -5,39 +5,27 @@ import { Title } from "@/design-system/components";
 import { ExtendedProgress } from "./types";
 import { cn } from "@/lib/style";
 import { GameLink } from "./game-link";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useDeleteProgress } from "./hooks/use-delete-progress";
 
 export const SavesDetail = ({
   startNewGame,
   currentProgress,
   otherProgresses,
-  onRefresh,
 }: {
   startNewGame: () => void;
   currentProgress: ExtendedProgress;
   otherProgresses: ExtendedProgress[];
-  onRefresh?: () => void;
 }) => {
   const PROGRESSES_BY_PAGE = 3;
   const [endProgressIndex, setEndProgressIndex] = useState(PROGRESSES_BY_PAGE);
   const { deleteProgress, isDeleting } = useDeleteProgress();
 
   const progresses = [currentProgress, ...otherProgresses];
-
   const slicedProgresses = progresses.slice(0, endProgressIndex);
 
-  const handleDeleteProgress = async (
-    event: React.MouseEvent,
-    progressKey: string,
-  ) => {
-    event.preventDefault(); // Prevent the navigation
-    event.stopPropagation();
-
-    const result = await deleteProgress(progressKey);
-    if (result.success && onRefresh) {
-      onRefresh();
-    }
+  const handleDeleteProgress = async (progressKey: string) => {
+    await deleteProgress(progressKey);
   };
 
   return (
@@ -83,7 +71,7 @@ export const SavesDetail = ({
                     <p>COMPLETED</p>
                   )}
                   <button
-                    onClick={(e) => handleDeleteProgress(e, progress.key)}
+                    onClick={() => handleDeleteProgress(progress.key)}
                     disabled={isDeleting}
                     className="text-muted-foreground hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-red-50"
                     title="Delete this save"

@@ -6,7 +6,6 @@ import { GameInfo } from "./game-info";
 import { useRouter } from "@tanstack/react-router";
 import { DeleteGameButton } from "./delete-game-button";
 import { getLibraryService } from "@/domains/game/library-service";
-import { useState } from "react";
 
 type Props = {
   story: Story;
@@ -20,7 +19,6 @@ export const LibraryGameDetail = ({
   otherProgresses,
 }: Props) => {
   const { navigate } = useRouter();
-  const [_refreshKey, setRefreshKey] = useState(0);
 
   const deleteGame = async () => {
     await getLibraryService().deleteGame(story.key);
@@ -37,10 +35,6 @@ export const LibraryGameDetail = ({
           search: { storyProgressKey: progress.key },
         }),
       );
-  };
-
-  const handleRefresh = () => {
-    setRefreshKey(prev => prev + 1);
   };
 
   return (
@@ -61,7 +55,6 @@ export const LibraryGameDetail = ({
             startNewGame={startNewGame}
             currentProgress={currentProgress}
             otherProgresses={otherProgresses}
-            onRefresh={handleRefresh}
           />
         </div>
       </div>
