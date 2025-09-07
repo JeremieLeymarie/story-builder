@@ -1,14 +1,15 @@
 import { MockPort } from "@/types";
 import { vi } from "vitest";
 import { getTestFactory } from "@/lib/testing/factory";
-import { AuthContext } from "../auth-context";
+import { AuthContextPort } from "../auth-context";
+import { User } from "@/lib/storage/domain";
 
-export type MockAuthContext = MockPort<AuthContext>;
+export type MockAuthContext = MockPort<AuthContextPort>;
 
 const factory = getTestFactory();
 
-export const getStubAuthContext = (): MockAuthContext => {
+export const getStubAuthContext = (currentUser?: User): MockAuthContext => {
   return {
-    getUser: vi.fn(() => Promise.resolve(factory.user())),
+    getUser: vi.fn(() => Promise.resolve(currentUser ?? factory.user())),
   };
 };

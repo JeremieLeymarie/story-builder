@@ -1,8 +1,5 @@
 import { expect, test, vi, describe, beforeEach } from "vitest";
-import {
-  getStubWikiRepository,
-  getWikiServiceTestContext,
-} from "../stubs/stub-wiki-repository";
+import { getStubWikiRepository } from "../stubs/stub-wiki-repository";
 import { _getWikiService } from "../wiki-service";
 import { TEST_USER } from "@/lib/storage/dexie/test-db";
 import { getTestFactory } from "@/lib/testing/factory";
@@ -11,6 +8,7 @@ import { WikiSection } from "../types";
 import { faker } from "@faker-js/faker";
 import { nanoid } from "nanoid";
 import { EntityNotExistError } from "@/domains/errors";
+import { getStubAuthContext } from "@/domains/user/stubs/stub-auth-context";
 
 const DATE = new Date();
 
@@ -18,7 +16,7 @@ const factory = getTestFactory();
 const repository = getStubWikiRepository();
 const svc = _getWikiService({
   repository,
-  context: getWikiServiceTestContext(),
+  authContext: getStubAuthContext(TEST_USER),
 });
 
 describe("wiki service", () => {

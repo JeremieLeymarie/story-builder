@@ -1,14 +1,8 @@
 import { vi } from "vitest";
 import { WikiRepositoryPort } from "../wiki-repository";
-import { WikiServiceContext } from "../wiki-service";
-import { TEST_USER } from "@/lib/storage/dexie/test-db";
 import { getTestFactory } from "@/lib/testing/factory";
 import { nanoid } from "nanoid";
 import { faker } from "@faker-js/faker";
-
-export const getWikiServiceTestContext = (): WikiServiceContext => ({
-  getUser: () => Promise.resolve(TEST_USER),
-});
 
 const factory = getTestFactory();
 

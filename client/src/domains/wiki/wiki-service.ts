@@ -1,10 +1,10 @@
-import { User, Wiki, WikiArticle } from "@/lib/storage/domain";
+import { Wiki, WikiArticle } from "@/lib/storage/domain";
 import { getDexieWikiRepository, WikiRepositoryPort } from "./wiki-repository";
-import { getUser } from "@/lib/auth";
 import { WikiSchema } from "@/wikis/wiki-form";
 import { ArticleSchema } from "@/wikis/schema";
 import { ArticleUpdatePayload, WikiData } from "./types";
 import { EntityNotExistError } from "../errors";
+import { AuthContextPort, getAuthContext } from "../user/auth-context";
 
 export type WikiServicePort = {
   getAllWikis: () => Promise<Wiki[]>;
@@ -22,19 +22,15 @@ export type WikiServicePort = {
   ) => Promise<void>;
 };
 
-export type WikiServiceContext = {
-  getUser: () => Promise<User | null>;
-};
-
 export const _getWikiService = ({
   repository,
-  context,
+  authContext,
 }: {
   repository: WikiRepositoryPort;
-  context: WikiServiceContext;
+  authContext: AuthContextPort;
 }): WikiServicePort => {
   const getAllWikis = async () => {
-    const user = await context.getUser();
+    const user = await authContext.getUser();
     return repository.getUserWikis(user?.key);
   };
 
@@ -50,7 +46,7 @@ export const _getWikiService = ({
       );
     },
     createWiki: async (payload) => {
-      const user = await context.getUser();
+      const user = await authContext.getUser();
       const key = await repository.create({
         name: payload.name,
         description: payload.description,
@@ -95,6 +91,6 @@ export const _getWikiService = ({
 export const getWikiService = () => {
   return _getWikiService({
     repository: getDexieWikiRepository(),
-    context: { getUser },
+    authContext: getAuthContext(),
   });
 };

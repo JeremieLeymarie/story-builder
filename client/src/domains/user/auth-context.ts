@@ -1,7 +1,7 @@
 import { User } from "@/lib/storage/domain";
 import { getUserRepository, UserRepositoryPort } from "./user-repository";
 
-export type AuthContext = {
+export type AuthContextPort = {
   getUser: () => Promise<User | null>;
 };
 
@@ -9,7 +9,7 @@ export const _getAuthContext = ({
   userRepository,
 }: {
   userRepository: UserRepositoryPort;
-}): AuthContext => {
+}): AuthContextPort => {
   return {
     getUser: userRepository.getCurrent,
   };
