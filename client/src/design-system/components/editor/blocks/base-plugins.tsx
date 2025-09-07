@@ -23,7 +23,6 @@ export const BasePlugins = ({
   };
   const contentRef = useRef<HTMLDivElement>(null);
 
-  console.log({ editable });
   return (
     <RichTextPlugin
       contentEditable={
