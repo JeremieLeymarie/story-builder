@@ -21,7 +21,7 @@ const RouteComponent = () => {
       wikiData={wikiData}
     >
       <WikiContainer>
-        <ArticleEditor />
+        <ArticleEditor mode="create" />
       </WikiContainer>
     </WikiProvider>
   );

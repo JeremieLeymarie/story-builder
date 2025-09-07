@@ -12,22 +12,36 @@ import {
   Input,
 } from "@/design-system/primitives";
 import { Editor } from "@/design-system/components/editor/blocks/editor";
+import { SerializedEditorState } from "lexical";
+
+type UpdateProps =
+  | {
+      defaultValues: ArticleSchema;
+      articleKey: string;
+      mode: "update";
+    }
+  | { defaultValues?: undefined; articleKey?: undefined; mode: "create" };
 
 export const ArticleEditor = ({
   defaultValues,
-}: {
-  defaultValues?: ArticleSchema;
-}) => {
+  articleKey,
+  mode,
+}: UpdateProps) => {
   const form = useForm({
     resolver: zodResolver(articleSchema),
     defaultValues: defaultValues ?? {},
   });
-  const { createArticle } = useArticleActions();
+  const { createArticle, updateArticle } = useArticleActions();
+
+  const handleSubmit = async (data: ArticleSchema) => {
+    if (mode === "update") await updateArticle(articleKey, data);
+    else await createArticle(data);
+  };
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(createArticle)}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className="w-full space-y-4"
       >
         <FormField
@@ -71,7 +85,9 @@ export const ArticleEditor = ({
                 <Editor
                   editable
                   onSerializedChange={field.onChange}
-                  initialState={undefined}
+                  initialState={
+                    defaultValues?.content as unknown as SerializedEditorState
+                  }
                 />
               </FormControl>
               <FormMessage />

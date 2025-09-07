@@ -1,10 +1,10 @@
 import { BackdropLoader, ErrorMessage } from "@/design-system/components";
 import { WikiProvider } from "@/wikis/hooks/use-wiki-store";
 import { createFileRoute } from "@tanstack/react-router";
-import { useWikiData } from "./-hooks/use-wiki-data";
-import { useArticleData } from "./-hooks/use-article-data";
 import { Article } from "@/wikis/article";
 import { WikiContainer } from "@/wikis/wiki-container";
+import { useArticleData } from "../-hooks/use-article-data";
+import { useWikiData } from "../-hooks/use-wiki-data";
 
 const RouteComponent = () => {
   const { articleKey, wikiKey } = Route.useParams();
@@ -43,6 +43,6 @@ const RouteComponent = () => {
   );
 };
 
-export const Route = createFileRoute("/wikis/$wikiKey/$articleKey")({
+export const Route = createFileRoute("/wikis/$wikiKey/$articleKey/")({
   component: RouteComponent,
 });

@@ -3,10 +3,9 @@ import { Editor } from "@/design-system/components/editor/blocks/editor";
 import { Button } from "@/design-system/primitives";
 import { Badge } from "@/design-system/primitives/badge";
 import { WikiArticle, WikiCategory } from "@/lib/storage/domain";
+import { Link } from "@tanstack/react-router";
 import { SerializedEditorState } from "lexical";
 import { PencilIcon } from "lucide-react";
-import { useState } from "react";
-import { ArticleEditor } from "./article-editor";
 
 export const Article = ({
   article,
@@ -15,20 +14,6 @@ export const Article = ({
   article: WikiArticle;
   category: WikiCategory | null;
 }) => {
-  const [isEditing, setIsEditing] = useState(false);
-
-  if (isEditing)
-    return (
-      <ArticleEditor
-        defaultValues={{
-          title: article.title,
-          content: article.content,
-          image: article.image,
-          categoryKey: article.categoryKey,
-        }}
-      />
-    );
-
   // TODO: handle permissions
   return (
     <div>
@@ -36,14 +21,15 @@ export const Article = ({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Title variant="article">{article.title}</Title>
-            <Button
-              className="gap-2"
-              size="sm"
-              onClick={() => setIsEditing(true)}
+            <Link
+              to="/wikis/$wikiKey/$articleKey/edit"
+              params={{ articleKey: article.key, wikiKey: article.wikiKey }}
             >
-              <PencilIcon />
-              Edit
-            </Button>
+              <Button className="gap-2" size="sm">
+                <PencilIcon />
+                Edit
+              </Button>
+            </Link>
           </div>
           <div className="flex items-center gap-4">
             {category ? (
