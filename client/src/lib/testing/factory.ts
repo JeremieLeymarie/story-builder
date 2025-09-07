@@ -4,6 +4,7 @@ import {
   STORY_GENRES,
   StoryBase,
   StoryProgress,
+  User,
   Wiki,
   WikiArticle,
   WikiCategory,
@@ -101,6 +102,14 @@ const _storyProgressFactory = {
   finished: () => Math.random() > 0.5,
 } satisfies StoryProgressFactory;
 
+type UserFactory = _BaseFactory<User>;
+const _userFactory = {
+  key: nanoid,
+  email: faker.internet.email,
+  username: faker.internet.username,
+  token: faker.string.sample,
+} satisfies UserFactory;
+
 export const getTestFactory = () => {
   return {
     wiki: (partial: Partial<Wiki> = {}) => {
@@ -126,6 +135,10 @@ export const getTestFactory = () => {
 
     storyProgress: (partial: Partial<StoryProgress> = {}) => {
       return makeRandomEntity(_storyProgressFactory, partial);
+    },
+
+    user: (partial: Partial<User> = {}) => {
+      return makeRandomEntity(_userFactory, partial);
     },
   };
 };

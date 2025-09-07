@@ -4,7 +4,7 @@ import {
   WikiRepositoryPort,
 } from "../wiki-repository";
 import { getTestDatabase, TEST_USER } from "@/lib/storage/dexie/test-db";
-import { Database } from "@/lib/storage/dexie/dexie-db";
+import { DexieDatabase } from "@/lib/storage/dexie/dexie-db";
 import { Factory, getTestFactory } from "@/lib/testing/factory";
 import { WikiSection } from "../types";
 
@@ -12,7 +12,7 @@ const DATE = new Date();
 
 describe("wiki repository", () => {
   let repo: WikiRepositoryPort;
-  let testDB: Database;
+  let testDB: DexieDatabase;
   let factory: Factory;
 
   beforeEach(async () => {

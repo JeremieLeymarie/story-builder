@@ -1,4 +1,4 @@
-import { Database, db } from "@/lib/storage/dexie/dexie-db";
+import { DexieDatabase, db } from "@/lib/storage/dexie/dexie-db";
 import { Wiki, WikiArticle } from "@/lib/storage/domain";
 import { WithoutKey } from "@/types";
 import { ArticleUpdatePayload, WikiData } from "./types";
@@ -18,7 +18,9 @@ export type WikiRepositoryPort = {
   getArticle: (articleKey: string) => Promise<WikiArticle | null>;
 };
 
-export const _getDexieWikiRepository = (db: Database): WikiRepositoryPort => {
+export const _getDexieWikiRepository = (
+  db: DexieDatabase,
+): WikiRepositoryPort => {
   return {
     getUserWikis: async (userKey) => {
       return await db.wikis

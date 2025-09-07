@@ -21,9 +21,9 @@ type Tables = {
   wikiArticles: EntityTable<WikiArticle, "key">;
   wikiCategories: EntityTable<WikiCategory, "key">;
 };
-export type Database = Dexie & Tables;
+export type DexieDatabase = Dexie & Tables;
 
-export const db = new Dexie("story-builder") as Database;
+export const db = new Dexie("story-builder") as DexieDatabase;
 
 const tables: Record<keyof Tables, string> = {
   user: "&key, username, email",
@@ -38,7 +38,7 @@ const tables: Record<keyof Tables, string> = {
 };
 export const TABLE_NAMES = Object.keys(tables);
 
-export const createDb = (db: Database) => {
+export const createDb = (db: DexieDatabase) => {
   db.version(2).stores(tables);
 
   db.on("populate", async () => {

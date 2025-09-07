@@ -1,10 +1,10 @@
-import { Database, db } from "@/lib/storage/dexie/dexie-db";
+import { DexieDatabase, db } from "@/lib/storage/dexie/dexie-db";
 import { InvalidStoryTypeError } from "./errors";
 import { BuilderStoryRepositoryPort } from "./ports/builder-story-repository-port";
 import { EntityNotExistError } from "../errors";
 
 export const _getDexieBuilderStoryRepository = (
-  db: Database,
+  db: DexieDatabase,
 ): BuilderStoryRepositoryPort => {
   const _getBuilderStory = async (key: string) => {
     const story = await db.stories.get(key);
