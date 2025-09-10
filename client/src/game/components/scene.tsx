@@ -6,7 +6,7 @@ import { Scene, StoryProgress } from "@/lib/storage/domain";
 import { Divider } from "@/design-system/components/divider";
 import { Link } from "@tanstack/react-router";
 import { SerializedEditorState } from "lexical";
-import { Editor } from "@/design-system/components/editor/blocks/editor";
+import { RichText } from "@/design-system/components/editor/blocks/rich-text-editor";
 
 type GameSceneProps = {
   scene: Scene;
@@ -28,7 +28,7 @@ export const GameScene = ({
               {title}
             </h1>
             <p className="leading-7 wrap-break-word not-first:mt-6">
-              <Editor
+              <RichText
                 editable={false}
                 initialState={content as unknown as SerializedEditorState}
               />

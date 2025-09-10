@@ -9,8 +9,8 @@ import {
 import { UseFormReturn } from "react-hook-form";
 import { SceneSchema, SceneUpdatePayload } from "./schema";
 import { SetFirstSceneSwitch } from "./set-first-scene-switch";
-import { Editor } from "@/design-system/components/editor/blocks/editor";
 import { SerializedEditorState } from "lexical";
+import { RichText } from "@/design-system/components/editor/blocks/rich-text-editor";
 
 export const SceneContentSection = ({
   form,
@@ -50,7 +50,7 @@ export const SceneContentSection = ({
           <FormItem>
             <FormLabel>Content</FormLabel>
             <FormControl>
-              <Editor
+              <RichText
                 onSerializedChange={field.onChange}
                 initialState={
                   scenePayload.content as unknown as SerializedEditorState
