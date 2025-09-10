@@ -1,5 +1,4 @@
 import { Title } from "@/design-system/components";
-import { Editor } from "@/design-system/components/editor/blocks/editor";
 import { Button } from "@/design-system/primitives";
 import { Badge } from "@/design-system/primitives/badge";
 import { WikiArticle, WikiCategory } from "@/lib/storage/domain";
@@ -7,6 +6,7 @@ import { Link } from "@tanstack/react-router";
 import { SerializedEditorState } from "lexical";
 import { PencilIcon } from "lucide-react";
 import { useWikiStore } from "./hooks/use-wiki-store";
+import { RichText } from "@/design-system/components/editor/blocks/rich-text-editor";
 
 export const Article = ({
   article,
@@ -55,7 +55,7 @@ export const Article = ({
         />
       </div>
       <article>
-        <Editor
+        <RichText
           initialState={article.content as unknown as SerializedEditorState}
           editable={false}
         />
