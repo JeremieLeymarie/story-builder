@@ -7,8 +7,9 @@ import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { WikiSection } from "../types";
 import { faker } from "@faker-js/faker";
 import { nanoid } from "nanoid";
-import { EntityNotExistError } from "@/domains/errors";
+import { EntityNotExistError, ForbiddenError } from "@/domains/errors";
 import { getStubAuthContext } from "@/domains/user/stubs/stub-auth-context";
+import { getStubWikiPermissionContextFactory } from "../stubs/stub-wiki-permission-context";
 
 const DATE = new Date();
 
@@ -17,6 +18,7 @@ const repository = getStubWikiRepository();
 const svc = _getWikiService({
   repository,
   authContext: getStubAuthContext(TEST_USER),
+  getPermissionContext: getStubWikiPermissionContextFactory(),
 });
 
 describe("wiki service", () => {
@@ -150,6 +152,20 @@ describe("wiki service", () => {
   });
 
   describe("create wiki article", () => {
+    test("no perms", async () => {
+      const svc = _getWikiService({
+        repository,
+        authContext: getStubAuthContext(TEST_USER),
+        getPermissionContext: getStubWikiPermissionContextFactory({
+          canCreateArticle: false,
+        }),
+      });
+
+      await expect(
+        svc.createArticle("key", factory.wikiArticle()),
+      ).rejects.toThrow(ForbiddenError);
+    });
+
     test("should create wiki article without category", async () => {
       repository.createArticle = vi.fn((article) => {
         expect(article).toStrictEqual({
@@ -174,6 +190,20 @@ describe("wiki service", () => {
   });
 
   describe("update wiki article", () => {
+    test("no perms", async () => {
+      const svc = _getWikiService({
+        repository,
+        authContext: getStubAuthContext(TEST_USER),
+        getPermissionContext: getStubWikiPermissionContextFactory({
+          canEditArticle: false,
+        }),
+      });
+
+      await expect(svc.updateArticle("tutu", {})).rejects.toThrow(
+        ForbiddenError,
+      );
+    });
+
     test("should update wiki article", async () => {
       repository.updateArticle = vi.fn(async (key, payload) => {
         expect(key).toStrictEqual("article-key");

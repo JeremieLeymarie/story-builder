@@ -4,24 +4,25 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Article } from "@/wikis/article";
 import { WikiContainer } from "@/wikis/wiki-container";
 import { useArticleData } from "../-hooks/use-article-data";
-import { useWikiData } from "../-hooks/use-wiki-data";
+import { useWikiQueries } from "../-hooks/use-wiki-queries";
 
 const RouteComponent = () => {
   const { articleKey, wikiKey } = Route.useParams();
   const {
     wikiData,
-    isLoading: isWikiDataLoading,
+    permissions,
+    isLoading: isWikiLoading,
     refetch: refetchWikiData,
-  } = useWikiData({ wikiKey });
+  } = useWikiQueries({ wikiKey });
   const {
     articleData,
     isLoading: isArticleLoading,
     refetch: refetchArticle,
   } = useArticleData({ articleKey });
 
-  if (isWikiDataLoading || isArticleLoading) return <BackdropLoader />;
+  if (isWikiLoading || isArticleLoading) return <BackdropLoader />;
 
-  if (!articleData || !wikiData) return <ErrorMessage />;
+  if (!articleData || !wikiData || !permissions) return <ErrorMessage />;
 
   // TODO: use a better heuristic to get category data
   const section = wikiData.sections.find((section) =>
@@ -35,6 +36,7 @@ const RouteComponent = () => {
         await refetchArticle();
       }}
       wikiData={wikiData}
+      permissions={permissions}
     >
       <WikiContainer>
         <Article article={articleData} category={section?.category ?? null} />

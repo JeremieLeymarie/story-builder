@@ -3,8 +3,12 @@ import { getDexieWikiRepository, WikiRepositoryPort } from "./wiki-repository";
 import { WikiSchema } from "@/wikis/wiki-form";
 import { ArticleSchema } from "@/wikis/schema";
 import { ArticleUpdatePayload, WikiData } from "./types";
-import { EntityNotExistError } from "../errors";
+import { EntityNotExistError, ForbiddenError } from "../errors";
 import { AuthContextPort, getAuthContext } from "../user/auth-context";
+import {
+  getWikiPermissionContext,
+  WikiPermissionContext,
+} from "./wiki-permission-context";
 
 export type WikiServicePort = {
   getAllWikis: () => Promise<Wiki[]>;
@@ -25,9 +29,11 @@ export type WikiServicePort = {
 export const _getWikiService = ({
   repository,
   authContext,
+  getPermissionContext,
 }: {
   repository: WikiRepositoryPort;
   authContext: AuthContextPort;
+  getPermissionContext: (wikiKey: string) => Promise<WikiPermissionContext>;
 }): WikiServicePort => {
   const getAllWikis = async () => {
     const user = await authContext.getUser();
@@ -64,6 +70,9 @@ export const _getWikiService = ({
     },
 
     createArticle: async (wikiKey, payload) => {
+      const permissionContext = await getPermissionContext(wikiKey);
+      if (!permissionContext.canCreateArticle()) throw new ForbiddenError();
+
       return await repository.createArticle({
         wikiKey: wikiKey,
         title: payload.title,
@@ -83,6 +92,9 @@ export const _getWikiService = ({
       const article = await repository.getArticle(articleKey);
       if (!article) throw new EntityNotExistError("wiki-article", articleKey);
 
+      const permissionContext = await getPermissionContext(article.wikiKey);
+      if (!permissionContext.canEditArticle()) throw new ForbiddenError();
+
       return await repository.updateArticle(articleKey, payload);
     },
   };
@@ -92,5 +104,6 @@ export const getWikiService = () => {
   return _getWikiService({
     repository: getDexieWikiRepository(),
     authContext: getAuthContext(),
+    getPermissionContext: getWikiPermissionContext,
   });
 };

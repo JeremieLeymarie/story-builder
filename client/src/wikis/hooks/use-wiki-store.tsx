@@ -4,18 +4,28 @@ import { createContext, ReactNode, useContext, useEffect, useRef } from "react";
 import { useStoreWithEqualityFn } from "zustand/traditional";
 import { shallow } from "zustand/shallow";
 import { WikiData } from "@/domains/wiki/types";
+import { WikiPermissionContext } from "@/domains/wiki/wiki-permission-context";
 
 type WikiState = {
   refresh: () => Promise<void>;
   wikiData: WikiData;
+  permissions: WikiPermissionContext;
 };
 
-type WikiProviderProps = Pick<WikiState, "wikiData" | "refresh">;
+type WikiProviderProps = Pick<
+  WikiState,
+  "wikiData" | "refresh" | "permissions"
+>;
 
-const createWikiStore = ({ refresh, wikiData }: WikiProviderProps) => {
+const createWikiStore = ({
+  refresh,
+  wikiData,
+  permissions,
+}: WikiProviderProps) => {
   return createStore<WikiState>()(() => ({
     refresh,
     wikiData,
+    permissions,
   }));
 };
 
@@ -27,12 +37,15 @@ export const WikiProvider = ({
   children,
   refresh,
   wikiData,
+  permissions,
 }: WikiProviderProps & { children: ReactNode }) => {
-  const storeRef = useRef<WikiStore>(createWikiStore({ refresh, wikiData }));
+  const storeRef = useRef<WikiStore>(
+    createWikiStore({ refresh, wikiData, permissions }),
+  );
 
   useEffect(() => {
-    storeRef.current = createWikiStore({ refresh, wikiData });
-  }, [refresh, wikiData]);
+    storeRef.current = createWikiStore({ refresh, wikiData, permissions });
+  }, [refresh, wikiData, permissions]);
 
   return (
     <WikiContext.Provider value={storeRef.current}>

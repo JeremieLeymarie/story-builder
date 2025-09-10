@@ -5,3 +5,9 @@ export class EntityNotExistError extends Error {
     super(`Entity [${entityType}] with key {${key}} does not exist.`);
   }
 }
+
+export class ForbiddenError extends Error {
+  constructor() {
+    super("Forbidden operation.");
+  }
+}
