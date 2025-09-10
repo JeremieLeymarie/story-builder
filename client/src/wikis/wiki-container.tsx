@@ -5,7 +5,7 @@ export const WikiContainer = ({ children }: { children: ReactNode }) => {
   return (
     <div className="flex h-full gap-4 p-4">
       <WikiBar />
-      <div className="w-full pt-4">{children}</div>
+      <div className="w-full">{children}</div>
     </div>
   );
 };
