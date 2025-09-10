@@ -1,10 +1,10 @@
 import { AuthContextPort, getAuthContext } from "../user/auth-context";
 import { getDexieWikiRepository, WikiRepositoryPort } from "./wiki-repository";
 
-type WikiPermissionContext = {
-  canCreate: () => boolean;
-  canEdit: () => boolean;
-  canDelete: () => boolean;
+export type WikiPermissionContext = {
+  canCreateArticle: () => boolean;
+  canEditArticle: () => boolean;
+  canDeleteArticle: () => boolean;
 };
 
 export const _getWikiPermissionContext = async ({
@@ -20,9 +20,9 @@ export const _getWikiPermissionContext = async ({
   const wikiAuthor = (await wikiRepository.get(wikiKey))?.wiki.author;
 
   return {
-    canCreate: () => wikiAuthor?.key === user?.key,
-    canEdit: () => wikiAuthor?.key === user?.key,
-    canDelete: () => wikiAuthor?.key === user?.key,
+    canCreateArticle: () => wikiAuthor?.key === user?.key,
+    canEditArticle: () => wikiAuthor?.key === user?.key,
+    canDeleteArticle: () => wikiAuthor?.key === user?.key,
   };
 };
 

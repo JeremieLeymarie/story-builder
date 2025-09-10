@@ -4,7 +4,10 @@ import { Button } from "@/design-system/primitives";
 import { Link } from "@tanstack/react-router";
 
 export const ArticleEmptyState = () => {
-  const wikiData = useWikiStore((state) => state.wikiData);
+  const [wikiData, permissions] = useWikiStore((state) => [
+    state.wikiData,
+    state.permissions,
+  ]);
 
   const isWikiEmpty = wikiData.sections.every(
     (section) => section.articles.length === 0,
@@ -23,12 +26,12 @@ export const ArticleEmptyState = () => {
             ? "This wiki is empty..."
             : "Select an article in the bar on the left"}
         </p>
-        {isWikiEmpty && (
+        {permissions.canCreateArticle() && (
           <Link
             to="/wikis/$wikiKey/new"
             params={{ wikiKey: wikiData.wiki.key }}
           >
-            <Button>Create your first article</Button>
+            <Button>Create {isWikiEmpty ? "a first" : "a new"} article</Button>
           </Link>
         )}
       </div>

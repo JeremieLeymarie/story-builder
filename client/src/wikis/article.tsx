@@ -6,6 +6,7 @@ import { WikiArticle, WikiCategory } from "@/lib/storage/domain";
 import { Link } from "@tanstack/react-router";
 import { SerializedEditorState } from "lexical";
 import { PencilIcon } from "lucide-react";
+import { useWikiStore } from "./hooks/use-wiki-store";
 
 export const Article = ({
   article,
@@ -14,22 +15,27 @@ export const Article = ({
   article: WikiArticle;
   category: WikiCategory | null;
 }) => {
-  // TODO: handle permissions
+  const { canEditArticle: canEdit } = useWikiStore(
+    (state) => state.permissions,
+  );
+
   return (
     <div>
       <div className="space-y-4">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Title variant="article">{article.title}</Title>
-            <Link
-              to="/wikis/$wikiKey/$articleKey/edit"
-              params={{ articleKey: article.key, wikiKey: article.wikiKey }}
-            >
-              <Button className="gap-2" size="sm">
-                <PencilIcon />
-                Edit
-              </Button>
-            </Link>
+            {canEdit() && (
+              <Link
+                to="/wikis/$wikiKey/$articleKey/edit"
+                params={{ articleKey: article.key, wikiKey: article.wikiKey }}
+              >
+                <Button className="gap-2" size="sm">
+                  <PencilIcon />
+                  Edit
+                </Button>
+              </Link>
+            )}
           </div>
           <div className="flex items-center gap-4">
             {category ? (

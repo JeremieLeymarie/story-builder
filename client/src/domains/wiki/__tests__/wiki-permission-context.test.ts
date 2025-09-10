@@ -20,9 +20,9 @@ describe("wiki permission context", async () => {
   test("no permissions when wiki doesn't exist", async () => {
     wikiRepository.get = vi.fn(() => Promise.resolve(null));
     const context = await _getContext();
-    expect(context.canCreate()).toBeFalsy();
-    expect(context.canDelete()).toBeFalsy();
-    expect(context.canEdit()).toBeFalsy();
+    expect(context.canCreateArticle()).toBeFalsy();
+    expect(context.canDeleteArticle()).toBeFalsy();
+    expect(context.canEditArticle()).toBeFalsy();
   });
 
   test("no permissions when user isn't wiki's author", async () => {
@@ -35,9 +35,9 @@ describe("wiki permission context", async () => {
     authContext.getUser = vi.fn(() => Promise.resolve(user));
 
     const context = await _getContext();
-    expect(context.canCreate()).toBeFalsy();
-    expect(context.canDelete()).toBeFalsy();
-    expect(context.canEdit()).toBeFalsy();
+    expect(context.canCreateArticle()).toBeFalsy();
+    expect(context.canDeleteArticle()).toBeFalsy();
+    expect(context.canEditArticle()).toBeFalsy();
   });
 
   test("no permissions when user is not logged in & wiki has author", async () => {
@@ -48,9 +48,9 @@ describe("wiki permission context", async () => {
     authContext.getUser = vi.fn(() => Promise.resolve(null));
 
     const context = await _getContext();
-    expect(context.canCreate()).toBeFalsy();
-    expect(context.canDelete()).toBeFalsy();
-    expect(context.canEdit()).toBeFalsy();
+    expect(context.canCreateArticle()).toBeFalsy();
+    expect(context.canDeleteArticle()).toBeFalsy();
+    expect(context.canEditArticle()).toBeFalsy();
   });
 
   test("permissions when user is wiki's author", async () => {
@@ -63,9 +63,9 @@ describe("wiki permission context", async () => {
     authContext.getUser = vi.fn(() => Promise.resolve(user));
 
     const context = await _getContext();
-    expect(context.canCreate()).toBeTruthy();
-    expect(context.canDelete()).toBeTruthy();
-    expect(context.canEdit()).toBeTruthy();
+    expect(context.canCreateArticle()).toBeTruthy();
+    expect(context.canDeleteArticle()).toBeTruthy();
+    expect(context.canEditArticle()).toBeTruthy();
   });
 
   test("permissions when user is not logged in and wiki has no author", async () => {
@@ -74,8 +74,8 @@ describe("wiki permission context", async () => {
     authContext.getUser = vi.fn(() => Promise.resolve(null));
 
     const context = await _getContext();
-    expect(context.canCreate()).toBeTruthy();
-    expect(context.canDelete()).toBeTruthy();
-    expect(context.canEdit()).toBeTruthy();
+    expect(context.canCreateArticle()).toBeTruthy();
+    expect(context.canDeleteArticle()).toBeTruthy();
+    expect(context.canEditArticle()).toBeTruthy();
   });
 });
