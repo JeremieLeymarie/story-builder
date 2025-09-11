@@ -1,18 +1,17 @@
-import { XYPosition } from "@xyflow/react";
+const ctx: {
+  pos: { x: number; y: number };
+  onMouseMove: null | ((ev: MouseEvent) => void);
+} = { pos: { x: 0, y: 0 }, onMouseMove: null };
 
-const state: {
-  pos: XYPosition;
-  trackingFunc: null | ((ev: MouseEvent) => void);
-} = { pos: { x: 0, y: 0 }, trackingFunc: null };
-const trackingFunc = (ev: MouseEvent) => {
-  state.pos.x = ev.clientX;
-  state.pos.y = ev.clientY;
+const onMouseMove = (ev: MouseEvent) => {
+  ctx.pos.x = ev.clientX;
+  ctx.pos.y = ev.clientY;
 };
 
 export const useMousePosition = () => {
-  if (!state.trackingFunc) {
-    state.trackingFunc = trackingFunc;
-    window.addEventListener("mousemove", state.trackingFunc);
+  if (!ctx.onMouseMove) {
+    ctx.onMouseMove = onMouseMove;
+    window.addEventListener("mousemove", ctx.onMouseMove);
   }
-  return state.pos;
+  return ctx.pos;
 };
