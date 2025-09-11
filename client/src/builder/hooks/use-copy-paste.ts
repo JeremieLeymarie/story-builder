@@ -10,6 +10,7 @@ import { makeSimpleSceneContent } from "@/lib/scene-content";
 import { Scene } from "@/lib/storage/domain";
 import { BuilderNode } from "../types";
 import { nodeToSceneAdapter } from "../adapters";
+import { getBuilderService } from "@/get-builder-service";
 
 export const scenesToJson = (scenes: Scene[]): string => {
   const keys = new Map(scenes.map((node, i) => [node.key, i]));
@@ -31,7 +32,8 @@ export const scenesToJson = (scenes: Scene[]): string => {
 
 export const useCopyPaste = () => {
   const { addScenes } = useAddScenes();
-  const { getNodes, deleteElements } = useReactFlow<BuilderNode>();
+  const { getNodes, setNodes } = useReactFlow<BuilderNode>();
+  const { deleteScenes } = getBuilderService();
 
   const clipboardSchema = z.array(
     sceneSchema.extend({
@@ -43,13 +45,16 @@ export const useCopyPaste = () => {
 
   const onCopyOrCut = (ev: ClipboardEvent) => {
     ev.preventDefault();
-    const nodes = getNodes().filter((nodes) => nodes.selected);
+    const nodes = getNodes().filter((nd) => nd.selected);
     if (!nodes.length) return;
     ev.clipboardData?.setData(
       "text/plain",
       scenesToJson(nodes.map((nd) => nodeToSceneAdapter(nd))),
     );
-    if (ev.type === "cut") deleteElements({ nodes });
+    if (ev.type === "cut") {
+      setNodes((nds) => nds.filter((nd) => !nd.selected));
+      deleteScenes(nodes.map((nd) => nd.data.key));
+    }
   };
 
   const onPaste = (ev: ClipboardEvent) => {
