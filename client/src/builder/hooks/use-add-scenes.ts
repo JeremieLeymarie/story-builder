@@ -19,7 +19,7 @@ export const DEFAULT_SCENE: NewScene = {
   builderParams: { position: { x: 0, y: 0 } },
 };
 
-const last = { x: Infinity, y: Infinity };
+const lastWishedPos = { x: Infinity, y: Infinity };
 const lastPlacement = { x: Infinity, y: Infinity };
 
 export const useAddScenes = () => {
@@ -33,11 +33,12 @@ export const useAddScenes = () => {
   const openSceneEditor = useBuilderEditorStore((state) => state.open);
 
   const getInitialPlacement = () => {
-    if (reactFlowRef.current?.matches(":hover")) {
+    if (!reactFlowRef.current)
+      throw "Could not add scene, the builder is missing";
+    // if the mouse is over the builder
+    if (reactFlowRef.current.matches(":hover")) {
       return screenToFlowPosition(mousePosition);
     } else {
-      if (!reactFlowRef.current) return { x: 0, y: 0 };
-
       const rect = reactFlowRef.current.getBoundingClientRect();
       // find the center
       const position = {
@@ -48,20 +49,27 @@ export const useAddScenes = () => {
     }
   };
 
-  const computeEfficientPlacement = (
+  // Offsets the scenes when there was already a scene pasted on the same spot last
+  // This provides visual feedback for the scenes being added even if they would have overlapped
+  // returns a relative position
+  const computeOptimalPlacement = (
     newScenes: NewScene[],
-    position: XYPosition,
-  ) => {
-    if (Math.hypot(position.x - last.x, position.y - last.y) < 40) {
+    wishedPos: XYPosition,
+  ): XYPosition => {
+    const placement = structuredClone(wishedPos);
+    if (
+      Math.hypot(wishedPos.x - lastWishedPos.x, wishedPos.y - lastWishedPos.y) <
+      40
+    ) {
       // offsets the placement in case we already placed something close
-      position.x = lastPlacement.x + 40;
-      position.y = lastPlacement.y + 40;
+      placement.x = lastPlacement.x + 40;
+      placement.y = lastPlacement.y + 40;
     } else {
-      last.x = position.x;
-      last.y = position.y;
+      lastWishedPos.x = wishedPos.x;
+      lastWishedPos.y = wishedPos.y;
     }
-    lastPlacement.x = position.x;
-    lastPlacement.y = position.y;
+    lastPlacement.x = wishedPos.x;
+    lastPlacement.y = wishedPos.y;
 
     // figure out the top corner of the rectangle containing our nodes
     let topX = Infinity;
@@ -70,11 +78,13 @@ export const useAddScenes = () => {
       topX = Math.min(topX, scene.builderParams.position.x);
       topY = Math.min(topY, scene.builderParams.position.y);
     });
-    if (Number.isFinite(topX)) position.x -= topX;
-    if (Number.isFinite(topY)) position.y -= topY;
+    if (Number.isFinite(topX)) placement.x -= topX;
+    if (Number.isFinite(topY)) placement.y -= topY;
+
+    return placement;
   };
 
-  const addScenesToDB = (newScenes: NewScene[], position: XYPosition) => {
+  const addScenesToDB = (newScenes: NewScene[], placement: XYPosition) => {
     // promote the new scenes into future resident of the database
     const scenes = structuredClone(newScenes) as Scene[];
     const keys = scenes.map(() => nanoid());
@@ -83,8 +93,8 @@ export const useAddScenes = () => {
       scene.storyKey = story.key;
       // relative position to absolute position
       scene.builderParams.position = {
-        x: scene.builderParams.position.x + position.x,
-        y: scene.builderParams.position.y + position.y,
+        x: scene.builderParams.position.x + placement.x,
+        y: scene.builderParams.position.y + placement.y,
       };
       // in case the sceneKeys were defined relative to other scenes in the batch,
       // promote the relative indicies to absolute keys
@@ -102,7 +112,7 @@ export const useAddScenes = () => {
     return scenes;
   };
 
-  const updateFrontend = (scenes: Scene[]) => {
+  const updateFlow = (scenes: Scene[]) => {
     const [nodes, edges] = scenesToNodesAndEdgesAdapter({ scenes, story });
     resetSelectedElements();
     nodes.forEach((node) => {
@@ -130,13 +140,14 @@ export const useAddScenes = () => {
 
   const addScenes = (
     newScenes: NewScene[],
-    position: XYPosition = getInitialPlacement(),
+    position: XYPosition | "auto",
   ): Scene[] | null => {
     if (!newScenes.length) return [];
-    computeEfficientPlacement(newScenes, position);
+    if (position === "auto") position = getInitialPlacement();
+    const placement = computeOptimalPlacement(newScenes, position);
     try {
-      const scenes = addScenesToDB(newScenes, position);
-      updateFrontend(scenes);
+      const scenes = addScenesToDB(newScenes, placement);
+      updateFlow(scenes);
       return scenes;
     } catch (err) {
       handleError(err);

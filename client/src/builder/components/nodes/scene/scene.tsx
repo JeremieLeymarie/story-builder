@@ -7,12 +7,12 @@ import {
 } from "@/design-system/primitives/card";
 import { Handle, NodeProps, Position, useReactFlow } from "@xyflow/react";
 import { EditIcon } from "lucide-react";
-import { SceneNodeType } from "../../../types";
+import { BuilderNode, SceneNodeType } from "../../../types";
 import { cn } from "@/lib/style";
 import { Button } from "@/design-system/primitives";
 import { useBuilderEditorStore } from "@/builder/hooks/use-scene-editor-store";
 import { RichText } from "@/design-system/components/editor/blocks/rich-text-editor";
-import { useCopyPaste } from "@/builder/hooks/use-copy-paste";
+import { nodesToJson } from "@/builder/hooks/use-copy-paste";
 
 export type SceneNodeProps = NodeProps<SceneNodeType>;
 
@@ -20,8 +20,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
   const openEditor = useBuilderEditorStore((state) => state.open);
   const { isFirstScene, builderParams, isEditable, ...scene } = data;
   const editable = data.isEditable !== undefined ? data.isEditable : true;
-  const { updateNode } = useReactFlow();
-  const { onCopyOrCut } = useCopyPaste();
+  const { getNodes, deleteElements } = useReactFlow<BuilderNode>();
 
   return (
     <Card
@@ -30,18 +29,12 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
         isFirstScene && "bg-primary/60",
         selected && "border border-black",
       )}
-      onAuxClick={(mouse_ev) => {
-        mouse_ev.preventDefault();
-        const ev = new ClipboardEvent("cut", {
-          clipboardData: new DataTransfer(),
-        });
-        updateNode(data.key, { selected: true });
-        setTimeout(() => {
-          onCopyOrCut(ev);
-          if (ev.clipboardData) {
-            navigator.clipboard.writeText(ev.clipboardData.getData("text"));
-          }
-        });
+      onAuxClick={(ev) => {
+        ev.preventDefault();
+        const nodes = getNodes().filter((nodes) => nodes.selected);
+        if (!nodes.length) return;
+        navigator.clipboard.writeText(nodesToJson(nodes));
+        if (ev.type === "cut") deleteElements({ nodes });
       }}
       onDoubleClick={() => {
         openEditor({
