@@ -10,9 +10,9 @@ import { nanoid } from "nanoid";
 import { useBuilderEditorStore } from "./use-scene-editor-store";
 import { useMousePosition } from "@/hooks/use-mouse-position";
 
-export type NewScene = Omit<WithoutKey<Scene>, "storyKey">;
+export type CreateScenePayload = Omit<WithoutKey<Scene>, "storyKey">;
 
-export const DEFAULT_SCENE: NewScene = {
+export const DEFAULT_SCENE: CreateScenePayload = {
   title: "",
   content: makeSimpleSceneContent(""),
   actions: [],
@@ -53,7 +53,7 @@ export const useAddScenes = () => {
   // This provides visual feedback for the scenes being added even if they would have overlapped
   // returns a relative position
   const computeOptimalPlacement = (
-    newScenes: NewScene[],
+    newScenes: CreateScenePayload[],
     wishedPos: XYPosition,
   ): XYPosition => {
     const placement = structuredClone(wishedPos);
@@ -68,8 +68,8 @@ export const useAddScenes = () => {
       lastWishedPos.x = wishedPos.x;
       lastWishedPos.y = wishedPos.y;
     }
-    lastPlacement.x = wishedPos.x;
-    lastPlacement.y = wishedPos.y;
+    lastPlacement.x = placement.x;
+    lastPlacement.y = placement.y;
 
     // figure out the top corner of the rectangle containing our nodes
     let topX = Infinity;
@@ -84,7 +84,10 @@ export const useAddScenes = () => {
     return placement;
   };
 
-  const addScenesToDB = (newScenes: NewScene[], placement: XYPosition) => {
+  const addScenesToDB = (
+    newScenes: CreateScenePayload[],
+    placement: XYPosition,
+  ) => {
     // promote the new scenes into future resident of the database
     const scenes = structuredClone(newScenes) as Scene[];
     const keys = scenes.map(() => nanoid());
@@ -139,7 +142,7 @@ export const useAddScenes = () => {
   };
 
   const addScenes = (
-    newScenes: NewScene[],
+    newScenes: CreateScenePayload[],
     position: XYPosition | "auto",
   ): Scene[] | null => {
     if (!newScenes.length) return [];

@@ -12,7 +12,7 @@ import { cn } from "@/lib/style";
 import { Button } from "@/design-system/primitives";
 import { useBuilderEditorStore } from "@/builder/hooks/use-scene-editor-store";
 import { RichText } from "@/design-system/components/editor/blocks/rich-text-editor";
-import { nodesToJson } from "@/builder/hooks/use-copy-paste";
+import { scenesToJson } from "@/builder/hooks/use-copy-paste";
 
 export type SceneNodeProps = NodeProps<SceneNodeType>;
 
@@ -20,7 +20,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
   const openEditor = useBuilderEditorStore((state) => state.open);
   const { isFirstScene, builderParams, isEditable, ...scene } = data;
   const editable = data.isEditable !== undefined ? data.isEditable : true;
-  const { getNodes, deleteElements } = useReactFlow<BuilderNode>();
+  const { setNodes } = useReactFlow<BuilderNode>();
 
   return (
     <Card
@@ -31,10 +31,8 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
       )}
       onAuxClick={(ev) => {
         ev.preventDefault();
-        const nodes = getNodes().filter((nodes) => nodes.selected);
-        if (!nodes.length) return;
-        navigator.clipboard.writeText(nodesToJson(nodes));
-        if (ev.type === "cut") deleteElements({ nodes });
+        navigator.clipboard.writeText(scenesToJson([data]));
+        setNodes((nds) => nds.filter((nd) => nd.data.key !== data.key));
       }}
       onDoubleClick={() => {
         openEditor({
