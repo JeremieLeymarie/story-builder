@@ -11,7 +11,7 @@ import { SceneNodeType } from "../../../types";
 import { cn } from "@/lib/style";
 import { Button } from "@/design-system/primitives";
 import { useBuilderEditorStore } from "@/builder/hooks/use-scene-editor-store";
-import { Editor } from "@/design-system/components/editor/blocks/editor";
+import { RichText } from "@/design-system/components/editor/blocks/rich-text-editor";
 import { useCopyPaste } from "@/builder/hooks/use-copy-paste";
 
 export type SceneNodeProps = NodeProps<SceneNodeType>;
@@ -76,7 +76,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
           )}
         </div>
         <CardDescription>
-          <Editor editable={false} initialState={data.content} />
+          <RichText editable={false} initialState={data.content} />
         </CardDescription>
       </CardHeader>
       {data.actions.length > 0 && (
