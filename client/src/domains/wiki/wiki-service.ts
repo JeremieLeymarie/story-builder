@@ -73,13 +73,14 @@ export const _getWikiService = ({
       const permissionContext = await getPermissionContext(wikiKey);
       if (!permissionContext.canCreateArticle()) throw new ForbiddenError();
 
+      const now = new Date();
       return await repository.createArticle({
         wikiKey: wikiKey,
         title: payload.title,
         content: payload.content,
         image: payload.image,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: now,
+        updatedAt: now,
         ...(payload.categoryKey ? { categoryKey: payload.categoryKey } : {}),
       });
     },
