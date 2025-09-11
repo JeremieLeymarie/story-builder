@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest";
-import { capitalize } from "./string";
+import { capitalize } from "../string";
 
 describe("capitalize", () => {
   test("empty string", () => {

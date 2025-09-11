@@ -3,7 +3,7 @@ import { useWikiStore } from "./hooks/use-wiki-store";
 import { Button } from "@/design-system/primitives";
 import { Link } from "@tanstack/react-router";
 
-export const ArticleEmptyState = () => {
+export const WikiHome = () => {
   const [wikiData, permissions] = useWikiStore((state) => [
     state.wikiData,
     state.permissions,
