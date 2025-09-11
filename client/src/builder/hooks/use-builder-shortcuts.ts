@@ -6,8 +6,23 @@ import { DEFAULT_SCENE, useAddScenes } from "./use-add-scenes";
 import { getUserOS } from "@/lib/get-os";
 import { useCopyPaste } from "./use-copy-paste";
 import { useEffect } from "react";
-import { useBuilderContext } from "./use-builder-context";
 import { useBuilderEditorStore } from "./use-scene-editor-store";
+
+const isAnyInputFocused = () => {
+  const isInputFocused = document.activeElement?.tagName === "INPUT";
+  const isTextAreaFocused = document.activeElement?.tagName === "TEXTAREA";
+  const isContentEditableFocused =
+    document.activeElement?.getAttribute("contenteditable") === "true";
+  // ShadCN sets pointer-events: 'none' on the body when a dialog is open
+  const isAnyModalOpen = () => document.body.style.pointerEvents === "none";
+
+  return (
+    isInputFocused ||
+    isTextAreaFocused ||
+    isContentEditableFocused ||
+    isAnyModalOpen
+  );
+};
 
 export const useBuilderShortCuts = ({
   firstSceneKey,
@@ -21,7 +36,6 @@ export const useBuilderShortCuts = ({
   const { addSelectedNodes, resetSelectedElements } = useStoreApi().getState();
   const { onCopyOrCut, onPaste } = useCopyPaste();
   const closeEditor = useBuilderEditorStore((state) => state.close);
-  const { reactFlowRef } = useBuilderContext();
 
   const shortcuts: Record<string, (e: KeyboardEvent) => void> = {
     ["n"]() {
@@ -43,7 +57,7 @@ export const useBuilderShortCuts = ({
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.isComposing || !reactFlowRef.current?.matches(":hover")) return;
+    if (e.isComposing || isAnyInputFocused()) return;
     const key = e.key.toLocaleLowerCase();
     for (const binding of Object.keys(shortcuts)) {
       if (!binding.endsWith(key)) continue;
