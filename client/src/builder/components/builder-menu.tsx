@@ -27,7 +27,7 @@ export const BuilderMenu = () => {
           size="sm"
           className={btnClassname}
           onClick={() => {
-            addScenes([DEFAULT_SCENE]);
+            addScenes([DEFAULT_SCENE], "auto");
           }}
         >
           <BookOpenTextIcon />

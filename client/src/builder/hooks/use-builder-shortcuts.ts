@@ -25,7 +25,7 @@ export const useBuilderShortCuts = ({
 
   const shortcuts: Record<string, (e: KeyboardEvent) => void> = {
     ["n"]() {
-      addScenes([DEFAULT_SCENE]);
+      addScenes([DEFAULT_SCENE], "auto");
     },
     ["t"]() {
       testStory(firstSceneKey);

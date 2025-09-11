@@ -6,7 +6,7 @@ import { nodeToSceneAdapter } from "../adapters";
 import { BuilderNode } from "../types";
 import { makeSimpleSceneContent } from "@/lib/scene-content";
 
-export const deserialize = (nodes: BuilderNode[]): string => {
+export const nodesToJson = (nodes: BuilderNode[]): string => {
   const keys = new Map(nodes.map((node, i) => [node.data.key, i]));
   return JSON.stringify(
     nodes.map((node): NewScene => {
@@ -41,7 +41,7 @@ export const useCopyPaste = () => {
     ev.preventDefault();
     const nodes = getNodes().filter((nodes) => nodes.selected);
     if (!nodes.length) return;
-    ev.clipboardData?.setData("text/plain", deserialize(nodes));
+    ev.clipboardData?.setData("text/plain", nodesToJson(nodes));
     if (ev.type === "cut") deleteElements({ nodes });
   };
 
@@ -56,7 +56,7 @@ export const useCopyPaste = () => {
       scenes = [{ ...DEFAULT_SCENE, content: makeSimpleSceneContent(text) }];
     }
 
-    addScenes(scenes);
+    addScenes(scenes, "auto");
   };
 
   return {
