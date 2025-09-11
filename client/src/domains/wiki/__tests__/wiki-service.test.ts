@@ -10,6 +10,7 @@ import { nanoid } from "nanoid";
 import { EntityNotExistError, ForbiddenError } from "@/domains/errors";
 import { getStubAuthContext } from "@/domains/user/stubs/stub-auth-context";
 import { getStubWikiPermissionContextFactory } from "../stubs/stub-wiki-permission-context";
+import { WikiCategoryNameTaken } from "../errors";
 
 const DATE = new Date();
 
@@ -127,6 +128,7 @@ describe("wiki service", () => {
         description: "Super wiki",
         image: "http://super-image.fr",
       });
+      expect(repository.createCategory).toHaveBeenCalledTimes(4); // Four default categories have been created
     });
   });
 
@@ -142,8 +144,11 @@ describe("wiki service", () => {
 
       repository.get = vi.fn((key) => {
         expect(key).toStrictEqual(wiki.key);
-
-        return Promise.resolve({ wiki, sections });
+        return Promise.resolve(wiki);
+      });
+      repository.getSections = vi.fn((key) => {
+        expect(key).toStrictEqual(wiki.key);
+        return Promise.resolve(sections);
       });
 
       const wikiData = await svc.getWikiData(wiki.key);
@@ -166,7 +171,7 @@ describe("wiki service", () => {
       ).rejects.toThrow(ForbiddenError);
     });
 
-    test("should create wiki article without category", async () => {
+    test("should create wiki article", async () => {
       repository.createArticle = vi.fn((article) => {
         expect(article).toStrictEqual({
           title: "Article",
@@ -175,6 +180,7 @@ describe("wiki service", () => {
           wikiKey: "wiki-key",
           createdAt: new Date(),
           updatedAt: new Date(),
+          categoryKey: "category-key",
         });
 
         return Promise.resolve("KEY");
@@ -184,6 +190,7 @@ describe("wiki service", () => {
         title: "Article",
         content: makeSimpleLexicalContent("content"),
         image: "http://super-image.fr",
+        categoryKey: "category-key",
       });
       expect(key).toStrictEqual("KEY");
     });
@@ -245,6 +252,55 @@ describe("wiki service", () => {
 
       const articleData = await svc.getArticle("ZIOUM");
       expect(articleData).toStrictEqual({ ...article, key: "ZIOUM" });
+    });
+  });
+
+  describe("create wiki category", () => {
+    test("no perms", async () => {
+      const svc = _getWikiService({
+        repository,
+        authContext: getStubAuthContext(TEST_USER),
+        getPermissionContext: getStubWikiPermissionContextFactory({
+          canCreateCategory: false,
+        }),
+      });
+
+      await expect(
+        svc.createCategory("key", factory.wikiCategory()),
+      ).rejects.toThrow(ForbiddenError);
+    });
+
+    test("should fail if category already exists with same name", async () => {
+      repository.getSections = vi.fn(() =>
+        Promise.resolve([
+          {
+            category: { name: "Plouf", key: "cat-key", color: "red" },
+            articles: [],
+          },
+        ]),
+      );
+
+      await expect(
+        svc.createCategory("wiki-key", { color: "green", name: "Plouf" }),
+      ).rejects.toThrow(WikiCategoryNameTaken);
+    });
+
+    test("should create wiki category", async () => {
+      repository.createCategory = vi.fn((category) => {
+        expect(category).toStrictEqual({
+          name: "Category",
+          color: "#EFCB68",
+          wikiKey: "wiki-key",
+        });
+
+        return Promise.resolve("KEY");
+      });
+
+      const key = await svc.createCategory("wiki-key", {
+        name: "Category",
+        color: "#EFCB68",
+      });
+      expect(key).toStrictEqual("KEY");
     });
   });
 });

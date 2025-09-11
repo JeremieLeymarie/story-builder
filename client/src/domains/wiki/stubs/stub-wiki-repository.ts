@@ -10,18 +10,17 @@ export const getStubWikiRepository = (): WikiRepositoryPort => ({
   getUserWikis: vi.fn(async () => Promise.resolve([])),
   bulkUpdate: vi.fn(async () => Promise.resolve()),
   create: vi.fn(async () => Promise.resolve(nanoid())),
-  get: vi.fn(async () =>
-    Promise.resolve({
-      wiki: factory.wiki(),
-      sections: [
-        {
-          category: factory.wikiCategory(),
-          articles: [{ title: faker.book.title(), key: nanoid() }],
-        },
-      ],
-    }),
+  get: vi.fn(async () => Promise.resolve(factory.wiki())),
+  getSections: vi.fn(async () =>
+    Promise.resolve([
+      {
+        category: factory.wikiCategory(),
+        articles: [{ title: faker.book.title(), key: nanoid() }],
+      },
+    ]),
   ),
   createArticle: vi.fn(async () => Promise.resolve(nanoid())),
   updateArticle: vi.fn(async () => Promise.resolve()),
   getArticle: vi.fn(async () => Promise.resolve(factory.wikiArticle())),
+  createCategory: vi.fn(async () => Promise.resolve(nanoid())),
 });

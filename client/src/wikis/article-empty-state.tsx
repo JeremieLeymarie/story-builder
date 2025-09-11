@@ -26,7 +26,7 @@ export const ArticleEmptyState = () => {
             ? "This wiki is empty..."
             : "Select an article in the bar on the left"}
         </p>
-        {permissions.canCreateArticle() && (
+        {permissions.canCreateArticle && (
           <Link
             to="/wikis/$wikiKey/new"
             params={{ wikiKey: wikiData.wiki.key }}

@@ -25,7 +25,7 @@ function RouteComponent() {
 
   if (!articleData || !wikiData || !permissions) return <ErrorMessage />;
 
-  if (!permissions.canEditArticle()) {
+  if (!permissions.canEditArticle) {
     return (
       <ErrorMessage className="flex flex-col gap-2">
         You don't have permission to create article in this wiki...

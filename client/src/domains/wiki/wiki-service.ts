@@ -1,7 +1,6 @@
-import { Wiki, WikiArticle } from "@/lib/storage/domain";
+import { Wiki, WikiArticle, WikiCategory } from "@/lib/storage/domain";
 import { getDexieWikiRepository, WikiRepositoryPort } from "./wiki-repository";
 import { WikiSchema } from "@/wikis/wiki-form";
-import { ArticleSchema } from "@/wikis/schema";
 import { ArticleUpdatePayload, WikiData } from "./types";
 import { EntityNotExistError, ForbiddenError } from "../errors";
 import { AuthContextPort, getAuthContext } from "../user/auth-context";
@@ -9,6 +8,15 @@ import {
   getWikiPermissionContext,
   WikiPermissionContext,
 } from "./wiki-permission-context";
+import { ArticleSchema, CategorySchema } from "@/wikis/schemas";
+import { WikiCategoryNameTaken } from "./errors";
+
+const DEFAULT_CATEGORIES: Omit<WikiCategory, "key" | "wikiKey">[] = [
+  { name: "Person", color: "#005f73" },
+  { name: "Culture", color: "#94d2bd" },
+  { name: "Geography", color: "#ee9b00" },
+  { name: "Event", color: "#bb3e03" },
+];
 
 export type WikiServicePort = {
   getAllWikis: () => Promise<Wiki[]>;
@@ -24,6 +32,7 @@ export type WikiServicePort = {
     articleKey: string,
     payload: ArticleUpdatePayload,
   ) => Promise<void>;
+  createCategory: (wikiKey: string, payload: CategorySchema) => Promise<string>;
 };
 
 export const _getWikiService = ({
@@ -62,16 +71,26 @@ export const _getWikiService = ({
         type: "created",
       });
 
+      await Promise.all(
+        DEFAULT_CATEGORIES.map((category) =>
+          repository.createCategory({ ...category, wikiKey: key }),
+        ),
+      );
+
       return key;
     },
 
     getWikiData: async (wikiKey) => {
-      return await repository.get(wikiKey);
+      const wiki = await repository.get(wikiKey);
+      if (!wiki) throw new EntityNotExistError("wiki", wikiKey);
+      const sections = await repository.getSections(wiki.key);
+
+      return { wiki, sections };
     },
 
     createArticle: async (wikiKey, payload) => {
       const permissionContext = await getPermissionContext(wikiKey);
-      if (!permissionContext.canCreateArticle()) throw new ForbiddenError();
+      if (!permissionContext.canCreateArticle) throw new ForbiddenError();
 
       const now = new Date();
       return await repository.createArticle({
@@ -94,9 +113,26 @@ export const _getWikiService = ({
       if (!article) throw new EntityNotExistError("wiki-article", articleKey);
 
       const permissionContext = await getPermissionContext(article.wikiKey);
-      if (!permissionContext.canEditArticle()) throw new ForbiddenError();
+      if (!permissionContext.canEditArticle) throw new ForbiddenError();
 
       return await repository.updateArticle(articleKey, payload);
+    },
+
+    createCategory: async (wikiKey, payload) => {
+      const permissionContext = await getPermissionContext(wikiKey);
+      if (!permissionContext.canCreateCategory) throw new ForbiddenError();
+
+      const categoryNames = (await repository.getSections(wikiKey)).map(
+        (section) => section.category?.name,
+      );
+      if (categoryNames.includes(payload.name))
+        throw new WikiCategoryNameTaken(wikiKey, payload.name);
+
+      return await repository.createCategory({
+        wikiKey,
+        color: payload.color,
+        name: payload.name,
+      });
     },
   };
 };

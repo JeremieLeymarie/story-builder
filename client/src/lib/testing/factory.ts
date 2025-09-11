@@ -64,8 +64,10 @@ const _wikiArticleFactory = {
 type WikiCategoryFactory = _BaseFactory<WikiCategory>;
 const _wikiCategoryFactory = {
   key: nanoid,
+  wikiKey: nanoid,
   name: () =>
     faker.helpers.arrayElement(["culture", "people", "event", "geography"]),
+  color: faker.color.rgb,
 } satisfies WikiCategoryFactory;
 
 type StoryBaseFactory = _BaseFactory<StoryBase>;
