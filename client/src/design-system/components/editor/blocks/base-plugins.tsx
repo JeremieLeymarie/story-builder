@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-
 import { ContentEditable } from "@/design-system/components/editor/editor-ui/content-editable";
 import { cn } from "@/lib/style";
 

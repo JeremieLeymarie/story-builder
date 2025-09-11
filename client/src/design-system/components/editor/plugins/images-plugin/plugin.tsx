@@ -23,11 +23,10 @@ import {
   $isImageNode,
   ImageNode,
 } from "@/design-system/components/editor/nodes/image-node";
-import { CAN_USE_DOM } from "@/design-system/components/editor/shared/can-use-dom";
 import { INSERT_IMAGE_COMMAND, InsertImagePayload } from "./command";
 
 const getDOMSelection = (targetWindow: Window | null): Selection | null =>
-  CAN_USE_DOM ? (targetWindow || window).getSelection() : null;
+  (targetWindow || window).getSelection();
 
 export const ImagesPlugin = () => {
   const [editor] = useLexicalComposerContext();
