@@ -22,7 +22,7 @@ import { SceneContent } from "@/lib/scene-content";
 
 type EditorNode = KlassConstructor<typeof LexicalNode> | LexicalNodeReplacement;
 
-export const Editor = ({
+export const RichText = ({
   onChange,
   onSerializedChange,
   initialState,

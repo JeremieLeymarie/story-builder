@@ -60,8 +60,7 @@ const _getRemoteAPIRepository = (
       const { data, error } = await _client.PUT("/api/save/stories", {
         body: {
           stories: adapter.fromClient.stories(stories, user.key),
-          scenes:
-            scenes as unknown as components["schemas"]["FullStory"]["scenes"],
+          scenes,
         },
         params: { header: { authorization: formatTokenHeader(user.token) } },
       });
