@@ -3,7 +3,6 @@ import { Button } from "@/design-system/primitives";
 import { Badge } from "@/design-system/primitives/badge";
 import { WikiArticle } from "@/lib/storage/domain";
 import { Link } from "@tanstack/react-router";
-import { SerializedEditorState } from "lexical";
 import { PencilIcon } from "lucide-react";
 import { useWikiStore } from "./hooks/use-wiki-store";
 import { RichText } from "@/design-system/components/editor/blocks/rich-text-editor";
@@ -56,10 +55,7 @@ export const Article = ({
         />
       </div>
       <article>
-        <RichText
-          initialState={article.content as unknown as SerializedEditorState}
-          editable={false}
-        />
+        <RichText initialState={article.content} editable={false} />
       </article>
     </div>
   );

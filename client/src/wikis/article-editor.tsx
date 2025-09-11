@@ -10,12 +10,12 @@ import {
   FormMessage,
   Input,
 } from "@/design-system/primitives";
-import { SerializedEditorState } from "lexical";
 import { CornerDownLeft } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useWikiStore } from "./hooks/use-wiki-store";
 import { RichText } from "@/design-system/components/editor/blocks/rich-text-editor";
 import { ArticleSchema, articleSchema } from "./schemas";
+import { SceneContent } from "@/lib/scene-content";
 
 type UpdateProps =
   | {
@@ -103,9 +103,7 @@ export const ArticleEditor = ({
                   <RichText
                     editable
                     onSerializedChange={field.onChange}
-                    initialState={
-                      defaultValues?.content as unknown as SerializedEditorState
-                    }
+                    initialState={defaultValues?.content as SceneContent}
                   />
                 </FormControl>
                 <FormMessage />

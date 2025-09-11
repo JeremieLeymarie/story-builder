@@ -30,7 +30,7 @@ const editorConfig: InitialConfigType = {
   },
 };
 
-export const Editor = ({
+export const RichText = ({
   onChange,
   onSerializedChange,
   initialState,
