@@ -1,16 +1,20 @@
 import z from "zod/v4";
-import { DEFAULT_SCENE, NewScene, useAddScenes } from "./use-add-scenes";
+import {
+  DEFAULT_SCENE,
+  CreateScenePayload,
+  useAddScenes,
+} from "./use-add-scenes";
 import { sceneSchema } from "../components/builder-editor-bar/scene-editor/schema";
 import { useReactFlow } from "@xyflow/react";
-import { nodeToSceneAdapter } from "../adapters";
-import { BuilderNode } from "../types";
 import { makeSimpleSceneContent } from "@/lib/scene-content";
+import { Scene } from "@/lib/storage/domain";
+import { BuilderNode } from "../types";
+import { nodeToSceneAdapter } from "../adapters";
 
-export const nodesToJson = (nodes: BuilderNode[]): string => {
-  const keys = new Map(nodes.map((node, i) => [node.data.key, i]));
+export const scenesToJson = (scenes: Scene[]): string => {
+  const keys = new Map(scenes.map((node, i) => [node.key, i]));
   return JSON.stringify(
-    nodes.map((node): NewScene => {
-      const scene = nodeToSceneAdapter(node);
+    scenes.map((scene): CreateScenePayload => {
       return {
         title: scene.title,
         content: scene.content,
@@ -41,7 +45,10 @@ export const useCopyPaste = () => {
     ev.preventDefault();
     const nodes = getNodes().filter((nodes) => nodes.selected);
     if (!nodes.length) return;
-    ev.clipboardData?.setData("text/plain", nodesToJson(nodes));
+    ev.clipboardData?.setData(
+      "text/plain",
+      scenesToJson(nodes.map((nd) => nodeToSceneAdapter(nd))),
+    );
     if (ev.type === "cut") deleteElements({ nodes });
   };
 
