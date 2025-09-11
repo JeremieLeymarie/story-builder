@@ -1,9 +1,9 @@
 import { BackdropLoader, ErrorMessage } from "@/design-system/components";
 import { WikiProvider } from "@/wikis/hooks/use-wiki-store";
 import { createFileRoute } from "@tanstack/react-router";
-import { ArticleEmptyState } from "@/wikis/article-empty-state";
 import { WikiContainer } from "@/wikis/wiki-container";
 import { useWikiQueries } from "./-hooks/use-wiki-queries";
+import { WikiHome } from "@/wikis/wiki-home";
 
 const RouteComponent = () => {
   const { wikiKey } = Route.useParams();
@@ -24,7 +24,7 @@ const RouteComponent = () => {
       permissions={permissions}
     >
       <WikiContainer>
-        <ArticleEmptyState />
+        <WikiHome />
       </WikiContainer>
     </WikiProvider>
   );
