@@ -1,7 +1,9 @@
 import { DexieDatabase, db } from "@/lib/storage/dexie/dexie-db";
-import { Wiki, WikiArticle } from "@/lib/storage/domain";
+import { Wiki, WikiArticle, WikiCategory } from "@/lib/storage/domain";
 import { WithoutKey } from "@/types";
-import { ArticleUpdatePayload, WikiData } from "./types";
+import { ArticleUpdatePayload, WikiSection } from "./types";
+
+export const NO_CATEGORY = "NO_CATEGORY";
 
 export type WikiRepositoryPort = {
   getUserWikis: (userKey: string | undefined) => Promise<Wiki[]>;
@@ -9,13 +11,15 @@ export type WikiRepositoryPort = {
     wikis: ({ key: string } & Partial<Omit<Wiki, "key">>)[],
   ) => Promise<void>;
   create: (wiki: WithoutKey<Wiki>) => Promise<string>;
-  get: (wikiKey: string) => Promise<WikiData | null>;
+  get: (wikiKey: string) => Promise<Wiki | null>;
+  getSections: (wikiKey: string) => Promise<WikiSection[]>;
   createArticle: (payload: WithoutKey<WikiArticle>) => Promise<string>;
   updateArticle: (
     articleKey: string,
     payload: ArticleUpdatePayload,
   ) => Promise<void>;
   getArticle: (articleKey: string) => Promise<WikiArticle | null>;
+  createCategory: (payload: WithoutKey<WikiCategory>) => Promise<string>;
 };
 
 export const _getDexieWikiRepository = (
@@ -50,23 +54,33 @@ export const _getDexieWikiRepository = (
       const wiki = await db.wikis.get(wikiKey);
       if (!wiki) return null;
 
-      const NO_CATEGORY = "NO_CATEGORY";
+      return wiki;
+    },
+
+    getSections: async (wikiKey) => {
+      const categories = await db.wikiCategories
+        .filter((cat) => cat.wikiKey === wikiKey)
+        .toArray();
+
+      const categoryKeys = categories.map(({ key }) => key);
+
       const articlesByCategoryKey: {
-        [categoryKey: string]: WikiArticle[];
+        [categoryKey: string]: WikiSection["articles"];
       } = {};
+
       await db.wikiArticles.where({ wikiKey }).each((article) => {
-        const key = article.categoryKey ?? NO_CATEGORY;
+        const key =
+          article.categoryKey && categoryKeys.includes(article.categoryKey)
+            ? article.categoryKey
+            : NO_CATEGORY;
+
+        const simpleArticle = { title: article.title, key: article.key };
         if (articlesByCategoryKey[key]) {
-          articlesByCategoryKey[key].push(article);
+          articlesByCategoryKey[key].push(simpleArticle);
         } else {
-          articlesByCategoryKey[key] = [article];
+          articlesByCategoryKey[key] = [simpleArticle];
         }
       });
-
-      const categoryKeys = Object.keys(articlesByCategoryKey).filter(
-        (key) => key !== NO_CATEGORY,
-      );
-      const categories = await db.wikiCategories.bulkGet(categoryKeys);
 
       const sections = Object.entries(articlesByCategoryKey).map(
         ([categoryKey, articles]) => {
@@ -74,13 +88,19 @@ export const _getDexieWikiRepository = (
             categories.find((cat) => cat?.key === categoryKey) ?? null;
 
           return {
-            category,
+            category: category
+              ? {
+                  key: category.key,
+                  name: category.name,
+                  color: category.color,
+                }
+              : null,
             articles,
           };
         },
       );
 
-      return { wiki, sections };
+      return sections;
     },
 
     createArticle: async (payload) => {
@@ -96,6 +116,10 @@ export const _getDexieWikiRepository = (
 
     getArticle: async (articleKey) => {
       return (await db.wikiArticles.get(articleKey)) ?? null;
+    },
+
+    createCategory: async (payload) => {
+      return await db.wikiCategories.add(payload);
     },
   };
 };

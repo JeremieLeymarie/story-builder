@@ -1,8 +1,8 @@
 import { getWikiService } from "@/domains/wiki/wiki-service";
-import { ArticleSchema } from "../schema";
 import { useWikiStore } from "./use-wiki-store";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
+import { ArticleSchema } from "../schemas";
 
 export const useArticleActions = () => {
   const svc = getWikiService();

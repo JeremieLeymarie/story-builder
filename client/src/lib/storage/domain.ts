@@ -99,8 +99,10 @@ export type WikiArticle = {
 };
 
 export type WikiCategory = {
+  wikiKey: string;
   key: string;
   name: string;
+  color: string;
 };
 
 export const ENTITIES = [

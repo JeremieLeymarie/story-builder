@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { ArticleSchema, articleSchema } from "./schema";
 import { useArticleActions } from "./hooks/use-article-actions";
 import {
   Button,
@@ -16,6 +15,7 @@ import { CornerDownLeft } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useWikiStore } from "./hooks/use-wiki-store";
 import { RichText } from "@/design-system/components/editor/blocks/rich-text-editor";
+import { ArticleSchema, articleSchema } from "./schemas";
 
 type UpdateProps =
   | {
