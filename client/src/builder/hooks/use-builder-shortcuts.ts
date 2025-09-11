@@ -14,7 +14,7 @@ const isAnyInputFocused = () => {
   const isContentEditableFocused =
     document.activeElement?.getAttribute("contenteditable") === "true";
   // ShadCN sets pointer-events: 'none' on the body when a dialog is open
-  const isAnyModalOpen = () => document.body.style.pointerEvents === "none";
+  const isAnyModalOpen = document.body.style.pointerEvents === "none";
 
   return (
     isInputFocused ||
