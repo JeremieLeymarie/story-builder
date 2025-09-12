@@ -19,6 +19,7 @@ import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ImageNode } from "../nodes/image-node";
 import { ReactNode } from "react";
 import { SceneContent } from "@/lib/scene-content";
+import { TextDisplayMode } from "../types";
 
 type EditorNode = KlassConstructor<typeof LexicalNode> | LexicalNodeReplacement;
 
@@ -28,16 +29,24 @@ export const RichText = ({
   initialState,
   editable,
   className,
+<<<<<<< HEAD:client/src/design-system/components/editor/components/rich-text-editor.tsx
   toolbarPlugins,
   editorNodes,
+=======
+  textDisplayMode,
+>>>>>>> 220aec0 (:lipstick: Rich Text - Implement text display modes (scroll, summary, full)):client/src/design-system/components/editor/blocks/rich-text-editor.tsx
 }: {
   className?: string;
   editable: boolean;
   initialState?: SceneContent;
   onChange?: (editorState: EditorState) => void;
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
+<<<<<<< HEAD:client/src/design-system/components/editor/components/rich-text-editor.tsx
   toolbarPlugins?: ReactNode[];
   editorNodes?: EditorNode[];
+=======
+  textDisplayMode: TextDisplayMode;
+>>>>>>> 220aec0 (:lipstick: Rich Text - Implement text display modes (scroll, summary, full)):client/src/design-system/components/editor/blocks/rich-text-editor.tsx
 }) => {
   // This allow lexical to refresh it's initial state when the content changes from the outside
   const state = JSON.stringify(initialState);
@@ -81,8 +90,17 @@ export const RichText = ({
         }}
       >
         <TooltipProvider>
+<<<<<<< HEAD:client/src/design-system/components/editor/components/rich-text-editor.tsx
           {editable && <EditorPlugins toolbarPlugins={toolbarPlugins} />}
           <BasePlugins className={className} editable={editable} />
+=======
+          {editable && <EditorPlugins />}
+          <BasePlugins
+            className={className}
+            editable={editable}
+            textDisplayMode={textDisplayMode}
+          />
+>>>>>>> 220aec0 (:lipstick: Rich Text - Implement text display modes (scroll, summary, full)):client/src/design-system/components/editor/blocks/rich-text-editor.tsx
 
           <OnChangePlugin
             ignoreSelectionChange={true}
