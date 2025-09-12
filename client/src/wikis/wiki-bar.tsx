@@ -2,7 +2,7 @@ import { Title } from "@/design-system/components";
 import { Toolbar } from "@/design-system/components/toolbar";
 import { Input } from "@/design-system/primitives";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
-import { PlusCircleIcon, SearchIcon } from "lucide-react";
+import { PlusCircleIcon, PlusIcon, SearchIcon } from "lucide-react";
 import { useWikiStore } from "./hooks/use-wiki-store";
 import { WikiSection } from "@/domains/wiki/types";
 import { Link, useParams } from "@tanstack/react-router";
@@ -12,6 +12,8 @@ import {
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
 import { cn } from "@/lib/style";
+import { AddCategoryPopover } from "./add-category-popover";
+import { CategoryBadge } from "./category-badge";
 
 const ArticleTitle = ({
   title,
@@ -29,7 +31,7 @@ const ArticleTitle = ({
       <p
         className={cn(
           isSelected && "bg-accent font-semibold",
-          "hover:bg-accent text-md w-full truncate rounded py-1 pl-2",
+          "hover:bg-accent text-md w-full truncate rounded py-1 pl-6",
         )}
       >
         {title}
@@ -38,19 +40,26 @@ const ArticleTitle = ({
   );
 };
 
+const SectionTitle = ({ title, color }: { title: string; color: string }) => {
+  return <CategoryBadge color={color}>{title}</CategoryBadge>;
+};
+
 const Section = ({ category, articles }: WikiSection) => {
   const wikiKey = useWikiStore((state) => state.wikiData.wiki.key);
 
   return (
-    <div className="my-2">
-      <div className="flex items-center gap-2">
-        <Title variant="sub-section">{category?.name ?? "Other"}</Title>
+    <div className="group my-2">
+      <div className="flex items-center justify-between">
+        <SectionTitle
+          title={category?.name ?? "Other"}
+          color={category?.color ?? "#80ed99"}
+        />
         <Tooltip>
           <TooltipTrigger>
             <Link to="/wikis/$wikiKey/new" params={{ wikiKey }}>
               <PlusCircleIcon
-                size={18}
-                className="text-primary cursor-pointer transition-transform ease-in-out hover:scale-105"
+                size={20}
+                className="text-primary invisible cursor-pointer transition-transform ease-in-out group-hover:visible hover:scale-105"
               />
             </Link>
           </TooltipTrigger>
@@ -82,14 +91,22 @@ export const WikiBar = () => {
       {/* Apparently display grid is needed in order for the scroll area to work with a max-height instead of hard-coded height?? */}
       <div className="grid">
         <ScrollArea className="flex max-h-[calc(100dvh-175px)]">
+          <AddCategoryPopover
+            trigger={
+              <Title
+                className="text-muted-foreground text-md flex items-center gap-2 font-semibold decoration-dashed"
+                variant="sub-section"
+              >
+                New category <PlusIcon className="cursor-pointer" size={20} />
+              </Title>
+            }
+          />
           <Link
             to="/wikis/$wikiKey"
             params={{ wikiKey }}
             className="my-2 block"
           >
-            <Title variant="sub-section" className="flex items-center gap-2">
-              Home
-            </Title>
+            <SectionTitle title="Home" color="#ffffff" />
           </Link>
           {sections.map(({ category, articles }) => (
             <Section
