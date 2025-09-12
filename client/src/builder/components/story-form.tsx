@@ -58,6 +58,7 @@ export const StoryForm = ({
                 />
               </FormControl>
               <FormDescription>The genre(s) of your story</FormDescription>
+              <FormMessage />
             </FormItem>
           )}
         />
