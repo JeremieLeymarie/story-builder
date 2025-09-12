@@ -20,9 +20,11 @@ export const scenesToJson = (scenes: Scene[]): string => {
       return {
         title: scene.title,
         content: scene.content,
-        actions: scene.actions.map((action) => {
+        actions: scene.actions.map((old_action) => {
+          const action = structuredClone(old_action);
           const idx = keys.get(action.sceneKey ?? "");
-          if (idx !== undefined) action.sceneKey = "=" + idx;
+          if (idx === undefined) delete action.sceneKey;
+          else action.sceneKey = "=" + idx;
           return action;
         }),
         builderParams: scene.builderParams,
