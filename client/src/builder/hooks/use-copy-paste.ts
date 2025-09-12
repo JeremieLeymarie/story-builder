@@ -11,6 +11,7 @@ import { Scene } from "@/lib/storage/domain";
 import { BuilderNode } from "../types";
 import { nodeToSceneAdapter } from "../adapters";
 import { getBuilderService } from "@/get-builder-service";
+import { isAnyInputFocused } from "./use-builder-shortcuts";
 
 export const scenesToJson = (scenes: Scene[]): string => {
   const keys = new Map(scenes.map((node, i) => [node.key, i]));
@@ -44,6 +45,7 @@ export const useCopyPaste = () => {
   );
 
   const onCopyOrCut = (ev: ClipboardEvent) => {
+    if (isAnyInputFocused()) return;
     ev.preventDefault();
     const nodes = getNodes().filter((nd) => nd.selected);
     if (!nodes.length) return;
@@ -58,6 +60,7 @@ export const useCopyPaste = () => {
   };
 
   const onPaste = (ev: ClipboardEvent) => {
+    if (isAnyInputFocused()) return;
     ev.preventDefault();
     const text = ev.clipboardData?.getData("text") ?? "[]";
 
