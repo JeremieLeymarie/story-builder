@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { useForm } from "react-hook-form";
-import { categorySchema } from "./schemas";
+import { CategorySchema, categorySchema } from "./schemas";
 import { useCreateCategory } from "./hooks/use-create-category";
 import { randomInArray } from "@/lib/random";
 import { DEFAULT_COLORS } from "@/design-system/components/color-picker/constants";
@@ -18,20 +18,25 @@ import {
 import { ColorPicker } from "@/design-system/components";
 
 export const AddCategoryPopover = ({ trigger }: { trigger: ReactNode }) => {
+  const [open, setOpen] = useState(false);
   const form = useForm({
     resolver: zodResolver(categorySchema),
     defaultValues: { color: randomInArray(DEFAULT_COLORS), name: "" },
   });
   const { createCategory } = useCreateCategory();
 
-  return (
-    <Popover>
-      <PopoverTrigger>{trigger}</PopoverTrigger>
+  const onSubmit = async (payload: CategorySchema) => {
+    await createCategory(payload);
+    setOpen(false);
+  };
 
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger>{trigger}</PopoverTrigger>
       <PopoverContent side="right" className="w-max">
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(createCategory)}
+            onSubmit={form.handleSubmit(onSubmit)}
             className="flex w-max gap-2"
           >
             <FormField
@@ -56,7 +61,7 @@ export const AddCategoryPopover = ({ trigger }: { trigger: ReactNode }) => {
                 <FormItem>
                   <FormControl>
                     <ColorPicker
-                      onChange={(color) => field.onChange(color)}
+                      onChange={field.onChange}
                       defaultValue={field.value}
                       size="sm"
                       position="right"

@@ -2,11 +2,13 @@ import { getIsColorDark } from "@/lib/colors";
 import { cn } from "@/lib/style";
 
 export const CategoryBadge = ({
-  color,
-  children,
+  color = "#f0f0f0",
+  name = "Other",
+  className,
 }: {
-  children: string;
-  color: string;
+  name?: string;
+  color?: string;
+  className?: string;
 }) => {
   const isColorDark = getIsColorDark(color);
 
@@ -15,10 +17,11 @@ export const CategoryBadge = ({
       className={cn(
         isColorDark ? "text-white" : "text-black",
         "rounded-lg px-3 py-0.5",
+        className,
       )}
       style={{ backgroundColor: color }}
     >
-      {children}
+      {name}
     </div>
   );
 };
