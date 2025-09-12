@@ -1,4 +1,4 @@
-import { ChangeEvent, forwardRef, HTMLAttributes, useState } from "react";
+import { forwardRef, HTMLAttributes, useState } from "react";
 import { chunk } from "@/lib/array";
 import { randomInArray } from "@/lib/random";
 import { PencilIcon, RefreshCcwIcon } from "lucide-react";
@@ -78,8 +78,7 @@ export const ColorPicker = ({
       : randomInArray(DEFAULT_COLORS),
   );
 
-  const _onChange = (e: ChangeEvent) => {
-    const value = (e.target as HTMLInputElement).value;
+  const _onChange = (value: string) => {
     // Here we only do the most basic validation, since the consumer will be responsible for use-case specific validation (using zod + react-hook-form)
     if (value.match(HEX_COLOR_REGEX)) {
       setColor(value);
@@ -97,12 +96,12 @@ export const ColorPicker = ({
           <Input
             className="h-8 w-full"
             placeholder={color}
-            onChange={_onChange}
+            onChange={(e) => _onChange((e.target as HTMLInputElement).value)}
           />
           <Button
             size="sm"
             variant="outline"
-            onClick={() => setColor(randomInArray(DEFAULT_COLORS))}
+            onClick={() => _onChange(randomInArray(DEFAULT_COLORS))}
           >
             <RefreshCcwIcon />
           </Button>
@@ -114,7 +113,7 @@ export const ColorPicker = ({
               <div
                 key={color}
                 onClick={() => {
-                  setColor(color);
+                  _onChange(color);
                 }}
                 className="h-6 w-8 cursor-pointer rounded"
                 style={{ backgroundColor: color }}
