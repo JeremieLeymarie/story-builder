@@ -54,6 +54,7 @@ export const SceneContentSection = ({
                 initialState={scenePayload.content}
                 editable
                 className="h-[300px] max-w-[450px]"
+                textDisplayMode="scroll"
               />
             </FormControl>
             <FormMessage />

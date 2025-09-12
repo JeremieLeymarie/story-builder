@@ -27,7 +27,11 @@ export const GameScene = ({
               {title}
             </h1>
             <p className="leading-7 wrap-break-word not-first:mt-6">
-              <RichText editable={false} initialState={content} />
+              <RichText
+                editable={false}
+                initialState={content}
+                textDisplayMode="full"
+              />
             </p>
             <div className="mt-4 flex w-full flex-wrap gap-3">
               {actions.map((action) => (

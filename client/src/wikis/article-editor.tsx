@@ -104,6 +104,7 @@ export const ArticleEditor = ({
                     editable
                     onSerializedChange={field.onChange}
                     initialState={defaultValues?.content as SceneContent}
+                    textDisplayMode="scroll"
                   />
                 </FormControl>
                 <FormMessage />

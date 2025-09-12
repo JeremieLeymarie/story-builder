@@ -12,6 +12,7 @@ import { EditorPlugins } from "./editor-plugins";
 import { BasePlugins } from "./base-plugins";
 import { cn } from "@/lib/style";
 import { SceneContent } from "@/lib/scene-content";
+import { TextDisplayMode } from "../types";
 
 const editorConfig: InitialConfigType = {
   namespace: "Editor",
@@ -36,12 +37,14 @@ export const RichText = ({
   initialState,
   editable,
   className,
+  textDisplayMode,
 }: {
   className?: string;
   editable: boolean;
   initialState?: SceneContent;
   onChange?: (editorState: EditorState) => void;
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
+  textDisplayMode: TextDisplayMode;
 }) => {
   // This allow lexical to refresh it's initial state when the content changes from the outside
   const state = JSON.stringify(initialState);
@@ -63,7 +66,11 @@ export const RichText = ({
       >
         <TooltipProvider>
           {editable && <EditorPlugins />}
-          <BasePlugins className={className} editable={editable} />
+          <BasePlugins
+            className={className}
+            editable={editable}
+            textDisplayMode={textDisplayMode}
+          />
 
           <OnChangePlugin
             ignoreSelectionChange={true}
