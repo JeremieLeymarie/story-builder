@@ -51,7 +51,11 @@ export const Article = ({
         />
       </div>
       <article>
-        <RichText initialState={article.content} editable={false} />
+        <RichText
+          initialState={article.content}
+          editable={false}
+          textDisplayMode="full"
+        />
       </article>
     </div>
   );

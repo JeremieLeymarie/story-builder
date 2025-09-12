@@ -9,7 +9,7 @@ import {
 import { UseFormReturn } from "react-hook-form";
 import { SceneSchema, SceneUpdatePayload } from "./schema";
 import { SetFirstSceneSwitch } from "./set-first-scene-switch";
-import { Editor } from "@/design-system/components/editor/components/rich-text-editor";
+import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
 import { WikiNode } from "@/design-system/components/editor/nodes/wiki-node";
 import { WikiPlugin } from "./wiki-lexical-plugin";
 import { useBuilderContext } from "@/builder/hooks/use-builder-context";
@@ -53,7 +53,7 @@ export const SceneContentSection = ({
           <FormItem>
             <FormLabel>Content</FormLabel>
             <FormControl>
-              <Editor
+              <RichText
                 onSerializedChange={field.onChange}
                 initialState={scenePayload.content}
                 editable
