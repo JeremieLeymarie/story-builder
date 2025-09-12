@@ -8,7 +8,7 @@ import { useCopyPaste } from "./use-copy-paste";
 import { useEffect } from "react";
 import { useBuilderEditorStore } from "./use-scene-editor-store";
 
-const isAnyInputFocused = () => {
+export const isAnyInputFocused = () => {
   const isInputFocused = document.activeElement?.tagName === "INPUT";
   const isTextAreaFocused = document.activeElement?.tagName === "TEXTAREA";
   const isContentEditableFocused =
