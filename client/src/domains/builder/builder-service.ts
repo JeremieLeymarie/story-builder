@@ -1,4 +1,4 @@
-import { Scene, Story } from "@/lib/storage/domain";
+import { BuilderPosition, Scene, Story } from "@/lib/storage/domain";
 import { LocalRepositoryPort } from "@/repositories/local-repository-port";
 import { BuilderNode } from "@/builder/types";
 import { Edge } from "@xyflow/react";
@@ -13,17 +13,21 @@ import { BuilderStoryRepositoryPort } from "./ports/builder-story-repository-por
 import { LayoutServicePort } from "./ports/layout-service-port";
 import { EntityNotExistError } from "../errors";
 import { CannotDeleteFirstSceneError } from "./errors";
+import { nanoid } from "nanoid";
+import { BuilderSceneRepositoryPort } from "./ports/builder-scene-repository-port";
 
 export const _getBuilderService = ({
   localRepository,
   layoutService,
   importService,
-  builderStoryRepository,
+  storyRepository,
+  sceneRepository,
 }: {
   layoutService: LayoutServicePort;
   importService: ImportServicePort;
-  localRepository: LocalRepositoryPort;
-  builderStoryRepository: BuilderStoryRepositoryPort;
+  localRepository: LocalRepositoryPort; // Legacy: should be removed and replaced by domain-specific repositories
+  storyRepository: BuilderStoryRepositoryPort;
+  sceneRepository: BuilderSceneRepositoryPort;
 }): BuilderServicePort => {
   const getUserBuilderStories = async () => {
     const user = await localRepository.getUser();
@@ -60,7 +64,7 @@ export const _getBuilderService = ({
   return {
     updateSceneBuilderPosition: async (
       sceneKey: string,
-      position: Scene["builderParams"]["position"],
+      position: BuilderPosition,
     ) => {
       await localRepository.updatePartialScene(sceneKey, {
         builderParams: { position },
@@ -287,7 +291,45 @@ export const _getBuilderService = ({
     },
 
     updateStory: async (key, payload) => {
-      return builderStoryRepository.update(key, payload);
+      return storyRepository.update(key, payload);
+    },
+
+    // TODO: unit tests
+    duplicateScenes: async ({ originalScenes, newPositions, storyKey }) => {
+      const story = await storyRepository.get(storyKey);
+      if (!story) throw new EntityNotExistError("story", storyKey);
+
+      const originalSceneKeys = originalScenes.map(({ key }) => key);
+
+      // Create new keys imperatively to compute bulk payload in a single loop
+      const oldKeyToNewKey = originalSceneKeys.reduce(
+        (acc, key) => ({ ...acc, [key]: nanoid() }),
+        {} as Record<string, string>,
+      );
+
+      const payload = originalScenes.map((scene) => ({
+        key: oldKeyToNewKey[scene.key]!,
+        storyKey,
+        title: scene.title,
+        content: scene.content,
+        builderParams: {
+          position: {
+            x: newPositions[scene.key]!.x,
+            y: newPositions[scene.key]!.y,
+          },
+        },
+        actions: scene.actions.map(({ sceneKey, text }) => {
+          if (sceneKey && originalSceneKeys.includes(sceneKey))
+            return {
+              text,
+              sceneKey: oldKeyToNewKey[sceneKey]!,
+            };
+          return { text }; // Do not copy links that target a scene that is not within the batch of duplicated scenes
+        }),
+      }));
+
+      await sceneRepository.bulkAdd(payload);
+      return payload;
     },
   };
 };

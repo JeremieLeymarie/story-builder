@@ -8,14 +8,14 @@ import {
 } from "@xyflow/react";
 import { nodeToSceneAdapter } from "../adapters";
 import { getBuilderService } from "@/get-builder-service";
-import { DEFAULT_SCENE, useAddScenes } from "./use-add-scenes";
 import { BuilderNode } from "../types";
 import { useBuilderError } from "./use-builder-error";
+import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
 
 export const useBuilderEdges = () => {
   const { getNodes, setEdges } = useReactFlow<BuilderNode>();
   const { handleError } = useBuilderError();
-  const { addScenes } = useAddScenes();
+  const { addScene } = useAddScene();
   const { screenToFlowPosition } = useReactFlow();
 
   const getSceneToUpdate = (edge: Edge | Connection) => {
@@ -60,7 +60,7 @@ export const useBuilderEdges = () => {
     });
   };
 
-  const onConnectEnd = (
+  const onConnectEnd = async (
     ev: MouseEvent | TouchEvent,
     connectionState: FinalConnectionState,
   ) => {
@@ -76,18 +76,16 @@ export const useBuilderEdges = () => {
       });
       // Magic values that places the node over the correct handle:
       const offset = fromHandle ? { x: 0, y: 0 } : { x: 375 - 16, y: 27.5 };
-      const scene = addScenes(
-        [
-          fromHandle
-            ? DEFAULT_SCENE
-            : { ...DEFAULT_SCENE, actions: [{ text: "" }] },
-        ],
-        { x: position.x - offset.x, y: position.y - offset.y },
-      );
+      const scene = await addScene({
+        payload: fromHandle
+          ? DEFAULT_SCENE
+          : { ...DEFAULT_SCENE, actions: [{ text: "" }] },
+        position: { x: position.x - offset.x, y: position.y - offset.y },
+      });
       if (!scene) return;
 
       const fromNode = connectionState.fromNode.id;
-      const toNode = scene[0]!.key;
+      const toNode = scene.key;
 
       const toHandle = `${toNode}-0`;
       setTimeout(() => {
