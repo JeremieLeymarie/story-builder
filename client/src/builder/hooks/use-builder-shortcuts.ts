@@ -2,11 +2,11 @@ import { useTestStory } from "./use-test-story";
 import { useExportModalStore } from "./use-export-modal-store";
 import { useReactFlow, useStoreApi } from "@xyflow/react";
 import { BuilderNode } from "../types";
-import { DEFAULT_SCENE, useAddScenes } from "./use-add-scenes";
 import { getUserOS } from "@/lib/get-os";
 import { useCopyPaste } from "./use-copy-paste";
 import { useEffect } from "react";
 import { useBuilderEditorStore } from "./use-scene-editor-store";
+import { useAddScene } from "./use-add-scene";
 
 export const isAnyInputFocused = () => {
   const isInputFocused = document.activeElement?.tagName === "INPUT";
@@ -29,7 +29,7 @@ export const useBuilderShortCuts = ({
 }: {
   firstSceneKey: string;
 }) => {
-  const { addScenes } = useAddScenes();
+  const { addScene } = useAddScene();
   const openExportModal = useExportModalStore((state) => state.setOpen);
   const { testStory } = useTestStory();
   const { getNodes } = useReactFlow<BuilderNode>();
@@ -39,7 +39,7 @@ export const useBuilderShortCuts = ({
 
   const shortcuts: Record<string, (e: KeyboardEvent) => void> = {
     ["n"]() {
-      addScenes([DEFAULT_SCENE], "auto");
+      addScene({ position: "auto" });
     },
     ["t"]() {
       testStory(firstSceneKey);

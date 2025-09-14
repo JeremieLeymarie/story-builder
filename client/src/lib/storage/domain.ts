@@ -59,13 +59,15 @@ export type Action = {
   sceneKey?: string;
 };
 
+export type BuilderPosition = { x: number; y: number };
+
 export type Scene = {
   key: string;
   storyKey: string;
   title: string;
   content: SceneContent;
   actions: Action[];
-  builderParams: { position: { x: number; y: number } };
+  builderParams: { position: BuilderPosition };
 };
 
 export type StoryProgress = {
