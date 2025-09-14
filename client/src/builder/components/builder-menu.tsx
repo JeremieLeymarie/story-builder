@@ -5,14 +5,14 @@ import { ExportModal } from "./export-modal";
 import { DeleteModal } from "./delete-modal";
 import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
 import { useBuilderContext } from "../hooks/use-builder-context";
-import { DEFAULT_SCENE, useAddScenes } from "../hooks/use-add-scenes";
 import { useBuilderEditorStore } from "../hooks/use-scene-editor-store";
 import { Toolbar, ToolbarTitle } from "@/design-system/components/toolbar";
+import { useAddScene } from "../hooks/use-add-scene";
 
 export const BuilderMenu = () => {
   const { story } = useBuilderContext();
   const { testStory, deleteStory } = useToolbar({ storyKey: story.key });
-  const { addScenes } = useAddScenes();
+  const { addScene } = useAddScene();
   const openBuilderEditor = useBuilderEditorStore((state) => state.open);
 
   const btnClassname = "flex w-full justify-start gap-4";
@@ -27,7 +27,7 @@ export const BuilderMenu = () => {
           size="sm"
           className={btnClassname}
           onClick={() => {
-            addScenes([DEFAULT_SCENE], "auto");
+            addScene({ position: "auto" });
           }}
         >
           <BookOpenTextIcon />

@@ -12,7 +12,6 @@ import { cn } from "@/lib/style";
 import { Button } from "@/design-system/primitives";
 import { useBuilderEditorStore } from "@/builder/hooks/use-scene-editor-store";
 import { RichText } from "@/design-system/components/editor/blocks/rich-text-editor";
-import { scenesToJson } from "@/builder/hooks/use-copy-paste";
 
 export type SceneNodeProps = NodeProps<SceneNodeType>;
 
@@ -31,7 +30,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
       )}
       onAuxClick={(ev) => {
         ev.preventDefault();
-        navigator.clipboard.writeText(scenesToJson([data]));
+        navigator.clipboard.writeText(JSON.stringify([data]));
         setNodes((nds) => nds.filter((nd) => nd.data.key !== data.key));
       }}
       onDoubleClick={() => {
@@ -66,11 +65,12 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
             </Button>
           )}
         </div>
-        <CardDescription>
+        <CardDescription className="select-none">
           <RichText
             editable={false}
             initialState={data.content}
             textDisplayMode="summary"
+            className="select-none"
           />
         </CardDescription>
       </CardHeader>

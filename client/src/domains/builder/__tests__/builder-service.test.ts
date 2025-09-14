@@ -29,6 +29,10 @@ import {
   MOCK_IMPORTED_SCENE,
 } from "@/domains/__tests__/data/imported-story-mocks";
 import { getTestFactory } from "@/lib/testing/factory";
+import {
+  getStubBuilderSceneRepository,
+  MockBuilderSceneRepository,
+} from "../stubs/stub-builder-scene-repository";
 
 const factory = getTestFactory();
 
@@ -37,7 +41,8 @@ describe("builder-service", () => {
   let localRepository: MockLocalRepository;
   let layoutService: MockLayoutService;
   let importService: MockImportService;
-  let builderStoryRepository: MockBuilderStoryRepository;
+  let storyRepository: MockBuilderStoryRepository;
+  let sceneRepository: MockBuilderSceneRepository;
 
   beforeAll(() => {
     vi.useFakeTimers();
@@ -47,13 +52,15 @@ describe("builder-service", () => {
     localRepository = getLocalRepositoryStub();
     layoutService = getStubLayoutService();
     importService = getImportServiceStub();
-    builderStoryRepository = getStubBuilderStoryRepository();
+    storyRepository = getStubBuilderStoryRepository();
+    sceneRepository = getStubBuilderSceneRepository();
 
     builderService = _getBuilderService({
       localRepository,
       importService,
       layoutService,
-      builderStoryRepository,
+      storyRepository,
+      sceneRepository,
     });
   });
 
@@ -676,14 +683,14 @@ describe("builder-service", () => {
   describe("updateStory", () => {
     it("should update scene using repository", async () => {
       const mockStory = factory.story.builder();
-      builderStoryRepository.update = vi.fn(() => Promise.resolve(mockStory));
+      storyRepository.update = vi.fn(() => Promise.resolve(mockStory));
 
       const story = await builderService.updateStory("schplong", {
         author: { key: "key", username: "bob_bidou" },
         title: "A new title",
       });
 
-      expect(builderStoryRepository.update).toHaveBeenCalledExactlyOnceWith(
+      expect(storyRepository.update).toHaveBeenCalledExactlyOnceWith(
         "schplong",
         {
           author: { key: "key", username: "bob_bidou" },
