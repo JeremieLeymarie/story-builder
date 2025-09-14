@@ -17,7 +17,7 @@ export const useDuplicateScenes = () => {
   const builderService = getBuilderService();
   const { handleError } = useBuilderError();
   const { addNodes, addEdges } = useReactFlow();
-  const { getState } = useStoreApi();
+  const { getState, setState } = useStoreApi();
   const { resetSelectedElements } = getState();
   const { story } = useBuilderContext();
   const openSceneEditor = useBuilderEditorStore((state) => state.open);
@@ -73,8 +73,10 @@ export const useDuplicateScenes = () => {
     });
 
     resetSelectedElements();
-    addNodes(nodes.length === 1 ? { ...nodes[0]!, selected: true } : nodes);
+    nodes.forEach((node) => (node.selected = true));
+    addNodes(nodes);
     addEdges(edges);
+    setState({ nodesSelectionActive: false });
   };
 
   // TODO: error management
