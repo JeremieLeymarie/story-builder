@@ -1,12 +1,12 @@
 import { useBuilderContext } from "./use-builder-context";
-import { useReactFlow, useStoreApi } from "@xyflow/react";
+import { useReactFlow } from "@xyflow/react";
 import { getBuilderService } from "@/get-builder-service";
 import { useBuilderError } from "./use-builder-error";
 import { BuilderPosition, Scene } from "@/lib/storage/domain";
-import { useBuilderEditorStore } from "./use-scene-editor-store";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
 import { addPositions, subtractPositions } from "../position";
 import { useGetNewScenePosition } from "./use-get-new-scene-position";
+import { useAddFocussedNodes } from "./use-focus";
 
 export type DuplicateScenePayload = Omit<Scene, "storyKey">;
 
@@ -16,12 +16,10 @@ let lastInitialPosition: BuilderPosition | null = null;
 export const useDuplicateScenes = () => {
   const builderService = getBuilderService();
   const { handleError } = useBuilderError();
-  const { addNodes, addEdges } = useReactFlow();
-  const { getState, setState } = useStoreApi();
-  const { resetSelectedElements } = getState();
+  const { addEdges } = useReactFlow();
   const { story } = useBuilderContext();
-  const openSceneEditor = useBuilderEditorStore((state) => state.open);
   const { getNewScenePosition: getInitialPosition } = useGetNewScenePosition();
+  const addNodes = useAddFocussedNodes();
 
   const findLeftMostPositionInBatch = (
     originalScenes: DuplicateScenePayload[],
@@ -72,11 +70,8 @@ export const useDuplicateScenes = () => {
       story,
     });
 
-    resetSelectedElements();
-    nodes.forEach((node) => (node.selected = true));
     addNodes(nodes);
     addEdges(edges);
-    setState({ nodesSelectionActive: false });
   };
 
   // TODO: error management
@@ -107,12 +102,6 @@ export const useDuplicateScenes = () => {
       });
 
       updateFlow(scenes);
-      if (scenes.length === 1)
-        openSceneEditor({
-          type: "scene-editor",
-          payload: { scene: scenes[0]!, isFirstScene: false },
-        });
-
       return scenes;
     } catch (err) {
       handleError(err);
