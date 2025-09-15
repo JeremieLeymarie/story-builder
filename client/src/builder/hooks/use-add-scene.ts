@@ -1,5 +1,5 @@
 import { useBuilderContext } from "./use-builder-context";
-import { useReactFlow, XYPosition } from "@xyflow/react";
+import { XYPosition } from "@xyflow/react";
 import { getBuilderService } from "@/get-builder-service";
 import { sceneToNodeAdapter } from "../adapters";
 import { Scene } from "@/lib/storage/domain";
@@ -7,6 +7,7 @@ import { useBuilderError } from "./use-builder-error";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { SceneSchema } from "../components/builder-editor-bar/scene-editor/schema";
 import { useGetNewScenePosition } from "./use-get-new-scene-position";
+import { useAddFocussedNodes } from "./use-focus";
 
 export const DEFAULT_SCENE: SceneSchema = {
   title: "",
@@ -18,7 +19,7 @@ export const useAddScene = () => {
   const builderService = getBuilderService();
   const { handleError } = useBuilderError();
   const { story } = useBuilderContext();
-  const { addNodes } = useReactFlow();
+  const addNodes = useAddFocussedNodes();
   const { getNewScenePosition } = useGetNewScenePosition();
 
   const addScene = async ({
