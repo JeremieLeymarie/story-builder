@@ -1,70 +1,25 @@
 import { useBuilderContext } from "./use-builder-context";
-import { useReactFlow } from "@xyflow/react";
 import { getBuilderService } from "@/get-builder-service";
 import { useBuilderError } from "./use-builder-error";
 import { BuilderPosition, Scene } from "@/lib/storage/domain";
-import { scenesToNodesAndEdgesAdapter } from "../adapters";
-import { addPositions, subtractPositions } from "../position";
 import { useGetNewScenePosition } from "./use-get-new-scene-position";
-import { useAddFocussedNodes } from "./use-focus";
-
-export type DuplicateScenePayload = Omit<Scene, "storyKey">;
-
-const positionOffset: BuilderPosition = { x: 0, y: 0 };
-let lastInitialPosition: BuilderPosition | null = null;
+import { scenesToNodesAndEdgesAdapter } from "../adapters";
+import { useAddFocussedNodes } from "./use-add-focussed-nodes";
+import { useReactFlow } from "@xyflow/react";
+import { StorylessScene } from "../types";
+import { useSmartOffset } from "./use-smart-offset";
+import { Vec2 } from "../position";
 
 export const useDuplicateScenes = () => {
   const builderService = getBuilderService();
   const { handleError } = useBuilderError();
-  const { addEdges } = useReactFlow();
   const { story } = useBuilderContext();
   const { getNewScenePosition: getInitialPosition } = useGetNewScenePosition();
   const addNodes = useAddFocussedNodes();
+  const { addEdges } = useReactFlow();
+  const getOffset = useSmartOffset();
 
-  const findLeftMostPositionInBatch = (
-    originalScenes: DuplicateScenePayload[],
-  ): BuilderPosition => {
-    let topX = Infinity;
-    let topY = Infinity;
-    originalScenes.forEach((scene) => {
-      topX = Math.min(topX, scene.builderParams.position.x);
-      topY = Math.min(topY, scene.builderParams.position.y);
-    });
-
-    return { x: topX, y: topY };
-  };
-
-  const getOffset = ({
-    initialPosition,
-    originalScenes,
-  }: {
-    initialPosition: BuilderPosition;
-    originalScenes: DuplicateScenePayload[];
-  }) => {
-    // `offsetFromOriginalScene` represents the offset between the left-most original scene and the initial position (mouse cursor or center of the flow)
-    const offsetFromOriginalScene = subtractPositions(
-      initialPosition,
-      findLeftMostPositionInBatch(originalScenes),
-    );
-
-    const isLastPlacedSceneTooClose =
-      lastInitialPosition &&
-      Math.hypot(
-        initialPosition.x - lastInitialPosition.x,
-        initialPosition.y - lastInitialPosition.y,
-      ) < 40;
-
-    // `positionOffset` represents the offset from the previously created batch of scenes, to avoid stacking them up visually
-    if (isLastPlacedSceneTooClose) {
-      positionOffset.x += 40;
-      positionOffset.y += 40;
-      return addPositions(offsetFromOriginalScene, positionOffset);
-    }
-
-    return offsetFromOriginalScene;
-  };
-
-  const updateFlow = (scenes: DuplicateScenePayload[]) => {
+  const updateFlow = (scenes: StorylessScene[]) => {
     const [nodes, edges] = scenesToNodesAndEdgesAdapter({
       scenes: scenes.map((scene) => ({ ...scene, storyKey: story.key })),
       story,
@@ -76,20 +31,19 @@ export const useDuplicateScenes = () => {
 
   // TODO: error management
   const duplicateScenes = async (
-    originalScenes: DuplicateScenePayload[],
+    originalScenes: StorylessScene[],
   ): Promise<Scene[] | null> => {
     if (!originalScenes.length) return [];
     const initialPosition = getInitialPosition();
     const offset = getOffset({
-      initialPosition,
-      originalScenes,
+      desiredPosition: Vec2.from(initialPosition),
+      scenes: originalScenes,
     });
-    lastInitialPosition = initialPosition;
 
     const newPositions = originalScenes.reduce(
       (acc, scene) => ({
         ...acc,
-        [scene.key]: addPositions(scene.builderParams.position, offset),
+        [scene.key]: Vec2.from(scene.builderParams.position).add(offset),
       }),
       {} as Record<string, BuilderPosition>,
     );

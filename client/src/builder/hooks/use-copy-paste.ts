@@ -9,12 +9,16 @@ import { useDuplicateScenes } from "./use-duplicate-scenes";
 import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { useBuilderError } from "./use-builder-error";
+import { Vec2 } from "../position";
 
 const clipboardSchema = z.array(
   sceneSchema.extend({
     key: z.nanoid(),
     builderParams: z.object({
-      position: z.object({ x: z.number(), y: z.number() }),
+      position: z.custom<Vec2>((data) => {
+        const res = z.object({ x: z.number(), y: z.number() }).safeParse(data);
+        return res.success ? Vec2.from(res.data) : false;
+      }),
     }),
   }),
 );

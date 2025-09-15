@@ -7,7 +7,9 @@ import { useBuilderError } from "./use-builder-error";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { SceneSchema } from "../components/builder-editor-bar/scene-editor/schema";
 import { useGetNewScenePosition } from "./use-get-new-scene-position";
-import { useAddFocussedNodes } from "./use-focus";
+import { useAddFocussedNodes } from "./use-add-focussed-nodes";
+import { Vec2 } from "../position";
+import { useSmartOffset } from "./use-smart-offset";
 
 export const DEFAULT_SCENE: SceneSchema = {
   title: "",
@@ -21,6 +23,7 @@ export const useAddScene = () => {
   const { story } = useBuilderContext();
   const addNodes = useAddFocussedNodes();
   const { getNewScenePosition } = useGetNewScenePosition();
+  const getOffset = useSmartOffset();
 
   const addScene = async ({
     payload = DEFAULT_SCENE,
@@ -32,11 +35,18 @@ export const useAddScene = () => {
     try {
       const newScenePosition =
         position === "auto" ? getNewScenePosition() : position;
-      const scene = await builderService.addScene({
+      const initialScene = {
         ...payload,
         storyKey: story.key,
-        builderParams: { position: newScenePosition },
+        builderParams: { position: Vec2.ZERO },
+      };
+      const offset = getOffset({
+        desiredPosition: Vec2.from(newScenePosition),
+        scenes: [initialScene],
       });
+      initialScene.builderParams.position = offset;
+
+      const scene = await builderService.addScene(initialScene);
       addNodes([sceneToNodeAdapter({ scene, story })]);
       return scene;
     } catch (err) {
