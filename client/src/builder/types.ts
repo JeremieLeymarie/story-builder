@@ -8,4 +8,6 @@ export type SceneProps = Scene & {
 
 export type SceneNodeType = Node<SceneProps, "scene">;
 
+export type StorylessScene = Omit<Scene, "storyKey">;
+
 export type BuilderNode = SceneNodeType;
