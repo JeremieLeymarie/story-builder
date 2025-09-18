@@ -1,16 +1,19 @@
 import { RefObject, useRef } from "react";
 import { calculateZoomLevel } from "@lexical/utils";
 import { getEditorContainerInfo } from "@/design-system/components/editor/helpers/get-editor-container-dimensions";
-import { setResizeCursor } from "@/design-system/components/editor/helpers/set-resize-cursor";
 import { LexicalEditor } from "lexical";
 
-export const useResizePointer = ({
+export type Direction = {
+  vertical?: "north" | "south";
+  horizontal?: "east" | "west";
+};
+
+export const useResizeImage = ({
   imageRef,
   onResizeEnd,
   onResizeStart,
   editor,
   maxWidth,
-  Direction,
   controlWrapperRef,
 }: {
   imageRef: { current: null | HTMLElement };
@@ -18,40 +21,23 @@ export const useResizePointer = ({
   onResizeEnd: (width: "inherit" | number, height: "inherit" | number) => void;
   onResizeStart: () => void;
   editor: LexicalEditor;
-  Direction: { east: number; north: number; south: number; west: number };
   controlWrapperRef: RefObject<HTMLDivElement | null>;
 }) => {
   const clamp = (value: number, min: number, max: number) => {
     return Math.min(Math.max(value, min), max);
   };
 
-  const userSelect = useRef({
-    priority: "",
-    value: "default",
-  });
-
-  const { maxWidthContainer, maxHeightContainer, editorRootElement } =
-    getEditorContainerInfo(editor, maxWidth);
+  const { maxWidthContainer, maxHeightContainer } = getEditorContainerInfo(
+    editor,
+    maxWidth,
+  );
   const minWidth = 100;
   const minHeight = 100;
-  const setEndCursor = () => {
-    if (editorRootElement !== null) {
-      editorRootElement.style.setProperty("cursor", "text");
-    }
-    if (document.body !== null) {
-      document.body.style.setProperty("cursor", "default");
-      document.body.style.setProperty(
-        "-webkit-user-select",
-        userSelect.current.value,
-        userSelect.current.priority,
-      );
-    }
-  };
 
   const DEFAULT_POSITIONING = {
     currentHeight: 0,
     currentWidth: 0,
-    direction: 0,
+    direction: {},
     isResizing: false,
     ratio: 0,
     startHeight: 0,
@@ -63,7 +49,7 @@ export const useResizePointer = ({
   const positioningRef = useRef<{
     currentHeight: "inherit" | number;
     currentWidth: "inherit" | number;
-    direction: number;
+    direction: Direction;
     isResizing: boolean;
     ratio: number;
     startHeight: number;
@@ -74,7 +60,7 @@ export const useResizePointer = ({
 
   const handlePointerDown = (
     event: React.PointerEvent<HTMLDivElement>,
-    direction: number,
+    direction: Direction,
   ) => {
     if (!editor.isEditable()) {
       return;
@@ -98,7 +84,6 @@ export const useResizePointer = ({
       positioning.isResizing = true;
       positioning.direction = direction;
 
-      setResizeCursor(direction, editorRootElement, userSelect.current);
       onResizeStart();
 
       controlWrapper.classList.add("touch-action-none");
@@ -106,26 +91,20 @@ export const useResizePointer = ({
       image.style.width = `${width}px`;
 
       document.addEventListener("pointermove", handlePointerMove);
-      document.addEventListener("pointerup", () =>
-        handlePointerUp(onResizeEnd),
-      );
+      document.addEventListener("pointerup", handlePointerUp);
     }
   };
   const handlePointerMove = (event: PointerEvent) => {
     const image = imageRef.current;
     const positioning = positioningRef.current;
-
-    const isHorizontal =
-      positioning.direction & (Direction.east | Direction.west);
-    const isVertical =
-      positioning.direction & (Direction.south | Direction.north);
+    const direction = positioning.direction;
 
     if (image !== null && positioning.isResizing) {
       const zoom = calculateZoomLevel(image);
       // Corner cursor
-      if (isHorizontal && isVertical) {
+      if (direction.horizontal && direction.vertical) {
         let diff = Math.floor(positioning.startX - event.clientX / zoom);
-        diff = positioning.direction & Direction.east ? -diff : diff;
+        diff = direction.horizontal === "east" ? -diff : diff;
 
         const width = clamp(
           positioning.startWidth + diff,
@@ -138,9 +117,9 @@ export const useResizePointer = ({
         image.style.height = `${height}px`;
         positioning.currentHeight = height;
         positioning.currentWidth = width;
-      } else if (isVertical) {
+      } else if (direction.vertical) {
         let diff = Math.floor(positioning.startY - event.clientY / zoom);
-        diff = positioning.direction & Direction.south ? -diff : diff;
+        diff = direction.vertical === "south" ? -diff : diff;
 
         const height = clamp(
           positioning.startHeight + diff,
@@ -152,7 +131,7 @@ export const useResizePointer = ({
         positioning.currentHeight = height;
       } else {
         let diff = Math.floor(positioning.startX - event.clientX / zoom);
-        diff = positioning.direction & Direction.east ? -diff : diff;
+        diff = direction.horizontal === "east" ? -diff : diff;
 
         const width = clamp(
           positioning.startWidth + diff,
@@ -165,12 +144,7 @@ export const useResizePointer = ({
       }
     }
   };
-  const handlePointerUp = (
-    onResizeEnd: (
-      width: "inherit" | number,
-      height: "inherit" | number,
-    ) => void,
-  ) => {
+  const handlePointerUp = () => {
     const image = imageRef.current;
     const positioning = positioningRef.current;
     const controlWrapper = controlWrapperRef.current;
@@ -181,13 +155,10 @@ export const useResizePointer = ({
 
       controlWrapper.classList.remove("touch-action-none");
 
-      setEndCursor();
       onResizeEnd(width, height);
 
       document.removeEventListener("pointermove", handlePointerMove);
-      document.removeEventListener("pointerup", () =>
-        handlePointerUp(onResizeEnd),
-      );
+      document.removeEventListener("pointerup", handlePointerUp);
     }
   };
 

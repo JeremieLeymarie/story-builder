@@ -59,7 +59,6 @@ export const InsertImageDialog = ({
   });
 
   const onSubmit = (data: ImageSchema) => {
-    console.log(data);
     activeEditor.dispatchCommand(INSERT_IMAGE_COMMAND, {
       src: data.src,
       altText: data.altText ?? "",

@@ -1,11 +1,7 @@
 export const getEditorContainerInfo = (
   editor: { getRootElement: () => HTMLElement | null },
   maxWidth?: number,
-): {
-  maxWidthContainer: number;
-  maxHeightContainer: number;
-  editorRootElement: HTMLElement | null;
-} => {
+) => {
   const editorRootElement = editor.getRootElement();
 
   let maxWidthContainer = 100;
@@ -21,5 +17,5 @@ export const getEditorContainerInfo = (
     maxHeightContainer = editorRootElement.getBoundingClientRect().height - 20;
   }
 
-  return { maxWidthContainer, maxHeightContainer, editorRootElement };
+  return { maxWidthContainer, maxHeightContainer };
 };
