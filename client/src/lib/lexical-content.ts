@@ -1,10 +1,10 @@
 import * as z from "zod/v4";
 
-export const contentSchema = z.custom<Record<string, unknown>>(
-  z.record(z.string(), z.any()).parse,
+export const lexicalContentSchema = z.custom<Record<string, unknown>>(
+  (data) => z.record(z.string(), z.any()).safeParse(data).success,
 );
 
-export const makeSimpleSceneContent = (
+export const makeSimpleLexicalContent = (
   content: string,
 ): Record<string, unknown> => {
   return {

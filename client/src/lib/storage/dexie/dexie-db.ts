@@ -1,6 +1,14 @@
 import Dexie, { type EntityTable } from "dexie";
 import { nanoid } from "nanoid";
-import { User, Story, Scene, StoryProgress, Wiki } from "../domain";
+import {
+  User,
+  Story,
+  Scene,
+  StoryProgress,
+  Wiki,
+  WikiArticle,
+  WikiCategory,
+} from "../domain";
 import { DEMO_IMPORTED_STORY, DEMO_SCENES, DEMO_STORY } from "./seed";
 import { getLibraryService } from "@/domains/game/library-service";
 
@@ -10,24 +18,28 @@ type Tables = {
   scenes: EntityTable<Scene, "key">;
   storyProgresses: EntityTable<StoryProgress, "key">;
   wikis: EntityTable<Wiki, "key">;
+  wikiArticles: EntityTable<WikiArticle, "key">;
+  wikiCategories: EntityTable<WikiCategory, "key">;
 };
-export type Database = Dexie & Tables;
+export type DexieDatabase = Dexie & Tables;
 
-export const db = new Dexie("story-builder") as Database;
+export const db = new Dexie("story-builder") as DexieDatabase;
 
 const tables: Record<keyof Tables, string> = {
-  user: "&key, username, email",
+  user: "&key, &username, email",
   stories:
     "&key, firstSceneKey, title, description, image, status, genres, publicationDate, creationDate, author, finished",
   scenes: "&key, storyKey, title, content, actions, builderParams",
   storyProgresses:
     "&key, storyKey, userKey, currentSceneKey, character, inventory, history, lastPlayedAt",
   wikis: "&key, userKey",
+  wikiArticles: "&key, wikiKey, categoryKey, title",
+  wikiCategories: "&key, name",
 };
 export const TABLE_NAMES = Object.keys(tables);
 
-export const createDb = (db: Database) => {
-  db.version(1).stores(tables);
+export const createDb = (db: DexieDatabase) => {
+  db.version(3).stores(tables);
 
   db.on("populate", async () => {
     // Add story to builder

@@ -1,5 +1,5 @@
 import Dexie from "dexie";
-import { createDb, Database } from "./dexie-db";
+import { createDb, DexieDatabase } from "./dexie-db";
 import { IDBKeyRange, IDBFactory } from "fake-indexeddb";
 import { User } from "../domain";
 
@@ -14,7 +14,7 @@ export const getTestDatabase = async () => {
   const testDB = new Dexie("test-sb", {
     indexedDB,
     IDBKeyRange,
-  }) as Database;
+  }) as DexieDatabase;
 
   createDb(testDB);
   await testDB.user.add(TEST_USER);

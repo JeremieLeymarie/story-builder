@@ -6,7 +6,7 @@ import { Scene, StoryProgress } from "@/lib/storage/domain";
 import { Divider } from "@/design-system/components/divider";
 import { Link } from "@tanstack/react-router";
 import { SerializedEditorState } from "lexical";
-import { Editor } from "@/design-system/components/editor/blocks/editor";
+import { RichText } from "@/design-system/components/editor/blocks/rich-text-editor";
 
 type GameSceneProps = {
   scene: Scene;
@@ -16,7 +16,7 @@ type GameSceneProps = {
 
 export const GameScene = ({
   progress,
-  scene: { key, content, title, actions, storyKey },
+  scene: { content, title, actions, storyKey },
   isLastScene,
 }: GameSceneProps) => {
   return (
@@ -28,12 +28,9 @@ export const GameScene = ({
               {title}
             </h1>
             <p className="leading-7 wrap-break-word not-first:mt-6">
-              <Editor
-                sceneKey={key}
+              <RichText
                 editable={false}
-                editorSerializedState={
-                  content as unknown as SerializedEditorState
-                }
+                initialState={content as unknown as SerializedEditorState}
               />
             </p>
             <div className="mt-4 flex w-full flex-wrap gap-3">

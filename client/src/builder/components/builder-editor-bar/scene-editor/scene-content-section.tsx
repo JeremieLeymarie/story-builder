@@ -1,6 +1,5 @@
 import {
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -8,19 +7,19 @@ import {
   Input,
 } from "@/design-system/primitives";
 import { UseFormReturn } from "react-hook-form";
-import { SceneSchema } from "./schema";
+import { SceneSchema, SceneUpdatePayload } from "./schema";
 import { SetFirstSceneSwitch } from "./set-first-scene-switch";
-import { Editor } from "@/design-system/components/editor/blocks/editor";
 import { SerializedEditorState } from "lexical";
+import { RichText } from "@/design-system/components/editor/blocks/rich-text-editor";
 
 export const SceneContentSection = ({
   form,
-  sceneKey,
+  scenePayload,
   isFirstScene,
   setFirstScene,
 }: {
   form: UseFormReturn<SceneSchema>;
-  sceneKey: string;
+  scenePayload: SceneUpdatePayload;
   isFirstScene: boolean;
   setFirstScene: () => void;
 }) => {
@@ -29,7 +28,7 @@ export const SceneContentSection = ({
       <SetFirstSceneSwitch
         isFirstScene={isFirstScene}
         setFirstScene={setFirstScene}
-        sceneKey={sceneKey}
+        sceneKey={scenePayload.key}
       />
       <FormField
         control={form.control}
@@ -40,7 +39,6 @@ export const SceneContentSection = ({
             <FormControl>
               <Input placeholder="A very suspicious crossroads" {...field} />
             </FormControl>
-            <FormDescription>The displayed title of the scene</FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -52,18 +50,15 @@ export const SceneContentSection = ({
           <FormItem>
             <FormLabel>Content</FormLabel>
             <FormControl>
-              <Editor
-                editable={true}
-                sceneKey={sceneKey}
-                onSerializedChange={(data) => {
-                  field.onChange(data);
-                }}
-                editorSerializedState={
-                  field.value as unknown as SerializedEditorState
+              <RichText
+                onSerializedChange={field.onChange}
+                initialState={
+                  scenePayload.content as unknown as SerializedEditorState
                 }
+                editable
+                className="h-[300px] max-w-[450px]"
               />
             </FormControl>
-            <FormDescription>The actual content of the scene.</FormDescription>
             <FormMessage />
           </FormItem>
         )}

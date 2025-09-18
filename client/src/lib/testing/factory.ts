@@ -4,10 +4,14 @@ import {
   STORY_GENRES,
   StoryBase,
   StoryProgress,
+  User,
   Wiki,
+  WikiArticle,
+  WikiCategory,
 } from "../storage/domain";
 import { faker } from "@faker-js/faker";
 import { nanoid } from "nanoid";
+import { makeSimpleLexicalContent } from "../lexical-content";
 
 type _EntityBase = {
   key: string;
@@ -45,6 +49,27 @@ const _wikiFactory = {
   description: faker.word.sample,
 } satisfies WikiFactory;
 
+type WikiArticleFactory = _BaseFactory<WikiArticle>;
+const _wikiArticleFactory = {
+  key: nanoid,
+  wikiKey: nanoid,
+  title: faker.book.title,
+  content: () => makeSimpleLexicalContent(faker.word.words(50)),
+  image: faker.image.url,
+  createdAt: faker.date.anytime,
+  updatedAt: faker.date.anytime,
+  categoryKey: nanoid,
+} satisfies WikiArticleFactory;
+
+type WikiCategoryFactory = _BaseFactory<WikiCategory>;
+const _wikiCategoryFactory = {
+  key: nanoid,
+  wikiKey: nanoid,
+  name: () =>
+    faker.helpers.arrayElement(["culture", "people", "event", "geography"]),
+  color: faker.color.rgb,
+} satisfies WikiCategoryFactory;
+
 type StoryBaseFactory = _BaseFactory<StoryBase>;
 const _baseStoryFactory = {
   key: nanoid,
@@ -79,10 +104,26 @@ const _storyProgressFactory = {
   finished: () => Math.random() > 0.5,
 } satisfies StoryProgressFactory;
 
+type UserFactory = _BaseFactory<User>;
+const _userFactory = {
+  key: nanoid,
+  email: faker.internet.email,
+  username: faker.internet.username,
+  token: faker.string.sample,
+} satisfies UserFactory;
+
 export const getTestFactory = () => {
   return {
     wiki: (partial: Partial<Wiki> = {}) => {
       return makeRandomEntity(_wikiFactory, partial);
+    },
+
+    wikiArticle: (partial: Partial<WikiArticle> = {}) => {
+      return makeRandomEntity(_wikiArticleFactory, partial);
+    },
+
+    wikiCategory: (partial: Partial<WikiCategory> = {}) => {
+      return makeRandomEntity(_wikiCategoryFactory, partial);
     },
 
     story: {
@@ -96,6 +137,10 @@ export const getTestFactory = () => {
 
     storyProgress: (partial: Partial<StoryProgress> = {}) => {
       return makeRandomEntity(_storyProgressFactory, partial);
+    },
+
+    user: (partial: Partial<User> = {}) => {
+      return makeRandomEntity(_userFactory, partial);
     },
   };
 };

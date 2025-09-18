@@ -87,11 +87,31 @@ export type Wiki = {
   createdAt: Date;
 };
 
+export type WikiArticle = {
+  key: string;
+  wikiKey: string;
+  title: string;
+  content: Record<string, unknown>;
+  image: string;
+  createdAt: Date;
+  updatedAt: Date;
+  categoryKey?: string;
+};
+
+export type WikiCategory = {
+  wikiKey: string;
+  key: string;
+  name: string;
+  color: string;
+};
+
 export const ENTITIES = [
   "story",
   "scene",
   "user",
   "story-progress",
   "wiki",
+  "wiki-article",
+  "wiki-category",
 ] as const;
 export type Entity = (typeof ENTITIES)[number];

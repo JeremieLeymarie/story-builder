@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { getTestDatabase } from "@/lib/storage/dexie/test-db";
-import { Database } from "@/lib/storage/dexie/dexie-db";
+import { DexieDatabase } from "@/lib/storage/dexie/dexie-db";
 import { getTestFactory } from "@/lib/testing/factory";
 import { BuilderStoryRepositoryPort } from "../ports/builder-story-repository-port";
 import { _getDexieBuilderStoryRepository } from "../builder-story-repository";
@@ -11,7 +11,7 @@ const factory = getTestFactory();
 
 describe("builder story repository", () => {
   let repo: BuilderStoryRepositoryPort;
-  let testDB: Database;
+  let testDB: DexieDatabase;
 
   const storyA = factory.story.builder();
   const storyB = factory.story.builder();

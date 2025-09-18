@@ -9,7 +9,6 @@ import { TooltipProvider } from "@/design-system/primitives/tooltip";
 
 import { nodes } from "./nodes";
 import { EditorPlugins } from "./editor-plugins";
-import { useMemo } from "react";
 import { BasePlugins } from "./base-plugins";
 import { cn } from "@/lib/style";
 
@@ -30,49 +29,43 @@ const editorConfig: InitialConfigType = {
   },
 };
 
-export const Editor = ({
-  editorSerializedState,
+export const RichText = ({
+  initialState,
   onChange,
   onSerializedChange,
-  sceneKey,
   editable,
+  className,
 }: {
+  className?: string;
   editable: boolean;
-  editorSerializedState?: SerializedEditorState;
+  initialState?: SerializedEditorState;
   onChange?: (editorState: EditorState) => void;
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
-  sceneKey: string;
 }) => {
-  // TODO: this is horrible, we should find another way to be reactive
-  // The key is used to force lexical to update its initial value.
-  // We need it to change only when the editor state changes, to avoid de-synchronization issues
-  // In the lifecycle, sceneKey (from global store) is updated before the scene content (from form);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const key = useMemo(() => sceneKey, [editorSerializedState]);
+  // This allow lexical to refresh it's initial state when the content changes from the outside
+  const key = JSON.stringify(initialState);
 
   return (
     <div
       className={cn(
-        editable &&
-          "bg-background max-h-75 min-h-25 overflow-y-auto rounded-lg border shadow",
+        editable && "bg-background min-h-25 rounded-lg border shadow",
+        "focus-within:border-ring focus-within:ring-ring/10 focus-within:ring-[3px]", // The focus style is the same as the input's & textarea's
+        // TODO: handle error state like other inputs
       )}
     >
       <LexicalComposer
         key={key}
         initialConfig={{
           ...editorConfig,
-          ...(editorSerializedState
-            ? { editorState: JSON.stringify(editorSerializedState) }
+          ...(initialState
+            ? { editorState: JSON.stringify(initialState) }
             : {}),
           editable,
         }}
       >
         <TooltipProvider>
-          {editable ? (
-            <EditorPlugins editable={editable} />
-          ) : (
-            <BasePlugins editable={editable} />
-          )}
+          {editable && <EditorPlugins />}
+          <BasePlugins className={className} editable={editable} />
 
           <OnChangePlugin
             ignoreSelectionChange={true}

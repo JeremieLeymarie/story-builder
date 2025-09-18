@@ -1,15 +1,26 @@
 import { expect, test, vi, describe, beforeEach } from "vitest";
-import {
-  getStubWikiRepository,
-  getWikiServiceTestContext,
-} from "../stubs/stub-wiki-repository";
+import { getStubWikiRepository } from "../stubs/stub-wiki-repository";
 import { _getWikiService } from "../wiki-service";
 import { TEST_USER } from "@/lib/storage/dexie/test-db";
 import { getTestFactory } from "@/lib/testing/factory";
+import { makeSimpleLexicalContent } from "@/lib/lexical-content";
+import { WikiSection } from "../types";
+import { faker } from "@faker-js/faker";
+import { nanoid } from "nanoid";
+import { EntityNotExistError, ForbiddenError } from "@/domains/errors";
+import { getStubAuthContext } from "@/domains/user/stubs/stub-auth-context";
+import { getStubWikiPermissionContextFactory } from "../stubs/stub-wiki-permission-context";
+import { WikiCategoryNameTaken } from "../errors";
 
 const DATE = new Date();
 
 const factory = getTestFactory();
+const repository = getStubWikiRepository();
+const svc = _getWikiService({
+  repository,
+  authContext: getStubAuthContext(TEST_USER),
+  getPermissionContext: getStubWikiPermissionContextFactory(),
+});
 
 describe("wiki service", () => {
   beforeEach(() => {
@@ -18,8 +29,6 @@ describe("wiki service", () => {
 
   describe("get all wikis", () => {
     test("should return user's wikis", async () => {
-      const repository = getStubWikiRepository();
-
       repository.getUserWikis = vi.fn((userKey) => {
         expect(userKey).toStrictEqual(TEST_USER.key);
 
@@ -36,10 +45,6 @@ describe("wiki service", () => {
         ]);
       });
 
-      const svc = _getWikiService({
-        repository,
-        context: getWikiServiceTestContext(),
-      });
       const wikis = await svc.getAllWikis();
 
       expect(wikis).toHaveLength(1);
@@ -57,7 +62,6 @@ describe("wiki service", () => {
 
   describe("add author to wikis", () => {
     test("should update wikis", async () => {
-      const repository = getStubWikiRepository();
       repository.getUserWikis = vi.fn((userKey) => {
         expect(userKey).toStrictEqual(TEST_USER.key);
 
@@ -100,18 +104,12 @@ describe("wiki service", () => {
         return Promise.resolve();
       });
 
-      const svc = _getWikiService({
-        repository,
-        context: getWikiServiceTestContext(),
-      });
       await svc.addAuthorToWikis({ username: "bob_bidou", key: "bob-key" });
     });
   });
 
   describe("create wiki", () => {
     test("should create wiki", async () => {
-      const repository = getStubWikiRepository();
-
       repository.create = vi.fn((wiki) => {
         expect(wiki).toStrictEqual({
           name: "Wiki",
@@ -125,36 +123,184 @@ describe("wiki service", () => {
         return Promise.resolve("KEY");
       });
 
-      const svc = _getWikiService({
-        repository,
-        context: getWikiServiceTestContext(),
-      });
-
       await svc.createWiki({
         name: "Wiki",
         description: "Super wiki",
         image: "http://super-image.fr",
       });
+      expect(repository.createCategory).toHaveBeenCalledTimes(4); // Four default categories have been created
     });
   });
 
   describe("get wiki", () => {
     test("should call repo with correct args", async () => {
       const wiki = factory.wiki();
-      const repository = getStubWikiRepository();
-      repository.get = vi.fn((key) => {
-        expect(key).toStrictEqual("ZIOUM");
+      const sections: WikiSection[] = [
+        {
+          category: factory.wikiCategory(),
+          articles: [{ title: faker.book.title(), key: nanoid() }],
+        },
+      ];
 
-        return Promise.resolve({ ...wiki, key: "ZIOUM" });
+      repository.get = vi.fn((key) => {
+        expect(key).toStrictEqual(wiki.key);
+        return Promise.resolve(wiki);
+      });
+      repository.getSections = vi.fn((key) => {
+        expect(key).toStrictEqual(wiki.key);
+        return Promise.resolve(sections);
       });
 
+      const wikiData = await svc.getWikiData(wiki.key);
+      expect(wikiData).toStrictEqual({ wiki, sections });
+    });
+  });
+
+  describe("create wiki article", () => {
+    test("no perms", async () => {
       const svc = _getWikiService({
         repository,
-        context: getWikiServiceTestContext(),
+        authContext: getStubAuthContext(TEST_USER),
+        getPermissionContext: getStubWikiPermissionContextFactory({
+          canCreateArticle: false,
+        }),
       });
 
-      const wikiData = await svc.getWikiData("ZIOUM");
-      expect(wikiData).toStrictEqual({ ...wiki, key: "ZIOUM" });
+      await expect(
+        svc.createArticle("key", factory.wikiArticle()),
+      ).rejects.toThrow(ForbiddenError);
+    });
+
+    test("should create wiki article", async () => {
+      repository.createArticle = vi.fn((article) => {
+        expect(article).toStrictEqual({
+          title: "Article",
+          content: makeSimpleLexicalContent("content"),
+          image: "http://super-image.fr",
+          wikiKey: "wiki-key",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          categoryKey: "category-key",
+        });
+
+        return Promise.resolve("KEY");
+      });
+
+      const key = await svc.createArticle("wiki-key", {
+        title: "Article",
+        content: makeSimpleLexicalContent("content"),
+        image: "http://super-image.fr",
+        categoryKey: "category-key",
+      });
+      expect(key).toStrictEqual("KEY");
+    });
+  });
+
+  describe("update wiki article", () => {
+    test("no perms", async () => {
+      const svc = _getWikiService({
+        repository,
+        authContext: getStubAuthContext(TEST_USER),
+        getPermissionContext: getStubWikiPermissionContextFactory({
+          canEditArticle: false,
+        }),
+      });
+
+      await expect(svc.updateArticle("tutu", {})).rejects.toThrow(
+        ForbiddenError,
+      );
+    });
+
+    test("should update wiki article", async () => {
+      repository.updateArticle = vi.fn(async (key, payload) => {
+        expect(key).toStrictEqual("article-key");
+        expect(payload).toStrictEqual({
+          title: "another title",
+          categoryKey: "cat-key",
+        });
+      });
+
+      await svc.updateArticle("article-key", {
+        title: "another title",
+        categoryKey: "cat-key",
+      });
+    });
+
+    test("should throw error for invalid article key", async () => {
+      repository.getArticle = vi.fn(() => {
+        return Promise.resolve(null);
+      });
+
+      await expect(
+        svc.updateArticle("article-key", {
+          title: "another title",
+          categoryKey: "cat-key",
+        }),
+      ).rejects.toThrowError(EntityNotExistError);
+    });
+  });
+
+  describe("get wiki article", () => {
+    test("should call repo with correct args", async () => {
+      const article = factory.wikiArticle();
+
+      repository.getArticle = vi.fn((key) => {
+        expect(key).toStrictEqual("ZIOUM");
+
+        return Promise.resolve({ ...article, key: "ZIOUM" });
+      });
+
+      const articleData = await svc.getArticle("ZIOUM");
+      expect(articleData).toStrictEqual({ ...article, key: "ZIOUM" });
+    });
+  });
+
+  describe("create wiki category", () => {
+    test("no perms", async () => {
+      const svc = _getWikiService({
+        repository,
+        authContext: getStubAuthContext(TEST_USER),
+        getPermissionContext: getStubWikiPermissionContextFactory({
+          canCreateCategory: false,
+        }),
+      });
+
+      await expect(
+        svc.createCategory("key", factory.wikiCategory()),
+      ).rejects.toThrow(ForbiddenError);
+    });
+
+    test("should fail if category already exists with same name", async () => {
+      repository.getSections = vi.fn(() =>
+        Promise.resolve([
+          {
+            category: { name: "Plouf", key: "cat-key", color: "red" },
+            articles: [],
+          },
+        ]),
+      );
+
+      await expect(
+        svc.createCategory("wiki-key", { color: "green", name: "Plouf" }),
+      ).rejects.toThrow(WikiCategoryNameTaken);
+    });
+
+    test("should create wiki category", async () => {
+      repository.createCategory = vi.fn((category) => {
+        expect(category).toStrictEqual({
+          name: "Category",
+          color: "#EFCB68",
+          wikiKey: "wiki-key",
+        });
+
+        return Promise.resolve("KEY");
+      });
+
+      const key = await svc.createCategory("wiki-key", {
+        name: "Category",
+        color: "#EFCB68",
+      });
+      expect(key).toStrictEqual("KEY");
     });
   });
 });

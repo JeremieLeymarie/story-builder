@@ -1,17 +1,18 @@
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import {
   _getDexieWikiRepository,
   WikiRepositoryPort,
 } from "../wiki-repository";
 import { getTestDatabase, TEST_USER } from "@/lib/storage/dexie/test-db";
-import { Database } from "@/lib/storage/dexie/dexie-db";
+import { DexieDatabase } from "@/lib/storage/dexie/dexie-db";
 import { Factory, getTestFactory } from "@/lib/testing/factory";
+import { WikiSection } from "../types";
 
 const DATE = new Date();
 
 describe("wiki repository", () => {
   let repo: WikiRepositoryPort;
-  let testDB: Database;
+  let testDB: DexieDatabase;
   let factory: Factory;
 
   beforeEach(async () => {
@@ -183,13 +184,13 @@ describe("wiki repository", () => {
   describe("get", () => {
     test("should get wiki from key", async () => {
       await testDB.wikis.add(factory.wiki());
-      const expected = factory.wiki();
-      const key = await testDB.wikis.add(expected);
+      const wiki = factory.wiki();
+      await testDB.wikis.add(wiki);
       await testDB.wikis.add(factory.wiki());
 
-      const wiki = await repo.get(key);
+      const result = await repo.get(wiki.key);
 
-      expect(wiki).toStrictEqual({ ...expected, key });
+      expect(result).toStrictEqual(wiki);
     });
 
     test("should return null if not found", async () => {
@@ -202,6 +203,163 @@ describe("wiki repository", () => {
       const wiki = await repo.get("zioummm");
 
       expect(wiki).toBeNull();
+    });
+  });
+
+  describe("getSections", () => {
+    test("should get wiki sections", async () => {
+      const wiki = factory.wiki();
+
+      const categories = [
+        factory.wikiCategory({ wikiKey: wiki.key }),
+        factory.wikiCategory({ wikiKey: wiki.key }),
+        factory.wikiCategory({ wikiKey: wiki.key }),
+      ];
+      const art1 = factory.wikiArticle({
+        wikiKey: wiki.key,
+        categoryKey: categories[0]?.key,
+      });
+      const art2 = factory.wikiArticle({
+        wikiKey: wiki.key,
+        categoryKey: categories[1]?.key,
+      });
+      const art3 = factory.wikiArticle({
+        wikiKey: wiki.key,
+        categoryKey: categories[1]?.key,
+      });
+      const art4 = factory.wikiArticle({
+        wikiKey: wiki.key,
+        categoryKey: undefined,
+      });
+      const art5 = factory.wikiArticle();
+      await testDB.wikiCategories.bulkAdd(categories);
+      await testDB.wikiArticles.bulkAdd([art1, art2, art3, art4, art5]);
+
+      const sections = await repo.getSections(wiki.key);
+
+      // TODO: this is horrible, we should find a more idiomatic way to deeply compare arrays in tests without taking order into account
+      const _sort = (data: WikiSection[]) => {
+        return data
+          .sort((a, b) =>
+            (a.category?.key ?? "").localeCompare(b.category?.key ?? ""),
+          )
+          .map(({ articles, ...rest }) => ({
+            ...rest,
+            articles: articles.sort((a, b) => a.key.localeCompare(b.key)),
+          }));
+      };
+
+      expect(sections).toHaveLength(3);
+
+      expect(_sort(sections)).toStrictEqual(
+        _sort([
+          {
+            category: {
+              name: categories[0]!.name,
+              key: categories[0]!.key,
+              color: categories[0]!.color,
+            },
+            articles: [{ title: art1.title, key: art1.key }],
+          },
+          {
+            category: {
+              name: categories[1]!.name,
+              key: categories[1]!.key,
+              color: categories[1]!.color,
+            },
+            articles: [
+              { title: art2.title, key: art2.key },
+              { title: art3.title, key: art3.key },
+            ],
+          },
+          { category: null, articles: [{ title: art4.title, key: art4.key }] },
+        ]),
+      );
+    });
+  });
+
+  describe("create article", () => {
+    test("should create wiki article", async () => {
+      const existingArticle = factory.wikiArticle();
+      await testDB.wikiArticles.add(existingArticle);
+
+      const articleToAdd = factory.wikiArticle();
+      const articleKey = await repo.createArticle(articleToAdd);
+
+      const allArticles = await testDB.wikiArticles.toArray();
+      expect(allArticles).toHaveLength(2);
+      expect(await testDB.wikiArticles.get(articleKey)).toStrictEqual({
+        ...articleToAdd,
+        key: articleKey,
+      });
+    });
+  });
+
+  describe("get article", () => {
+    test("should get article from key", async () => {
+      await testDB.wikiArticles.add(factory.wikiArticle());
+      const expected = factory.wikiArticle();
+      await testDB.wikiArticles.add(expected);
+      await testDB.wikiArticles.add(factory.wikiArticle());
+
+      const article = await repo.getArticle(expected.key);
+
+      expect(article).toStrictEqual(expected);
+    });
+
+    test("should return null if not found", async () => {
+      await testDB.wikiArticles.bulkAdd([
+        factory.wikiArticle(),
+        factory.wikiArticle(),
+        factory.wikiArticle(),
+      ]);
+
+      const article = await repo.getArticle("zioummm");
+
+      expect(article).toBeNull();
+    });
+  });
+
+  describe("update article", () => {
+    test("should update article", async () => {
+      vi.setSystemTime(new Date());
+
+      const art1 = factory.wikiArticle();
+      const art2 = factory.wikiArticle();
+      await testDB.wikiArticles.bulkAdd([art1, art2]);
+      const category = factory.wikiCategory();
+
+      await repo.updateArticle(art2.key, {
+        title: "A new title",
+        categoryKey: category.key,
+      });
+
+      const art1FromDB = await testDB.wikiArticles.get(art1.key);
+      const art2FromDB = await testDB.wikiArticles.get(art2.key);
+      expect(art1FromDB).toEqual(art1); // Unchanged
+      expect(art2FromDB).toEqual({
+        ...art2,
+        title: "A new title",
+        categoryKey: category.key,
+        updatedAt: new Date(),
+      });
+    });
+  });
+
+  describe("create category", () => {
+    test("should create wiki category", async () => {
+      const existingCategory = factory.wikiCategory({ name: "culture" });
+      await testDB.wikiCategories.add(existingCategory);
+
+      const categoryToAdd = factory.wikiCategory({ name: "person" });
+      const articleKey = await repo.createCategory(categoryToAdd);
+
+      const allCategories = await testDB.wikiCategories.toArray();
+      expect(allCategories).toHaveLength(2);
+      expect(await testDB.wikiCategories.get(articleKey)).toStrictEqual({
+        ...categoryToAdd,
+        key: articleKey,
+      });
     });
   });
 });
