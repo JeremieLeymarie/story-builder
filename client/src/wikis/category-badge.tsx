@@ -15,8 +15,8 @@ export const CategoryBadge = ({
   return (
     <div
       className={cn(
+        "w-max rounded-lg px-3 py-0.5 select-none",
         isColorDark ? "text-white" : "text-black",
-        "rounded-lg px-3 py-0.5",
         className,
       )}
       style={{ backgroundColor: color }}

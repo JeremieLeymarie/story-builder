@@ -7,6 +7,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
   Input,
 } from "@/design-system/primitives";
@@ -16,6 +17,7 @@ import { Link } from "@tanstack/react-router";
 import { useWikiStore } from "./hooks/use-wiki-store";
 import { ArticleSchema, articleSchema } from "./schemas";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
+import { CategoryPicker } from "./category-picker";
 
 type UpdateProps =
   | {
@@ -35,7 +37,13 @@ export const ArticleEditor = ({
     defaultValues: defaultValues ?? {},
   });
   const { createArticle, updateArticle } = useArticleActions();
-  const wikiKey = useWikiStore((state) => state.wikiData.wiki.key);
+  const {
+    wiki: { key: wikiKey },
+    sections,
+  } = useWikiStore((state) => state.wikiData);
+  const categories = sections
+    .map((section) => section.category)
+    .filter((cat) => !!cat);
 
   const handleSubmit = async (data: ArticleSchema) => {
     if (mode === "update") await updateArticle(articleKey, data);
@@ -67,6 +75,7 @@ export const ArticleEditor = ({
             name="title"
             render={({ field }) => (
               <FormItem>
+                <FormLabel>Title</FormLabel>
                 <FormControl>
                   <Input
                     className="w-6/12"
@@ -80,9 +89,28 @@ export const ArticleEditor = ({
           />
           <FormField
             control={form.control}
+            name="categoryKey"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Category</FormLabel>
+                <FormControl>
+                  <CategoryPicker
+                    categories={categories}
+                    onChange={field.onChange}
+                    value={field.value}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
             name="image"
             render={({ field }) => (
               <FormItem>
+                <FormLabel>Preview image</FormLabel>
                 <FormControl>
                   <Input
                     className="w-6/12"
@@ -99,6 +127,7 @@ export const ArticleEditor = ({
             name="content"
             render={({ field }) => (
               <FormItem>
+                <FormLabel>Content</FormLabel>
                 <FormControl>
                   <RichText
                     editable
