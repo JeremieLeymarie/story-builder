@@ -32,7 +32,7 @@ export const AddCategoryPopover = ({ trigger }: { trigger: ReactNode }) => {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger>{trigger}</PopoverTrigger>
+      <PopoverTrigger asChild>{trigger}</PopoverTrigger>
       <PopoverContent side="right" className="w-max">
         <Form {...form}>
           <form

@@ -14,42 +14,23 @@ import { cn } from "@/lib/style";
 import { useState } from "react";
 import { CommandList } from "cmdk";
 import { capitalize } from "@/lib/string";
-import { StoryGenreBadge } from "@/design-system/components";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
-import { StoryGenre, STORY_GENRES } from "@/lib/storage/domain";
+import { WikiDataCategory } from "@/domains/wiki/types";
 
-export const StoryGenreCombobox = ({
+export const CategoryPicker = ({
   onChange,
-  values = [],
+  value,
+  categories,
 }: {
-  onChange: (values: StoryGenre[]) => void;
-  values: StoryGenre[];
+  onChange: (value?: string | null) => void;
+  value?: string | null;
+  categories: WikiDataCategory[];
 }) => {
   const [open, setOpen] = useState(false);
-
-  const handleSelect = (value: StoryGenre) => {
-    const idx = values.indexOf(value);
-
-    // If present, remove the value
-    if (idx !== -1) {
-      const copiedValues = [...values];
-      copiedValues.splice(idx, 1);
-
-      onChange(copiedValues);
-      return;
-    }
-
-    // Otherwise, add it
-    onChange([...values, value]);
-  };
+  const selectedCategory = categories.find((cat) => cat.key === value);
 
   return (
     <>
-      <div className="flex flex-wrap gap-2">
-        {values.map((genre) => (
-          <StoryGenreBadge key={`${genre}-badge`} variant={genre} />
-        ))}
-      </div>
       <Popover open={open} onOpenChange={setOpen} modal={true}>
         <PopoverTrigger asChild>
           <Button
@@ -58,33 +39,43 @@ export const StoryGenreCombobox = ({
             aria-expanded={open}
             className="w-[250px] justify-between"
           >
-            {values.length
-              ? `${values.length} genres selected...`
-              : "Select genre..."}
+            {value ? selectedCategory?.name : "No category"}
 
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0" align="start" side="bottom">
           <Command>
-            <CommandInput placeholder="Search genre..." />
+            <CommandInput placeholder="Search categories..." />
             <CommandList>
-              <ScrollArea className="h-[300px]">
-                <CommandEmpty>No genre found.</CommandEmpty>
+              <ScrollArea className="h-[150px]">
+                <CommandEmpty>No category found.</CommandEmpty>
                 <CommandGroup>
-                  {STORY_GENRES.map((genre) => (
+                  <CommandItem
+                    value={undefined}
+                    onSelect={() => onChange(null)}
+                  >
+                    <Check
+                      className={cn(
+                        "mx-1 h-4 w-4",
+                        value === undefined ? "opacity-100" : "opacity-0",
+                      )}
+                    />
+                    No category
+                  </CommandItem>
+                  {categories.map((category) => (
                     <CommandItem
-                      key={`${genre}-command-item`}
-                      value={genre}
-                      onSelect={(value) => handleSelect(value as StoryGenre)}
+                      key={category.key}
+                      value={category.key}
+                      onSelect={(value) => onChange(value)}
                     >
                       <Check
                         className={cn(
                           "mx-1 h-4 w-4",
-                          values.includes(genre) ? "opacity-100" : "opacity-0",
+                          value === category.key ? "opacity-100" : "opacity-0",
                         )}
                       />
-                      {capitalize(genre)}
+                      {capitalize(category.name)}
                     </CommandItem>
                   ))}
                 </CommandGroup>
