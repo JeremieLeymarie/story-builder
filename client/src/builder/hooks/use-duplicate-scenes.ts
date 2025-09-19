@@ -2,22 +2,21 @@ import { useBuilderContext } from "./use-builder-context";
 import { getBuilderService } from "@/get-builder-service";
 import { useBuilderError } from "./use-builder-error";
 import { BuilderPosition, Scene } from "@/lib/storage/domain";
-import { useGetNewScenePosition } from "./use-get-new-scene-position";
+import { useScenePositioning } from "./use-scene-positioning";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
-import { useAddFocussedNodes } from "./use-add-focussed-nodes";
+import { useAddFocusedNodes } from "./use-add-focused-nodes";
 import { useReactFlow } from "@xyflow/react";
 import { StorylessScene } from "../types";
-import { useSmartOffset } from "./use-smart-offset";
 import { Vec2 } from "../position";
 
 export const useDuplicateScenes = () => {
   const builderService = getBuilderService();
   const { handleError } = useBuilderError();
   const { story } = useBuilderContext();
-  const { getNewScenePosition: getInitialPosition } = useGetNewScenePosition();
-  const addNodes = useAddFocussedNodes();
+  const { getNewScenePosition: getInitialPosition, getOffset } =
+    useScenePositioning();
+  const addNodes = useAddFocusedNodes();
   const { addEdges } = useReactFlow();
-  const getOffset = useSmartOffset();
 
   const updateFlow = (scenes: StorylessScene[]) => {
     const [nodes, edges] = scenesToNodesAndEdgesAdapter({
