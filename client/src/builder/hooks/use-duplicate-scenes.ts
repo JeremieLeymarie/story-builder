@@ -7,7 +7,7 @@ import { scenesToNodesAndEdgesAdapter } from "../adapters";
 import { useAddFocusedNodes } from "./use-add-focused-nodes";
 import { useReactFlow } from "@xyflow/react";
 import { StorylessScene } from "../types";
-import { Vec2 } from "../position";
+import { Vec2 } from "@/lib/vec2";
 
 export const useDuplicateScenes = () => {
   const builderService = getBuilderService();

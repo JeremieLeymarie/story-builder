@@ -8,7 +8,7 @@ import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { SceneSchema } from "../components/builder-editor-bar/scene-editor/schema";
 import { useScenePositioning } from "./use-scene-positioning";
 import { useAddFocusedNodes } from "./use-add-focused-nodes";
-import { Vec2 } from "../position";
+import { Vec2 } from "@/lib/vec2";
 
 export const DEFAULT_SCENE: SceneSchema = {
   title: "",

@@ -1,9 +1,9 @@
 import { useMousePosition } from "@/hooks/use-mouse-position";
-import { Vec2 } from "../position";
 import { StorylessScene } from "../types";
 import { WithoutKey } from "@/types";
 import { useBuilderContext } from "./use-builder-context";
 import { useReactFlow } from "@xyflow/react";
+import { Vec2 } from "@/lib/vec2";
 
 const positionOffset: Vec2 = Vec2.ZERO;
 let lastPosition: Vec2 | null = null;
@@ -40,12 +40,12 @@ export const useScenePositioning = () => {
     //  a. Standardise the node measurements or
     //  b. Simulate BuilderFlow in a document fragment and measure the dom there or
     //  c. add the scenes to the builder then measure the nodes using either `useNodesInitialized`, `getNodesBound` or even a `MutationObserver`
-    const offsetFromScenes = desiredPosition.sub(
+    const offsetFromScenes = desiredPosition.subtract(
       findLeftMostPositionInBatch(scenes),
     );
 
     const isLastPlacedScenesTooClose =
-      lastPosition && Vec2.dist(desiredPosition, lastPosition) < 40;
+      lastPosition && Vec2.distance(desiredPosition, lastPosition) < 40;
 
     // `positionOffset` represents the offset from the previously created batch of scenes
     // to avoid stacking them up visually
