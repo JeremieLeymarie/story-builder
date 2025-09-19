@@ -18,7 +18,7 @@ declare module "@tanstack/react-router" {
   }
 }
 
-scan({ enabled: process.env.NODE_ENV === "development" });
+scan({ enabled: import.meta.env.DEV });
 
 // Render the app
 const rootElement = document.getElementById("root")!;
