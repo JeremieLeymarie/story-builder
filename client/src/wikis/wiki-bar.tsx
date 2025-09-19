@@ -1,8 +1,7 @@
-import { Title } from "@/design-system/components";
 import { Toolbar } from "@/design-system/components/toolbar";
-import { Input } from "@/design-system/primitives";
+import { Button, Input } from "@/design-system/primitives";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
-import { PlusCircleIcon, SearchIcon } from "lucide-react";
+import { HomeIcon, PlusIcon, SearchIcon } from "lucide-react";
 import { useWikiStore } from "./hooks/use-wiki-store";
 import { WikiSection } from "@/domains/wiki/types";
 import { Link, useParams } from "@tanstack/react-router";
@@ -12,6 +11,8 @@ import {
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
 import { cn } from "@/lib/style";
+import { AddCategoryPopover } from "./add-category-popover";
+import { CategoryBadge } from "./category-badge";
 
 const ArticleTitle = ({
   title,
@@ -29,7 +30,7 @@ const ArticleTitle = ({
       <p
         className={cn(
           isSelected && "bg-accent font-semibold",
-          "hover:bg-accent text-md w-full truncate rounded py-1 pl-2",
+          "hover:bg-accent text-md w-full truncate rounded py-1 pl-6",
         )}
       >
         {title}
@@ -42,15 +43,15 @@ const Section = ({ category, articles }: WikiSection) => {
   const wikiKey = useWikiStore((state) => state.wikiData.wiki.key);
 
   return (
-    <div className="my-2">
-      <div className="flex items-center gap-2">
-        <Title variant="sub-section">{category?.name ?? "Other"}</Title>
+    <div className="group my-2">
+      <div className="flex items-center justify-between">
+        <CategoryBadge color={category?.color} name={category?.name} />
         <Tooltip>
           <TooltipTrigger>
             <Link to="/wikis/$wikiKey/new" params={{ wikiKey }}>
-              <PlusCircleIcon
+              <PlusIcon
                 size={18}
-                className="text-primary cursor-pointer transition-transform ease-in-out hover:scale-105"
+                className="invisible cursor-pointer transition-transform ease-in-out group-hover:visible hover:scale-105"
               />
             </Link>
           </TooltipTrigger>
@@ -73,10 +74,21 @@ export const WikiBar = () => {
   } = useWikiStore((state) => state.wikiData);
 
   return (
-    <Toolbar className="w-[300px] space-y-3">
+    <Toolbar className="w-[300px] space-y-1">
       <div className="relative">
         <SearchIcon className="text-muted-foreground absolute top-2.5 left-2 h-4" />
         <Input placeholder="Search" className="pl-9" />
+        <AddCategoryPopover
+          trigger={
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground mt-1 flex items-center gap-2 text-xs"
+            >
+              New category <PlusIcon className="cursor-pointer" size={14} />
+            </Button>
+          }
+        />
       </div>
 
       {/* Apparently display grid is needed in order for the scroll area to work with a max-height instead of hard-coded height?? */}
@@ -87,9 +99,9 @@ export const WikiBar = () => {
             params={{ wikiKey }}
             className="my-2 block"
           >
-            <Title variant="sub-section" className="flex items-center gap-2">
-              Home
-            </Title>
+            <div className="flex w-max items-center gap-1 rounded-lg py-0.5">
+              <HomeIcon size={18} /> Home
+            </div>
           </Link>
           {sections.map(({ category, articles }) => (
             <Section

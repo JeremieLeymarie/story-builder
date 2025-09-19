@@ -1,6 +1,5 @@
 import { Title } from "@/design-system/components";
 import { Button } from "@/design-system/primitives";
-import { Badge } from "@/design-system/primitives/badge";
 import { WikiArticle } from "@/lib/storage/domain";
 import { Link } from "@tanstack/react-router";
 import { SerializedEditorState } from "lexical";
@@ -8,6 +7,7 @@ import { PencilIcon } from "lucide-react";
 import { useWikiStore } from "./hooks/use-wiki-store";
 import { WikiDataCategory } from "@/domains/wiki/types";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
+import { CategoryBadge } from "./category-badge";
 
 export const Article = ({
   article,
@@ -39,11 +39,7 @@ export const Article = ({
             )}
           </div>
           <div className="flex items-center gap-4">
-            {category ? (
-              <Badge>{category.name} </Badge>
-            ) : (
-              <span className="font-semibold">No category</span>
-            )}
+            <CategoryBadge color={category?.color} name={category?.name} />
             <p className="text-muted-foreground text-sm">
               Last edited on {article.updatedAt.toLocaleDateString()}, at{" "}
               {article.updatedAt.toLocaleTimeString()}
