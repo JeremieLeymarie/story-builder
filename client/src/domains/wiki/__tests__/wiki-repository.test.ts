@@ -249,7 +249,7 @@ describe("wiki repository", () => {
           }));
       };
 
-      expect(sections).toHaveLength(3);
+      expect(sections).toHaveLength(4);
 
       expect(_sort(sections)).toStrictEqual(
         _sort([
@@ -271,6 +271,14 @@ describe("wiki repository", () => {
               { title: art2.title, key: art2.key },
               { title: art3.title, key: art3.key },
             ],
+          },
+          {
+            category: {
+              name: categories[2]!.name,
+              key: categories[2]!.key,
+              color: categories[2]!.color,
+            },
+            articles: [],
           },
           { category: null, articles: [{ title: art4.title, key: art4.key }] },
         ]),

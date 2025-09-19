@@ -5,3 +5,9 @@ export class InvalidStoryTypeError extends Error {
     super(`Invalid story type: expected type {builder}, got ${type}`);
   }
 }
+
+export class CannotDeleteFirstSceneError extends Error {
+  constructor(storyKey: string) {
+    super(`Cannot delete first scene : impacted story ${storyKey}`);
+  }
+}

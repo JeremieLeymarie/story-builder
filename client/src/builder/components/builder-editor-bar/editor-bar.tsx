@@ -12,7 +12,7 @@ export const EditorBar = () => {
 
   return (
     <Toolbar
-      className={cn("min-w-[450px]", currentEditor.type === null && "hidden")}
+      className={cn("w-[500px]", currentEditor.type === null && "hidden")}
     >
       <ToolbarTitle className="mb-2">
         {match(currentEditor)

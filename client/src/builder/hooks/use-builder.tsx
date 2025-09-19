@@ -5,6 +5,8 @@ import { useBuilderShortCuts } from "./use-builder-shortcuts";
 import { useBuilderContext } from "./use-builder-context";
 import { getBuilderService } from "@/get-builder-service";
 import { useBuilderError } from "./use-builder-error";
+import { toast } from "sonner";
+import { Edge, OnBeforeDelete } from "@xyflow/react";
 
 export const useBuilder = () => {
   const { story } = useBuilderContext();
@@ -21,15 +23,25 @@ export const useBuilder = () => {
       .catch(handleError);
   };
 
-  const onNodesDelete = (nodes: BuilderNode[]) => {
+  const onBeforeNodesDelete: OnBeforeDelete<BuilderNode, Edge> = async ({
+    nodes,
+  }) => {
+    if (nodes.find((n) => n.data.isFirstScene)) {
+      toast.error("Cannot delete the first scene of the story");
+      return false;
+    }
     builderService
-      .deleteScenes(nodes.map(({ data: { key } }) => key))
+      .deleteScenes({
+        sceneKeys: nodes.map(({ data: { key } }) => key),
+        storyKey: story.key,
+      })
       .catch(handleError);
+    return true;
   };
 
   return {
     onNodeDragStop,
-    onNodesDelete,
+    onBeforeNodesDelete,
     onConnect,
     onConnectEnd,
     onEdgesDelete,

@@ -14,6 +14,7 @@ import { LayoutServicePort } from "./ports/layout-service-port";
 import { nanoid } from "nanoid";
 import { BuilderSceneRepositoryPort } from "./ports/builder-scene-repository-port";
 import { EntityNotExistError } from "../errors";
+import { CannotDeleteFirstSceneError } from "./errors";
 
 export const _getBuilderService = ({
   localRepository,
@@ -71,14 +72,17 @@ export const _getBuilderService = ({
     },
 
     addSceneConnection: async ({
-      sourceScene,
+      sourceSceneKey,
       destinationSceneKey,
       actionIndex,
     }: {
-      sourceScene: Scene;
+      sourceSceneKey: string;
       destinationSceneKey: string;
       actionIndex: number;
     }) => {
+      const sourceScene = await localRepository.getScene(sourceSceneKey);
+      if (!sourceScene) throw new EntityNotExistError("scene", sourceSceneKey);
+
       const actions = sourceScene.actions.map((action, i) => {
         if (i === actionIndex) {
           return { ...action, sceneKey: destinationSceneKey };
@@ -239,7 +243,13 @@ export const _getBuilderService = ({
       );
     },
 
-    deleteScenes: async (sceneKeys: string[]) => {
+    deleteScenes: async ({ storyKey, sceneKeys }) => {
+      const story = await storyRepository.get(storyKey);
+      if (!story) throw new EntityNotExistError("story", storyKey);
+
+      if (sceneKeys.includes(story.firstSceneKey))
+        throw new CannotDeleteFirstSceneError(story.firstSceneKey);
+
       await localRepository.deleteScenes(sceneKeys);
     },
 

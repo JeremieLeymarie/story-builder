@@ -44,7 +44,7 @@ export const WikiProvider = ({
   );
 
   useEffect(() => {
-    storeRef.current = createWikiStore({ refresh, wikiData, permissions });
+    storeRef.current.setState({ refresh, wikiData, permissions });
   }, [refresh, wikiData, permissions]);
 
   return (

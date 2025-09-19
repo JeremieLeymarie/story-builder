@@ -1,0 +1,18 @@
+export const DEFAULT_COLORS = [
+  "#c1121f",
+  "#ACC12F",
+  "#ffb703",
+  "#219ebc",
+  "#2C3D55",
+  "#cdb4db",
+  "#5A2328",
+  "#4ECDC4",
+  "#BA2C73",
+  "#99582a",
+  "#BFD7EA",
+  "#E71D36",
+  "#0077b6",
+  "#14213d",
+  "#fb8500",
+  "#ffafcc",
+];

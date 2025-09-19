@@ -24,7 +24,7 @@ const computeLuminance = (rgb: readonly [number, number, number]) => {
   return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
 };
 
-export const isColorDark = (hexColor: string) => {
+export const getIsColorDark = (hexColor: string) => {
   const rgb = hexToRGB(hexColor);
   const luminance = computeLuminance(rgb);
 

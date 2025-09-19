@@ -1,3 +1,4 @@
+export * from "./color-picker";
 export * from "./confirm-dialog";
 export * from "./divider";
 export * from "./error-message";

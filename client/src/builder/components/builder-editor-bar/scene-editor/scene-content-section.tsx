@@ -9,7 +9,7 @@ import {
 import { UseFormReturn } from "react-hook-form";
 import { SceneSchema, SceneUpdatePayload } from "./schema";
 import { SetFirstSceneSwitch } from "./set-first-scene-switch";
-import { RichText } from "@/design-system/components/editor/blocks/rich-text-editor";
+import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
 
 export const SceneContentSection = ({
   form,

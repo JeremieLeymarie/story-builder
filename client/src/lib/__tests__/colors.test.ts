@@ -1,13 +1,13 @@
 import { describe, expect, test } from "vitest";
-import { isColorDark } from "../colors";
+import { getIsColorDark } from "../colors";
 
 describe("colors", () => {
   describe("isColorDark", () => {
     test("invalid color code", () => {
-      expect(() => isColorDark("tutu")).toThrow();
-      expect(() => isColorDark("25283D")).toThrow();
-      expect(() => isColorDark("#25283Z")).toThrow();
-      expect(() => isColorDark("255,255,255")).toThrow();
+      expect(() => getIsColorDark("tutu")).toThrow();
+      expect(() => getIsColorDark("25283D")).toThrow();
+      expect(() => getIsColorDark("#25283Z")).toThrow();
+      expect(() => getIsColorDark("255,255,255")).toThrow();
     });
 
     test("dark colors", () => {
@@ -21,7 +21,7 @@ describe("colors", () => {
       ];
 
       DARK_COLORS.forEach((color) => {
-        expect(isColorDark(color)).toBeTruthy();
+        expect(getIsColorDark(color)).toBeTruthy();
       });
     });
 
@@ -36,7 +36,7 @@ describe("colors", () => {
       ];
 
       LIGHT_COLORS.forEach((color) => {
-        expect(isColorDark(color)).toBeFalsy();
+        expect(getIsColorDark(color)).toBeFalsy();
       });
     });
   });

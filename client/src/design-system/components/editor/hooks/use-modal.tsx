@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { JSX, useState } from "react";
+import { ReactNode, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -32,13 +32,13 @@ const Modal = ({
 
 type ModalContent = {
   closeOnClickOutside: boolean;
-  content: JSX.Element;
+  content: ReactNode;
   title: string;
 };
 
 export const useEditorModal = (): [
-  JSX.Element | null,
-  (title: string, showModal: (onClose: () => void) => JSX.Element) => void,
+  ReactNode,
+  (title: string, showModal: (onClose: () => void) => ReactNode) => void,
 ] => {
   const [modalContent, setModalContent] = useState<null | ModalContent>(null);
 
@@ -48,7 +48,7 @@ export const useEditorModal = (): [
 
   const showModal = (
     title: string,
-    getContent: (onClose: () => void) => JSX.Element,
+    getContent: (onClose: () => void) => ReactNode,
     closeOnClickOutside = false,
   ) => {
     setModalContent({

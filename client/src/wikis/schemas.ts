@@ -7,7 +7,7 @@ export const articleSchema = z.object({
     .max(250, { error: "Title has to be less than 250 characters" }),
   content: lexicalContentSchema,
   image: z.url(),
-  categoryKey: z.nanoid().optional(),
+  categoryKey: z.nanoid().nullish(),
 });
 
 export type ArticleSchema = z.infer<typeof articleSchema>;

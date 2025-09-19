@@ -17,10 +17,6 @@ import {
 } from "@/repositories/stubs/data";
 import { _getBuilderService } from "../builder-service";
 import {
-  MockBuilderStoryRepository,
-  getStubBuilderStoryRepository,
-} from "../stubs/stub-builder-story-repository";
-import {
   MockLayoutService,
   getStubLayoutService,
 } from "../stubs/stub-layout-service";
@@ -33,6 +29,12 @@ import {
   getStubBuilderSceneRepository,
   MockBuilderSceneRepository,
 } from "../stubs/stub-builder-scene-repository";
+import { EntityNotExistError } from "@/domains/errors";
+import {
+  getStubBuilderStoryRepository,
+  MockBuilderStoryRepository,
+} from "../stubs/stub-builder-story-repository";
+import { CannotDeleteFirstSceneError } from "../errors";
 
 const factory = getTestFactory();
 
@@ -80,7 +82,7 @@ describe("builder-service", () => {
   describe("addSceneConnection", () => {
     it("should add connection between scenes", async () => {
       await builderService.addSceneConnection({
-        sourceScene: BASIC_SCENE,
+        sourceSceneKey: BASIC_SCENE.key,
         destinationSceneKey: "dest",
         actionIndex: 0,
       });
@@ -98,7 +100,7 @@ describe("builder-service", () => {
 
     it("should do nothing when given out of bounds index", async () => {
       await builderService.addSceneConnection({
-        sourceScene: BASIC_SCENE,
+        sourceSceneKey: BASIC_SCENE.key,
         destinationSceneKey: "dest",
         actionIndex: 42,
       });
@@ -113,7 +115,7 @@ describe("builder-service", () => {
 
     it("should do nothing when given negative index", async () => {
       await builderService.addSceneConnection({
-        sourceScene: BASIC_SCENE,
+        sourceSceneKey: BASIC_SCENE.key,
         destinationSceneKey: "dest",
         actionIndex: -1,
       });
@@ -392,8 +394,37 @@ describe("builder-service", () => {
   });
 
   describe("deleteScenes", () => {
+    it("should not delete when story key is invalid", async () => {
+      storyRepository.get = vi.fn(() => Promise.resolve(null));
+
+      await expect(
+        builderService.deleteScenes({
+          storyKey: "vroum",
+          sceneKeys: ["ti", "ta", "tu"],
+        }),
+      ).rejects.toThrow(EntityNotExistError);
+      expect(localRepository.deleteScenes).not.toHaveBeenCalled();
+    });
+
+    it("should not delete first scene", async () => {
+      storyRepository.get = vi.fn(() =>
+        Promise.resolve(factory.story.builder({ firstSceneKey: "ti" })),
+      );
+
+      await expect(
+        builderService.deleteScenes({
+          storyKey: "vroum",
+          sceneKeys: ["ti", "ta", "tu"],
+        }),
+      ).rejects.toThrow(CannotDeleteFirstSceneError);
+      expect(localRepository.deleteScenes).not.toHaveBeenCalled();
+    });
+
     it("should delete scenes", async () => {
-      await builderService.deleteScenes(["ti", "ta", "tu"]);
+      await builderService.deleteScenes({
+        storyKey: "vroum",
+        sceneKeys: ["ti", "ta", "tu"],
+      });
 
       expect(localRepository.deleteScenes).toHaveBeenCalledWith([
         "ti",

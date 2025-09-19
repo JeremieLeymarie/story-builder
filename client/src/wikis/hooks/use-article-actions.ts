@@ -31,7 +31,10 @@ export const useArticleActions = () => {
     payload: Partial<ArticleSchema>,
   ) => {
     try {
-      await svc.updateArticle(articleKey, payload);
+      await svc.updateArticle(articleKey, {
+        ...payload,
+        categoryKey: payload.categoryKey ?? undefined,
+      });
       await refresh();
       navigate({
         to: "/wikis/$wikiKey/$articleKey",

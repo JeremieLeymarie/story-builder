@@ -62,11 +62,13 @@ export const _getDexieWikiRepository = (
         .filter((cat) => cat.wikiKey === wikiKey)
         .toArray();
 
-      const categoryKeys = categories.map(({ key }) => key);
-
-      const articlesByCategoryKey: {
-        [categoryKey: string]: WikiSection["articles"];
-      } = {};
+      const articlesByCategoryKey = categories.reduce(
+        (acc, cat) => ({ ...acc, [cat.key]: [] }),
+        {} as {
+          [categoryKey: string]: WikiSection["articles"];
+        },
+      );
+      const categoryKeys = Object.keys(articlesByCategoryKey);
 
       await db.wikiArticles.where({ wikiKey }).each((article) => {
         const key =
