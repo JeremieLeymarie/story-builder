@@ -6,10 +6,9 @@ import { Scene } from "@/lib/storage/domain";
 import { useBuilderError } from "./use-builder-error";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { SceneSchema } from "../components/builder-editor-bar/scene-editor/schema";
-import { useGetNewScenePosition } from "./use-get-new-scene-position";
-import { useAddFocussedNodes } from "./use-add-focussed-nodes";
+import { useScenePositioning } from "./use-scene-positioning";
+import { useAddFocusedNodes } from "./use-add-focused-nodes";
 import { Vec2 } from "../position";
-import { useSmartOffset } from "./use-smart-offset";
 
 export const DEFAULT_SCENE: SceneSchema = {
   title: "",
@@ -21,9 +20,8 @@ export const useAddScene = () => {
   const builderService = getBuilderService();
   const { handleError } = useBuilderError();
   const { story } = useBuilderContext();
-  const addNodes = useAddFocussedNodes();
-  const { getNewScenePosition } = useGetNewScenePosition();
-  const getOffset = useSmartOffset();
+  const addNodes = useAddFocusedNodes();
+  const { getNewScenePosition, getOffset } = useScenePositioning();
 
   const addScene = async ({
     payload = DEFAULT_SCENE,

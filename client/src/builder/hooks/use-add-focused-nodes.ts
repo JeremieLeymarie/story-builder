@@ -3,16 +3,15 @@ import { BuilderNode } from "../types";
 import { useBuilderEditorStore } from "./use-scene-editor-store";
 import { nodeToSceneAdapter } from "../adapters";
 
-export const useAddFocussedNodes = () => {
+export const useAddFocusedNodes = () => {
   const { getState, setState } = useStoreApi();
   const { resetSelectedElements } = getState();
   const { addNodes } = useReactFlow();
   const openSceneEditor = useBuilderEditorStore((state) => state.open);
 
-  const addFocussedNodes = (nodes: BuilderNode[]) => {
+  const addFocusedNodes = (nodes: BuilderNode[]) => {
     resetSelectedElements();
-    nodes.forEach((node) => (node.selected = true));
-    addNodes(nodes);
+    addNodes(nodes.map((node) => ({ ...node, selected: true })));
     setState({ nodesSelectionActive: false });
 
     if (nodes.length === 1) {
@@ -23,5 +22,5 @@ export const useAddFocussedNodes = () => {
     }
   };
 
-  return addFocussedNodes;
+  return addFocusedNodes;
 };
