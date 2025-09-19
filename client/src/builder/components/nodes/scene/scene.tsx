@@ -5,21 +5,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/design-system/primitives/card";
-import { Handle, NodeProps, Position, useReactFlow } from "@xyflow/react";
+import { Handle, NodeProps, Position } from "@xyflow/react";
 import { EditIcon } from "lucide-react";
-import { BuilderNode, SceneNodeType } from "../../../types";
+import { SceneNodeType } from "../../../types";
 import { cn } from "@/lib/style";
 import { Button } from "@/design-system/primitives";
 import { useBuilderEditorStore } from "@/builder/hooks/use-scene-editor-store";
 import { RichText } from "@/design-system/components/editor/blocks/rich-text-editor";
+import { useCopyPaste } from "@/builder/hooks/use-copy-paste";
 
 export type SceneNodeProps = NodeProps<SceneNodeType>;
 
 export const SceneNode = ({ data, selected }: SceneNodeProps) => {
   const openEditor = useBuilderEditorStore((state) => state.open);
-  const { isFirstScene, builderParams, isEditable, ...scene } = data;
-  const editable = data.isEditable !== undefined ? data.isEditable : true;
-  const { setNodes } = useReactFlow<BuilderNode>();
+  const { isFirstScene, builderParams, isEditable = true, ...scene } = data;
+  const { onAuxClick } = useCopyPaste();
 
   return (
     <Card
@@ -28,11 +28,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
         isFirstScene && "bg-primary/60",
         selected && "border border-black",
       )}
-      onAuxClick={(ev) => {
-        ev.preventDefault();
-        navigator.clipboard.writeText(JSON.stringify([data]));
-        setNodes((nds) => nds.filter((nd) => nd.data.key !== data.key));
-      }}
+      onAuxClick={(ev) => onAuxClick(ev, data)}
       onDoubleClick={() => {
         openEditor({
           type: "scene-editor",
@@ -49,7 +45,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
               Empty Scene
             </CardTitle>
           )}
-          {editable && (
+          {isEditable && (
             <Button
               className="invisible aspect-square group-hover:visible"
               size="icon"

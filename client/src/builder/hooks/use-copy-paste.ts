@@ -1,7 +1,7 @@
 import z from "zod/v4";
 import { sceneSchema } from "../components/builder-editor-bar/scene-editor/schema";
 import { useReactFlow } from "@xyflow/react";
-import { BuilderNode } from "../types";
+import { BuilderNode, SceneProps } from "../types";
 import { nodeToSceneAdapter } from "../adapters";
 import { getBuilderService } from "@/get-builder-service";
 import { isAnyInputFocused } from "./use-builder-shortcuts";
@@ -9,6 +9,7 @@ import { useDuplicateScenes } from "./use-duplicate-scenes";
 import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { useBuilderError } from "./use-builder-error";
+import { MouseEvent as ReactMouseEvent } from "react";
 
 const clipboardSchema = z.array(
   sceneSchema.extend({
@@ -41,6 +42,15 @@ export const useCopyPaste = () => {
     }
   };
 
+  const onAuxClick = (
+    ev: ReactMouseEvent<HTMLDivElement, MouseEvent>,
+    data: SceneProps,
+  ) => {
+    ev.preventDefault();
+    navigator.clipboard.writeText(JSON.stringify([data]));
+    setNodes((nds) => nds.filter((nd) => nd.data.key !== data.key));
+  };
+
   const onPaste = (ev: ClipboardEvent) => {
     if (isAnyInputFocused()) return;
     ev.preventDefault();
@@ -68,6 +78,7 @@ export const useCopyPaste = () => {
   };
 
   return {
+    onAuxClick,
     onCopyOrCut,
     onPaste,
   };
