@@ -6,7 +6,7 @@ import { useBuilderError } from "./use-builder-error";
 import { SceneUpdatePayload } from "../components/builder-editor-bar/scene-editor/schema";
 
 export const useBuilderActions = () => {
-  const { story } = useBuilderContext();
+  const { story, setStory } = useBuilderContext();
   const { setNodes } = useReactFlow<BuilderNode>();
   const { handleError } = useBuilderError();
 
@@ -34,6 +34,7 @@ export const useBuilderActions = () => {
 
   const setFirstScene = async (sceneKey: string) => {
     builderService.changeFirstScene(story.key, sceneKey).catch(handleError);
+    setStory({ ...story, firstSceneKey: sceneKey });
     setNodes((prev) =>
       prev.map((n) => ({
         ...n,
