@@ -41,7 +41,7 @@ export const useBuilderEdges = () => {
 
     getBuilderService()
       .addSceneConnection({
-        sourceScene: sceneData.sceneToUpdate,
+        sourceSceneKey: sceneData.sceneToUpdate.key,
         destinationSceneKey: connection.target,
         actionIndex: sceneData.actionIndex,
       })

@@ -73,7 +73,7 @@ describe("builder-service", () => {
   describe("addSceneConnection", () => {
     it("should add connection between scenes", async () => {
       await builderService.addSceneConnection({
-        sourceScene: BASIC_SCENE,
+        sourceSceneKey: BASIC_SCENE.key,
         destinationSceneKey: "dest",
         actionIndex: 0,
       });
@@ -91,7 +91,7 @@ describe("builder-service", () => {
 
     it("should do nothing when given out of bounds index", async () => {
       await builderService.addSceneConnection({
-        sourceScene: BASIC_SCENE,
+        sourceSceneKey: BASIC_SCENE.key,
         destinationSceneKey: "dest",
         actionIndex: 42,
       });
@@ -106,7 +106,7 @@ describe("builder-service", () => {
 
     it("should do nothing when given negative index", async () => {
       await builderService.addSceneConnection({
-        sourceScene: BASIC_SCENE,
+        sourceSceneKey: BASIC_SCENE.key,
         destinationSceneKey: "dest",
         actionIndex: -1,
       });
