@@ -6,6 +6,7 @@ import { $isNodeSelection } from "lexical";
 import { ImageResizer } from "@/design-system/components/editor/editor-ui/image-resizer";
 import { SimpleLoader } from "../../simple-loader";
 import { useImageCommands } from "../helpers/use-image-commands";
+import { getEditorContainerInfo } from "../helpers/get-editor-container-dimensions";
 
 const LazyImage = ({
   altText,
@@ -63,7 +64,6 @@ const ImageComponent = ({
   nodeKey,
   width,
   height,
-  maxWidth,
   resizable,
 }: {
   altText: string;
@@ -80,6 +80,8 @@ const ImageComponent = ({
   const [isLoadError, setIsLoadError] = useState<boolean>(false);
   const { draggable, isFocused, selection, onResizeEnd, onResizeStart } =
     useImageCommands({ nodeKey, imageRef });
+  const { maxWidthContainer } = getEditorContainerInfo(editor);
+
   return (
     <Suspense fallback={<SimpleLoader />}>
       <span className="user-select-none editor-image relative inline-block cursor-default">
@@ -98,7 +100,7 @@ const ImageComponent = ({
               imageRef={imageRef}
               width={width}
               height={height}
-              maxWidth={maxWidth}
+              maxWidth={maxWidthContainer}
               onError={() => setIsLoadError(true)}
             />
           )}
@@ -109,7 +111,7 @@ const ImageComponent = ({
             editor={editor}
             buttonRef={buttonRef}
             imageRef={imageRef}
-            maxWidth={maxWidth}
+            maxWidth={maxWidthContainer}
             onResizeStart={onResizeStart}
             onResizeEnd={onResizeEnd}
           />

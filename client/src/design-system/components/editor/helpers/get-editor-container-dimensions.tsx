@@ -1,5 +1,7 @@
+import { LexicalEditor } from "lexical";
+
 export const getEditorContainerInfo = (
-  editor: { getRootElement: () => HTMLElement | null },
+  editor: LexicalEditor,
   maxWidth?: number,
 ) => {
   const editorRootElement = editor.getRootElement();
@@ -10,11 +12,11 @@ export const getEditorContainerInfo = (
   if (maxWidth !== undefined) {
     maxWidthContainer = maxWidth;
   } else if (editorRootElement) {
-    maxWidthContainer = editorRootElement.getBoundingClientRect().width - 20;
+    maxWidthContainer = editorRootElement.getBoundingClientRect().width - 30;
   }
 
   if (editorRootElement) {
-    maxHeightContainer = editorRootElement.getBoundingClientRect().height - 20;
+    maxHeightContainer = editorRootElement.getBoundingClientRect().height - 30;
   }
 
   return { maxWidthContainer, maxHeightContainer };
