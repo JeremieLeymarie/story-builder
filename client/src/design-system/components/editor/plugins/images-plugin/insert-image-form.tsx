@@ -1,3 +1,4 @@
+"use no memo";
 import { FileDropInput } from "@/design-system/components/file-input";
 import {
   FormField,
@@ -15,26 +16,6 @@ import { LexicalEditor } from "lexical";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { INSERT_IMAGE_COMMAND } from "./command";
-import { XIcon } from "lucide-react";
-
-const ImagePreview = ({
-  src,
-  onRemove,
-}: {
-  src: string;
-  onRemove: () => void;
-}) => {
-  return (
-    <div className="group relative m-auto w-10/12">
-      <XIcon
-        className="bg-primary absolute -top-2 -right-2 z-[100] rounded-full p-1"
-        size={22.75}
-        onClick={onRemove}
-      />
-      <img src={src} className="rounded shadow" />
-    </div>
-  );
-};
 
 const imageSchema = z.object({
   src: z.string(), // TODO: use base64url?
@@ -60,7 +41,7 @@ export const InsertImageDialog = ({
 
   const onSubmit = (data: ImageSchema) => {
     activeEditor.dispatchCommand(INSERT_IMAGE_COMMAND, {
-      src: data.src,
+      src: data.src ?? "",
       altText: data.altText ?? "",
     });
     onClose();
@@ -79,32 +60,26 @@ export const InsertImageDialog = ({
           name="src"
           render={({ field }) => (
             <FormItem>
-              {field.value ? (
-                <ImagePreview
-                  src={field.value}
-                  onRemove={() => field.onChange(undefined)}
-                />
-              ) : (
-                <div className="space-y-2">
-                  <FormControl>
-                    <FileDropInput
-                      onUploadFile={(dataURL) => {
-                        field.onChange(dataURL);
-                      }}
-                      readAs="dataURL"
-                    />
-                  </FormControl>
-                  <p className="w-full text-center">--- OR ---</p>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="url"
-                      placeholder="Paste a URL from the web"
-                    />
-                  </FormControl>
-                </div>
-              )}
-              <FormMessage />
+              <div className="space-y-2">
+                <FormControl>
+                  <FileDropInput
+                    onUploadFile={(dataURL) => {
+                      field.onChange(dataURL);
+                    }}
+                    readAs="dataURL"
+                    accept="image"
+                  />
+                </FormControl>
+                <p className="w-full text-center">--- OR ---</p>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="url"
+                    placeholder="Paste a URL from the web"
+                  />
+                </FormControl>
+                <FormMessage />
+              </div>
             </FormItem>
           )}
         />

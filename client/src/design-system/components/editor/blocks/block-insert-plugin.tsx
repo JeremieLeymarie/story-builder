@@ -18,7 +18,7 @@ export const BlockInsertPlugin = ({
   return (
     <>
       {modal}
-      <Select value={""}>
+      <Select value="">
         <SelectTrigger className="!h-8 w-min gap-1">
           <PlusIcon className="size-4" />
           <span>Insert</span>

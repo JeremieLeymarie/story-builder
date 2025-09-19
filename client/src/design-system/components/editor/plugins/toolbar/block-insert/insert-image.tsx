@@ -15,7 +15,6 @@ export const InsertImage = () => {
           <InsertImageDialog activeEditor={activeEditor} onClose={onClose} />
         ));
       }}
-      className=""
     >
       <div className="flex items-center gap-1">
         <ImageIcon className="size-4" />

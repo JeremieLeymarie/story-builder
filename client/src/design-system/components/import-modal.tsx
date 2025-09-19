@@ -82,6 +82,7 @@ export const ImportModal = ({
           <ImportPreview storyFromImport={storyFromImport} />
         ) : (
           <FileDropInput
+            accept="json"
             readAs="text"
             onUploadFile={(content) => {
               // TODO: test what happens when parsing fails
