@@ -45,7 +45,10 @@ export type BuilderServicePort = {
     scenes: Scene[];
   }>;
   loadBuilderState: (stories: Story[], scenes: Scene[]) => Promise<void>;
-  deleteScenes: (sceneKeys: string[]) => Promise<void>;
+  deleteScenes: (params: {
+    storyKey: string;
+    sceneKeys: string[];
+  }) => Promise<void>;
   deleteStory: (storyKey: string) => Promise<void>;
   importStory: (
     storyFromImport: StoryFromImport,

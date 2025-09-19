@@ -29,6 +29,8 @@ import {
   MOCK_IMPORTED_SCENE,
 } from "@/domains/__tests__/data/imported-story-mocks";
 import { getTestFactory } from "@/lib/testing/factory";
+import { EntityNotExistError } from "@/domains/errors";
+import { CannotDeleteFirstSceneError } from "../errors";
 
 const factory = getTestFactory();
 
@@ -385,8 +387,37 @@ describe("builder-service", () => {
   });
 
   describe("deleteScenes", () => {
+    it("should not delete when story key is invalid", async () => {
+      builderStoryRepository.get = vi.fn(() => Promise.resolve(null));
+
+      await expect(
+        builderService.deleteScenes({
+          storyKey: "vroum",
+          sceneKeys: ["ti", "ta", "tu"],
+        }),
+      ).rejects.toThrow(EntityNotExistError);
+      expect(localRepository.deleteScenes).not.toHaveBeenCalled();
+    });
+
+    it("should not delete first scene", async () => {
+      builderStoryRepository.get = vi.fn(() =>
+        Promise.resolve(factory.story.builder({ firstSceneKey: "ti" })),
+      );
+
+      await expect(
+        builderService.deleteScenes({
+          storyKey: "vroum",
+          sceneKeys: ["ti", "ta", "tu"],
+        }),
+      ).rejects.toThrow(CannotDeleteFirstSceneError);
+      expect(localRepository.deleteScenes).not.toHaveBeenCalled();
+    });
+
     it("should delete scenes", async () => {
-      await builderService.deleteScenes(["ti", "ta", "tu"]);
+      await builderService.deleteScenes({
+        storyKey: "vroum",
+        sceneKeys: ["ti", "ta", "tu"],
+      });
 
       expect(localRepository.deleteScenes).toHaveBeenCalledWith([
         "ti",

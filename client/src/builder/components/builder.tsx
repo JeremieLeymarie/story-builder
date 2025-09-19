@@ -25,7 +25,7 @@ const BuilderFlow = () => {
     onConnectEnd,
     onEdgesDelete,
     onNodeDragStop,
-    onNodesDelete,
+    onBeforeNodesDelete,
   } = useBuilder();
 
   return (
@@ -38,7 +38,7 @@ const BuilderFlow = () => {
       onConnectEnd={onConnectEnd}
       onEdgesDelete={onEdgesDelete}
       onNodeDragStop={onNodeDragStop}
-      onNodesDelete={onNodesDelete}
+      onBeforeDelete={onBeforeNodesDelete}
       nodeOrigin={[0, 0.5]}
       minZoom={0.1}
       selectionMode={SelectionMode.Partial}

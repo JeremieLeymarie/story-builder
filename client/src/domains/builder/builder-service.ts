@@ -12,6 +12,7 @@ import { BuilderServicePort } from "./ports/builder-service-port";
 import { BuilderStoryRepositoryPort } from "./ports/builder-story-repository-port";
 import { LayoutServicePort } from "./ports/layout-service-port";
 import { EntityNotExistError } from "../errors";
+import { CannotDeleteFirstSceneError } from "./errors";
 
 export const _getBuilderService = ({
   localRepository,
@@ -238,7 +239,13 @@ export const _getBuilderService = ({
       );
     },
 
-    deleteScenes: async (sceneKeys: string[]) => {
+    deleteScenes: async ({ storyKey, sceneKeys }) => {
+      const story = await builderStoryRepository.get(storyKey);
+      if (!story) throw new EntityNotExistError("story", storyKey);
+
+      if (sceneKeys.includes(story.firstSceneKey))
+        throw new CannotDeleteFirstSceneError(story.firstSceneKey);
+
       await localRepository.deleteScenes(sceneKeys);
     },
 
