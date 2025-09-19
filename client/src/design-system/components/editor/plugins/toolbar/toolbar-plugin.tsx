@@ -3,7 +3,7 @@ import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext
 import { COMMAND_PRIORITY_CRITICAL, SELECTION_CHANGE_COMMAND } from "lexical";
 
 import { useEditorModal } from "@/design-system/components/editor/hooks/use-modal";
-import { ToolbarContext } from "../../hooks/use-toolbar-context";
+import { ToolbarProvider } from "../../hooks/use-toolbar-context";
 
 export const ToolbarPlugin = ({
   children,
@@ -13,8 +13,6 @@ export const ToolbarPlugin = ({
   const [editor] = useLexicalComposerContext();
 
   const [activeEditor, setActiveEditor] = useState(editor);
-  const [blockType, setBlockType] = useState<string>("paragraph");
-  const $updateToolbar = () => {};
   const [modal, showModal] = useEditorModal();
 
   useEffect(() => {
@@ -29,16 +27,10 @@ export const ToolbarPlugin = ({
   }, [activeEditor, editor]);
 
   return (
-    <ToolbarContext
-      activeEditor={activeEditor}
-      $updateToolbar={$updateToolbar}
-      blockType={blockType}
-      setBlockType={setBlockType}
-      showModal={showModal}
-    >
+    <ToolbarProvider activeEditor={activeEditor} showModal={showModal}>
       {modal}
 
-      {children({ blockType })}
-    </ToolbarContext>
+      {children({ blockType: "paragraph" })}
+    </ToolbarProvider>
   );
 };
