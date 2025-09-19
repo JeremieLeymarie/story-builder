@@ -12,7 +12,9 @@ import type {
 import { $applyNodeReplacement, DecoratorNode } from "lexical";
 import React from "react";
 
-const ImageComponent = React.lazy(() => import("../editor-ui/image-component"));
+const ImageComponent = React.lazy(
+  () => import("../components/image-component"),
+);
 
 export type ImagePayload = {
   altText: string;

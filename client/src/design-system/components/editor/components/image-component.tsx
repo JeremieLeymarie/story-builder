@@ -3,10 +3,10 @@ import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext
 import type { NodeKey } from "lexical";
 import { $isNodeSelection } from "lexical";
 
-import { ImageResizer } from "@/design-system/components/editor/editor-ui/image-resizer";
 import { SimpleLoader } from "../../simple-loader";
-import { useImageCommands } from "../helpers/use-image-commands";
-import { getEditorContainerInfo } from "../helpers/get-editor-container-dimensions";
+import { getEditorContainerInfo } from "../lib/get-editor-container-dimensions";
+import { useImageCommands } from "../hooks/use-image-commands";
+import { ImageResizer } from "./image-resizer";
 
 const LazyImage = ({
   altText,

@@ -6,7 +6,7 @@ import { Scene, StoryProgress } from "@/lib/storage/domain";
 import { Divider } from "@/design-system/components/divider";
 import { Link } from "@tanstack/react-router";
 import { SerializedEditorState } from "lexical";
-import { RichText } from "@/design-system/components/editor/blocks/rich-text-editor";
+import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
 
 type GameSceneProps = {
   scene: Scene;

@@ -1,6 +1,6 @@
 import { PlusIcon } from "lucide-react";
 
-import { useEditorModal } from "@/design-system/components/editor/editor-hooks/use-modal";
+import { useEditorModal } from "@/design-system/components/editor/hooks/use-modal";
 import {
   Select,
   SelectContent,

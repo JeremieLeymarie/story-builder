@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import type { LexicalEditor } from "lexical";
-import { Direction, useResizeImage } from "../helpers/use-resize-image";
 import { cn } from "@/lib/style";
+import { Direction, useResizeImage } from "../hooks/use-resize-image";
 
 const ResizeHandle = ({
   className,

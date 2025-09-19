@@ -7,10 +7,10 @@ import { EditorState, SerializedEditorState } from "lexical";
 
 import { TooltipProvider } from "@/design-system/primitives/tooltip";
 
-import { nodes } from "./nodes";
-import { EditorPlugins } from "./editor-plugins";
-import { BasePlugins } from "./base-plugins";
 import { cn } from "@/lib/style";
+import { EditorPlugins } from "../plugins/editor-plugins";
+import { BasePlugins } from "../plugins/base-plugins";
+import { nodes } from "../nodes";
 
 const editorConfig: InitialConfigType = {
   namespace: "Editor",

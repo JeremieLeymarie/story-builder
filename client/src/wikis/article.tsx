@@ -6,8 +6,8 @@ import { Link } from "@tanstack/react-router";
 import { SerializedEditorState } from "lexical";
 import { PencilIcon } from "lucide-react";
 import { useWikiStore } from "./hooks/use-wiki-store";
-import { RichText } from "@/design-system/components/editor/blocks/rich-text-editor";
 import { WikiDataCategory } from "@/domains/wiki/types";
+import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
 
 export const Article = ({
   article,

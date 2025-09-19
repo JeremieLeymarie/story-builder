@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { COMMAND_PRIORITY_CRITICAL, SELECTION_CHANGE_COMMAND } from "lexical";
 
-import { ToolbarContext } from "@/design-system/components/editor/context/toolbar-context";
-import { useEditorModal } from "@/design-system/components/editor/editor-hooks/use-modal";
+import { useEditorModal } from "@/design-system/components/editor/hooks/use-modal";
+import { ToolbarContext } from "../../hooks/use-toolbar-context";
 
 export const ToolbarPlugin = ({
   children,

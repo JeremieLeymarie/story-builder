@@ -1,6 +1,6 @@
 import { RefObject, useRef } from "react";
 import { calculateZoomLevel } from "@lexical/utils";
-import { getEditorContainerInfo } from "@/design-system/components/editor/helpers/get-editor-container-dimensions";
+import { getEditorContainerInfo } from "@/design-system/components/editor/lib/get-editor-container-dimensions";
 import { LexicalEditor } from "lexical";
 
 export type Direction = {

@@ -6,8 +6,7 @@ import {
   COMMAND_PRIORITY_CRITICAL,
   SELECTION_CHANGE_COMMAND,
 } from "lexical";
-
-import { useToolbarContext } from "@/design-system/components/editor/context/toolbar-context";
+import { useToolbarContext } from "./use-toolbar-context";
 
 export const useUpdateToolbarHandler = (
   callback: (selection: BaseSelection) => void,

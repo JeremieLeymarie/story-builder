@@ -14,8 +14,8 @@ import { SerializedEditorState } from "lexical";
 import { CornerDownLeft } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useWikiStore } from "./hooks/use-wiki-store";
-import { RichText } from "@/design-system/components/editor/blocks/rich-text-editor";
 import { ArticleSchema, articleSchema } from "./schemas";
+import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
 
 type UpdateProps =
   | {
