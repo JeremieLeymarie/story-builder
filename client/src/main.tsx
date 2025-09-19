@@ -18,7 +18,7 @@ declare module "@tanstack/react-router" {
   }
 }
 
-scan({ enabled: import.meta.env.DEV });
+scan({ enabled: import.meta.env.VITE_VERCEL_ENV !== "production" });
 
 // Render the app
 const rootElement = document.getElementById("root")!;
