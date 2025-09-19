@@ -11,6 +11,7 @@ import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { BuilderServicePort } from "./ports/builder-service-port";
 import { BuilderStoryRepositoryPort } from "./ports/builder-story-repository-port";
 import { LayoutServicePort } from "./ports/layout-service-port";
+import { EntityNotExistError } from "../errors";
 
 export const _getBuilderService = ({
   localRepository,
@@ -66,14 +67,17 @@ export const _getBuilderService = ({
     },
 
     addSceneConnection: async ({
-      sourceScene,
+      sourceSceneKey,
       destinationSceneKey,
       actionIndex,
     }: {
-      sourceScene: Scene;
+      sourceSceneKey: string;
       destinationSceneKey: string;
       actionIndex: number;
     }) => {
+      const sourceScene = await localRepository.getScene(sourceSceneKey);
+      if (!sourceScene) throw new EntityNotExistError("scene", sourceSceneKey);
+
       const actions = sourceScene.actions.map((action, i) => {
         if (i === actionIndex) {
           return { ...action, sceneKey: destinationSceneKey };

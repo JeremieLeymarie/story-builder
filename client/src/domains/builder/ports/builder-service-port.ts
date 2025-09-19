@@ -10,7 +10,7 @@ export type BuilderServicePort = {
     position: Scene["builderParams"]["position"],
   ) => Promise<void>;
   addSceneConnection: (props: {
-    sourceScene: Scene;
+    sourceSceneKey: string;
     destinationSceneKey: string;
     actionIndex: number;
   }) => Promise<void>;
