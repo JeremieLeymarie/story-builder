@@ -12,9 +12,12 @@ import { BuilderServicePort } from "./ports/builder-service-port";
 import { BuilderStoryRepositoryPort } from "./ports/builder-story-repository-port";
 import { LayoutServicePort } from "./ports/layout-service-port";
 import { EntityNotExistError } from "../errors";
-import { CannotDeleteFirstSceneError } from "./errors";
 import { nanoid } from "nanoid";
 import { BuilderSceneRepositoryPort } from "./ports/builder-scene-repository-port";
+import {
+  CannotDeleteFirstSceneError,
+  DuplicationMissingPositionError,
+} from "./errors";
 
 export const _getBuilderService = ({
   localRepository,
@@ -244,7 +247,7 @@ export const _getBuilderService = ({
     },
 
     deleteScenes: async ({ storyKey, sceneKeys }) => {
-      const story = await builderStoryRepository.get(storyKey);
+      const story = await storyRepository.get(storyKey);
       if (!story) throw new EntityNotExistError("story", storyKey);
 
       if (sceneKeys.includes(story.firstSceneKey))
@@ -294,7 +297,6 @@ export const _getBuilderService = ({
       return storyRepository.update(key, payload);
     },
 
-    // TODO: unit tests
     duplicateScenes: async ({ originalScenes, newPositions, storyKey }) => {
       const story = await storyRepository.get(storyKey);
       if (!story) throw new EntityNotExistError("story", storyKey);
@@ -307,26 +309,32 @@ export const _getBuilderService = ({
         {} as Record<string, string>,
       );
 
-      const payload = originalScenes.map((scene) => ({
-        key: oldKeyToNewKey[scene.key]!,
-        storyKey,
-        title: scene.title,
-        content: scene.content,
-        builderParams: {
-          position: {
-            x: newPositions[scene.key]!.x,
-            y: newPositions[scene.key]!.y,
+      const payload = originalScenes.map((scene) => {
+        const position = newPositions[scene.key];
+        if (!position) {
+          throw new DuplicationMissingPositionError(scene.key);
+        }
+        return {
+          key: oldKeyToNewKey[scene.key]!,
+          storyKey,
+          title: scene.title,
+          content: scene.content,
+          builderParams: {
+            position: {
+              x: newPositions[scene.key]!.x,
+              y: newPositions[scene.key]!.y,
+            },
           },
-        },
-        actions: scene.actions.map(({ sceneKey, text }) => {
-          if (sceneKey && originalSceneKeys.includes(sceneKey))
-            return {
-              text,
-              sceneKey: oldKeyToNewKey[sceneKey]!,
-            };
-          return { text }; // Do not copy links that target a scene that is not within the batch of duplicated scenes
-        }),
-      }));
+          actions: scene.actions.map(({ sceneKey, text }) => {
+            if (sceneKey && originalSceneKeys.includes(sceneKey))
+              return {
+                text,
+                sceneKey: oldKeyToNewKey[sceneKey]!,
+              };
+            return { text }; // Do not copy links that target a scene that is not within the batch of duplicated scenes
+          }),
+        };
+      });
 
       await sceneRepository.bulkAdd(payload);
       return payload;

@@ -5,9 +5,10 @@ export const _getDexieBuilderSceneRepository = (
   db: DexieDatabase,
 ): BuilderSceneRepositoryPort => {
   return {
-    // TODO: unit tests
     bulkAdd: async (payload) => {
-      return await db.scenes.bulkAdd(payload, { allKeys: true });
+      return await db.scenes.bulkAdd(structuredClone(payload), {
+        allKeys: true,
+      });
     },
   };
 };
