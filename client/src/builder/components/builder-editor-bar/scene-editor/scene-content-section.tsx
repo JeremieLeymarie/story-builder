@@ -9,7 +9,6 @@ import {
 import { UseFormReturn } from "react-hook-form";
 import { SceneSchema, SceneUpdatePayload } from "./schema";
 import { SetFirstSceneSwitch } from "./set-first-scene-switch";
-import { SerializedEditorState } from "lexical";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
 
 export const SceneContentSection = ({
@@ -52,11 +51,10 @@ export const SceneContentSection = ({
             <FormControl>
               <RichText
                 onSerializedChange={field.onChange}
-                initialState={
-                  scenePayload.content as unknown as SerializedEditorState
-                }
+                initialState={scenePayload.content}
                 editable
                 className="h-[300px] max-w-[450px]"
+                textDisplayMode="scroll"
               />
             </FormControl>
             <FormMessage />

@@ -1,6 +1,7 @@
+import { LexicalContent } from "@/lib/lexical-content";
 import { Scene, Story, StoryProgress, User } from "@/lib/storage/domain";
 
-export const BASIC_SCENE_CONTENT = {
+export const BASIC_SCENE_CONTENT: LexicalContent = {
   root: {
     children: [
       {

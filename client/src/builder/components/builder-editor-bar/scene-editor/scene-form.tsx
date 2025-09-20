@@ -18,9 +18,7 @@ export const SceneForm = ({
   scene: SceneUpdatePayload;
   isFirstScene: boolean;
 }) => {
-  const { updateScene } = useBuilderActions();
-
-  const { setFirstScene } = useBuilderActions();
+  const { updateScene, setFirstScene } = useBuilderActions();
   const form = useSceneEditorForm({ onSave: updateScene, scene });
 
   return (

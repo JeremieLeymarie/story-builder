@@ -122,7 +122,7 @@ export const _getLibraryService = ({
           },
         )
         .catch((err) => {
-          console.log((err as DexieError).inner, (err as DexieError).stack);
+          console.error((err as DexieError).inner, (err as DexieError).stack);
         });
 
       return { error: null };

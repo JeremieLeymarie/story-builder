@@ -1,3 +1,5 @@
+import { LexicalContent } from "../lexical-content";
+
 export const STORY_GENRES = [
   "adventure",
   "children",
@@ -37,7 +39,7 @@ export type StoryBase = {
   title: string;
   description: string;
   image: string;
-  firstSceneKey: string;
+  firstSceneKey: string; // FIXME: the first scene can be deleted (#273)
   genres: StoryGenre[];
   creationDate: Date;
 };
@@ -56,13 +58,15 @@ export type Action = {
   sceneKey?: string;
 };
 
+export type BuilderPosition = { x: number; y: number };
+
 export type Scene = {
   key: string;
   storyKey: string;
   title: string;
-  content: Record<string, unknown>;
+  content: LexicalContent;
   actions: Action[];
-  builderParams: { position: { x: number; y: number } };
+  builderParams: { position: BuilderPosition };
 };
 
 export type StoryProgress = {

@@ -11,13 +11,13 @@ import {
   FormMessage,
   Input,
 } from "@/design-system/primitives";
-import { SerializedEditorState } from "lexical";
 import { CornerDownLeft } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useWikiStore } from "./hooks/use-wiki-store";
 import { ArticleSchema, articleSchema } from "./schemas";
-import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
 import { CategoryPicker } from "./category-picker";
+import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
+import { LexicalContent } from "@/lib/lexical-content";
 
 type UpdateProps =
   | {
@@ -132,9 +132,8 @@ export const ArticleEditor = ({
                   <RichText
                     editable
                     onSerializedChange={field.onChange}
-                    initialState={
-                      defaultValues?.content as unknown as SerializedEditorState
-                    }
+                    initialState={defaultValues?.content as LexicalContent}
+                    textDisplayMode="scroll"
                   />
                 </FormControl>
                 <FormMessage />

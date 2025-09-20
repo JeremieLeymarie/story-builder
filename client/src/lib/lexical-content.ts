@@ -1,6 +1,7 @@
 import * as z from "zod/v4";
 
-export const lexicalContentSchema = z.custom<Record<string, unknown>>(
+export type LexicalContent = Record<string, unknown>;
+export const lexicalContentSchema = z.custom<LexicalContent>(
   (data) => z.record(z.string(), z.any()).safeParse(data).success,
 );
 

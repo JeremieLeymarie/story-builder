@@ -1,50 +1,33 @@
-import {
-  InitialConfigType,
-  LexicalComposer,
-} from "@lexical/react/LexicalComposer";
+import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { EditorState, SerializedEditorState } from "lexical";
 
 import { TooltipProvider } from "@/design-system/primitives/tooltip";
 
 import { cn } from "@/lib/style";
+import { TextDisplayMode } from "../types";
 import { EditorPlugins } from "../plugins/editor-plugins";
 import { BasePlugins } from "../plugins/base-plugins";
-import { nodes } from "../nodes";
-
-const editorConfig: InitialConfigType = {
-  namespace: "Editor",
-  theme: {
-    text: {
-      underline: "underline",
-      strikethrough: "line-through",
-      underlineStrikethrough: "[text-decoration:underline_line-through]",
-      bold: "bold",
-      italic: "italic",
-    },
-  },
-  nodes,
-  onError: (error: Error) => {
-    console.error(error);
-  },
-};
+import { LexicalContent } from "@/lib/lexical-content";
+import { BASE_EDITOR_CONFIG } from "../constants";
 
 export const RichText = ({
-  initialState,
   onChange,
   onSerializedChange,
+  initialState,
   editable,
   className,
+  textDisplayMode,
 }: {
   className?: string;
   editable: boolean;
-  initialState?: SerializedEditorState;
+  initialState?: LexicalContent;
   onChange?: (editorState: EditorState) => void;
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
+  textDisplayMode: TextDisplayMode;
 }) => {
-  // This allow lexical to refresh it's initial state when the content changes from the outside
-  const key = JSON.stringify(initialState);
-
+  // This allows lexical to refresh it's initial state when the content changes from the outside
+  const state = JSON.stringify(initialState);
   return (
     <div
       className={cn(
@@ -54,18 +37,20 @@ export const RichText = ({
       )}
     >
       <LexicalComposer
-        key={key}
+        key={state}
         initialConfig={{
-          ...editorConfig,
-          ...(initialState
-            ? { editorState: JSON.stringify(initialState) }
-            : {}),
+          ...BASE_EDITOR_CONFIG,
+          editorState: state,
           editable,
         }}
       >
         <TooltipProvider>
           {editable && <EditorPlugins />}
-          <BasePlugins className={className} editable={editable} />
+          <BasePlugins
+            className={className}
+            editable={editable}
+            textDisplayMode={textDisplayMode}
+          />
 
           <OnChangePlugin
             ignoreSelectionChange={true}

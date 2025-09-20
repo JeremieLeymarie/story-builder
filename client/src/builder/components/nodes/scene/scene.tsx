@@ -10,38 +10,32 @@ import { SceneNodeType } from "../../../types";
 import { cn } from "@/lib/style";
 import { Button } from "@/design-system/primitives";
 import { useBuilderEditorStore } from "@/builder/hooks/use-scene-editor-store";
+import { useCopyPaste } from "@/builder/hooks/use-copy-paste";
 
 export type SceneNodeProps = NodeProps<SceneNodeType>;
 
 export const SceneNode = ({ data, selected }: SceneNodeProps) => {
-  const isEditable = data.isEditable !== undefined ? data.isEditable : true;
   const openEditor = useBuilderEditorStore((state) => state.open);
+  const { isFirstScene, builderParams, isEditable = true, ...scene } = data;
+  const { onAuxClick } = useCopyPaste();
 
   return (
     <Card
       className={cn(
         "group w-[375px]",
-        data.isFirstScene && "bg-primary/60",
+        isFirstScene && "bg-primary/60",
         selected && "border border-black",
       )}
+      onAuxClick={(ev) => onAuxClick(ev, data)}
       onDoubleClick={() => {
         openEditor({
           type: "scene-editor",
-          payload: {
-            scene: {
-              actions: data.actions,
-              content: data.content,
-              key: data.key,
-              storyKey: data.storyKey,
-              title: data.title,
-            },
-            isFirstScene: data.isFirstScene,
-          },
+          payload: { scene, isFirstScene },
         });
       }}
     >
       <CardHeader>
-        <div className="flex justify-between gap-1">
+        <div className="flex items-center justify-between">
           {data.title ? (
             <CardTitle>{data.title}</CardTitle>
           ) : (
@@ -57,16 +51,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
               onClick={() =>
                 openEditor({
                   type: "scene-editor",
-                  payload: {
-                    scene: {
-                      actions: data.actions,
-                      content: data.content,
-                      key: data.key,
-                      storyKey: data.storyKey,
-                      title: data.title,
-                    },
-                    isFirstScene: data.isFirstScene,
-                  },
+                  payload: { scene, isFirstScene },
                 })
               }
             >
@@ -74,19 +59,24 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
             </Button>
           )}
         </div>
-        {/* <CardDescription>{data.content}</CardDescription> */}
+        {/* TODO: Re-add description in plain text  */}
       </CardHeader>
       {data.actions.length > 0 && (
         <CardContent className="flex flex-col gap-2">
           {data.actions.map(({ text }, i) => (
-            // TODO: empty action state
-            <div className="border-primary relative border p-2" key={text}>
-              {text}
+            <div
+              className={cn(
+                "border-primary relative border p-2",
+                !text && "text-muted-foreground italic",
+              )}
+              key={text || "..."}
+            >
+              {text || "..."}
               <Handle
                 type="source"
                 id={`${data.key}-${i}`}
                 position={Position.Right}
-                className="absolute !right-[-10px] !h-[15px] !w-[15px]"
+                className="!h-[15px] !w-[15px]"
               />
             </div>
           ))}
@@ -95,7 +85,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
       <Handle
         type="target"
         position={Position.Left}
-        className="!right-[-10px] !h-[15px] !w-[15px]"
+        className="!h-[15px] !w-[15px]"
       />
     </Card>
   );

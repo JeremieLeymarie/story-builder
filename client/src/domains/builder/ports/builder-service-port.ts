@@ -1,5 +1,10 @@
 import { BuilderNode } from "@/builder/types";
-import { BuilderStory, Scene, Story } from "@/lib/storage/domain";
+import {
+  BuilderPosition,
+  BuilderStory,
+  Scene,
+  Story,
+} from "@/lib/storage/domain";
 import { StoryFromImport } from "@/services/common/import-service";
 import { WithoutKey } from "@/types";
 import { Edge } from "@xyflow/react";
@@ -57,4 +62,13 @@ export type BuilderServicePort = {
     storyKey: string,
     payload: Partial<BuilderStory>,
   ) => Promise<BuilderStory>;
+  /**
+   * Creates scenes from a payload of scenes (from any story), reproducing links from within the payload
+   * @returns created scenes
+   */
+  duplicateScenes: (params: {
+    originalScenes: Omit<Scene, "storyKey">[];
+    newPositions: { [sceneKey: string]: BuilderPosition };
+    storyKey: string;
+  }) => Promise<Scene[]>;
 };

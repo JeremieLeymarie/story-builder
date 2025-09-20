@@ -1,11 +1,14 @@
 import { useBuilderContext } from "./use-builder-context";
-import { useReactFlow, XYPosition } from "@xyflow/react";
+import { XYPosition } from "@xyflow/react";
 import { getBuilderService } from "@/get-builder-service";
 import { sceneToNodeAdapter } from "../adapters";
 import { Scene } from "@/lib/storage/domain";
 import { useBuilderError } from "./use-builder-error";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { SceneSchema } from "../components/builder-editor-bar/scene-editor/schema";
+import { useScenePositioning } from "./use-scene-positioning";
+import { useAddFocusedNodes } from "./use-add-focused-nodes";
+import { Vec2 } from "@/lib/vec2";
 
 export const DEFAULT_SCENE: SceneSchema = {
   title: "",
@@ -17,30 +20,31 @@ export const useAddScene = () => {
   const builderService = getBuilderService();
   const { handleError } = useBuilderError();
   const { story } = useBuilderContext();
-  const { screenToFlowPosition, addNodes } = useReactFlow();
-  const { reactFlowRef } = useBuilderContext();
+  const addNodes = useAddFocusedNodes();
+  const { getNewScenePosition, getOffset } = useScenePositioning();
 
-  const getCenterPosition = () => {
-    if (!reactFlowRef.current) return { x: 0, y: 0 };
-
-    const rect = reactFlowRef.current.getBoundingClientRect();
-    const position = {
-      x: rect.x + rect.width / 2,
-      y: rect.y + rect.height / 2,
-    };
-    return screenToFlowPosition(position);
-  };
-
-  const addScene = async (
-    position: XYPosition = getCenterPosition(),
-    keylessScene: SceneSchema = DEFAULT_SCENE,
-  ): Promise<Scene | null> => {
+  const addScene = async ({
+    payload = DEFAULT_SCENE,
+    position,
+  }: {
+    payload?: SceneSchema;
+    position: XYPosition | "auto";
+  }): Promise<Scene | null> => {
     try {
-      const scene = await builderService.addScene({
-        ...keylessScene,
+      const newScenePosition =
+        position === "auto" ? getNewScenePosition() : position;
+      const initialScene = {
+        ...payload,
         storyKey: story.key,
-        builderParams: { position },
+        builderParams: { position: Vec2.ZERO },
+      };
+      const offset = getOffset({
+        desiredPosition: Vec2.from(newScenePosition),
+        scenes: [initialScene],
       });
+      initialScene.builderParams.position = offset;
+
+      const scene = await builderService.addScene(initialScene);
       addNodes([sceneToNodeAdapter({ scene, story })]);
       return scene;
     } catch (err) {

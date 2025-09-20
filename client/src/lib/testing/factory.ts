@@ -1,6 +1,7 @@
 import {
   BuilderStory,
   LibraryStory,
+  Scene,
   STORY_GENRES,
   StoryBase,
   StoryProgress,
@@ -93,6 +94,24 @@ const _libraryStoryFactory = {
   type: () => "imported",
 } satisfies LibraryStoryFactory;
 
+type SceneFactory = _BaseFactory<Scene>;
+const _sceneFactory = {
+  key: nanoid,
+  storyKey: nanoid,
+  title: faker.book.title,
+  content: () => makeSimpleLexicalContent(faker.word.sample(10)),
+  actions: () =>
+    Array(3)
+      .fill(null)
+      .map(() => ({
+        text: faker.word.sample(),
+        sceneKey: Math.random() > 0.5 ? nanoid() : undefined,
+      })),
+  builderParams: () => ({
+    position: { x: faker.number.float(), y: faker.number.float() },
+  }),
+} satisfies SceneFactory;
+
 type StoryProgressFactory = _BaseFactory<StoryProgress>;
 const _storyProgressFactory = {
   key: nanoid,
@@ -133,6 +152,10 @@ export const getTestFactory = () => {
       library: (partial: Partial<LibraryStory> = {}) => {
         return makeRandomEntity(_libraryStoryFactory, partial);
       },
+    },
+
+    scene: (partial: Partial<Scene> = {}) => {
+      return makeRandomEntity(_sceneFactory, partial);
     },
 
     storyProgress: (partial: Partial<StoryProgress> = {}) => {

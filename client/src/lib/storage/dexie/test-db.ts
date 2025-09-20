@@ -16,7 +16,7 @@ export const getTestDatabase = async () => {
     IDBKeyRange,
   }) as DexieDatabase;
 
-  createDb(testDB);
+  createDb(testDB, { seed: false });
   await testDB.user.add(TEST_USER);
 
   return testDB;

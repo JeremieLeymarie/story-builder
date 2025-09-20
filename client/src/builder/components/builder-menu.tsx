@@ -5,9 +5,9 @@ import { ExportModal } from "./export-modal";
 import { DeleteModal } from "./delete-modal";
 import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
 import { useBuilderContext } from "../hooks/use-builder-context";
-import { useAddScene } from "../hooks/use-add-scene";
 import { useBuilderEditorStore } from "../hooks/use-scene-editor-store";
 import { Toolbar, ToolbarTitle } from "@/design-system/components/toolbar";
+import { useAddScene } from "../hooks/use-add-scene";
 
 export const BuilderMenu = () => {
   const { story } = useBuilderContext();
@@ -27,7 +27,7 @@ export const BuilderMenu = () => {
           size="sm"
           className={btnClassname}
           onClick={() => {
-            addScene();
+            addScene({ position: "auto" });
           }}
         >
           <BookOpenTextIcon />

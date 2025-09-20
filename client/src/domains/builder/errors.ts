@@ -11,3 +11,11 @@ export class CannotDeleteFirstSceneError extends Error {
     super(`Cannot delete first scene : impacted story ${storyKey}`);
   }
 }
+
+export class DuplicationMissingPositionError extends Error {
+  constructor(missingSceneKey: string) {
+    super(
+      `Cannot duplicate scenes: missing new positions info for scene ${missingSceneKey}`,
+    );
+  }
+}

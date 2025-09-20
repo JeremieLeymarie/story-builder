@@ -8,9 +8,9 @@ import {
 } from "@xyflow/react";
 import { nodeToSceneAdapter } from "../adapters";
 import { getBuilderService } from "@/get-builder-service";
-import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
 import { BuilderNode } from "../types";
 import { useBuilderError } from "./use-builder-error";
+import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
 
 export const useBuilderEdges = () => {
   const { getNodes, setEdges } = useReactFlow<BuilderNode>();
@@ -74,22 +74,14 @@ export const useBuilderEdges = () => {
         x: event.clientX,
         y: event.clientY,
       });
-      // TODO: unify constants regarding the scene component in a single place
-      // Magic values to hover right over the correct handle:
+      // Magic values that places the node over the correct handle:
       const offset = fromHandle ? { x: 0, y: 0 } : { x: 375 - 16, y: 27.5 };
-      const scene = await addScene(
-        { x: position.x - offset.x, y: position.y - offset.y },
-        fromHandle
+      const scene = await addScene({
+        payload: fromHandle
           ? DEFAULT_SCENE
-          : {
-              ...DEFAULT_SCENE,
-              actions: [
-                {
-                  text: "...",
-                },
-              ],
-            },
-      );
+          : { ...DEFAULT_SCENE, actions: [{ text: "" }] },
+        position: { x: position.x - offset.x, y: position.y - offset.y },
+      });
       if (!scene) return;
 
       const fromNode = connectionState.fromNode.id;
