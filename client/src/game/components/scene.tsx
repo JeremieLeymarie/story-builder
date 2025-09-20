@@ -5,7 +5,6 @@ import { LibraryBigIcon } from "lucide-react";
 import { Scene, StoryProgress } from "@/lib/storage/domain";
 import { Divider } from "@/design-system/components/divider";
 import { Link } from "@tanstack/react-router";
-import { SerializedEditorState } from "lexical";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
 import { WikiNode } from "@/design-system/components/editor/nodes/wiki-node";
 
@@ -31,16 +30,11 @@ export const GameScene = ({
             <p className="leading-7 wrap-break-word not-first:mt-6">
               <RichText
                 editable={false}
-<<<<<<< HEAD
-                initialState={content as unknown as SerializedEditorState}
-                editorNodes={[WikiNode]}
-              />
-=======
                 initialState={content}
+                editorNodes={[WikiNode]}
                 textDisplayMode="full"
               />
             </p>
->>>>>>> 220aec0 (:lipstick: Rich Text - Implement text display modes (scroll, summary, full))
             <div className="mt-4 flex w-full flex-wrap gap-3">
               {actions.map((action) => (
                 <SceneAction
