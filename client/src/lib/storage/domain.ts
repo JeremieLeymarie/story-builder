@@ -1,4 +1,4 @@
-import { SceneContent } from "../scene-content";
+import { LexicalContent } from "../lexical-content";
 
 export const STORY_GENRES = [
   "adventure",
@@ -65,7 +65,7 @@ export type Scene = {
   key: string;
   storyKey: string;
   title: string;
-  content: SceneContent;
+  content: LexicalContent;
   actions: Action[];
   builderParams: { position: BuilderPosition };
 };

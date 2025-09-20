@@ -1,7 +1,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/design-system/primitives/card";
@@ -11,7 +10,6 @@ import { SceneNodeType } from "../../../types";
 import { cn } from "@/lib/style";
 import { Button } from "@/design-system/primitives";
 import { useBuilderEditorStore } from "@/builder/hooks/use-scene-editor-store";
-import { RichText } from "@/design-system/components/editor/blocks/rich-text-editor";
 import { useCopyPaste } from "@/builder/hooks/use-copy-paste";
 
 export type SceneNodeProps = NodeProps<SceneNodeType>;
@@ -61,14 +59,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
             </Button>
           )}
         </div>
-        <CardDescription className="select-none">
-          <RichText
-            editable={false}
-            initialState={data.content}
-            textDisplayMode="summary"
-            className="select-none"
-          />
-        </CardDescription>
+        {/* TODO: Re-add description in plain text  */}
       </CardHeader>
       {data.actions.length > 0 && (
         <CardContent className="flex flex-col gap-2">
