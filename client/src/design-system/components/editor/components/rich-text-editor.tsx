@@ -1,35 +1,15 @@
-import {
-  InitialConfigType,
-  LexicalComposer,
-} from "@lexical/react/LexicalComposer";
+import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { EditorState, SerializedEditorState } from "lexical";
 
 import { TooltipProvider } from "@/design-system/primitives/tooltip";
 
 import { cn } from "@/lib/style";
-import { SceneContent } from "@/lib/scene-content";
 import { TextDisplayMode } from "../types";
-import { nodes } from "../nodes";
 import { EditorPlugins } from "../plugins/editor-plugins";
 import { BasePlugins } from "../plugins/base-plugins";
-
-const editorConfig: InitialConfigType = {
-  namespace: "Editor",
-  theme: {
-    text: {
-      underline: "underline",
-      strikethrough: "line-through",
-      underlineStrikethrough: "[text-decoration:underline_line-through]",
-      bold: "bold",
-      italic: "italic",
-    },
-  },
-  nodes,
-  onError: (error: Error) => {
-    console.error(error);
-  },
-};
+import { LexicalContent } from "@/lib/lexical-content";
+import { BASE_EDITOR_CONFIG } from "../constants";
 
 export const RichText = ({
   onChange,
@@ -41,12 +21,12 @@ export const RichText = ({
 }: {
   className?: string;
   editable: boolean;
-  initialState?: SceneContent;
+  initialState?: LexicalContent;
   onChange?: (editorState: EditorState) => void;
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
   textDisplayMode: TextDisplayMode;
 }) => {
-  // This allow lexical to refresh it's initial state when the content changes from the outside
+  // This allows lexical to refresh it's initial state when the content changes from the outside
   const state = JSON.stringify(initialState);
   return (
     <div
@@ -59,7 +39,7 @@ export const RichText = ({
       <LexicalComposer
         key={state}
         initialConfig={{
-          ...editorConfig,
+          ...BASE_EDITOR_CONFIG,
           editorState: state,
           editable,
         }}

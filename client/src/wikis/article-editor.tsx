@@ -15,9 +15,9 @@ import { CornerDownLeft } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useWikiStore } from "./hooks/use-wiki-store";
 import { ArticleSchema, articleSchema } from "./schemas";
-import { SceneContent } from "@/lib/scene-content";
 import { CategoryPicker } from "./category-picker";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
+import { LexicalContent } from "@/lib/lexical-content";
 
 type UpdateProps =
   | {
@@ -132,7 +132,7 @@ export const ArticleEditor = ({
                   <RichText
                     editable
                     onSerializedChange={field.onChange}
-                    initialState={defaultValues?.content as SceneContent}
+                    initialState={defaultValues?.content as LexicalContent}
                     textDisplayMode="scroll"
                   />
                 </FormControl>

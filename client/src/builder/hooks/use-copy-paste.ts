@@ -10,6 +10,7 @@ import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { useBuilderError } from "./use-builder-error";
 import { MouseEvent as ReactMouseEvent } from "react";
+import { useBuilderContext } from "./use-builder-context";
 
 const clipboardSchema = z.array(
   sceneSchema.extend({
@@ -26,6 +27,7 @@ export const useCopyPaste = () => {
   const { deleteScenes } = getBuilderService();
   const { addScene } = useAddScene();
   const { handleError } = useBuilderError();
+  const { story } = useBuilderContext();
 
   const onCopyOrCut = (ev: ClipboardEvent) => {
     if (isAnyInputFocused()) return;
@@ -38,7 +40,10 @@ export const useCopyPaste = () => {
     );
     if (ev.type === "cut") {
       setNodes((nds) => nds.filter((nd) => !nd.selected));
-      deleteScenes(nodes.map((nd) => nd.data.key));
+      deleteScenes({
+        sceneKeys: nodes.map((nd) => nd.data.key),
+        storyKey: story.key,
+      });
     }
   };
 
