@@ -38,17 +38,21 @@ const tables: Record<keyof Tables, string> = {
 };
 export const TABLE_NAMES = Object.keys(tables);
 
-export const createDb = (db: DexieDatabase) => {
+export const createDb = (
+  db: DexieDatabase,
+  { seed }: { seed: boolean } = { seed: true },
+) => {
   db.version(3).stores(tables);
 
-  db.on("populate", async () => {
-    // Add story to builder
-    await db.stories.add(DEMO_STORY);
-    await db.scenes.bulkAdd(DEMO_SCENES);
+  if (seed)
+    db.on("populate", async () => {
+      // Add story to builder
+      await db.stories.add(DEMO_STORY);
+      await db.scenes.bulkAdd(DEMO_SCENES);
 
-    // Add story to library
-    await getLibraryService().importStory(DEMO_IMPORTED_STORY);
-  });
+      // Add story to library
+      await getLibraryService().importStory(DEMO_IMPORTED_STORY);
+    });
 
   // Register nanoid middleware
   db.use({

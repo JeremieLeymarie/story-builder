@@ -1,4 +1,4 @@
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, test, vi } from "vitest";
 import {
   getLocalRepositoryStub,
   MockLocalRepository,
@@ -30,11 +30,15 @@ import {
 } from "@/domains/__tests__/data/imported-story-mocks";
 import { getTestFactory } from "@/lib/testing/factory";
 import { EntityNotExistError } from "@/domains/errors";
-import { CannotDeleteFirstSceneError } from "../errors";
+import {
+  CannotDeleteFirstSceneError,
+  DuplicationMissingPositionError,
+} from "../errors";
 import {
   getStubBuilderSceneRepository,
   MockBuilderSceneRepository,
 } from "../stubs/stub-builder-scene-repository";
+import { Scene } from "@/lib/storage/domain";
 
 const factory = getTestFactory();
 
@@ -395,7 +399,7 @@ describe("builder-service", () => {
 
   describe("deleteScenes", () => {
     it("should not delete when story key is invalid", async () => {
-      builderStoryRepository.get = vi.fn(() => Promise.resolve(null));
+      storyRepository.get = vi.fn(() => Promise.resolve(null));
 
       await expect(
         builderService.deleteScenes({
@@ -407,7 +411,7 @@ describe("builder-service", () => {
     });
 
     it("should not delete first scene", async () => {
-      builderStoryRepository.get = vi.fn(() =>
+      storyRepository.get = vi.fn(() =>
         Promise.resolve(factory.story.builder({ firstSceneKey: "ti" })),
       );
 
@@ -730,6 +734,106 @@ describe("builder-service", () => {
       );
 
       expect(story).toStrictEqual(mockStory);
+    });
+  });
+
+  describe("duplicateScenes", () => {
+    test("invalid story key", async () => {
+      storyRepository.get = vi.fn(() => Promise.resolve(null));
+
+      await expect(
+        builderService.duplicateScenes({
+          originalScenes: [],
+          newPositions: {},
+          storyKey: "VROUM",
+        }),
+      ).rejects.toThrow(EntityNotExistError);
+      expect(sceneRepository.bulkAdd).not.toHaveBeenCalled();
+    });
+
+    test("missing positions", async () => {
+      await expect(
+        builderService.duplicateScenes({
+          originalScenes: [factory.scene()],
+          newPositions: {},
+          storyKey: "VROUM",
+        }),
+      ).rejects.toThrow(DuplicationMissingPositionError);
+      expect(sceneRepository.bulkAdd).not.toHaveBeenCalled();
+    });
+
+    test("no scenes", async () => {
+      const result = await builderService.duplicateScenes({
+        originalScenes: [],
+        newPositions: {},
+        storyKey: "VROUM",
+      });
+      expect(result).toStrictEqual([]);
+    });
+
+    test("one scene", async () => {
+      const scene = factory.scene({
+        actions: [{ text: "action", sceneKey: "something" }],
+      });
+      sceneRepository.bulkAdd = vi.fn((payload) => {
+        const scenePayload = payload[0]!;
+        expect(scenePayload.title).toStrictEqual(scene.title);
+        expect(scenePayload.content).toStrictEqual(scene.content);
+        expect(scenePayload.actions).toStrictEqual([{ text: "action" }]);
+        expect(scenePayload.storyKey).toStrictEqual("VROUM");
+        expect(scenePayload.builderParams).toStrictEqual({
+          position: { x: -42, y: 42 },
+        });
+      });
+
+      await builderService.duplicateScenes({
+        originalScenes: [scene],
+        newPositions: { [scene.key]: { x: -42, y: 42 } },
+        storyKey: "VROUM",
+      });
+    });
+
+    test("multiple scenes", async () => {
+      const scene1 = factory.scene({
+        key: "scene-1",
+        actions: [{ text: "action1", sceneKey: "something" }],
+      });
+      const scene2 = factory.scene({
+        actions: [{ text: "action2", sceneKey: "scene-1" }],
+      });
+
+      sceneRepository.bulkAdd = vi.fn((payload) => {
+        expect(payload).toHaveLength(2);
+
+        const scene1Payload = payload[0]!;
+        expect(scene1Payload.title).toStrictEqual(scene1.title);
+        expect(scene1Payload.content).toStrictEqual(scene1.content);
+        expect(scene1Payload.actions).toStrictEqual([{ text: "action1" }]);
+        expect(scene1Payload.storyKey).toStrictEqual("VROUM");
+        expect(scene1Payload.builderParams).toStrictEqual({
+          position: { x: -42, y: 42 },
+        });
+
+        const scene2Payload = payload[1]!;
+        expect(scene2Payload.title).toStrictEqual(scene2.title);
+        expect(scene2Payload.content).toStrictEqual(scene2.content);
+        expect(scene2Payload.actions).toStrictEqual([
+          { text: "action2", sceneKey: (scene1Payload as Scene).key },
+        ]);
+        expect(scene2Payload.storyKey).toStrictEqual("VROUM");
+        expect(scene2Payload.builderParams).toStrictEqual({
+          position: { x: 1, y: 2 },
+        });
+      });
+
+      await builderService.duplicateScenes({
+        originalScenes: [scene1, scene2],
+        newPositions: {
+          [scene1.key]: { x: -42, y: 42 },
+          [scene2.key]: { x: 1, y: 2 },
+        },
+        storyKey: "VROUM",
+      });
     });
   });
 });
