@@ -40,6 +40,7 @@ export type StoryBase = {
   firstSceneKey: string;
   genres: StoryGenre[];
   creationDate: Date;
+  wikiKey?: string;
 };
 
 export type LibraryStory = StoryBase & {

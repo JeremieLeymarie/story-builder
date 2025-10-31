@@ -1,10 +1,10 @@
 import { EditStoryFormType } from "@/builder/hooks/use-edit-story-form";
+import { useGetAllWikis } from "@/builder/hooks/use-get-all-wikis";
 import { StoryGenreCombobox } from "@/design-system/components/story-genre-combobox";
 import {
   Button,
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -12,7 +12,14 @@ import {
   Input,
   Textarea,
 } from "@/design-system/primitives";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/design-system/primitives/tooltip";
+import { CircleHelpIcon } from "lucide-react";
 import { BaseSyntheticEvent } from "react";
+import { WikiSelector } from "../../wiki-selector";
 
 export const EditStoryForm = ({
   onSubmit,
@@ -23,6 +30,10 @@ export const EditStoryForm = ({
   isSubmitting?: boolean;
   form: EditStoryFormType;
 }) => {
+  // const { story } = useBuilderContext();
+  const { wikis, isLoading: isWikisLoading } = useGetAllWikis();
+  // console.log(form.getValues("wikiKey"));
+
   return (
     <Form {...form}>
       <form onSubmit={onSubmit} className="space-y-4">
@@ -38,9 +49,6 @@ export const EditStoryForm = ({
                   {...field}
                 />
               </FormControl>
-              <FormDescription>
-                The displayed title of your story
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -57,7 +65,6 @@ export const EditStoryForm = ({
                   values={field.value}
                 />
               </FormControl>
-              <FormDescription>The genre(s) of your story</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -74,9 +81,6 @@ export const EditStoryForm = ({
                   {...field}
                 />
               </FormControl>
-              <FormDescription>
-                A short description of your story
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -90,7 +94,38 @@ export const EditStoryForm = ({
               <FormControl>
                 <Input placeholder="http://your-image-url.com" {...field} />
               </FormControl>
-              <FormDescription>The cover image for your story</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="wikiKey"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                Linked wiki{" "}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <CircleHelpIcon
+                      size="16px"
+                      className="hover:text-primary"
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent className="text-muted-foreground max-w-[300px] text-xs font-normal">
+                    Linking a wiki to a story will enable linking articles to
+                    scene
+                  </TooltipContent>
+                </Tooltip>
+              </FormLabel>
+              <FormControl>
+                <WikiSelector
+                  disabled={!wikis || isWikisLoading}
+                  wikis={wikis ?? []}
+                  selectedWikiKey={field.value}
+                  onChange={(wikiKey) => field.onChange(wikiKey)}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
