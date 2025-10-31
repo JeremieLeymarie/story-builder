@@ -17,9 +17,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
-import { CircleHelpIcon } from "lucide-react";
+import { CircleHelpIcon, ExternalLinkIcon } from "lucide-react";
 import { BaseSyntheticEvent } from "react";
 import { WikiSelector } from "../../wiki-selector";
+import { useBuilderContext } from "@/builder/hooks/use-builder-context";
+import { Link } from "@tanstack/react-router";
 
 export const EditStoryForm = ({
   onSubmit,
@@ -30,9 +32,9 @@ export const EditStoryForm = ({
   isSubmitting?: boolean;
   form: EditStoryFormType;
 }) => {
-  // const { story } = useBuilderContext();
+  const { story } = useBuilderContext();
   const { wikis, isLoading: isWikisLoading } = useGetAllWikis();
-  // console.log(form.getValues("wikiKey"));
+  const assignedWiki = wikis?.find((wiki) => wiki.key === story.wikiKey);
 
   return (
     <Form {...form}>
@@ -113,19 +115,32 @@ export const EditStoryForm = ({
                     />
                   </TooltipTrigger>
                   <TooltipContent className="text-muted-foreground max-w-[300px] text-xs font-normal">
-                    Linking a wiki to a story will enable linking articles to
-                    scene
+                    You can link a story to a wiki and reference wiki articles
+                    in scenes
                   </TooltipContent>
                 </Tooltip>
               </FormLabel>
-              <FormControl>
-                <WikiSelector
-                  disabled={!wikis || isWikisLoading}
-                  wikis={wikis ?? []}
-                  selectedWikiKey={field.value}
-                  onChange={(wikiKey) => field.onChange(wikiKey)}
-                />
-              </FormControl>
+              {assignedWiki ? (
+                <div className="flex items-center gap-2">
+                  {assignedWiki.name}
+                  <Link
+                    to="/wikis/$wikiKey"
+                    params={{ wikiKey: assignedWiki.key }}
+                    target="_blank"
+                  >
+                    <ExternalLinkIcon size={16} />
+                  </Link>
+                </div>
+              ) : (
+                <FormControl>
+                  <WikiSelector
+                    disabled={!wikis || isWikisLoading}
+                    wikis={wikis ?? []}
+                    selectedWikiKey={field.value}
+                    onChange={(wikiKey) => field.onChange(wikiKey)}
+                  />
+                </FormControl>
+              )}
               <FormMessage />
             </FormItem>
           )}
