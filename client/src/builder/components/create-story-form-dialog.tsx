@@ -7,46 +7,49 @@ import {
   DialogTrigger,
 } from "@/design-system/primitives";
 import { ReactNode, useState } from "react";
-import { StorySchema } from "./story-schema";
 import { CreateStoryPayload } from "../hooks/use-builder-stories";
-import { StoryForm } from "./story-form";
-import { useStoryForm } from "../hooks/use-story-form";
+import { CreateStoryForm } from "./create-story-form";
+import { useCreateStoryForm } from "../hooks/use-create-story-form";
+import { EditStorySchema } from "../hooks/use-edit-story-form";
 
-type StoryFormProps = {
+type CreateStoryFormProps = {
   onSubmit: (props: CreateStoryPayload) => void;
   trigger?: ReactNode;
-  defaultValues?: StorySchema;
   title: string;
   description: string;
 };
 
 // This version of the component is uncontrolled and needs a trigger to open it
-export const StoryFormDialog = (
-  props: Omit<StoryFormProps, "trigger"> & { trigger: ReactNode },
+export const CreateStoryFormDialog = (
+  props: Omit<CreateStoryFormProps, "trigger"> & { trigger: ReactNode },
 ) => {
   const [open, setOpen] = useState(false);
 
-  return <ControlledStoryFormDialog {...props} open={open} setOpen={setOpen} />;
+  return (
+    <ControlledCreateStoryFormDialog {...props} open={open} setOpen={setOpen} />
+  );
 };
 
 // This version of the component is controlled and its state can be managed from the outside
-export const ControlledStoryFormDialog = ({
+export const ControlledCreateStoryFormDialog = ({
   onSubmit,
   trigger,
-  defaultValues,
   setOpen,
   open,
   title,
   description,
-}: StoryFormProps & { open: boolean; setOpen: (open: boolean) => void }) => {
-  const form = useStoryForm({ defaultValues });
+}: CreateStoryFormProps & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}) => {
+  const form = useCreateStoryForm();
 
   const handleOpen = (open: boolean) => {
     setOpen(open);
     if (!open) form.reset();
   };
 
-  const submit = (data: StorySchema) => {
+  const submit = (data: EditStorySchema) => {
     onSubmit({ ...data });
     handleOpen(false);
   };
@@ -59,7 +62,7 @@ export const ControlledStoryFormDialog = ({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <StoryForm form={form} onSubmit={submit} />
+        <CreateStoryForm form={form} onSubmit={submit} />
       </DialogContent>
     </Dialog>
   );

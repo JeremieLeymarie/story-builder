@@ -12,7 +12,7 @@ import { StoryCard } from "@/design-system/components/story-card";
 import { Story } from "@/lib/storage/domain";
 import { Title } from "@/design-system/components";
 import { ImportModal } from "@/design-system/components/import-modal";
-import { StoryFormDialog } from "./story-form-dialog";
+import { CreateStoryFormDialog } from "./create-story-form-dialog";
 
 type BuilderHomeProps = {
   stories: Story[];
@@ -34,7 +34,7 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
             <CardTitle>New story</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center gap-2">
-            <StoryFormDialog
+            <CreateStoryFormDialog
               onSubmit={createStory}
               trigger={
                 <Button size="sm">

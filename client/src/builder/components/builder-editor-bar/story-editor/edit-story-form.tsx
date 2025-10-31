@@ -1,3 +1,4 @@
+import { EditStoryFormType } from "@/builder/hooks/use-edit-story-form";
 import { StoryGenreCombobox } from "@/design-system/components/story-genre-combobox";
 import {
   Button,
@@ -11,21 +12,20 @@ import {
   Input,
   Textarea,
 } from "@/design-system/primitives";
-import { StorySchema } from "./story-schema";
-import { StoryFormType } from "../hooks/use-story-form";
+import { BaseSyntheticEvent } from "react";
 
-export const StoryForm = ({
+export const EditStoryForm = ({
   onSubmit,
   form,
   isSubmitting = false,
 }: {
-  onSubmit: (data: StorySchema) => void;
+  onSubmit: (e?: BaseSyntheticEvent) => Promise<void>;
   isSubmitting?: boolean;
-  form: StoryFormType;
+  form: EditStoryFormType;
 }) => {
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={onSubmit} className="space-y-4">
         <FormField
           control={form.control}
           name="title"

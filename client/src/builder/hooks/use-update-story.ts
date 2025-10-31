@@ -1,13 +1,13 @@
 import { getBuilderService } from "@/get-builder-service";
 import { useMutation } from "@tanstack/react-query";
-import { StorySchema } from "../components/story-schema";
 import { useBuilderError } from "./use-builder-error";
 import { useBuilderContext } from "./use-builder-context";
 import { toast } from "sonner";
+import { EditStorySchema } from "./use-edit-story-form";
 
 type MutationParams = {
   key: string;
-  payload: StorySchema;
+  payload: EditStorySchema;
 };
 
 export const useUpdateStory = () => {

@@ -1,18 +1,18 @@
-import { useUpdateStory } from "@/builder/hooks/use-update-story";
 import { useBuilderContext } from "@/builder/hooks/use-builder-context";
-import { useStoryForm } from "@/builder/hooks/use-story-form";
-import { StoryForm } from "../../story-form";
+import { useEditStoryForm } from "@/builder/hooks/use-edit-story-form";
+import { EditStoryForm } from "./edit-story-form";
 
 export const StoryEditor = () => {
   const { story } = useBuilderContext();
-  const { updateStory, isPending } = useUpdateStory();
-  const form = useStoryForm({ defaultValues: story });
+  const { form, handleSubmit, isSubmitting } = useEditStoryForm({
+    defaultValues: story,
+  });
 
   return (
-    <StoryForm
+    <EditStoryForm
       form={form}
-      onSubmit={(payload) => updateStory({ key: story.key, payload })}
-      isSubmitting={isPending}
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
     />
   );
 };
