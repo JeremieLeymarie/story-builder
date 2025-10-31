@@ -31,8 +31,6 @@ export const WikiSelector = ({
   const [open, setOpen] = useState(false);
   const selectedWiki = wikis.find((wiki) => wiki.key === selectedWikiKey);
 
-  // TODO: handle state where wiki is selected
-
   return (
     <>
       <Popover open={open} onOpenChange={setOpen} modal={true}>
