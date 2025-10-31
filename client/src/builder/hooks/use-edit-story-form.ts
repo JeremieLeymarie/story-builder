@@ -15,7 +15,8 @@ export const editStorySchema = z.object({
   image: z.url({ message: "Image has to be a valid URL" }),
   status: z.enum(STORY_TYPE).optional(),
   genres: z.array(z.enum(STORY_GENRES)),
-  firstSceneKey: z.string().optional(),
+  firstSceneKey: z.nanoid().optional(),
+  wikiKey: z.nanoid().optional(),
 });
 
 export type EditStorySchema = z.infer<typeof editStorySchema>;
