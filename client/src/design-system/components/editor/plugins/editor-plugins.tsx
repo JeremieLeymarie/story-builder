@@ -4,6 +4,7 @@ import { BlockInsertPlugin } from "./block-insert-plugin";
 import { InsertImage } from "@/design-system/components/editor/plugins/toolbar/block-insert/insert-image";
 import { ImagesPlugin } from "../plugins/images-plugin/plugin";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
+import { WikiPlugin } from "./wiki-plugin/wiki-plugin";
 
 export const EditorPlugins = () => {
   return (
@@ -18,6 +19,7 @@ export const EditorPlugins = () => {
             <BlockInsertPlugin>
               <InsertImage />
             </BlockInsertPlugin>
+            <WikiPlugin />
           </div>
         )}
       </ToolbarPlugin>
