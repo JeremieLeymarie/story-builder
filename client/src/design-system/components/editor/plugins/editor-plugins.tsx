@@ -6,7 +6,11 @@ import { ImagesPlugin } from "../plugins/images-plugin/plugin";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { WikiPlugin } from "./wiki-plugin/wiki-plugin";
 
-export const EditorPlugins = () => {
+export const EditorPlugins = ({
+  wikiIntegrationEnabled,
+}: {
+  wikiIntegrationEnabled: boolean;
+}) => {
   return (
     <>
       <ToolbarPlugin>
@@ -19,7 +23,7 @@ export const EditorPlugins = () => {
             <BlockInsertPlugin>
               <InsertImage />
             </BlockInsertPlugin>
-            <WikiPlugin />
+            {wikiIntegrationEnabled && <WikiPlugin />}
           </div>
         )}
       </ToolbarPlugin>
