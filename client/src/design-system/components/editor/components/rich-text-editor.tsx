@@ -1,33 +1,20 @@
-import {
-  InitialConfigType,
-  LexicalComposer,
-} from "@lexical/react/LexicalComposer";
+import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { EditorState, SerializedEditorState } from "lexical";
+import {
+  EditorState,
+  ParagraphNode,
+  SerializedEditorState,
+  TextNode,
+} from "lexical";
 
 import { TooltipProvider } from "@/design-system/primitives/tooltip";
 
 import { cn } from "@/lib/style";
 import { EditorPlugins } from "../plugins/editor-plugins";
 import { BasePlugins } from "../plugins/base-plugins";
-import { nodes } from "../nodes";
-
-const editorConfig: InitialConfigType = {
-  namespace: "Editor",
-  theme: {
-    text: {
-      underline: "underline",
-      strikethrough: "line-through",
-      underlineStrikethrough: "[text-decoration:underline_line-through]",
-      bold: "bold",
-      italic: "italic",
-    },
-  },
-  nodes,
-  onError: (error: Error) => {
-    console.error(error);
-  },
-};
+import { HeadingNode, QuoteNode } from "@lexical/rich-text";
+import { ImageNode } from "../nodes/image-node";
+import { WikiNode } from "../nodes/wiki-node";
 
 export const RichText = ({
   initialState,
@@ -35,12 +22,14 @@ export const RichText = ({
   onSerializedChange,
   editable,
   className,
+  wikiIntegrationEnabled = false,
 }: {
   className?: string;
   editable: boolean;
   initialState?: SerializedEditorState;
   onChange?: (editorState: EditorState) => void;
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
+  wikiIntegrationEnabled?: boolean;
 }) => {
   // This allow lexical to refresh it's initial state when the content changes from the outside
   const key = JSON.stringify(initialState);
@@ -56,15 +45,38 @@ export const RichText = ({
       <LexicalComposer
         key={key}
         initialConfig={{
-          ...editorConfig,
+          namespace: "Editor",
+          theme: {
+            text: {
+              underline: "underline",
+              strikethrough: "line-through",
+              underlineStrikethrough:
+                "[text-decoration:underline_line-through]",
+              bold: "bold",
+              italic: "italic",
+            },
+          },
+          nodes: [
+            HeadingNode,
+            ParagraphNode,
+            TextNode,
+            QuoteNode,
+            ImageNode,
+            ...(wikiIntegrationEnabled ? [WikiNode] : []),
+          ],
+          onError: (error: Error) => {
+            console.error(error);
+          },
+          editable,
           ...(initialState
             ? { editorState: JSON.stringify(initialState) }
             : {}),
-          editable,
         }}
       >
         <TooltipProvider>
-          {editable && <EditorPlugins />}
+          {editable && (
+            <EditorPlugins wikiIntegrationEnabled={wikiIntegrationEnabled} />
+          )}
           <BasePlugins className={className} editable={editable} />
 
           <OnChangePlugin
