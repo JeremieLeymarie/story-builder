@@ -6,13 +6,8 @@ import {
   SerializedLexicalNode,
   Spread,
 } from "lexical";
+import { ScrollTextIcon } from "lucide-react";
 import { ReactNode } from "react";
-
-// TODO: use NodeState paradigm
-
-// const articleKeyState = createState("articleKey", {
-//   parse: (v) => (typeof v === "string" ? v : ""),
-// });
 
 export type SerializedWikiNode = Spread<
   {
@@ -33,7 +28,12 @@ const WikiNodeComponent = ({
   textContent?: string;
 }) => {
   console.log({ articleKey });
-  return <span className="bg-primary/50">{textContent}</span>;
+  return (
+    <span className="inline-flex translate-y-0.5 items-center gap-1 rounded-xl bg-green-600/60 px-2">
+      <ScrollTextIcon size={18} className="opacity-75" />
+      {textContent}
+    </span>
+  );
 };
 
 export class WikiNode extends DecoratorNode<ReactNode> {
