@@ -2,6 +2,9 @@ import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import {
   EditorState,
+  KlassConstructor,
+  LexicalNode,
+  LexicalNodeReplacement,
   ParagraphNode,
   SerializedEditorState,
   TextNode,
@@ -14,7 +17,9 @@ import { EditorPlugins } from "../plugins/editor-plugins";
 import { BasePlugins } from "../plugins/base-plugins";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ImageNode } from "../nodes/image-node";
-import { WikiNode } from "../nodes/wiki-node";
+import { ReactNode } from "react";
+
+type EditorNode = KlassConstructor<typeof LexicalNode> | LexicalNodeReplacement;
 
 export const RichText = ({
   initialState,
@@ -22,14 +27,16 @@ export const RichText = ({
   onSerializedChange,
   editable,
   className,
-  wikiIntegrationEnabled = false,
+  toolbarPlugins,
+  editorNodes,
 }: {
   className?: string;
   editable: boolean;
   initialState?: SerializedEditorState;
   onChange?: (editorState: EditorState) => void;
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
-  wikiIntegrationEnabled?: boolean;
+  toolbarPlugins?: ReactNode[];
+  editorNodes?: EditorNode[];
 }) => {
   // This allow lexical to refresh it's initial state when the content changes from the outside
   const key = JSON.stringify(initialState);
@@ -62,7 +69,7 @@ export const RichText = ({
             TextNode,
             QuoteNode,
             ImageNode,
-            ...(wikiIntegrationEnabled ? [WikiNode] : []),
+            ...(editorNodes ?? []),
           ],
           onError: (error: Error) => {
             console.error(error);
@@ -74,9 +81,7 @@ export const RichText = ({
         }}
       >
         <TooltipProvider>
-          {editable && (
-            <EditorPlugins wikiIntegrationEnabled={wikiIntegrationEnabled} />
-          )}
+          {editable && <EditorPlugins toolbarPlugins={toolbarPlugins} />}
           <BasePlugins className={className} editable={editable} />
 
           <OnChangePlugin
