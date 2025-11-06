@@ -11,8 +11,6 @@ import { SceneSchema, SceneUpdatePayload } from "./schema";
 import { SetFirstSceneSwitch } from "./set-first-scene-switch";
 import { SerializedEditorState } from "lexical";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
-import { WikiPlugin } from "./wiki-lexical-plugin";
-import { useBuilderContext } from "@/builder/hooks/use-builder-context";
 import { WikiNode } from "@/design-system/components/editor/nodes/wiki-node";
 
 export const SceneContentSection = ({
@@ -26,8 +24,6 @@ export const SceneContentSection = ({
   isFirstScene: boolean;
   setFirstScene: () => void;
 }) => {
-  const { story } = useBuilderContext();
-
   return (
     <div className="space-y-4">
       <SetFirstSceneSwitch
@@ -62,9 +58,10 @@ export const SceneContentSection = ({
                 }
                 editable
                 className="h-[300px] max-w-[450px]"
-                toolbarPlugins={[
-                  <WikiPlugin wikiKey={story.wikiKey ?? null} />,
-                ]}
+                // Disabled until the feature is finished
+                // toolbarPlugins={[
+                //   <WikiPlugin wikiKey={story.wikiKey ?? null} />,
+                // ]}
                 editorNodes={[WikiNode]}
               />
             </FormControl>
