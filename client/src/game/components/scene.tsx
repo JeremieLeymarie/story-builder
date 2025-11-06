@@ -7,6 +7,7 @@ import { Divider } from "@/design-system/components/divider";
 import { Link } from "@tanstack/react-router";
 import { SerializedEditorState } from "lexical";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
+import { WikiNode } from "@/design-system/components/editor/nodes/wiki-node";
 
 type GameSceneProps = {
   scene: Scene;
@@ -31,6 +32,7 @@ export const GameScene = ({
               <RichText
                 editable={false}
                 initialState={content as unknown as SerializedEditorState}
+                editorNodes={[WikiNode]}
               />
             </p>
             <div className="mt-4 flex w-full flex-wrap gap-3">

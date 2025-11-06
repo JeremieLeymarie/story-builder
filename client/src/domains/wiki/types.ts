@@ -2,9 +2,10 @@ import { Wiki, WikiCategory } from "@/lib/storage/domain";
 
 export type WikiDataCategory = Omit<WikiCategory, "wikiKey">;
 
+export type WikiSectionArticle = { key: string; title: string };
 export type WikiSection = {
   category: WikiDataCategory | null;
-  articles: { key: string; title: string }[];
+  articles: WikiSectionArticle[];
 };
 
 export type WikiData = {

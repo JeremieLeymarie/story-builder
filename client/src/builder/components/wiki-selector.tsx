@@ -30,6 +30,10 @@ export const WikiSelector = ({
 }) => {
   const [open, setOpen] = useState(false);
   const selectedWiki = wikis.find((wiki) => wiki.key === selectedWikiKey);
+  const wikisByKey = wikis.reduce(
+    (acc, wiki) => ({ ...acc, [wiki.key]: wiki }),
+    {} as Record<string, Wiki>,
+  );
 
   return (
     <>
@@ -51,7 +55,15 @@ export const WikiSelector = ({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0" align="start" side="bottom">
-          <Command>
+          <Command
+            filter={(wikiKey, search) =>
+              wikisByKey?.[wikiKey]?.name
+                .toLocaleLowerCase()
+                .includes(search.toLocaleLowerCase())
+                ? 1
+                : 0
+            }
+          >
             <CommandInput placeholder="Search wikis..." disabled={disabled} />
             <CommandList>
               <ScrollArea className="h-[150px]">

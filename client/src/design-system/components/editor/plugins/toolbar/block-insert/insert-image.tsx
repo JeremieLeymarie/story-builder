@@ -1,15 +1,16 @@
 import { ImageIcon } from "lucide-react";
 
-import { SelectItem } from "@/design-system/primitives/select";
 import { InsertImageDialog } from "../../images-plugin/insert-image-form";
 import { useToolbarContext } from "../../../hooks/use-toolbar-context";
+import { Button } from "@/design-system/primitives";
 
 export const InsertImage = () => {
   const { activeEditor, showModal } = useToolbarContext();
 
   return (
-    <SelectItem
-      value="image"
+    <Button
+      variant="outline"
+      size="sm"
       onPointerUp={() => {
         showModal("Insert Image", (onClose) => (
           <InsertImageDialog activeEditor={activeEditor} onClose={onClose} />
@@ -20,6 +21,6 @@ export const InsertImage = () => {
         <ImageIcon className="size-4" />
         <span>Image</span>
       </div>
-    </SelectItem>
+    </Button>
   );
 };
