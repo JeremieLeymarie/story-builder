@@ -1,13 +1,24 @@
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/design-system/primitives/tooltip";
+import { getWikiService } from "@/domains/wiki/wiki-service";
+import { useQuery } from "@tanstack/react-query";
+import {
   DecoratorNode,
   EditorConfig,
   LexicalEditor,
   LexicalNode,
+  SerializedEditorState,
   SerializedLexicalNode,
   Spread,
 } from "lexical";
 import { ScrollTextIcon } from "lucide-react";
 import { ReactNode } from "react";
+import { RichText } from "../components/rich-text-editor";
+import { BackdropLoader } from "../../backdrop-loader";
+import { Link } from "@tanstack/react-router";
 
 export type SerializedWikiNode = Spread<
   {
@@ -20,7 +31,7 @@ export type SerializedWikiNode = Spread<
 >;
 
 // eslint-disable-next-line react-refresh/only-export-components
-const WikiNodeComponent = ({
+const EditorWikiNodeComponent = ({
   articleKey,
   textContent,
 }: {
@@ -33,6 +44,58 @@ const WikiNodeComponent = ({
       <ScrollTextIcon size={18} className="opacity-75" />
       {textContent}
     </span>
+  );
+};
+
+// eslint-disable-next-line react-refresh/only-export-components
+const DisplayWikiNodeComponent = ({
+  articleKey,
+  textContent,
+}: {
+  articleKey?: string;
+  textContent?: string;
+}) => {
+  const wiki = getWikiService();
+  const { data, isLoading } = useQuery({
+    queryKey: ["get-article", articleKey],
+    queryFn: async () => wiki.getArticle(articleKey!),
+    enabled: !!articleKey,
+  });
+  if (isLoading || !data) {
+    return <BackdropLoader />;
+  }
+  return (
+    <>
+      <Tooltip>
+        <TooltipTrigger>
+          {" "}
+          <Link
+            to="/wikis/$wikiKey/$articleKey"
+            params={{ articleKey: articleKey!, wikiKey: data.wikiKey }}
+            target="_blank"
+            className="cursor-pointer underline decoration-emerald-600 decoration-3 underline-offset-4"
+          >
+            {textContent}
+          </Link>
+        </TooltipTrigger>
+        <TooltipContent className="h-2xs w-2xs">
+          <p className="pt-3 text-slate-400">Wiki</p>
+          <p className="py-3 text-lg font-semibold text-emerald-600 capitalize">
+            {data.title}
+          </p>
+          <img
+            src={data.image}
+            className="rounded object-scale-down"
+            draggable="false"
+          />
+          <RichText
+            editable={false}
+            initialState={data.content as unknown as SerializedEditorState}
+            editorNodes={[WikiNode]}
+          />
+        </TooltipContent>
+      </Tooltip>
+    </>
   );
 };
 
@@ -85,12 +148,22 @@ export class WikiNode extends DecoratorNode<ReactNode> {
   }
 
   decorate(_editor: LexicalEditor, _config: EditorConfig): ReactNode {
-    return (
-      <WikiNodeComponent
-        articleKey={this.__articleKey}
-        textContent={this.__textContent}
-      />
-    );
+    console.log(_editor._editable);
+    if (_editor._editable) {
+      return (
+        <EditorWikiNodeComponent
+          articleKey={this.__articleKey}
+          textContent={this.__textContent}
+        />
+      );
+    } else {
+      return (
+        <DisplayWikiNodeComponent
+          articleKey={this.__articleKey}
+          textContent={this.__textContent}
+        />
+      );
+    }
   }
 }
 
