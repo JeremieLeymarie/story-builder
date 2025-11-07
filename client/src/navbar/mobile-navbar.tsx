@@ -139,7 +139,7 @@ export const NavbarActions = ({
             </TooltipTrigger>
             {!isOnline && (
               <TooltipContent>
-                <p>Connexion internet requise</p>
+                <p>An internet connection is required to log in.</p>
               </TooltipContent>
             )}
           </Tooltip>
