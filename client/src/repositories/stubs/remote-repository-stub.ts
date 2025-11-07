@@ -36,7 +36,7 @@ export const getRemoteRepositoryStub = (): MockRemoteRepository => {
       builderGames: { stories: [BASIC_STORY], scenes: [BASIC_SCENE] },
       storyProgresses: [BASIC_STORY_PROGRESS],
     }),
-    
+
     deleteStoryProgress: P({ success: true }),
   };
 };

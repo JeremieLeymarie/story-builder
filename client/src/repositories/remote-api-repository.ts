@@ -97,10 +97,10 @@ const _getRemoteAPIRepository = (
     deleteStoryProgress: async (progressKey, user) => {
       try {
         const response = await fetch(`/api/progress/${progressKey}`, {
-          method: 'DELETE',
+          method: "DELETE",
           headers: {
-            'Authorization': formatTokenHeader(user.token),
-            'Content-Type': 'application/json',
+            Authorization: formatTokenHeader(user.token),
+            "Content-Type": "application/json",
           },
         });
 
