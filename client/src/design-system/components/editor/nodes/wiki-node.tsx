@@ -17,8 +17,8 @@ import {
 import { ScrollTextIcon } from "lucide-react";
 import { ReactNode } from "react";
 import { RichText } from "../components/rich-text-editor";
-import { BackdropLoader } from "../../backdrop-loader";
 import { Link } from "@tanstack/react-router";
+import { SimpleLoader } from "../../simple-loader";
 
 export type SerializedWikiNode = Spread<
   {
@@ -62,13 +62,12 @@ const DisplayWikiNodeComponent = ({
     enabled: !!articleKey,
   });
   if (isLoading || !data) {
-    return <BackdropLoader />;
+    return <SimpleLoader />;
   }
   return (
     <>
       <Tooltip>
         <TooltipTrigger>
-          {" "}
           <Link
             to="/wikis/$wikiKey/$articleKey"
             params={{ articleKey: articleKey!, wikiKey: data.wikiKey }}
@@ -83,11 +82,7 @@ const DisplayWikiNodeComponent = ({
           <p className="py-3 text-lg font-semibold text-emerald-600 capitalize">
             {data.title}
           </p>
-          <img
-            src={data.image}
-            className="rounded object-scale-down"
-            draggable="false"
-          />
+          <img src={data.image} className="rounded object-scale-down" />
           <RichText
             editable={false}
             initialState={data.content as unknown as SerializedEditorState}
@@ -148,7 +143,6 @@ export class WikiNode extends DecoratorNode<ReactNode> {
   }
 
   decorate(_editor: LexicalEditor, _config: EditorConfig): ReactNode {
-    console.log(_editor._editable);
     if (_editor._editable) {
       return (
         <EditorWikiNodeComponent
