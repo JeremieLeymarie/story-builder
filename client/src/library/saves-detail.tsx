@@ -29,11 +29,11 @@ export const SavesDetail = ({
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <div className="flex items-center justify-between mb-8">
+        <div className="mb-8 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-yellow-600">Your Saves:</h2>
           <button
             onClick={startNewGame}
-            className="w-12 h-12 bg-yellow-400 hover:bg-yellow-500 rounded-full flex items-center justify-center shadow-lg transition-all"
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-400 shadow-lg transition-all hover:bg-yellow-500"
             title="New save"
           >
             <PlusIcon size={24} className="text-white" />
@@ -45,19 +45,17 @@ export const SavesDetail = ({
             <div
               key={progress.key}
               className={cn(
-                "relative group bg-white rounded-2xl border-2 border-yellow-400 p-4 shadow-md hover:shadow-lg transition-all",
-                index === 0 && "bg-yellow-50 border-yellow-500",
+                "group relative rounded-2xl border-2 border-yellow-400 bg-white p-4 shadow-md transition-all hover:shadow-lg",
+                index === 0 && "border-yellow-500 bg-yellow-50",
                 progress.finished && "opacity-75",
               )}
             >
-              <GameLink
-                progress={progress}
-                gameKey={progress.storyKey}
-              >
+              <GameLink progress={progress} gameKey={progress.storyKey}>
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-lg text-gray-800">
-                      Save #{index + 1} - {progress.lastScene?.title || "Scène inconnue"}
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      Save #{index + 1} -{" "}
+                      {progress.lastScene?.title || "Scène inconnue"}
                     </h3>
                     <p className="text-sm text-gray-600">
                       {timeFrom(progress.lastPlayedAt)}
@@ -66,13 +64,13 @@ export const SavesDetail = ({
                       {formatDate(progress.lastPlayedAt)}
                     </p>
                   </div>
-                  
+
                   <div className="flex items-center gap-3">
                     {/* Play button */}
-                    <div className="w-10 h-10 bg-yellow-400 hover:bg-yellow-500 rounded-full flex items-center justify-center shadow-md transition-all cursor-pointer">
-                      <Play size={18} className="text-white ml-0.5" />
+                    <div className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-yellow-400 shadow-md transition-all hover:bg-yellow-500">
+                      <Play size={18} className="ml-0.5 text-white" />
                     </div>
-                    
+
                     {/* Delete button */}
                     <button
                       onClick={(e) => {
@@ -81,7 +79,7 @@ export const SavesDetail = ({
                         handleDeleteProgress(progress.key);
                       }}
                       disabled={isDeleting}
-                      className="w-8 h-8 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center shadow-md transition-all opacity-0 group-hover:opacity-100"
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500 opacity-0 shadow-md transition-all group-hover:opacity-100 hover:bg-red-600"
                       title="Delete this save"
                     >
                       <X size={14} className="text-white" />
@@ -89,10 +87,10 @@ export const SavesDetail = ({
                   </div>
                 </div>
               </GameLink>
-              
+
               {progress.finished && (
                 <div className="absolute top-2 right-2">
-                  <span className="px-2 py-1 bg-green-500 text-white text-xs rounded-full">
+                  <span className="rounded-full bg-green-500 px-2 py-1 text-xs text-white">
                     COMPLETED
                   </span>
                 </div>
@@ -107,7 +105,7 @@ export const SavesDetail = ({
               onClick={() =>
                 setEndProgressIndex((prev) => prev + PROGRESSES_BY_PAGE)
               }
-              className="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm font-medium transition-colors"
+              className="px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:text-gray-800"
             >
               - Load more -
             </button>
