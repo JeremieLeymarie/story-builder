@@ -1,7 +1,5 @@
-import { Button } from "@/design-system/primitives";
-import { PlusIcon, Trash2Icon, Play, X } from "lucide-react";
+import { PlusIcon, Play, X } from "lucide-react";
 import { formatDate, timeFrom } from "@/lib/date";
-import { Title } from "@/design-system/components";
 import { ExtendedProgress } from "./types";
 import { cn } from "@/lib/style";
 import { GameLink } from "./game-link";
@@ -36,7 +34,7 @@ export const SavesDetail = ({
           <button
             onClick={startNewGame}
             className="w-12 h-12 bg-yellow-400 hover:bg-yellow-500 rounded-full flex items-center justify-center shadow-lg transition-all"
-            title="Nouvelle sauvegarde"
+            title="New save"
           >
             <PlusIcon size={24} className="text-white" />
           </button>
@@ -70,12 +68,12 @@ export const SavesDetail = ({
                   </div>
                   
                   <div className="flex items-center gap-3">
-                    {/* Bouton Play */}
+                    {/* Play button */}
                     <div className="w-10 h-10 bg-yellow-400 hover:bg-yellow-500 rounded-full flex items-center justify-center shadow-md transition-all cursor-pointer">
                       <Play size={18} className="text-white ml-0.5" />
                     </div>
                     
-                    {/* Bouton Delete */}
+                    {/* Delete button */}
                     <button
                       onClick={(e) => {
                         e.preventDefault();
@@ -84,7 +82,7 @@ export const SavesDetail = ({
                       }}
                       disabled={isDeleting}
                       className="w-8 h-8 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center shadow-md transition-all opacity-0 group-hover:opacity-100"
-                      title="Supprimer cette sauvegarde"
+                      title="Delete this save"
                     >
                       <X size={14} className="text-white" />
                     </button>
