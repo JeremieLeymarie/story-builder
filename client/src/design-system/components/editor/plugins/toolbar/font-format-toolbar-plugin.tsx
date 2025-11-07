@@ -16,7 +16,7 @@ import {
 
 import { useUpdateToolbarHandler } from "@/design-system/components/editor/hooks/use-update-toolbar";
 import { Toggle } from "@/design-system/primitives/toggle";
-import { useToolbarContext } from "../../hooks/use-toolbar-context";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 const Icons: Partial<Record<TextFormatType, React.ElementType>> = {
   bold: BoldIcon,
@@ -31,7 +31,7 @@ export const FontFormatToolbarPlugin = ({
 }: {
   format: Omit<TextFormatType, "highlight" | "subscript" | "superscript">;
 }) => {
-  const { activeEditor } = useToolbarContext();
+  const [editor] = useLexicalComposerContext();
   const [isSelected, setIsSelected] = useState<boolean>(false);
 
   const $updateToolbar = (selection: BaseSelection) => {
@@ -55,10 +55,7 @@ export const FontFormatToolbarPlugin = ({
       pressed={isSelected}
       onPressedChange={setIsSelected}
       onClick={() => {
-        activeEditor.dispatchCommand(
-          FORMAT_TEXT_COMMAND,
-          format as TextFormatType,
-        );
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, format as TextFormatType);
       }}
     >
       <Icon className="h-4 w-4" />

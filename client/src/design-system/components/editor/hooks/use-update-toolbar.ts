@@ -6,16 +6,14 @@ import {
   COMMAND_PRIORITY_CRITICAL,
   SELECTION_CHANGE_COMMAND,
 } from "lexical";
-import { useToolbarContext } from "./use-toolbar-context";
 
 export const useUpdateToolbarHandler = (
   callback: (selection: BaseSelection) => void,
 ) => {
   const [editor] = useLexicalComposerContext();
-  const { activeEditor } = useToolbarContext();
 
   useEffect(() => {
-    return activeEditor.registerCommand(
+    return editor.registerCommand(
       SELECTION_CHANGE_COMMAND,
       () => {
         const selection = $getSelection();
@@ -26,14 +24,14 @@ export const useUpdateToolbarHandler = (
       },
       COMMAND_PRIORITY_CRITICAL,
     );
-  }, [editor, callback, activeEditor]);
+  }, [editor, callback]);
 
   useEffect(() => {
-    activeEditor.getEditorState().read(() => {
+    editor.getEditorState().read(() => {
       const selection = $getSelection();
       if (selection) {
         callback(selection);
       }
     });
-  }, [activeEditor, callback]);
+  }, [editor, callback]);
 };

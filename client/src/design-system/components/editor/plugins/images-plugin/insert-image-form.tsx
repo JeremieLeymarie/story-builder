@@ -10,12 +10,13 @@ import {
   Button,
   Form,
   FormMessage,
+  DialogClose,
 } from "@/design-system/primitives";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LexicalEditor } from "lexical";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { INSERT_IMAGE_COMMAND } from "./command";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 const imageSchema = z.object({
   src: z.string(), // TODO: use base64url?
@@ -24,37 +25,22 @@ const imageSchema = z.object({
 
 type ImageSchema = z.infer<typeof imageSchema>;
 
-export const InsertImageDialog = ({
-  activeEditor,
-  onClose,
-}: {
-  activeEditor: LexicalEditor;
-  onClose: () => void;
-}) => {
+export const InsertImageForm = () => {
+  const [editor] = useLexicalComposerContext();
   const form = useForm({
     resolver: zodResolver(imageSchema),
-    defaultValues: {
-      altText: undefined,
-      src: undefined,
-    },
   });
 
   const onSubmit = (data: ImageSchema) => {
-    activeEditor.dispatchCommand(INSERT_IMAGE_COMMAND, {
+    editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
       src: data.src ?? "",
       altText: data.altText ?? "",
     });
-    onClose();
   };
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit, (invalid) => {
-          console.error({ invalid });
-        })}
-        className="mt-2 space-y-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2 space-y-4">
         <FormField
           control={form.control}
           name="src"
@@ -102,7 +88,9 @@ export const InsertImageDialog = ({
             </FormItem>
           )}
         />
-        <Button type="submit">Confirm</Button>
+        <DialogClose asChild>
+          <Button onPointerUp={form.handleSubmit(onSubmit)}>Confirm</Button>
+        </DialogClose>
       </form>
     </Form>
   );
