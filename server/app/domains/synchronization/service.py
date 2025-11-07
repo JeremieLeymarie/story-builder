@@ -31,6 +31,10 @@ class SynchronizationServicePort(Protocol):
         self, stories: list[SynchronizationStory], *, user_key: str
     ) -> Result: ...
 
+    def delete_progress(
+        self, progress_key: str, *, user_key: str
+    ) -> Result: ...
+
 
 class SynchronizationService:
     def __init__(
@@ -89,3 +93,10 @@ class SynchronizationService:
                 )
 
         return self.repository.save_stories(stories=stories, user_key=user_key)
+
+    def delete_progress(
+        self, progress_key: str, *, user_key: str
+    ) -> Result:
+        return self.repository.delete_story_progress(
+            progress_key=progress_key, user_key=user_key
+        )
