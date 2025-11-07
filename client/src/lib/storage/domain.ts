@@ -109,6 +109,12 @@ export type WikiCategory = {
   name: string;
   color: string;
 };
+export type WikiArticleLink = {
+  key: string; // This is not a primary key, multiple WikiArticleLinks can have the same articleLinkKey
+  articleKey: string;
+  entityType: Extract<Entity, "scene">; // maybe wiki articles in the future?
+  entityKey: string;
+};
 
 export const ENTITIES = [
   "story",
@@ -118,5 +124,6 @@ export const ENTITIES = [
   "wiki",
   "wiki-article",
   "wiki-category",
+  "wiki-article-link",
 ] as const;
 export type Entity = (typeof ENTITIES)[number];

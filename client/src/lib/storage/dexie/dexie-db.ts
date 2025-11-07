@@ -1,4 +1,4 @@
-import Dexie, { type EntityTable } from "dexie";
+import Dexie, { type EntityTable, Table } from "dexie";
 import { nanoid } from "nanoid";
 import {
   User,
@@ -8,6 +8,7 @@ import {
   Wiki,
   WikiArticle,
   WikiCategory,
+  WikiArticleLink,
 } from "../domain";
 import { DEMO_IMPORTED_STORY, DEMO_SCENES, DEMO_STORY } from "./seed";
 import { getLibraryService } from "@/domains/game/library-service";
@@ -20,6 +21,7 @@ type Tables = {
   wikis: EntityTable<Wiki, "key">;
   wikiArticles: EntityTable<WikiArticle, "key">;
   wikiCategories: EntityTable<WikiCategory, "key">;
+  wikiArticleLinks: Table<WikiArticleLink, [string, string]>;
 };
 export type DexieDatabase = Dexie & Tables;
 
@@ -35,6 +37,7 @@ const tables: Record<keyof Tables, string> = {
   wikis: "&key, userKey",
   wikiArticles: "&key, wikiKey, categoryKey, title",
   wikiCategories: "&key, name",
+  wikiArticleLinks: "[key+entityKey], key, entityKey, entityType",
 };
 export const TABLE_NAMES = Object.keys(tables);
 
@@ -42,7 +45,7 @@ export const createDb = (
   db: DexieDatabase,
   { seed }: { seed: boolean } = { seed: true },
 ) => {
-  db.version(3).stores(tables);
+  db.version(6).stores(tables);
 
   if (seed)
     db.on("populate", async () => {

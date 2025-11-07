@@ -1,4 +1,9 @@
-import { Wiki, WikiArticle, WikiCategory } from "@/lib/storage/domain";
+import {
+  Wiki,
+  WikiArticle,
+  WikiArticleLink,
+  WikiCategory,
+} from "@/lib/storage/domain";
 import { getDexieWikiRepository, WikiRepositoryPort } from "./wiki-repository";
 import { WikiSchema } from "@/wikis/wiki-form";
 import { ArticleUpdatePayload, WikiData } from "./types";
@@ -10,6 +15,7 @@ import {
 } from "./wiki-permission-context";
 import { ArticleSchema, CategorySchema } from "@/wikis/schemas";
 import { WikiCategoryNameTaken } from "./errors";
+import { nanoid } from "nanoid";
 
 const DEFAULT_CATEGORIES: Omit<WikiCategory, "key" | "wikiKey">[] = [
   { name: "Person", color: "#005f73" },
@@ -33,6 +39,16 @@ export type WikiServicePort = {
     payload: ArticleUpdatePayload,
   ) => Promise<void>;
   createCategory: (wikiKey: string, payload: CategorySchema) => Promise<string>;
+  addArticleLink: (payload: WikiArticleLink) => Promise<void>;
+  updateArticleLink: (payload: WikiArticleLink) => Promise<void>;
+  removeArticleLink: (
+    payload: Pick<WikiArticleLink, "entityKey" | "entityType" | "key">,
+  ) => Promise<void>;
+  makeArticleLinkKey: () => string;
+  getArticleLink: (
+    articleLinkKey: string,
+    entityKey: string,
+  ) => Promise<WikiArticleLink | null>;
 };
 
 export const _getWikiService = ({
@@ -133,6 +149,28 @@ export const _getWikiService = ({
         color: payload.color,
         name: payload.name,
       });
+    },
+
+    addArticleLink: async (payload) => {
+      await repository.addArticleLink(payload);
+    },
+
+    updateArticleLink: async (payload) => {
+      await repository.updateArticleLink(payload);
+    },
+
+    removeArticleLink: async (payload) => {
+      await repository.removeArticleLink(payload.key, payload.entityKey);
+    },
+
+    makeArticleLinkKey: nanoid,
+
+    getArticleLink: async (articleLinkKey, entityKey) => {
+      const articleLink = await repository.getArticleLink(
+        articleLinkKey,
+        entityKey,
+      );
+      return articleLink;
     },
   };
 };

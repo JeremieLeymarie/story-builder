@@ -29,6 +29,7 @@ import {
 import { ScrollTextIcon } from "lucide-react";
 import { WikiSectionArticle } from "@/domains/wiki/types";
 import { mergeRegister } from "@lexical/utils";
+import { useUpdateArticleLinks } from "./hooks/use-update-article-links";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const INSERT_WIKI_COMMAND: LexicalCommand<string> = createCommand();
@@ -48,6 +49,7 @@ export const WikiPlugin = ({ wikiKey }: { wikiKey: string | null }) => {
   );
   const currentTextSelection = useRef<string>(null);
   const [searchValue, setSearchValue] = useState<string>();
+  const wikiService = getWikiService();
 
   if (!editor.hasNodes([WikiNode]))
     throw new Error(
@@ -59,6 +61,8 @@ export const WikiPlugin = ({ wikiKey }: { wikiKey: string | null }) => {
     setOpen(false);
   };
 
+  useUpdateArticleLinks();
+
   useEffect(() => {
     return mergeRegister(
       editor.registerCommand<string>(
@@ -67,7 +71,11 @@ export const WikiPlugin = ({ wikiKey }: { wikiKey: string | null }) => {
           const selection = $getSelection();
           if ($isRangeSelection(selection)) {
             const textContent = selection.getTextContent();
-            const wikiNode = $createWikiNode(articleKey, textContent);
+            const wikiNode = $createWikiNode({
+              articleLinkKey: wikiService.makeArticleLinkKey(),
+              articleKey,
+              textContent,
+            });
             selection.insertNodes([wikiNode]);
           }
           return true;
@@ -86,7 +94,7 @@ export const WikiPlugin = ({ wikiKey }: { wikiKey: string | null }) => {
         COMMAND_PRIORITY_EDITOR,
       ),
     );
-  }, [editor]);
+  }, [wikiService, editor]);
 
   return (
     <Popover

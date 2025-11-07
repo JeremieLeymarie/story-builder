@@ -1,5 +1,10 @@
 import { DexieDatabase, db } from "@/lib/storage/dexie/dexie-db";
-import { Wiki, WikiArticle, WikiCategory } from "@/lib/storage/domain";
+import {
+  Wiki,
+  WikiArticle,
+  WikiArticleLink,
+  WikiCategory,
+} from "@/lib/storage/domain";
 import { WithoutKey } from "@/types";
 import { ArticleUpdatePayload, WikiSection } from "./types";
 
@@ -20,6 +25,13 @@ export type WikiRepositoryPort = {
   ) => Promise<void>;
   getArticle: (articleKey: string) => Promise<WikiArticle | null>;
   createCategory: (payload: WithoutKey<WikiCategory>) => Promise<string>;
+  addArticleLink: (payload: WikiArticleLink) => Promise<void>;
+  updateArticleLink: (payload: WikiArticleLink) => Promise<void>;
+  removeArticleLink: (key: string, entityKey: string) => Promise<void>;
+  getArticleLink: (
+    key: string,
+    entityKey: string,
+  ) => Promise<WikiArticleLink | null>;
 };
 
 export const _getDexieWikiRepository = (
@@ -122,6 +134,27 @@ export const _getDexieWikiRepository = (
 
     createCategory: async (payload) => {
       return await db.wikiCategories.add(payload);
+    },
+
+    addArticleLink: async (payload: WikiArticleLink) => {
+      await db.wikiArticleLinks.add(payload, [payload.key, payload.entityKey]);
+    },
+
+    updateArticleLink: async (payload: WikiArticleLink) => {
+      await db.wikiArticleLinks.update(payload, payload);
+    },
+
+    removeArticleLink: async (key: string, entityKey: string) => {
+      await db.wikiArticleLinks
+        .where(["key", "entityKey"])
+        .equals([key, entityKey])
+        .delete();
+    },
+
+    getArticleLink: async (key, entityKey) => {
+      return (
+        (await db.wikiArticleLinks.where({ key, entityKey }).first()) ?? null
+      );
     },
   };
 };

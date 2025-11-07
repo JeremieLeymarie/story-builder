@@ -17,6 +17,7 @@ import { useWikiStore } from "./hooks/use-wiki-store";
 import { ArticleSchema, articleSchema } from "./schemas";
 import { CategoryPicker } from "./category-picker";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
+import { EditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
 
 type UpdateProps =
   | {
@@ -128,12 +129,19 @@ export const ArticleEditor = ({
               <FormItem>
                 <FormLabel>Content</FormLabel>
                 <FormControl>
-                  <RichText
-                    editable
-                    onSerializedChange={field.onChange}
-                    initialState={defaultValues?.content}
-                    textDisplayMode="scroll"
-                  />
+                  <EditorContext
+                    value={{
+                      entityType: "wiki-article",
+                      entityKey: articleKey,
+                    }}
+                  >
+                    <RichText
+                      editable
+                      onSerializedChange={field.onChange}
+                      initialState={defaultValues?.content}
+                      textDisplayMode="scroll"
+                    />
+                  </EditorContext>
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -7,6 +7,7 @@ import { Divider } from "@/design-system/components/divider";
 import { Link } from "@tanstack/react-router";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
 import { WikiNode } from "@/design-system/components/editor/nodes/wiki-node";
+import { EditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
 
 type GameSceneProps = {
   scene: Scene;
@@ -16,7 +17,7 @@ type GameSceneProps = {
 
 export const GameScene = ({
   progress,
-  scene: { content, title, actions, storyKey },
+  scene: { key, content, title, actions, storyKey },
   isLastScene,
 }: GameSceneProps) => {
   return (
@@ -28,12 +29,14 @@ export const GameScene = ({
               {title}
             </h1>
             <div className="leading-7 wrap-break-word not-first:mt-6">
-              <RichText
-                editable={false}
-                initialState={content}
-                editorNodes={[WikiNode]}
-                textDisplayMode="full"
-              />
+              <EditorContext value={{ entityType: "scene", entityKey: key }}>
+                <RichText
+                  editable={false}
+                  initialState={content}
+                  editorNodes={[WikiNode]}
+                  textDisplayMode="full"
+                />
+              </EditorContext>
             </div>
             <div className="mt-4 flex w-full flex-wrap gap-3">
               {actions.map((action) => (

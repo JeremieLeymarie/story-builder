@@ -16,6 +16,7 @@ const entityToDexieTableAdapter = (entity: Entity) => {
     wiki: "wikis",
     "wiki-article": "wikiArticle",
     "wiki-category": "wikiCategory",
+    "wiki-article-link": "wikiArticleLink",
   };
 
   return mapping[entity];
