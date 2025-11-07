@@ -37,6 +37,10 @@ export const LibraryGameDetail = ({
       );
   };
 
+  const createNewSave = async () => {
+    await getLibraryService().createBlankStoryProgress({ storyKey: story.key });
+  };
+
   const playCurrentGame = () => {
     navigate({
       to: "/game/$gameKey/$sceneKey",
@@ -171,7 +175,7 @@ export const LibraryGameDetail = ({
         {/* Section Your Saves en dessous */}
         <div>
           <SavesDetail
-            startNewGame={startNewGame}
+            startNewGame={createNewSave}
             currentProgress={currentProgress}
             otherProgresses={otherProgresses}
           />

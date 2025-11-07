@@ -31,10 +31,8 @@ export const SavesDetail = ({
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <h2 className="text-2xl font-bold text-yellow-600">Your Saves:</h2>
-        
-        {/* Bouton + pour nouvelle save */}
-        <div className="flex justify-end">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-2xl font-bold text-yellow-600">Your Saves:</h2>
           <button
             onClick={startNewGame}
             className="w-12 h-12 bg-yellow-400 hover:bg-yellow-500 rounded-full flex items-center justify-center shadow-lg transition-all"
