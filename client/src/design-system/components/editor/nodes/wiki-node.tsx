@@ -15,6 +15,7 @@ import { ScrollTextIcon } from "lucide-react";
 import { ReactNode } from "react";
 import { RichText } from "../components/rich-text-editor";
 import { Link } from "@tanstack/react-router";
+import { SimpleLoader } from "../../simple-loader";
 import { useEditorContext } from "../hooks/use-editor-context";
 import { useQuery } from "@tanstack/react-query";
 import { getWikiService } from "@/domains/wiki/wiki-service";
@@ -28,6 +29,7 @@ export type SerializedWikiNode = Spread<
   },
   SerializedLexicalNode
 >;
+// TODO: move this file out of the design system
 
 // TODO: move this file out of the design system
 
