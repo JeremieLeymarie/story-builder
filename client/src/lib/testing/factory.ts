@@ -8,6 +8,7 @@ import {
   User,
   Wiki,
   WikiArticle,
+  WikiArticleLink,
   WikiCategory,
 } from "../storage/domain";
 import { faker } from "@faker-js/faker";
@@ -70,6 +71,14 @@ const _wikiCategoryFactory = {
     faker.helpers.arrayElement(["culture", "people", "event", "geography"]),
   color: faker.color.rgb,
 } satisfies WikiCategoryFactory;
+
+type WikiArticleLinkFactory = _BaseFactory<WikiArticleLink>;
+const _wikiArticleLinkFactory = {
+  key: nanoid,
+  articleKey: nanoid,
+  entityKey: nanoid,
+  entityType: () => faker.helpers.arrayElement(["scene"]),
+} satisfies WikiArticleLinkFactory;
 
 type StoryBaseFactory = _BaseFactory<StoryBase>;
 const _baseStoryFactory = {
@@ -143,6 +152,10 @@ export const getTestFactory = () => {
 
     wikiCategory: (partial: Partial<WikiCategory> = {}) => {
       return makeRandomEntity(_wikiCategoryFactory, partial);
+    },
+
+    wikiArticleLink: (partial: Partial<WikiArticleLink> = {}) => {
+      return makeRandomEntity(_wikiArticleLinkFactory, partial);
     },
 
     story: {

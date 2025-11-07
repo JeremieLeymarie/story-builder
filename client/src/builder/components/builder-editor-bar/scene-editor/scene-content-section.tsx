@@ -11,8 +11,11 @@ import { SceneSchema, SceneUpdatePayload } from "./schema";
 import { SetFirstSceneSwitch } from "./set-first-scene-switch";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
 import { WikiNode } from "@/design-system/components/editor/nodes/wiki-node";
-import { WikiPlugin } from "./wiki-lexical-plugin";
 import { useBuilderContext } from "@/builder/hooks/use-builder-context";
+import { EditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
+import { WikiPlugin } from "../../wiki-lexical-plugin/wiki-lexical-plugin";
+import { SerializedEditorState } from "lexical";
+
 export const SceneContentSection = ({
   form,
   scenePayload,
@@ -50,17 +53,21 @@ export const SceneContentSection = ({
           <FormItem>
             <FormLabel>Content</FormLabel>
             <FormControl>
-              <RichText
-                onSerializedChange={field.onChange}
-                initialState={scenePayload.content}
-                editable
-                className="h-[300px] max-w-[450px]"
-                toolbarPlugins={[
-                  <WikiPlugin wikiKey={story.wikiKey ?? null} />,
-                ]}
-                editorNodes={[WikiNode]}
-                textDisplayMode="scroll"
-              />
+              <EditorContext
+                value={{ entityType: "scene", entityKey: scenePayload.key }}
+              >
+                <RichText
+                  onSerializedChange={field.onChange}
+                  initialState={scenePayload.content}
+                  editable
+                  className="h-[300px] max-w-[450px]"
+                  toolbarPlugins={[
+                    <WikiPlugin wikiKey={story.wikiKey ?? null} />,
+                  ]}
+                  editorNodes={[WikiNode]}
+                  textDisplayMode="scroll"
+                />
+              </EditorContext>
             </FormControl>
             <FormMessage />
           </FormItem>

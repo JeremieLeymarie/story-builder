@@ -3,8 +3,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
-import { getWikiService } from "@/domains/wiki/wiki-service";
-import { useQuery } from "@tanstack/react-query";
 import {
   DecoratorNode,
   EditorConfig,
@@ -18,26 +16,40 @@ import { ReactNode } from "react";
 import { RichText } from "../components/rich-text-editor";
 import { Link } from "@tanstack/react-router";
 import { SimpleLoader } from "../../simple-loader";
+import { useEditorContext } from "../hooks/use-editor-context";
+import { useQuery } from "@tanstack/react-query";
+import { getWikiService } from "@/domains/wiki/wiki-service";
 
 export type SerializedWikiNode = Spread<
   {
-    articleKey: string;
+    articleLinkKey: string;
     textContent: string;
     type: "wiki";
     version: 1;
   },
   SerializedLexicalNode
 >;
+// TODO: move this file out of the design system
 
 // eslint-disable-next-line react-refresh/only-export-components
 const EditorWikiNodeComponent = ({
-  articleKey,
+  articleLinkKey,
+
   textContent,
 }: {
-  articleKey?: string;
+  articleLinkKey?: string;
   textContent?: string;
 }) => {
-  console.log({ articleKey });
+  const { entityKey } = useEditorContext();
+
+  const { data: _articleKey } = useQuery({
+    queryKey: ["get-article-link", articleLinkKey],
+    queryFn: async () =>
+      getWikiService().getArticleLink(articleLinkKey!, entityKey!),
+    enabled: !!entityKey && !!articleLinkKey,
+    select: (data) => data?.articleKey,
+  });
+
   return (
     <span className="inline-flex translate-y-0.5 items-center gap-1 rounded-xl bg-green-600/60 px-2">
       <ScrollTextIcon size={18} className="opacity-75" />
@@ -95,17 +107,24 @@ const DisplayWikiNodeComponent = ({
 };
 
 export class WikiNode extends DecoratorNode<ReactNode> {
+  private __articleLinkKey?: string;
+  private __textContent: string;
+
+  // This attribute is only used to update the related article links, not to represent the linked article key reliably
   private __articleKey?: string;
-  private __textContent?: string;
 
   constructor(
-    articleKey: string = "",
-    textContent: string = "",
+    props?: {
+      articleLinkKey?: string;
+      textContent: string;
+      articleKey?: string;
+    },
     nodeKey?: string,
   ) {
     super(nodeKey);
-    this.__articleKey = articleKey;
-    this.__textContent = textContent;
+    this.__articleLinkKey = props?.articleLinkKey;
+    this.__textContent = props?.textContent ?? "";
+    this.__articleKey = props?.articleKey;
   }
 
   $config() {
@@ -113,14 +132,21 @@ export class WikiNode extends DecoratorNode<ReactNode> {
   }
 
   static clone(node: WikiNode): WikiNode {
-    return new WikiNode(node.__articleKey, node.__textContent, node.__key);
+    return new WikiNode(
+      {
+        articleLinkKey: node?.__articleLinkKey,
+        textContent: node.__textContent,
+        articleKey: node.__articleKey,
+      },
+      node.__key,
+    );
   }
 
-  static importJSON(serializedNode: SerializedWikiNode): WikiNode {
-    const node = $createWikiNode(
-      serializedNode.articleKey,
-      serializedNode.textContent,
-    );
+  static importJSON({
+    articleLinkKey,
+    textContent,
+  }: SerializedWikiNode): WikiNode {
+    const node = $createWikiNode({ articleLinkKey, textContent }); // should we add articleKey?
     return node;
   }
 
@@ -128,7 +154,7 @@ export class WikiNode extends DecoratorNode<ReactNode> {
     return {
       ...super.exportJSON(),
       type: "wiki",
-      articleKey: this.__articleKey ?? "",
+      articleLinkKey: this.__articleLinkKey ?? "",
       textContent: this.__textContent ?? "",
       version: 1,
     };
@@ -146,7 +172,7 @@ export class WikiNode extends DecoratorNode<ReactNode> {
     if (_editor._editable) {
       return (
         <EditorWikiNodeComponent
-          articleKey={this.__articleKey}
+          articleLinkKey={this.__articleLinkKey}
           textContent={this.__textContent}
         />
       );
@@ -159,13 +185,26 @@ export class WikiNode extends DecoratorNode<ReactNode> {
       );
     }
   }
+
+  get articleLinkKey() {
+    return this.__articleLinkKey;
+  }
+
+  get articleKey() {
+    return this.__articleKey;
+  }
 }
 
-export const $createWikiNode = (
-  articleKey: string,
-  textContent: string,
-): WikiNode => {
-  return new WikiNode(articleKey, textContent);
+export const $createWikiNode = ({
+  articleKey,
+  articleLinkKey,
+  textContent,
+}: {
+  articleKey?: string;
+  articleLinkKey: string;
+  textContent: string;
+}): WikiNode => {
+  return new WikiNode({ articleLinkKey, textContent, articleKey });
 };
 
 export const $isWikiNode = (
