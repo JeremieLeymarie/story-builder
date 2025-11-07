@@ -35,12 +35,6 @@ import { ConfirmLoadAction } from "./components/confirm-load-action";
 import { ConfirmSaveAction } from "./components/confirm-save-action";
 import { getUserService } from "@/domains/user/user-service";
 import { useIsOnline } from "@/hooks/use-is-online";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/design-system/primitives/tooltip";
 
 const NavButton = ({
   children,
@@ -121,29 +115,16 @@ export const NavbarActions = ({
   ) : (
     <div className="flex w-full flex-col items-center">
       <div className="flex flex-col items-center gap-1">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-2"
-                  onClick={() => isOnline && setIsModalOpen(true)}
-                  disabled={!isOnline}
-                >
-                  <LogInIcon size="16px" />
-                  Log in
-                </Button>
-              </span>
-            </TooltipTrigger>
-            {!isOnline && (
-              <TooltipContent>
-                <p>An internet connection is required to log in.</p>
-              </TooltipContent>
-            )}
-          </Tooltip>
-        </TooltipProvider>
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-2"
+          onClick={() => isOnline && setIsModalOpen(true)}
+          disabled={!isOnline}
+        >
+          <LogInIcon size="16px" />
+          Log in
+        </Button>
         <p className="text-muted-foreground text-sm">
           To access synchronization features
         </p>
