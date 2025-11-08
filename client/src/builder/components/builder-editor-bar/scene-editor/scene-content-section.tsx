@@ -11,8 +11,8 @@ import { SceneSchema, SceneUpdatePayload } from "./schema";
 import { SetFirstSceneSwitch } from "./set-first-scene-switch";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
 import { WikiNode } from "@/design-system/components/editor/nodes/wiki-node";
-import { WikiPlugin } from "./wiki-lexical-plugin";
-import { useBuilderContext } from "@/builder/hooks/use-builder-context";
+// import { WikiPlugin } from "./wiki-lexical-plugin";
+// import { useBuilderContext } from "@/builder/hooks/use-builder-context";
 export const SceneContentSection = ({
   form,
   scenePayload,
@@ -24,7 +24,7 @@ export const SceneContentSection = ({
   isFirstScene: boolean;
   setFirstScene: () => void;
 }) => {
-  const { story } = useBuilderContext();
+  // const { story } = useBuilderContext();
 
   return (
     <div className="space-y-4">
@@ -59,10 +59,11 @@ export const SceneContentSection = ({
                 editable
                 className="h-[300px] max-w-[450px]"
                 // Disabled until the feature is finished
-                toolbarPlugins={[
-                  <WikiPlugin wikiKey={story.wikiKey ?? null} />,
-                ]}
+                // toolbarPlugins={[
+                // <WikiPlugin wikiKey={story.wikiKey ?? null} />,
+                // ]}
                 editorNodes={[WikiNode]}
+                textDisplayMode="scroll"
               />
             </FormControl>
             <FormMessage />
