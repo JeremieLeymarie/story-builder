@@ -27,14 +27,14 @@ export const GameScene = ({
             <h1 className="scroll-m-20 text-3xl font-bold tracking-tight lg:text-4xl">
               {title}
             </h1>
-            <p className="leading-7 wrap-break-word not-first:mt-6">
+            <div className="leading-7 wrap-break-word not-first:mt-6">
               <RichText
                 editable={false}
                 initialState={content}
                 editorNodes={[WikiNode]}
                 textDisplayMode="full"
               />
-            </p>
+            </div>
             <div className="mt-4 flex w-full flex-wrap gap-3">
               {actions.map((action) => (
                 <SceneAction
