@@ -8,7 +8,7 @@ export class Vec2 {
   }
 
   add(...others: Vec2[]): Vec2 {
-    const result = new Vec2(this.x, this.y);
+    const result = Vec2.from(this);
     others.forEach((other) => {
       result.x += other.x;
       result.y += other.y;
@@ -17,7 +17,7 @@ export class Vec2 {
   }
 
   subtract(...others: Vec2[]): Vec2 {
-    const result = new Vec2(this.x, this.y);
+    const result = Vec2.from(this);
     others.forEach((vec) => {
       result.x -= vec.x;
       result.y -= vec.y;
@@ -33,9 +33,4 @@ export class Vec2 {
   static from(some: { x: number; y: number }) {
     return new Vec2(some.x, some.y);
   }
-
-  static ZERO = new Vec2(0);
-  static ONE = new Vec2(1);
-  static INFINITY = new Vec2(Infinity);
-  static NEG_INFINITY = new Vec2(-Infinity);
 }
