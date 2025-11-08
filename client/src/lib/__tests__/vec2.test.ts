@@ -19,15 +19,17 @@ describe("vec2", () => {
     });
     test("vector 0 0", () => {
       const vector = new Vec2(42, 42);
-      expect(vector.add(Vec2.ZERO)).toStrictEqual(vector);
+      expect(vector.add(new Vec2(0))).toStrictEqual(vector);
     });
     test("infinity", () => {
       const vector = new Vec2(42, 42);
-      expect(vector.add(Vec2.INFINITY)).toStrictEqual(Vec2.INFINITY);
+      expect(vector.add(new Vec2(Infinity))).toStrictEqual(new Vec2(Infinity));
     });
     test("negative infinity", () => {
       const vector = new Vec2(42, 42);
-      expect(vector.add(Vec2.NEG_INFINITY)).toStrictEqual(Vec2.NEG_INFINITY);
+      expect(vector.add(new Vec2(-Infinity))).toStrictEqual(
+        new Vec2(-Infinity),
+      );
     });
   });
 
@@ -50,15 +52,19 @@ describe("vec2", () => {
     });
     test("zero", () => {
       const vector = new Vec2(42, 42);
-      expect(vector.subtract(Vec2.ZERO)).toStrictEqual(vector);
+      expect(vector.subtract(new Vec2(0))).toStrictEqual(vector);
     });
     test("infinity", () => {
       const vector = new Vec2(42, 42);
-      expect(vector.subtract(Vec2.INFINITY)).toStrictEqual(Vec2.NEG_INFINITY);
+      expect(vector.subtract(new Vec2(Infinity))).toStrictEqual(
+        new Vec2(-Infinity),
+      );
     });
     test("negative infinity", () => {
       const vector = new Vec2(42, 42);
-      expect(vector.subtract(Vec2.NEG_INFINITY)).toStrictEqual(Vec2.INFINITY);
+      expect(vector.subtract(new Vec2(-Infinity))).toStrictEqual(
+        new Vec2(Infinity),
+      );
     });
   });
 
@@ -77,13 +83,13 @@ describe("vec2", () => {
 
     test("infinity", () => {
       const a = new Vec2(42, 42);
-      const b = Vec2.INFINITY;
+      const b = new Vec2(Infinity);
       expect(Vec2.distance(a, b)).toStrictEqual(Infinity);
     });
 
     test("negative infinity", () => {
       const a = new Vec2(42, 42);
-      const b = Vec2.NEG_INFINITY;
+      const b = new Vec2(-Infinity);
       expect(Vec2.distance(a, b)).toStrictEqual(Infinity);
     });
   });

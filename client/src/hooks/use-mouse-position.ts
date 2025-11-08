@@ -1,17 +1,21 @@
-const ctx: {
-  pos: { x: number; y: number };
-  onMouseMove: null | ((ev: MouseEvent) => void);
-} = { pos: { x: 0, y: 0 }, onMouseMove: null };
+import { useEffect } from "react";
+
+const pos: {
+  x: number;
+  y: number;
+} = { x: 0, y: 0 };
 
 const onMouseMove = (ev: MouseEvent) => {
-  ctx.pos.x = ev.clientX;
-  ctx.pos.y = ev.clientY;
+  pos.x = ev.clientX;
+  pos.y = ev.clientY;
 };
 
 export const useMousePosition = () => {
-  if (!ctx.onMouseMove) {
-    ctx.onMouseMove = onMouseMove;
-    window.addEventListener("mousemove", ctx.onMouseMove);
-  }
-  return ctx.pos;
+  useEffect(() => {
+    window.addEventListener("mousemove", onMouseMove);
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+    };
+  });
+  return () => ({ x: pos.x, y: pos.y });
 };

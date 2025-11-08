@@ -5,14 +5,21 @@ import { useBuilderContext } from "./use-builder-context";
 import { useReactFlow } from "@xyflow/react";
 import { Vec2 } from "@/lib/vec2";
 
-const positionOffset: Vec2 = Vec2.ZERO;
+const positionOffset: Vec2 = new Vec2(0);
 let lastPosition: Vec2 | null = null;
 
 export const useScenePositioning = () => {
   const { screenToFlowPosition } = useReactFlow();
   const { reactFlowRef } = useBuilderContext();
-  const mousePosition = useMousePosition();
+  const getMousePosition = useMousePosition();
 
+  // Since the nodes could be scattered anywhere
+  // we must recenter them around the leftmost position, and then add the desired position
+  // Ultimately I think new scenes should centered around the true center instead of the leftmost position, but
+  // doing so is QUITE the challenge, you'll either have to
+  //  a. Standardise the node measurements or
+  //  b. Simulate BuilderFlow in a document fragment and measure the dom there or
+  //  c. add the scenes to the builder then measure the nodes using either `useNodesInitialized`, `getNodesBound` or even a `MutationObserver`
   const findLeftMostPositionInBatch = (
     scenes: WithoutKey<StorylessScene>[],
   ): Vec2 => {
@@ -33,17 +40,6 @@ export const useScenePositioning = () => {
     desiredPosition: Vec2;
     scenes: WithoutKey<StorylessScene>[];
   }) => {
-    // Since the nodes could be scattered anywhere
-    // we must recenter them around the leftmost position, and then add the desired position
-    // Ultimately I think new scenes should centered around the true center instead of the leftmost position, but
-    // doing so is QUITE the challenge, you'll either have to
-    //  a. Standardise the node measurements or
-    //  b. Simulate BuilderFlow in a document fragment and measure the dom there or
-    //  c. add the scenes to the builder then measure the nodes using either `useNodesInitialized`, `getNodesBound` or even a `MutationObserver`
-    const offsetFromScenes = desiredPosition.subtract(
-      findLeftMostPositionInBatch(scenes),
-    );
-
     const isLastPlacedScenesTooClose =
       lastPosition && Vec2.distance(desiredPosition, lastPosition) < 40;
 
@@ -52,13 +48,14 @@ export const useScenePositioning = () => {
     if (isLastPlacedScenesTooClose) {
       positionOffset.x += 40;
       positionOffset.y += 40;
-      return offsetFromScenes.add(positionOffset);
+    } else {
+      positionOffset.x = 0;
+      positionOffset.y = 0;
+      lastPosition = Vec2.from(desiredPosition);
     }
 
-    positionOffset.x = 0;
-    positionOffset.y = 0;
-    lastPosition = structuredClone(desiredPosition);
-    return offsetFromScenes;
+    const offsetFromScenes = findLeftMostPositionInBatch(scenes);
+    return lastPosition!.add(positionOffset).subtract(offsetFromScenes);
   };
 
   const isMouseOverFlow = () => {
@@ -73,7 +70,7 @@ export const useScenePositioning = () => {
    */
   const getNewScenePosition = () => {
     if (isMouseOverFlow()) {
-      return screenToFlowPosition(mousePosition);
+      return screenToFlowPosition(getMousePosition());
     } else {
       const rect = reactFlowRef.current!.getBoundingClientRect();
       // find the center

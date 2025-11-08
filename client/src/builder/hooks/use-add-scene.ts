@@ -36,7 +36,7 @@ export const useAddScene = () => {
       const initialScene = {
         ...payload,
         storyKey: story.key,
-        builderParams: { position: Vec2.ZERO },
+        builderParams: { position: new Vec2(0) },
       };
       const offset = getOffset({
         desiredPosition: Vec2.from(newScenePosition),
