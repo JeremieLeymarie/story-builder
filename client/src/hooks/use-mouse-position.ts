@@ -5,16 +5,16 @@ const pos: {
   y: number;
 } = { x: 0, y: 0 };
 
-const onMouseMove = (ev: MouseEvent) => {
+const onPointerMove = (ev: MouseEvent) => {
   pos.x = ev.clientX;
   pos.y = ev.clientY;
 };
 
 export const useGetMousePosition = () => {
   useEffect(() => {
-    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("pointermove", onPointerMove);
     return () => {
-      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("pointermove", onPointerMove);
     };
   });
 
