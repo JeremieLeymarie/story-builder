@@ -10,12 +10,13 @@ const onMouseMove = (ev: MouseEvent) => {
   pos.y = ev.clientY;
 };
 
-export const useMousePosition = () => {
+export const useGetMousePosition = () => {
   useEffect(() => {
     window.addEventListener("mousemove", onMouseMove);
     return () => {
       window.removeEventListener("mousemove", onMouseMove);
     };
   });
+
   return () => ({ x: pos.x, y: pos.y });
 };

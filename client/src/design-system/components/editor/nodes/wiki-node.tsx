@@ -18,7 +18,6 @@ import { ReactNode } from "react";
 import { RichText } from "../components/rich-text-editor";
 import { Link } from "@tanstack/react-router";
 import { SimpleLoader } from "../../simple-loader";
-import { LexicalContent } from "@/lib/lexical-content";
 
 export type SerializedWikiNode = Spread<
   {
@@ -85,7 +84,7 @@ const DisplayWikiNodeComponent = ({
           <img src={data.image} className="rounded object-scale-down" />
           <RichText
             editable={false}
-            initialState={data.content as unknown as LexicalContent}
+            initialState={data.content}
             editorNodes={[WikiNode]}
             textDisplayMode="full"
           />

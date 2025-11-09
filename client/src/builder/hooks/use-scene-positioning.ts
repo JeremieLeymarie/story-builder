@@ -1,4 +1,4 @@
-import { useMousePosition } from "@/hooks/use-mouse-position";
+import { useGetMousePosition } from "@/hooks/use-mouse-position";
 import { StorylessScene } from "../types";
 import { WithoutKey } from "@/types";
 import { useBuilderContext } from "./use-builder-context";
@@ -11,7 +11,7 @@ let lastPosition: Vec2 | null = null;
 export const useScenePositioning = () => {
   const { screenToFlowPosition } = useReactFlow();
   const { reactFlowRef } = useBuilderContext();
-  const getMousePosition = useMousePosition();
+  const getMousePosition = useGetMousePosition();
 
   // Since the nodes could be scattered anywhere
   // we must recenter them around the leftmost position, and then add the desired position
