@@ -64,5 +64,5 @@ export default defineConfig([
       "no-unused-vars": "off",
     },
   },
-  reactHooks.configs.recommended,
+  reactHooks.configs.flat.recommended,
 ]);
