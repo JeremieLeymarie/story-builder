@@ -11,13 +11,7 @@ import { ActionsSection } from "./actions-section";
 import { useBuilderActions } from "@/builder/hooks/use-builder-actions";
 import { useSceneEditorForm } from "@/builder/hooks/use-scene-editor-form";
 
-export const SceneForm = ({
-  scene,
-  isFirstScene,
-}: {
-  scene: SceneUpdatePayload;
-  isFirstScene: boolean;
-}) => {
+export const SceneForm = ({ scene }: { scene: SceneUpdatePayload }) => {
   const { updateScene, setFirstScene } = useBuilderActions();
   const form = useSceneEditorForm({ onSave: updateScene, scene });
 
@@ -39,7 +33,6 @@ export const SceneForm = ({
             <SceneContentSection
               form={form}
               scenePayload={scene}
-              isFirstScene={isFirstScene}
               setFirstScene={() => setFirstScene(scene.key)}
             />
           </TabsContent>

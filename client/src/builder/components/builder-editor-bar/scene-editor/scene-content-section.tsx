@@ -16,12 +16,10 @@ import { useBuilderContext } from "@/builder/hooks/use-builder-context";
 export const SceneContentSection = ({
   form,
   scenePayload,
-  isFirstScene,
   setFirstScene,
 }: {
   form: UseFormReturn<SceneSchema>;
   scenePayload: SceneUpdatePayload;
-  isFirstScene: boolean;
   setFirstScene: () => void;
 }) => {
   const { story } = useBuilderContext();
@@ -29,7 +27,6 @@ export const SceneContentSection = ({
   return (
     <div className="space-y-4">
       <SetFirstSceneSwitch
-        isFirstScene={isFirstScene}
         setFirstScene={setFirstScene}
         sceneKey={scenePayload.key}
       />

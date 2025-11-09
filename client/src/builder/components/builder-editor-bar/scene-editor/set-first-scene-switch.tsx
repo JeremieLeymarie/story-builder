@@ -1,23 +1,19 @@
+import { useBuilderContext } from "@/builder/hooks/use-builder-context";
 import { ConfirmDialog } from "@/design-system/components";
 import { Label } from "@/design-system/primitives";
 import { Switch } from "@/design-system/primitives/switch";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export const SetFirstSceneSwitch = ({
   sceneKey,
-  isFirstScene,
   setFirstScene,
 }: {
   sceneKey: string;
-  isFirstScene: boolean;
   setFirstScene: () => void;
 }) => {
+  const { story } = useBuilderContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isChecked, setIsChecked] = useState(isFirstScene);
-
-  useEffect(() => {
-    setIsChecked(isFirstScene);
-  }, [sceneKey, isFirstScene]);
+  const isFirstScene = story.firstSceneKey === sceneKey;
 
   return (
     <div className="border-primary h-10 w-full rounded-(--radius) border px-3">
@@ -29,7 +25,6 @@ export const SetFirstSceneSwitch = ({
         confirmLabel="Confirm"
         onConfirm={() => {
           setFirstScene();
-          setIsChecked(true);
         }}
         open={isModalOpen}
         setOpen={setIsModalOpen}
@@ -37,7 +32,7 @@ export const SetFirstSceneSwitch = ({
       <div className="flex h-full w-full items-center gap-2">
         <Switch
           id="set-first-scene"
-          checked={isChecked}
+          checked={isFirstScene}
           disabled={isFirstScene}
           onCheckedChange={() => setIsModalOpen(true)}
         />
