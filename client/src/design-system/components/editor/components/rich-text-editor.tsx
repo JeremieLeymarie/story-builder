@@ -1,13 +1,10 @@
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import {
-  EditorState,
   KlassConstructor,
   LexicalNode,
   LexicalNodeReplacement,
-  ParagraphNode,
   SerializedEditorState,
-  TextNode,
 } from "lexical";
 
 import { TooltipProvider } from "@/design-system/primitives/tooltip";
@@ -15,8 +12,6 @@ import { TooltipProvider } from "@/design-system/primitives/tooltip";
 import { cn } from "@/lib/style";
 import { EditorPlugins } from "../plugins/editor-plugins";
 import { BasePlugins } from "../plugins/base-plugins";
-import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { ImageNode } from "../nodes/image-node";
 import { ReactNode } from "react";
 import { TextDisplayMode } from "../types";
 import { LexicalContent } from "@/lib/lexical-content";
@@ -25,7 +20,6 @@ import { BASE_EDITOR_CONFIG } from "../constants";
 type EditorNode = KlassConstructor<typeof LexicalNode> | LexicalNodeReplacement;
 
 export const RichText = ({
-  onChange,
   onSerializedChange,
   initialState,
   editable,
@@ -37,7 +31,6 @@ export const RichText = ({
   className?: string;
   editable: boolean;
   initialState?: LexicalContent;
-  onChange?: (editorState: EditorState) => void;
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
   toolbarPlugins?: ReactNode[];
   editorNodes?: EditorNode[];
@@ -56,25 +49,8 @@ export const RichText = ({
       <LexicalComposer
         key={state}
         initialConfig={{
-          theme: {
-            text: {
-              underline: "underline",
-              strikethrough: "line-through",
-              underlineStrikethrough:
-                "[text-decoration:underline_line-through]",
-              bold: "bold",
-              italic: "italic",
-            },
-          },
-          nodes: [
-            HeadingNode,
-            ParagraphNode,
-            TextNode,
-            QuoteNode,
-            ImageNode,
-            ...(editorNodes ?? []),
-          ],
           ...BASE_EDITOR_CONFIG,
+          nodes: [...(BASE_EDITOR_CONFIG.nodes ?? []), ...(editorNodes ?? [])],
           editorState: state,
           editable,
         }}
@@ -90,7 +66,6 @@ export const RichText = ({
           <OnChangePlugin
             ignoreSelectionChange={true}
             onChange={(editorState) => {
-              onChange?.(editorState);
               onSerializedChange?.(editorState.toJSON());
             }}
           />
