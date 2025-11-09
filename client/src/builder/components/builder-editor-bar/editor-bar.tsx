@@ -22,10 +22,7 @@ export const EditorBar = () => {
       </ToolbarTitle>
       {match(currentEditor)
         .with({ type: "scene-editor" }, ({ payload }) => (
-          <SceneForm
-            isFirstScene={payload.isFirstScene}
-            scene={payload.scene}
-          />
+          <SceneForm scene={payload.scene} />
         ))
         .with({ type: "story-editor" }, () => <StoryEditor />)
         .exhaustive()}
