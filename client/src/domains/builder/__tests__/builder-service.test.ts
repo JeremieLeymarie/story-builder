@@ -784,6 +784,7 @@ describe("builder-service", () => {
         expect(scenePayload.builderParams).toStrictEqual({
           position: { x: -42, y: 42 },
         });
+        return Promise.resolve(["key"]);
       });
 
       await builderService.duplicateScenes({
@@ -824,6 +825,7 @@ describe("builder-service", () => {
         expect(scene2Payload.builderParams).toStrictEqual({
           position: { x: 1, y: 2 },
         });
+        return Promise.resolve(["key"]);
       });
 
       await builderService.duplicateScenes({

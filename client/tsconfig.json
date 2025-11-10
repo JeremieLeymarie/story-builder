@@ -22,7 +22,7 @@
     "noUncheckedIndexedAccess": true,
 
     /* Vite-PWA options */
-    "types": ["vite-plugin-pwa/react"],
+    "types": ["vite-plugin-pwa/react", "node"],
 
     /* ShadCn UI options*/
     "baseUrl": ".",
