@@ -1,6 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createStore } from "zustand";
-import { createContext, ReactNode, useContext, useEffect, useRef } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useStoreWithEqualityFn } from "zustand/traditional";
 import { shallow } from "zustand/shallow";
 import { WikiData } from "@/domains/wiki/types";
@@ -39,19 +45,15 @@ export const WikiProvider = ({
   wikiData,
   permissions,
 }: WikiProviderProps & { children: ReactNode }) => {
-  const storeRef = useRef<WikiStore>(
+  const [store] = useState<WikiStore>(() =>
     createWikiStore({ refresh, wikiData, permissions }),
   );
 
   useEffect(() => {
-    storeRef.current.setState({ refresh, wikiData, permissions });
-  }, [refresh, wikiData, permissions]);
+    store.setState({ refresh, wikiData, permissions });
+  }, [refresh, wikiData, permissions, store]);
 
-  return (
-    <WikiContext.Provider value={storeRef.current}>
-      {children}
-    </WikiContext.Provider>
-  );
+  return <WikiContext.Provider value={store}>{children}</WikiContext.Provider>;
 };
 
 export const useWikiStore = <T,>(selector: (state: WikiState) => T): T => {
