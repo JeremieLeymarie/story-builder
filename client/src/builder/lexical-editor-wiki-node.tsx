@@ -7,8 +7,8 @@ import {
   Spread,
 } from "lexical";
 import { ReactNode } from "react";
-import { EditorWikiNodeComponent } from "../components/wiki-editor-node";
-import { DisplayWikiNodeComponent } from "../components/wiki-display-node";
+import { EditorWikiNodeComponent } from "./components/lexical-node-wiki-article-editor";
+import { DisplayWikiNodeComponent } from "./components/lexical-node-wiki-article-display";
 
 export type SerializedWikiNode = Spread<
   {
@@ -19,99 +19,6 @@ export type SerializedWikiNode = Spread<
   },
   SerializedLexicalNode
 >;
-
-// TODO: move this file out of the design system
-
-// TODO: move this file out of the design system
-
-// eslint-disable-next-line react-refresh/only-export-components
-const EditorWikiNodeComponent = ({
-  articleLinkKey,
-  textContent,
-}: {
-  articleLinkKey?: string;
-  textContent?: string;
-}) => {
-  const { entityKey } = useEditorContext();
-
-  const { data: _articleKey } = useQuery({
-    queryKey: ["get-article-link", articleLinkKey],
-    queryFn: async () =>
-      getWikiService().getArticleLink(articleLinkKey!, entityKey!),
-    enabled: !!entityKey && !!articleLinkKey,
-    select: (data) => data?.articleKey,
-  });
-
-  return (
-    <span className="inline-flex translate-y-0.5 items-center gap-1 rounded-xl bg-green-600/60 px-2">
-      <ScrollTextIcon size={18} className="opacity-75" />
-      {textContent}
-    </span>
-  );
-};
-
-// eslint-disable-next-line react-refresh/only-export-components
-const DisplayWikiNodeComponent = ({
-  articleLinkKey,
-  textContent,
-}: {
-  articleLinkKey?: string;
-  textContent?: string;
-}) => {
-  const { entityKey } = useEditorContext();
-
-  const { data: article } = useQuery({
-    queryKey: ["get-article-link", articleLinkKey],
-    queryFn: async () => {
-      const wikiService = getWikiService();
-      const articleLink = await wikiService.getArticleLink(
-        articleLinkKey!,
-        entityKey!,
-      );
-      if (!articleLink) throw new Error("Article key not found");
-      const article = await wikiService.getArticle(articleLink?.articleKey);
-      return article;
-    },
-    enabled: !!entityKey && !!articleLinkKey,
-  });
-
-  const linkContent = (
-    <span className="cursor-pointer underline decoration-emerald-600 decoration-3 underline-offset-4">
-      {textContent}
-    </span>
-  );
-
-  if (!article) return linkContent;
-
-  return (
-    <>
-      <Tooltip>
-        <TooltipTrigger>
-          <Link
-            to="/wikis/$wikiKey/$articleKey"
-            params={{ articleKey: article.key, wikiKey: article.wikiKey }}
-            target="_blank"
-          >
-            {linkContent}
-          </Link>
-        </TooltipTrigger>
-        <TooltipContent className="h-2xs w-2xs">
-          <p className="pt-3 text-slate-400">Wiki</p>
-          <p className="py-3 text-lg font-semibold text-emerald-600 capitalize">
-            {article.title}
-          </p>
-          <img src={article.image} className="rounded object-scale-down" />
-          <RichText
-            editable={false}
-            initialState={article.content}
-            editorNodes={[WikiNode]}
-            textDisplayMode="full"
-          />
-        </TooltipContent>
-      </Tooltip>
-    </>
-  );
-};
 
 export class WikiNode extends DecoratorNode<ReactNode> {
   private __articleLinkKey?: string;
