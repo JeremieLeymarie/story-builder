@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEditorContext } from "../hooks/use-editor-context";
 import { getWikiService } from "@/domains/wiki/wiki-service";
 import {
   Tooltip,
@@ -7,9 +6,10 @@ import {
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
 import { Link } from "@tanstack/react-router";
-import { RichText } from "./rich-text-editor";
 import { SerializedEditorState } from "lexical";
-import { WikiNode } from "../nodes/wiki-node";
+import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
+import { WikiNode } from "../lexical-editor-wiki-node";
+import { useEditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
 
 export const DisplayWikiNodeComponent = ({
   articleLinkKey,

@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEditorContext } from "../hooks/use-editor-context";
 import { getWikiService } from "@/domains/wiki/wiki-service";
 import {
   Button,
@@ -32,7 +31,6 @@ import {
   ScrollTextIcon,
   Trash2Icon,
 } from "lucide-react";
-import { SimpleLoader } from "../../simple-loader";
 import { Link } from "@tanstack/react-router";
 import z from "zod";
 import { useForm } from "react-hook-form";
@@ -40,6 +38,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { WikiSectionArticle } from "@/domains/wiki/types";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
+import { SimpleLoader } from "@/design-system/components/simple-loader";
+import { useEditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
 
 const editLinkSchema = z.object({ text: z.string(), articleKey: z.string() });
 type EditLinkSchema = z.infer<typeof editLinkSchema>;
@@ -172,7 +172,7 @@ const ArticleInfo = ({
 }: {
   articleKey?: string;
   articleLinkKey?: string;
-  textContent: string;
+  textContent?: string;
 }) => {
   const { data: article, isLoading } = useQuery({
     queryKey: ["article", articleKey],
