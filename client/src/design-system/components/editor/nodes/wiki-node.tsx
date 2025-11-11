@@ -1,9 +1,4 @@
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/design-system/primitives/tooltip";
-import {
   DecoratorNode,
   EditorConfig,
   LexicalEditor,
@@ -11,13 +6,9 @@ import {
   SerializedLexicalNode,
   Spread,
 } from "lexical";
-import { ScrollTextIcon } from "lucide-react";
 import { ReactNode } from "react";
-import { RichText } from "../components/rich-text-editor";
-import { Link } from "@tanstack/react-router";
-import { useEditorContext } from "../hooks/use-editor-context";
-import { useQuery } from "@tanstack/react-query";
-import { getWikiService } from "@/domains/wiki/wiki-service";
+import { EditorWikiNodeComponent } from "../components/wiki-editor-node";
+import { DisplayWikiNodeComponent } from "../components/wiki-display-node";
 
 export type SerializedWikiNode = Spread<
   {
