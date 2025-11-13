@@ -8,8 +8,8 @@ import {
 import { Link } from "@tanstack/react-router";
 import { SerializedEditorState } from "lexical";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
-import { WikiNode } from "../lexical-editor-wiki-node";
 import { useEditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
+import { WikiNode } from "../lexical-wiki-node";
 
 export const DisplayWikiNodeComponent = ({
   articleLinkKey,
