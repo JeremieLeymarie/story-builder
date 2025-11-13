@@ -5,7 +5,7 @@ from utils.mongo.base_repository import (
     MongoBuilderParams,
     MongoBuilderPosition,
     MongoScene,
-    MongoSceneAction,
+    MongoSimpleAction,
     MongoStory,
     MongoStoryAuthor,
     MongoStoryProgress,
@@ -41,7 +41,9 @@ def test_load(api_test_infra_authenticated) -> None:
                 scenes=[
                     MongoScene(
                         actions=[
-                            MongoSceneAction(sceneKey="scene-1", text="Action  Text")
+                            MongoSimpleAction(
+                                type="simple", sceneKey="scene-1", text="Action  Text"
+                            )
                         ],
                         builderParams=MongoBuilderParams(
                             position=MongoBuilderPosition(x=400.0, y=200.0)

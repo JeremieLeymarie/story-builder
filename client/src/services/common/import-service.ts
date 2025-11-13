@@ -1,8 +1,6 @@
-import * as z from "zod/v4";
 import {
   BuilderStory,
   LibraryStory,
-  Scene,
   Story,
   STORY_GENRES,
   STORY_TYPE,
@@ -10,6 +8,8 @@ import {
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 import { WithoutKey } from "@/types";
 import { lexicalContentSchema } from "@/lib/lexical-content";
+import z from "zod";
+import { actionSchema } from "@/lib/action-schema";
 
 export const ANONYMOUS_AUTHOR = {
   key: "ANONYMOUS_AUTHOR_KEY",
@@ -21,10 +21,10 @@ export const TEMPORARY_NULL_KEY = "TEMPORARY_NULL_KEY";
 export const storyFromImportSchema = z.object({
   story: z.object(
     {
-      key: z.string({ message: "storyKey is required" }),
+      key: z.nanoid({ message: "storyKey is required" }),
       title: z.string({ message: "Title is required" }),
       description: z.string({ message: "Description is required" }),
-      firstSceneKey: z.string({ message: "FirstSceneKey is required" }),
+      firstSceneKey: z.nanoid({ message: "FirstSceneKey is required" }),
       creationDate: z
         .string({ message: "creationDate is required" })
         .transform((val) => new Date(val)),
@@ -48,16 +48,11 @@ export const storyFromImportSchema = z.object({
   ),
   scenes: z.array(
     z.object({
-      key: z.string({ message: "Key is required" }),
-      storyKey: z.string({ message: "StoryKey is required" }),
+      key: z.nanoid({ message: "Key is required" }),
+      storyKey: z.nanoid({ message: "StoryKey is required" }),
       title: z.string({ message: "Title is required" }),
       content: lexicalContentSchema,
-      actions: z.array(
-        z.object({
-          text: z.string({ message: "Text is required" }),
-          sceneKey: z.string().optional(),
-        }),
-      ),
+      actions: z.array(actionSchema),
       builderParams: z.object({
         position: z.object({
           x: z.number({ message: "X is required" }),
@@ -115,7 +110,7 @@ export const _makeBulkSceneUpdatePayload = ({
       ...acc,
       [scene.key]: scene,
     }),
-    {} as Record<string, Scene>,
+    {} as Record<string, StoryFromImport["scenes"][number]>,
   );
 
   return storyFromImport.scenes

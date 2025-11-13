@@ -140,9 +140,11 @@ export const _getBuilderService = ({
           title: "Your first scene",
           actions: [
             {
+              type: "simple",
               text: "An action that leads to a scene",
             },
             {
+              type: "simple",
               text: "An action that leads to another scene",
             },
           ],
@@ -325,13 +327,14 @@ export const _getBuilderService = ({
               y: newPositions[scene.key]!.y,
             },
           },
-          actions: scene.actions.map(({ sceneKey, text }) => {
+          actions: scene.actions.map(({ sceneKey, text, ...action }) => {
             if (sceneKey && originalSceneKeys.includes(sceneKey))
               return {
+                ...action,
                 text,
                 sceneKey: oldKeyToNewKey[sceneKey]!,
               };
-            return { text }; // Do not copy links that target a scene that is not within the batch of duplicated scenes
+            return { text, type: "simple" as const }; // Do not copy links that target a scene that is not within the batch of duplicated scenes
           }),
         };
       });
