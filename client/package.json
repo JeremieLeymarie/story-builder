@@ -78,7 +78,7 @@
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-react-hooks": "^6.0.0-rc.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "fake-indexeddb": "^6.2.5",
     "globals": "^16.5.0",
