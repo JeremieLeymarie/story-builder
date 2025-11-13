@@ -54,5 +54,5 @@ export const useUpdateArticleLinks = () => {
       },
       { skipInitialization: false },
     );
-  }, [wikiService, editor, entityKey]);
+  }, [wikiService, editor, entityKey, queryClient]);
 };

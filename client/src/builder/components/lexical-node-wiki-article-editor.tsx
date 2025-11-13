@@ -42,11 +42,12 @@ import { SimpleLoader } from "@/design-system/components/simple-loader";
 import { useEditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
 import { WikiNode } from "../lexical-wiki-node";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { $createTextNode } from "lexical";
 
 const editLinkSchema = z.object({ text: z.string(), articleKey: z.string() });
 type EditLinkPayload = z.infer<typeof editLinkSchema>;
 
-const useEditWikiNode = ({ node }: { node: WikiNode }) => {
+const useEditWikiNodeActions = ({ node }: { node: WikiNode }) => {
   const [editor] = useLexicalComposerContext();
 
   const editWikiNode = (value: EditLinkPayload) => {
@@ -56,7 +57,18 @@ const useEditWikiNode = ({ node }: { node: WikiNode }) => {
     });
   };
 
-  return { editWikiNode };
+  // Remove wiki and create a text node instead
+  const deleteWikiNode = () => {
+    console.log("coucou");
+    editor.update(() => {
+      const nodeBefore = node.getPreviousSibling();
+      const textContent = node.textContent;
+      node.remove();
+      nodeBefore?.insertAfter($createTextNode(textContent));
+    });
+  };
+
+  return { editWikiNode, deleteWikiNode };
 };
 
 const EditWikiNodeForm = ({
@@ -73,7 +85,7 @@ const EditWikiNodeForm = ({
     defaultValues: { text: node.textContent, articleKey: articleKey },
   });
   const [isArticleSelectorOpen, setIsArticleSelectorOpen] = useState(false);
-  const { editWikiNode } = useEditWikiNode({ node });
+  const { editWikiNode } = useEditWikiNodeActions({ node });
 
   // TODO: this should be extracted to a hook (so that we can remove the duplication in wiki-lexical-plugin.tsx)
   const { data: articles } = useQuery({
@@ -191,6 +203,7 @@ const ArticleInfo = ({
     queryFn: async () => getWikiService().getArticle(articleKey!),
     enabled: !!articleKey,
   });
+  const { deleteWikiNode } = useEditWikiNodeActions({ node });
 
   return (
     <PopoverContent>
@@ -214,7 +227,7 @@ const ArticleInfo = ({
               </div>
             </DialogContent>
           </Dialog>
-          <Button size="xs" variant="ghost">
+          <Button size="xs" variant="ghost" onClick={deleteWikiNode}>
             <Trash2Icon className="text-destructive" />
           </Button>
         </div>
