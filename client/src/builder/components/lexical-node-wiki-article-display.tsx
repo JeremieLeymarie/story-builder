@@ -6,9 +6,11 @@ import {
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
 import { Link } from "@tanstack/react-router";
-import { SerializedEditorState } from "lexical";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
-import { useEditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
+import {
+  EditorContext,
+  useEditorContext,
+} from "@/design-system/components/editor/hooks/use-editor-context";
 import { WikiNode } from "../lexical-wiki-node";
 
 export const DisplayWikiNodeComponent = ({
@@ -61,11 +63,16 @@ export const DisplayWikiNodeComponent = ({
             {article.title}
           </p>
           <img src={article.image} className="rounded object-scale-down" />
-          <RichText
-            editable={false}
-            initialState={article.content as unknown as SerializedEditorState}
-            editorNodes={[WikiNode]}
-          />
+          <EditorContext
+            value={{ entityType: "wiki-article", entityKey: article.wikiKey }}
+          >
+            <RichText
+              editable={false}
+              initialState={article.content}
+              editorNodes={[WikiNode]}
+              textDisplayMode="summary"
+            />
+          </EditorContext>
         </TooltipContent>
       </Tooltip>
     </>

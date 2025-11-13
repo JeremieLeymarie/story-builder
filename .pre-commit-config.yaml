@@ -41,7 +41,7 @@ repos:
 
       - id: check-typescript
         name: Run Typescript in client
-        entry: bash -c 'cd client && bun run typescript'
+        entry: bash -c 'cd client && bun run ts'
         language: system
         pass_filenames: false
         files: ^client/
