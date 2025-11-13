@@ -10,10 +10,10 @@ import { UseFormReturn } from "react-hook-form";
 import { SceneSchema, SceneUpdatePayload } from "./schema";
 import { SetFirstSceneSwitch } from "./set-first-scene-switch";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
-import { WikiNode } from "@/design-system/components/editor/nodes/wiki-node";
 import { useBuilderContext } from "@/builder/hooks/use-builder-context";
 import { EditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
 import { WikiPlugin } from "../../wiki-lexical-plugin/wiki-lexical-plugin";
+import { WikiNode } from "@/builder/lexical-wiki-node";
 
 export const SceneContentSection = ({
   form,

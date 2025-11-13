@@ -22,14 +22,11 @@ import {
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { getWikiService } from "@/domains/wiki/wiki-service";
-import {
-  $createWikiNode,
-  WikiNode,
-} from "@/design-system/components/editor/nodes/wiki-node";
 import { ScrollTextIcon } from "lucide-react";
 import { WikiSectionArticle } from "@/domains/wiki/types";
 import { mergeRegister } from "@lexical/utils";
 import { useUpdateArticleLinks } from "./hooks/use-update-article-links";
+import { $createWikiNode, WikiNode } from "@/builder/lexical-wiki-node";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const INSERT_WIKI_COMMAND: LexicalCommand<string> = createCommand();

@@ -84,12 +84,7 @@ export class WikiNode extends DecoratorNode<ReactNode> {
 
   decorate(_editor: LexicalEditor, _config: EditorConfig): ReactNode {
     if (_editor._editable) {
-      return (
-        <EditorWikiNodeComponent
-          articleLinkKey={this.__articleLinkKey}
-          textContent={this.__textContent}
-        />
-      );
+      return <EditorWikiNodeComponent node={this} />;
     } else {
       return (
         <DisplayWikiNodeComponent
@@ -106,6 +101,24 @@ export class WikiNode extends DecoratorNode<ReactNode> {
 
   get articleKey() {
     return this.__articleKey;
+  }
+
+  get textContent() {
+    return this.__textContent;
+  }
+
+  setTextContent(content: string) {
+    if (content === this.textContent) return;
+    const self = this.getWritable();
+    self.__textContent = content;
+    return self;
+  }
+
+  setArticleKey(articleKey: string) {
+    if (articleKey === this.articleKey) return;
+    const self = this.getWritable();
+    self.__articleKey = articleKey;
+    return self;
   }
 }
 

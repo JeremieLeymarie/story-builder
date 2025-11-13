@@ -6,8 +6,8 @@ import { Scene, StoryProgress } from "@/lib/storage/domain";
 import { Divider } from "@/design-system/components/divider";
 import { Link } from "@tanstack/react-router";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
-import { WikiNode } from "@/design-system/components/editor/nodes/wiki-node";
 import { EditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
+import { WikiNode } from "@/builder/lexical-wiki-node";
 
 type GameSceneProps = {
   scene: Scene;

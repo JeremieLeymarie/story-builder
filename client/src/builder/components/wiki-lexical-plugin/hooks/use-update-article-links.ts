@@ -1,7 +1,8 @@
+import { WikiNode } from "@/builder/lexical-wiki-node";
 import { useEditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
-import { WikiNode } from "@/design-system/components/editor/nodes/wiki-node";
 import { getWikiService } from "@/domains/wiki/wiki-service";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { useQueryClient } from "@tanstack/react-query";
 import { $getNodeByKey } from "lexical";
 import { useEffect } from "react";
 
@@ -9,6 +10,7 @@ export const useUpdateArticleLinks = () => {
   const [editor] = useLexicalComposerContext();
   const wikiService = getWikiService();
   const { entityKey } = useEditorContext();
+  const queryClient = useQueryClient();
 
   if (!entityKey) throw new Error("Entity key should be ");
 
@@ -43,6 +45,10 @@ export const useUpdateArticleLinks = () => {
                 entityKey,
               });
             }
+
+            queryClient.invalidateQueries({
+              queryKey: ["get-article-link", articleLinkKey],
+            });
           }
         });
       },

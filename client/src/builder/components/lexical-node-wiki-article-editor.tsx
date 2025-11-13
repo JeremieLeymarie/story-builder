@@ -40,26 +40,40 @@ import { WikiSectionArticle } from "@/domains/wiki/types";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
 import { SimpleLoader } from "@/design-system/components/simple-loader";
 import { useEditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
+import { WikiNode } from "../lexical-wiki-node";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 const editLinkSchema = z.object({ text: z.string(), articleKey: z.string() });
-type EditLinkSchema = z.infer<typeof editLinkSchema>;
+type EditLinkPayload = z.infer<typeof editLinkSchema>;
+
+const useEditWikiNode = ({ node }: { node: WikiNode }) => {
+  const [editor] = useLexicalComposerContext();
+
+  const editWikiNode = (value: EditLinkPayload) => {
+    editor.update(() => {
+      node.setArticleKey(value.articleKey);
+      node.setTextContent(value.text);
+    });
+  };
+
+  return { editWikiNode };
+};
 
 const EditWikiNodeForm = ({
-  text,
-  articleKey,
-  articleLinkKey,
   wikiKey,
+  node,
+  articleKey,
 }: {
-  text?: string;
-  articleKey?: string;
-  articleLinkKey: string;
   wikiKey?: string;
+  node: WikiNode;
+  articleKey?: string;
 }) => {
-  const form = useForm<EditLinkSchema>({
+  const form = useForm<EditLinkPayload>({
     resolver: zodResolver(editLinkSchema),
-    defaultValues: { text, articleKey },
+    defaultValues: { text: node.textContent, articleKey: articleKey },
   });
   const [isArticleSelectorOpen, setIsArticleSelectorOpen] = useState(false);
+  const { editWikiNode } = useEditWikiNode({ node });
 
   // TODO: this should be extracted to a hook (so that we can remove the duplication in wiki-lexical-plugin.tsx)
   const { data: articles } = useQuery({
@@ -73,11 +87,9 @@ const EditWikiNodeForm = ({
     {} as Record<string, WikiSectionArticle>,
   );
 
-  const onSubmit = (data: EditLinkSchema) => {};
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(editWikiNode)} className="space-y-4">
         <FormField
           control={form.control}
           name="text"
@@ -156,9 +168,11 @@ const EditWikiNodeForm = ({
             </FormItem>
           )}
         />
-        <DialogClose className="flex w-full justify-end gap-2">
-          <Button variant="secondary">Cancel</Button>
-          <Button type="submit">Save</Button>
+        <DialogClose className="flex w-full justify-end gap-2" asChild>
+          <div>
+            <Button variant="secondary">Cancel</Button>
+            <Button type="submit">Save</Button>
+          </div>
         </DialogClose>
       </form>
     </Form>
@@ -166,13 +180,11 @@ const EditWikiNodeForm = ({
 };
 
 const ArticleInfo = ({
+  node,
   articleKey,
-  articleLinkKey,
-  textContent,
 }: {
+  node: WikiNode;
   articleKey?: string;
-  articleLinkKey?: string;
-  textContent?: string;
 }) => {
   const { data: article, isLoading } = useQuery({
     queryKey: ["article", articleKey],
@@ -195,10 +207,9 @@ const ArticleInfo = ({
               <DialogTitle>Edit Article Link</DialogTitle>
               <div className="mt-2">
                 <EditWikiNodeForm
-                  articleLinkKey={articleLinkKey}
                   wikiKey={article?.wikiKey}
+                  node={node}
                   articleKey={articleKey}
-                  text={textContent}
                 />
               </div>
             </DialogContent>
@@ -216,7 +227,7 @@ const ArticleInfo = ({
             Referenced article:&nbsp;
             <Link
               to="/wikis/$wikiKey/$articleKey"
-              params={{ wikiKey: article.wikiKey, articleKey }}
+              params={{ wikiKey: article.wikiKey, articleKey: articleKey }}
               target="_blank"
               className="inline-flex items-center gap-1 font-semibold text-emerald-600 hover:underline"
             >
@@ -229,20 +240,14 @@ const ArticleInfo = ({
   );
 };
 
-export const EditorWikiNodeComponent = ({
-  articleLinkKey,
-  textContent,
-}: {
-  articleLinkKey?: string;
-  textContent?: string;
-}) => {
+export const EditorWikiNodeComponent = ({ node }: { node: WikiNode }) => {
   const { entityKey } = useEditorContext();
 
   const { data: articleKey } = useQuery({
-    queryKey: ["get-article-link", articleLinkKey],
+    queryKey: ["get-article-link", node.articleLinkKey],
     queryFn: async () =>
-      getWikiService().getArticleLink(articleLinkKey!, entityKey!),
-    enabled: !!entityKey && !!articleLinkKey,
+      getWikiService().getArticleLink(node.articleLinkKey!, entityKey!),
+    enabled: !!entityKey && !!node.articleLinkKey,
     select: (data) => data?.articleKey,
   });
 
@@ -251,14 +256,10 @@ export const EditorWikiNodeComponent = ({
       <PopoverTrigger>
         <span className="inline-flex translate-y-0.5 items-center gap-1 rounded-xl bg-green-600/60 px-2">
           <ScrollTextIcon size={18} className="opacity-75" />
-          {textContent}
+          {node.textContent}
         </span>
       </PopoverTrigger>
-      <ArticleInfo
-        articleKey={articleKey}
-        articleLinkKey={articleLinkKey}
-        textContent={textContent}
-      />
+      <ArticleInfo articleKey={articleKey} node={node} />
     </Popover>
   );
 };

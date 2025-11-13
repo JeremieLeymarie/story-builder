@@ -114,7 +114,6 @@ export type WikiArticleLink = {
   articleKey: string;
   entityType: Extract<Entity, "scene">; // maybe wiki articles in the future?
   entityKey: string;
-  createdAt: Date; // ?
 };
 
 export const ENTITIES = [
