@@ -1,13 +1,30 @@
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal, Union
 from pydantic import BaseModel
 
 from utils.type_defs import StoryGenre, StoryType
 
 
-class SynchronizationSceneAction(BaseModel):
+class _ActionBase(BaseModel):
     text: str
     scene_key: str | None = None
+
+
+class SyncSimpleAction(_ActionBase):
+    type: Literal["simple"]
+
+
+class SyncActionCondition(BaseModel):
+    type: Literal["user-did-visit", "user-did-not-visit"]
+    scene_key: str
+
+
+class SyncConditionalAction(_ActionBase):
+    type: Literal["conditional"]
+    condition: SyncActionCondition
+
+
+SynchronizationSceneAction = Union[SyncSimpleAction, SyncConditionalAction]
 
 
 class SynchronizationBuilderPosition(BaseModel):

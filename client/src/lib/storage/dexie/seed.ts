@@ -30,16 +30,20 @@ export const DEMO_SCENES: Scene[] = [
       {
         text: "You head north towards the mountain ",
         sceneKey: "hTv4yXZ-8hRFIzQ3lY0Hx",
+        type: "simple",
       },
       {
         text: "You head east towards Glitterlake",
         sceneKey: "cTbuqI9NR2QhSMfZnPkht",
+        type: "simple",
       },
       {
         text: "You head South and go back on you tracks in the Molin Forest",
+        type: "simple",
       },
       {
         text: "You head west towards the village of Loriath",
+        type: "simple",
       },
     ],
     storyKey: "mcDZQvTdmUCJ7laL8yyLq",
@@ -54,10 +58,12 @@ export const DEMO_SCENES: Scene[] = [
       {
         text: "You take in this marvelous sight and continue walking towards the direction of the song",
         sceneKey: "QzcLyUR6XigrC1cXi-wit",
+        type: "simple",
       },
       {
         text: "You go back",
         sceneKey: "HD0HctAmKp075yXwujHOW",
+        type: "simple",
       },
     ],
     storyKey: "mcDZQvTdmUCJ7laL8yyLq",
@@ -78,10 +84,12 @@ export const DEMO_SCENES: Scene[] = [
       {
         text: "You head towards the provenance of this song ",
         sceneKey: "6QHCEM8VprXJRh43-oriO",
+        type: "simple",
       },
       {
         text: "You choose to ignore the song an set camp  and try your in the morning",
         sceneKey: "cTbuqI9NR2QhSMfZnPkht",
+        type: "simple",
       },
     ],
     storyKey: "mcDZQvTdmUCJ7laL8yyLq",
@@ -102,10 +110,12 @@ export const DEMO_SCENES: Scene[] = [
       {
         text: "You walk towards the silouhette ",
         sceneKey: "gB_MDqzZpR4TLm7DeqNvJ",
+        type: "simple",
       },
       {
         text: "You go back",
         sceneKey: "QzcLyUR6XigrC1cXi-wit",
+        type: "simple",
       },
     ],
     storyKey: "mcDZQvTdmUCJ7laL8yyLq",
@@ -126,10 +136,12 @@ export const DEMO_SCENES: Scene[] = [
       {
         text: "You go in and row towards the center of the Lake",
         sceneKey: "OAG0l62bXL3H2FFd8nkP0",
+        type: "simple",
       },
       {
         text: "Go back on your tracks",
         sceneKey: "6QHCEM8VprXJRh43-oriO",
+        type: "simple",
       },
     ],
     storyKey: "mcDZQvTdmUCJ7laL8yyLq",
@@ -163,14 +175,17 @@ export const DEMO_SCENES: Scene[] = [
       {
         text: "You stop a few minutes to take on this beautiful sight",
         sceneKey: "cTbuqI9NR2QhSMfZnPkht",
+        type: "simple",
       },
       {
         text: "You continue walking while admiring the ancient trees ",
         sceneKey: "HD0HctAmKp075yXwujHOW",
+        type: "simple",
       },
       {
         text: "You go back on your tracks",
         sceneKey: "27of_GQ4ZnaMU5BeQ5qPx",
+        type: "simple",
       },
     ],
     storyKey: "mcDZQvTdmUCJ7laL8yyLq",
@@ -191,10 +206,12 @@ export const DEMO_SCENES: Scene[] = [
       {
         text: "You walk towards the creature waiting foe an eventual interaction",
         sceneKey: "lXYahsi23G1QL766LaVK4",
+        type: "simple",
       },
       {
         text: "You go back on your tracks",
         sceneKey: "OAG0l62bXL3H2FFd8nkP0",
+        type: "simple",
       },
     ],
     storyKey: "mcDZQvTdmUCJ7laL8yyLq",
@@ -214,15 +231,19 @@ export const DEMO_SCENES: Scene[] = [
     actions: [
       {
         text: "I light a candle and try to find my way through the fog.",
+        type: "simple",
       },
       {
         text: "I look a the stars far far above and try to find my way using the oldest map in the world",
+        type: "simple",
       },
       {
         text: "You open the ancient scroll which contains an ancient map that allowed to make your way to the mountain",
+        type: "simple",
       },
       {
         text: "You go back on you tracks and try to visit other places before heading to the mountain",
+        type: "simple",
       },
     ],
     storyKey: "mcDZQvTdmUCJ7laL8yyLq",
@@ -243,10 +264,12 @@ export const DEMO_SCENES: Scene[] = [
       {
         text: "You try speaking to her",
         sceneKey: "mysJlUr2Q9wfrmH2YF7jq",
+        type: "simple",
       },
       {
         text: "You go back",
         sceneKey: "gB_MDqzZpR4TLm7DeqNvJ",
+        type: "simple",
       },
     ],
     storyKey: "mcDZQvTdmUCJ7laL8yyLq",
@@ -267,10 +290,12 @@ export const DEMO_SCENES: Scene[] = [
       {
         text: "She stops singing and gazes at you with an inquisitive look",
         sceneKey: "WTLrmPxeGXZRfnCk6DDk5",
+        type: "simple",
       },
       {
         text: "You go back ",
         sceneKey: "lXYahsi23G1QL766LaVK4",
+        type: "simple",
       },
     ],
     storyKey: "mcDZQvTdmUCJ7laL8yyLq",

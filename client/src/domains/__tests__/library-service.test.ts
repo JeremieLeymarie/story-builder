@@ -141,7 +141,10 @@ describe("library-service", () => {
 
     const CURRENT_SCENE = {
       key: "most-recent-vroum",
-      actions: [{ text: "action A" }, { text: "action B" }],
+      actions: [
+        { type: "simple" as const, text: "action A" },
+        { type: "simple" as const, text: "action B" },
+      ],
       builderParams: { position: { x: 0, y: 0 } },
       content: makeSimpleLexicalContent("pas content"),
       storyKey: "zut",
@@ -150,7 +153,10 @@ describe("library-service", () => {
 
     const OTHER_SCENE = {
       key: "older-vroum",
-      actions: [{ text: "action A" }, { text: "action B" }],
+      actions: [
+        { type: "simple" as const, text: "action A" },
+        { type: "simple" as const, text: "action B" },
+      ],
       builderParams: { position: { x: 0, y: 0 } },
       content: makeSimpleLexicalContent("pas content"),
       storyKey: "zut",
@@ -158,7 +164,10 @@ describe("library-service", () => {
     };
     const FINISHED_SCENE = {
       key: "finished-vroum",
-      actions: [{ text: "action A" }, { text: "action B" }],
+      actions: [
+        { type: "simple" as const, text: "action A" },
+        { type: "simple" as const, text: "action B" },
+      ],
       builderParams: { position: { x: 0, y: 0 } },
       content: makeSimpleLexicalContent("pas content"),
       storyKey: "zut",

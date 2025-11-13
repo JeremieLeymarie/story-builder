@@ -4,7 +4,7 @@ from bson import ObjectId
 from pymongo.collection import Collection
 
 from datetime import datetime
-from typing import Any, Generic, NotRequired, TypeVar, TypedDict
+from typing import Any, Generic, Literal, NotRequired, TypeVar, TypedDict, Union
 
 from utils.mongo.db import MongoDatabaseManager
 
@@ -20,9 +20,26 @@ class MongoUser(WithId):
     password: str
 
 
-class MongoSceneAction(TypedDict):
+class _ActionBase(TypedDict):
     text: str
     sceneKey: str | None
+
+
+class MongoSimpleAction(_ActionBase):
+    type: Literal["simple"]
+
+
+class MongoActionCondition(TypedDict):
+    type: Literal["user-did-visit", "user-did-not-visit"]
+    sceneKey: str
+
+
+class MongoConditionalAction(_ActionBase):
+    type: Literal["conditional"]
+    condition: MongoActionCondition
+
+
+MongoSceneAction = Union[MongoSimpleAction, MongoConditionalAction]
 
 
 class MongoBuilderPosition(TypedDict):

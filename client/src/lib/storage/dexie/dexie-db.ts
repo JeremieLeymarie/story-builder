@@ -9,6 +9,7 @@ import {
   WikiArticle,
   WikiCategory,
   WikiArticleLink,
+  Action,
 } from "../domain";
 import { DEMO_IMPORTED_STORY, DEMO_SCENES, DEMO_STORY } from "./seed";
 import { getLibraryService } from "@/domains/game/library-service";
@@ -46,6 +47,25 @@ export const createDb = (
   { seed }: { seed: boolean } = { seed: true },
 ) => {
   db.version(6).stores(tables);
+  // Migration: add type `simple` to actions ton handle conditional actions in the future
+  db.version(7)
+    .stores(tables)
+    .upgrade(async () => {
+      const bulkPayload: {
+        key: string;
+        changes: Partial<Scene>;
+      }[] = [];
+
+      await db.scenes.each((scene) => {
+        const actions = scene.actions.map((action) => ({
+          ...action,
+          type: "simple",
+        })) satisfies Action[];
+        bulkPayload.push({ key: scene.key, changes: { actions } });
+      });
+
+      await db.scenes.bulkUpdate(bulkPayload);
+    });
 
   if (seed)
     db.on("populate", async () => {

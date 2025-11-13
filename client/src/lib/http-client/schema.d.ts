@@ -93,13 +93,6 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /** Action */
-        Action: {
-            /** Text */
-            text: string;
-            /** Scenekey */
-            sceneKey?: string | null;
-        };
         /** AuthUser */
         AuthUser: {
             /** Key */
@@ -121,6 +114,29 @@ export interface components {
             x: number;
             /** Y */
             y: number;
+        };
+        /** Condition */
+        Condition: {
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "user-did-visit" | "user-did-not-visit";
+            /** Scenekey */
+            sceneKey: string;
+        };
+        /** ConditionalAction */
+        ConditionalAction: {
+            /** Text */
+            text: string;
+            /** Scenekey */
+            sceneKey?: string | null;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "conditional";
+            condition: components["schemas"]["Condition"];
         };
         /** CreateUserRequest */
         CreateUserRequest: {
@@ -233,7 +249,7 @@ export interface components {
                 [key: string]: components["schemas"]["JsonValue"];
             };
             /** Actions */
-            actions: components["schemas"]["Action"][];
+            actions: (components["schemas"]["SimpleAction"] | components["schemas"]["ConditionalAction"])[];
             builderParams: components["schemas"]["BuilderParams"];
         };
         /** Scene */
@@ -249,8 +265,20 @@ export interface components {
                 [key: string]: components["schemas"]["JsonValue"];
             };
             /** Actions */
-            actions: components["schemas"]["Action"][];
+            actions: (components["schemas"]["SimpleAction"] | components["schemas"]["ConditionalAction"])[];
             builderParams: components["schemas"]["BuilderParams"];
+        };
+        /** SimpleAction */
+        SimpleAction: {
+            /** Text */
+            text: string;
+            /** Scenekey */
+            sceneKey?: string | null;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "simple";
         };
         /** Story */
         Story: {

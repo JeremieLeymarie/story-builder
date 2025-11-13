@@ -8,14 +8,18 @@ import {
 } from "../storage/domain";
 import { components } from "./schema";
 import dayjs from "dayjs";
+import { match } from "ts-pattern";
+
+type APISceneAction =
+  | components["schemas"]["SimpleAction"]
+  | components["schemas"]["ConditionalAction"];
 
 const _toAPIDate = (date: Date) => dayjs(date).format("YYYY-MM-DD[T]hh:mm:ss");
 
 /* API TO CLIENT DOMAIN */
 
-const fromAPIActionsAdapter = (
-  actions: components["schemas"]["Action"][],
-): Action[] => actions.map(fromAPIActionAdapter);
+const fromAPIActionsAdapter = (actions: APISceneAction[]): Action[] =>
+  actions.map(fromAPIActionAdapter);
 
 const fromAPISceneAdapter = (
   scene: components["schemas"]["Scene-Output"],
@@ -63,13 +67,20 @@ const fromAPIStoriesAdapter = (
   return stories.map(fromAPIStoryAdapter);
 };
 
-const fromAPIActionAdapter = (
-  action: components["schemas"]["Action"],
-): Action => {
-  return {
-    ...action,
-    sceneKey: action.sceneKey ?? undefined,
-  };
+const fromAPIActionAdapter = (action: APISceneAction): Action => {
+  return match<APISceneAction, Action>(action)
+    .with({ type: "simple" }, (a) => ({
+      type: "simple",
+      text: a.text,
+      sceneKey: a.sceneKey ?? undefined,
+    }))
+    .with({ type: "conditional" }, (a) => ({
+      type: "conditional",
+      text: a.text,
+      sceneKey: a.sceneKey ?? undefined,
+      condition: a.condition,
+    }))
+    .exhaustive();
 };
 
 const fromAPIFullStoryAdapter = (
