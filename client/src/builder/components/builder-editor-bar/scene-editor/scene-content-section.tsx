@@ -14,7 +14,6 @@ import { WikiNode } from "@/design-system/components/editor/nodes/wiki-node";
 import { useBuilderContext } from "@/builder/hooks/use-builder-context";
 import { EditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
 import { WikiPlugin } from "../../wiki-lexical-plugin/wiki-lexical-plugin";
-import { SerializedEditorState } from "lexical";
 
 export const SceneContentSection = ({
   form,
