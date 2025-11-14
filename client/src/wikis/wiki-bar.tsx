@@ -1,10 +1,10 @@
 import { Toolbar } from "@/design-system/components/toolbar";
 import { Button, Input } from "@/design-system/primitives";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
-import { HomeIcon, PlusIcon, SearchIcon } from "lucide-react";
+import { HomeIcon, PlusIcon, SearchIcon, Trash2Icon } from "lucide-react";
 import { useWikiStore } from "./hooks/use-wiki-store";
 import { WikiSection } from "@/domains/wiki/types";
-import { Link, useParams } from "@tanstack/react-router";
+import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import {
   Tooltip,
   TooltipContent,
@@ -13,6 +13,9 @@ import {
 import { cn } from "@/lib/style";
 import { AddCategoryPopover } from "./add-category-popover";
 import { CategoryBadge } from "./category-badge";
+import { ConfirmDialog } from "@/design-system/components";
+import { useState } from "react";
+import { getWikiService } from "@/domains/wiki/wiki-service";
 
 const ArticleTitle = ({
   title,
@@ -21,21 +24,58 @@ const ArticleTitle = ({
   title: string;
   articleKey: string;
 }) => {
-  const wikiKey = useWikiStore((state) => state.wikiData.wiki.key);
+  const [wikiKey, refresh] = useWikiStore((state) => [
+    state.wikiData.wiki.key,
+    state.refresh,
+  ]);
   const { articleKey: selectedArticleKey } = useParams({ strict: false });
   const isSelected = selectedArticleKey === articleKey;
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const wikiService = getWikiService();
 
   return (
-    <Link to="/wikis/$wikiKey/$articleKey" params={{ articleKey, wikiKey }}>
-      <p
-        className={cn(
-          isSelected && "bg-accent font-semibold",
-          "hover:bg-accent text-md w-full truncate rounded py-1 pl-6",
-        )}
-      >
-        {title}
-      </p>
-    </Link>
+    <div
+      onClick={() =>
+        navigate({
+          to: "/wikis/$wikiKey/$articleKey",
+          params: { articleKey, wikiKey },
+        })
+      }
+      className={cn(
+        isSelected && "bg-accent font-semibold",
+        "hover:bg-accent group/article flex items-center justify-between rounded",
+      )}
+    >
+      <p className="text-md w-full truncate py-1 pl-6">{title}</p>
+      <ConfirmDialog
+        title="Are you sure?"
+        description={`Do want to delete ${title} from the wiki? Deletion is definitive.`}
+        confirmLabel="Delete"
+        onConfirm={async (e) => {
+          e.stopPropagation();
+          await wikiService.removeArticle(articleKey);
+          refresh();
+        }}
+        onCancel={(e) => {
+          e.stopPropagation();
+        }}
+        open={open}
+        setOpen={setOpen}
+        trigger={
+          <Button
+            size="xs"
+            variant="ghost"
+            className="invisible cursor-pointer group-hover/article:visible"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <Trash2Icon />
+          </Button>
+        }
+      />
+    </div>
   );
 };
 

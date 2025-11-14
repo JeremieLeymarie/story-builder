@@ -11,11 +11,11 @@ import {
   DialogTrigger,
 } from "../primitives";
 
-import type { ReactNode } from "react";
+import type { ReactNode, MouseEvent } from "react";
 
 type Props = {
-  onCancel?: () => void;
-  onConfirm?: () => void;
+  onCancel?: (e: MouseEvent) => void;
+  onConfirm?: (e: MouseEvent) => void;
   title: ReactNode | string;
   description: ReactNode | string;
   trigger?: ReactNode | string;

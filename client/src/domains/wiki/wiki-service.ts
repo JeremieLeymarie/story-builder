@@ -34,6 +34,7 @@ export type WikiServicePort = {
   getWikiData: (wikiKey: string) => Promise<WikiData | null>;
   createArticle: (wikiKey: string, payload: ArticleSchema) => Promise<string>;
   getArticle: (articleKey: string) => Promise<WikiArticle | null>;
+  removeArticle: (articleKey: string) => Promise<void>;
   updateArticle: (
     articleKey: string,
     payload: ArticleUpdatePayload,
@@ -122,6 +123,10 @@ export const _getWikiService = ({
 
     getArticle: async (articleKey) => {
       return await repository.getArticle(articleKey);
+    },
+
+    removeArticle: async (articleKey) => {
+      return await repository.removeArticle(articleKey);
     },
 
     updateArticle: async (articleKey, payload) => {
