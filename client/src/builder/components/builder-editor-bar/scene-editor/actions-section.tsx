@@ -1,13 +1,8 @@
 import { useFieldArray, UseFormReturn } from "react-hook-form";
 import { SceneSchema } from "./schema";
-import {
-  Button,
-  FormDescription,
-  FormItem,
-  Input,
-} from "@/design-system/primitives";
-import { PlusIcon, TrashIcon } from "lucide-react";
-import { FormError } from "@/design-system/components";
+import { Button, FormDescription } from "@/design-system/primitives";
+import { PlusIcon } from "lucide-react";
+import { ActionItem } from "./action-item";
 
 export const ActionsSection = ({
   form,
@@ -30,7 +25,7 @@ export const ActionsSection = ({
             size="icon"
             onClick={() => append({ type: "simple", text: "" })}
           >
-            <PlusIcon size="16px" />
+            <PlusIcon />
           </Button>
         </div>
         <hr />
@@ -41,29 +36,13 @@ export const ActionsSection = ({
       </FormDescription>
       <div>
         {fields.map((field, index) => (
-          <FormItem className="my-2" key={field.id}>
-            <div className="flex items-center gap-2">
-              <Input
-                placeholder="Go to the village"
-                {...form.register(`actions.${index}.text` as const)}
-                {...field}
-              />
-              <Button
-                variant="ghost"
-                size="icon"
-                type="button"
-                onClick={() => remove(index)}
-              >
-                <TrashIcon size="16px" />
-              </Button>
-            </div>
-
-            {!!form.formState.errors.actions?.[index]?.text && (
-              <FormError>
-                {form.formState.errors.actions?.[index]?.text?.message}
-              </FormError>
-            )}
-          </FormItem>
+          <ActionItem
+            key={field.id}
+            field={field}
+            form={form}
+            index={index}
+            removeAction={remove}
+          />
         ))}
       </div>
     </div>
