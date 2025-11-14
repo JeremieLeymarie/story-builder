@@ -232,7 +232,7 @@ const ArticleInfo = ({
       </div>
       <div className="mt-1">
         {isLoading || !article || !articleKey ? (
-          <p>Are you sure article exist</p>
+          <p className="text-muted-foreground">Article not found. Are you sure it still exists?</p>
         ) : (
           <div>
             Referenced article:&nbsp;
