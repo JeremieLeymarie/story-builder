@@ -38,11 +38,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { WikiSectionArticle } from "@/domains/wiki/types";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
-import { SimpleLoader } from "@/design-system/components/simple-loader";
 import { useEditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
 import { WikiNode } from "../lexical-wiki-node";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $createTextNode } from "lexical";
+import { useBuilderContext } from "../hooks/use-builder-context";
 
 const editLinkSchema = z.object({ text: z.string(), articleKey: z.string() });
 type EditLinkPayload = z.infer<typeof editLinkSchema>;
@@ -71,11 +71,9 @@ const useEditWikiNodeActions = ({ node }: { node: WikiNode }) => {
 };
 
 const EditWikiNodeForm = ({
-  wikiKey,
   node,
   articleKey,
 }: {
-  wikiKey?: string;
   node: WikiNode;
   articleKey?: string;
 }) => {
@@ -85,13 +83,14 @@ const EditWikiNodeForm = ({
   });
   const [isArticleSelectorOpen, setIsArticleSelectorOpen] = useState(false);
   const { editWikiNode } = useEditWikiNodeActions({ node });
+  const { story } = useBuilderContext();
 
   // TODO: this should be extracted to a hook (so that we can remove the duplication in wiki-lexical-plugin.tsx)
   const { data: articles } = useQuery({
-    queryKey: ["wiki-articles", wikiKey],
-    queryFn: async () => getWikiService().getWikiData(wikiKey!),
+    queryKey: ["wiki-articles", story.wikiKey],
+    queryFn: async () => getWikiService().getWikiData(story.wikiKey!),
     select: (data) => data?.sections.flatMap((section) => section.articles),
-    enabled: !!wikiKey,
+    enabled: !!story.wikiKey,
   });
   const articlesByKey = articles?.reduce(
     (acc, article) => ({ ...acc, [article.key]: article }),
@@ -207,25 +206,29 @@ const ArticleInfo = ({
   return (
     <PopoverContent>
       <div className="flex items-center justify-between">
-        <span className="text-muted-foreground">Details</span>
+        {!article ? (
+          <span className="text-muted-foreground">Error</span>
+        ) : (
+          <span className="text-muted-foreground">Details</span>
+        )}
         <div className="flex">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button size="xs" variant="ghost" disabled={!article}>
-                <EditIcon />
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogTitle>Edit Article Link</DialogTitle>
-              <div className="mt-2">
-                <EditWikiNodeForm
-                  wikiKey={article?.wikiKey}
-                  node={node}
-                  articleKey={articleKey}
-                />
-              </div>
-            </DialogContent>
-          </Dialog>
+          {isLoading || !article || !articleKey ? (
+            <></>
+          ) : (
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button size="xs" variant="ghost" disabled={!article}>
+                  <EditIcon />
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogTitle>Edit Article Link</DialogTitle>
+                <div className="mt-2">
+                  <EditWikiNodeForm node={node} articleKey={articleKey} />
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
           <Button size="xs" variant="ghost" onClick={deleteWikiNode}>
             <Trash2Icon className="text-destructive" />
           </Button>
@@ -233,7 +236,7 @@ const ArticleInfo = ({
       </div>
       <div className="mt-1">
         {isLoading || !article || !articleKey ? (
-          <SimpleLoader />
+          <p>Are you sure article exist</p>
         ) : (
           <div>
             Referenced article:&nbsp;

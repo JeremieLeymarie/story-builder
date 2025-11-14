@@ -38,7 +38,7 @@ const tables: Record<keyof Tables, string> = {
   wikis: "&key, userKey",
   wikiArticles: "&key, wikiKey, categoryKey, title",
   wikiCategories: "&key, name",
-  wikiArticleLinks: "[key+entityKey], key, entityKey, entityType",
+  wikiArticleLinks: "[key+entityKey], key, entityKey, entityType,articleKey",
 };
 export const TABLE_NAMES = Object.keys(tables);
 
