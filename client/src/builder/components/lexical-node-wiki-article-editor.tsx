@@ -206,11 +206,7 @@ const ArticleInfo = ({
   return (
     <PopoverContent>
       <div className="flex items-center justify-between">
-        {!article ? (
-          <span className="text-muted-foreground">Error</span>
-        ) : (
-          <span className="text-muted-foreground">Details</span>
-        )}
+          <span className="text-muted-foreground">{!article ? "Error" : "Details"}</span>
         <div className="flex">
           {isLoading || !article || !articleKey ? (
             <></>
