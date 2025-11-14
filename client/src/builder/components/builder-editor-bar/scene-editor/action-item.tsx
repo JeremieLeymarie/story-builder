@@ -1,4 +1,8 @@
-import { FieldArrayWithId, UseFormReturn } from "react-hook-form";
+import {
+  FieldArrayWithId,
+  UseFieldArrayUpdate,
+  UseFormReturn,
+} from "react-hook-form";
 import { SceneSchema } from "./schema";
 import {
   Button,
@@ -8,6 +12,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  FormControl,
+  FormField,
   FormItem,
   Input,
   Popover,
@@ -102,25 +108,28 @@ export const SceneSelector = ({
 };
 
 export const ActionItem = ({
-  field,
+  actionField,
   form,
   index,
   removeAction,
+  updateAction,
 }: {
-  field: FieldArrayWithId<SceneSchema, "actions", "id">;
+  actionField: FieldArrayWithId<SceneSchema, "actions", "id">;
   form: UseFormReturn<SceneSchema>;
   index: number;
   removeAction: (index: number) => void;
+  updateAction: UseFieldArrayUpdate<SceneSchema, "actions">;
 }) => {
   const [open, setOpen] = useState(false);
+  console.log({ actionField, open });
 
   return (
-    <FormItem className="my-2" key={field.id}>
+    <FormItem className="my-2" key={actionField.id}>
       <div className="flex items-center gap-2">
         <Input
           placeholder="Go to the village"
           {...form.register(`actions.${index}.text` as const)}
-          {...field}
+          {...actionField}
         />
         <Button
           variant="outline"
@@ -142,32 +151,76 @@ export const ActionItem = ({
       {open && (
         <div className="flex items-center gap-2 text-sm">
           Show
-          <Select>
-            <SelectTrigger className="h-8! w-[180px] *:data-[slot=select-value]:text-xs">
-              <SelectValue placeholder="Select a condition" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel className="text-xs">Show this action</SelectLabel>
-                <SelectItem className="text-xs" value="always">
-                  Always
-                </SelectItem>
-                <SelectItem className="text-xs" value="player-did-visit">
-                  If player visited
-                </SelectItem>
-                <SelectItem className="text-xs" value="player-did-not-visit">
-                  If player did not visit
-                </SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <SceneSelector onChange={() => {}} />
+          <FormField
+            control={form.control}
+            name={`actions.${index}.showCondition`}
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Select
+                    onValueChange={(value) =>
+                      updateAction(index, {
+                        ...actionField,
+                        showCondition: value,
+                      })
+                    }
+                    value={field.value}
+                  >
+                    <SelectTrigger className="h-8! w-[180px] *:data-[slot=select-value]:text-xs">
+                      <SelectValue placeholder="Select a condition" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel className="text-xs">
+                          Show this action
+                        </SelectLabel>
+                        <SelectItem className="text-xs" value="always">
+                          Always
+                        </SelectItem>
+                        <SelectItem
+                          className="text-xs"
+                          value="when-user-did-visit"
+                        >
+                          If player visited
+                        </SelectItem>
+                        <SelectItem
+                          className="text-xs"
+                          value="when-user-did-not-visit"
+                        >
+                          If player did not visit
+                        </SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name={`actions.${index}.targetSceneKey`}
+            render={({ field }) =>
+              actionField.showCondition !== "always" ? (
+                <FormItem>
+                  <FormControl>
+                    <SceneSelector
+                      onChange={field.onChange}
+                      value={field.value}
+                    />
+                  </FormControl>
+                </FormItem>
+              ) : (
+                <></>
+              )
+            }
+          />
         </div>
       )}
-      {!!form.formState.errors.actions?.[index]?.text && (
-        <FormError>
-          {form.formState.errors.actions?.[index]?.text?.message}
-        </FormError>
+      {Object.entries(form.formState.errors.actions?.[index] ?? {}).map(
+        ([_fieldName, error]) =>
+          error ? (
+            <FormError className="text-xs">{error.message}</FormError>
+          ) : null,
       )}
     </FormItem>
   );

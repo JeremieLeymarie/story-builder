@@ -6,7 +6,51 @@ import {
   SceneUpdatePayload,
   SceneSchema,
   sceneSchema,
+  SceneEditorActionSchema,
 } from "../components/builder-editor-bar/scene-editor/schema";
+import { Action } from "@/lib/storage/domain";
+import { match } from "ts-pattern";
+
+const adaptDomainAction = (action: Action) => {
+  return match<Action, SceneEditorActionSchema>(action)
+    .with({ type: "conditional" }, (a) => ({
+      showCondition:
+        a.condition.type === "user-did-visit"
+          ? "when-user-did-visit"
+          : "when-user-did-not-visit",
+      text: a.text,
+      sceneKey: a.sceneKey,
+      targetSceneKey: a.condition.sceneKey,
+    }))
+    .with({ type: "simple" }, (a) => ({
+      showCondition: "always",
+      text: a.text,
+      sceneKey: a.sceneKey,
+    }))
+    .exhaustive();
+};
+
+const adaptFormAction = (formAction: SceneEditorActionSchema) => {
+  return match<SceneEditorActionSchema, Action>(formAction)
+    .with({ showCondition: "always" }, (a) => ({
+      type: "simple",
+      text: a.text,
+      sceneKey: a.sceneKey,
+    }))
+    .with({ showCondition: "when-user-did-visit" }, (a) => ({
+      type: "conditional",
+      text: a.text,
+      sceneKey: a.sceneKey,
+      condition: { type: "user-did-visit", sceneKey: a.targetSceneKey },
+    }))
+    .with({ showCondition: "when-user-did-not-visit" }, (a) => ({
+      type: "conditional",
+      text: a.text,
+      sceneKey: a.sceneKey,
+      condition: { type: "user-did-not-visit", sceneKey: a.targetSceneKey },
+    }))
+    .exhaustive();
+};
 
 export const useSceneEditorForm = ({
   scene,
@@ -20,7 +64,7 @@ export const useSceneEditorForm = ({
     defaultValues: {
       content: scene?.content,
       title: scene?.title,
-      actions: scene?.actions,
+      actions: scene.actions.map(adaptDomainAction),
     },
   });
 
@@ -30,7 +74,7 @@ export const useSceneEditorForm = ({
         onSave({
           key: scene.key,
           storyKey: scene.storyKey,
-          actions: values.actions,
+          actions: values.actions.map(adaptFormAction),
           content: values.content,
           title: values.title,
         });
@@ -42,7 +86,12 @@ export const useSceneEditorForm = ({
 
   useEffect(() => {
     // Update the form when the default values change, which are 'cached' otherwise
-    if (scene) form.reset(scene);
+    if (scene)
+      form.reset({
+        content: scene?.content,
+        title: scene?.title,
+        actions: scene.actions.map(adaptDomainAction),
+      });
   }, [scene, form, debouncer]);
 
   useEffect(() => {
