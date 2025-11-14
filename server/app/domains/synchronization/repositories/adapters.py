@@ -1,4 +1,7 @@
 from domains.synchronization.type_defs import (
+    SyncActionCondition,
+    SyncConditionalAction,
+    SyncSimpleAction,
     SynchronizationBuilderParams,
     SynchronizationBuilderPosition,
     SynchronizationScene,
@@ -8,15 +11,19 @@ from domains.synchronization.type_defs import (
     SynchronizationStoryProgress,
 )
 from utils.mongo.base_repository import (
+    MongoActionCondition,
     MongoBuilderParams,
     MongoBuilderPosition,
+    MongoConditionalAction,
     MongoScene,
     MongoSceneAction,
+    MongoSimpleAction,
     MongoStory,
     MongoStoryAuthor,
     MongoStoryProgress,
 )
 from utils.type_defs import StoryGenre, StoryType
+from typing import assert_never
 
 # From domain to mongo
 
@@ -30,10 +37,22 @@ def make_mongo_builder_params(
 
 
 def make_mongo_scene_action(domain: SynchronizationSceneAction) -> MongoSceneAction:
-    return MongoSceneAction(
-        text=domain.text,
-        sceneKey=domain.scene_key,
-    )
+    if isinstance(domain, SyncSimpleAction):
+        return MongoSimpleAction(
+            type="simple",
+            text=domain.text,
+            sceneKey=domain.scene_key,
+        )
+    if isinstance(domain, SyncConditionalAction):
+        return MongoConditionalAction(
+            type="conditional",
+            text=domain.text,
+            sceneKey=domain.scene_key,
+            condition=MongoActionCondition(
+                type=domain.condition.type, sceneKey=domain.condition.scene_key
+            ),
+        )
+    assert_never()
 
 
 def make_mongo_author(domain: SynchronizationStoryAuthor) -> MongoStoryAuthor:
@@ -146,6 +165,24 @@ def make_synchronization_author(
     )
 
 
+def make_synchronization_action(action: MongoSceneAction) -> SynchronizationSceneAction:
+    if action["type"] == "simple":
+        return SyncSimpleAction(
+            type="simple", text=action["text"], scene_key=action.get("sceneKey")
+        )
+    if action["type"] == "conditional":
+        return SyncConditionalAction(
+            type="conditional",
+            text=action["text"],
+            scene_key=action.get("sceneKey"),
+            condition=SyncActionCondition(
+                type=action["condition"]["type"],
+                scene_key=action["condition"]["sceneKey"],
+            ),
+        )
+    assert_never()
+
+
 def make_synchronization_scene(scene: MongoScene) -> SynchronizationScene:
     return SynchronizationScene(
         key=scene["key"],
@@ -153,10 +190,7 @@ def make_synchronization_scene(scene: MongoScene) -> SynchronizationScene:
         title=scene["title"],
         content=scene["content"],
         actions=[
-            SynchronizationSceneAction(
-                text=action["text"], scene_key=action["sceneKey"]
-            )
-            for action in scene.get("actions", [])
+            make_synchronization_action(action) for action in scene.get("actions", [])
         ],
         builder_params=SynchronizationBuilderParams(
             position=make_synchronization_builder_position(

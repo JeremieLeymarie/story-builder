@@ -79,7 +79,7 @@ export const useBuilderEdges = () => {
       const scene = await addScene({
         payload: fromHandle
           ? DEFAULT_SCENE
-          : { ...DEFAULT_SCENE, actions: [{ text: "" }] },
+          : { ...DEFAULT_SCENE, actions: [{ type: "simple", text: "" }] },
         position: { x: position.x - offset.x, y: position.y - offset.y },
       });
       if (!scene) return;

@@ -1,8 +1,11 @@
 from datetime import datetime
-from typing import Self
+from typing import Annotated, Literal, Self, Union, assert_never
 from pydantic import Field, JsonValue
 
 from domains.synchronization.type_defs import (
+    SyncActionCondition,
+    SyncConditionalAction,
+    SyncSimpleAction,
     SynchronizationBuilderParams,
     SynchronizationBuilderPosition,
     SynchronizationScene,
@@ -15,9 +18,26 @@ from endpoints.common import BaseAPIModel
 from utils.type_defs import StoryGenre, StoryType
 
 
-class Action(BaseAPIModel):
+class _ActionBase(BaseAPIModel):
     text: str
     scene_key: str | None = None
+
+
+class SimpleAction(_ActionBase):
+    type: Literal["simple"]
+
+
+class Condition(BaseAPIModel):
+    type: Literal["user-did-visit", "user-did-not-visit"]
+    scene_key: str
+
+
+class ConditionalAction(_ActionBase):
+    type: Literal["conditional"]
+    condition: Condition
+
+
+Action = Annotated[Union[SimpleAction, ConditionalAction], Field(discriminator="type")]
 
 
 class BuilderPosition(BaseAPIModel):
@@ -38,16 +58,35 @@ class Scene(BaseAPIModel):
     builder_params: BuilderParams
 
     @classmethod
+    def _make_action_from_domain(
+        cls, domain_action: SynchronizationSceneAction
+    ) -> Action:
+        if isinstance(domain_action, SyncSimpleAction):
+            return SimpleAction(
+                text=domain_action.text,
+                scene_key=domain_action.scene_key,
+                type="simple",
+            )
+        if isinstance(domain_action, SyncConditionalAction):
+            return ConditionalAction(
+                text=domain_action.text,
+                scene_key=domain_action.scene_key,
+                type="conditional",
+                condition=Condition(
+                    type=domain_action.condition.type,
+                    scene_key=domain_action.condition.scene_key,
+                ),
+            )
+        assert_never()
+
+    @classmethod
     def from_domain(cls, domain: SynchronizationScene) -> Self:
         return cls(
             key=domain.key,
             story_key=domain.story_key,
             title=domain.title,
             content=domain.content,
-            actions=[
-                Action(text=action.text, scene_key=action.scene_key)
-                for action in domain.actions
-            ],
+            actions=[cls._make_action_from_domain(action) for action in domain.actions],
             builder_params=BuilderParams(
                 position=BuilderPosition(
                     x=domain.builder_params.position.x,
@@ -56,16 +95,29 @@ class Scene(BaseAPIModel):
             ),
         )
 
+    def _action_to_domain(self, action: Action) -> SynchronizationSceneAction:
+        if isinstance(action, SimpleAction):
+            return SyncSimpleAction(
+                text=action.text, scene_key=action.scene_key, type="simple"
+            )
+        if isinstance(action, ConditionalAction):
+            return SyncConditionalAction(
+                text=action.text,
+                scene_key=action.scene_key,
+                type="conditional",
+                condition=SyncActionCondition(
+                    type=action.condition.type, scene_key=action.condition.scene_key
+                ),
+            )
+        assert_never()
+
     def to_domain(self) -> SynchronizationScene:
         return SynchronizationScene(
             key=self.key,
             story_key=self.story_key,
             title=self.title,
             content=self.content,
-            actions=[
-                SynchronizationSceneAction(text=action.text, scene_key=action.scene_key)
-                for action in self.actions
-            ],
+            actions=[self._action_to_domain(action) for action in self.actions],
             builder_params=SynchronizationBuilderParams(
                 position=SynchronizationBuilderPosition(
                     x=self.builder_params.position.x,
@@ -226,7 +278,7 @@ class SynchronizationLoadResponse(BaseAPIModel):
         *,
         player_games: list[SynchronizationStory],
         builder_stories: list[SynchronizationStory],
-        story_progresses: list[SynchronizationStoryProgress]
+        story_progresses: list[SynchronizationStoryProgress],
     ) -> Self:
         return cls(
             player_games=[FullStory.from_domain(story) for story in player_games],

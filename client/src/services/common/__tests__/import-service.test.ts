@@ -15,13 +15,15 @@ import {
   BASIC_SCENE_CONTENT,
   BASIC_STORY,
 } from "@/repositories/stubs/data";
+import { nanoid } from "nanoid";
+const SCENE_KEY = nanoid();
 
 describe("import-service", () => {
   let localRepository: MockLocalRepository;
   let importService: ImportServicePort;
 
   const importedStory: StoryFromImport["story"] = {
-    key: "bloup",
+    key: nanoid(),
     title: "The Great Journey To The Green River",
     description: "A wonderful epic tale through the world of Penthetir. ",
     image:
@@ -29,23 +31,25 @@ describe("import-service", () => {
     type: "builder" as const,
     genres: ["adventure" as const, "fantasy" as const],
     creationDate: new Date(),
-    firstSceneKey: "skibidi",
+    firstSceneKey: SCENE_KEY,
     author: {
       username: "author",
-      key: "author-key",
+      key: nanoid(),
     },
   };
   const sourceScene: StoryFromImport["scenes"][number] = {
-    key: "skibidi",
-    storyKey: "bloup",
+    key: SCENE_KEY,
+    storyKey: nanoid(),
     title: "Your first scene",
     content: BASIC_SCENE_CONTENT,
     actions: [
       {
+        type: "simple",
         text: "An action that leads to a scene",
-        sceneKey: "dest-scene",
+        sceneKey: nanoid(),
       },
       {
+        type: "simple",
         text: "An action that leads to another scene",
       },
     ],
@@ -120,7 +124,7 @@ describe("import-service", () => {
 
       expect(localRepository.createStory).toHaveBeenCalledWith({
         type: "imported",
-        originalStoryKey: "bloup",
+        originalStoryKey: importedStory.key,
         title: "The Great Journey To The Green River",
         description: "A wonderful epic tale through the world of Penthetir. ",
         image:
@@ -130,7 +134,7 @@ describe("import-service", () => {
         firstSceneKey: TEMPORARY_NULL_KEY,
         author: {
           username: "author",
-          key: "author-key",
+          key: importedStory.author?.key,
         },
       });
 
@@ -150,7 +154,7 @@ describe("import-service", () => {
 
       expect(localRepository.createStory).toHaveBeenCalledWith({
         type: "imported",
-        originalStoryKey: "bloup",
+        originalStoryKey: importedStory.key,
         title: "The Great Journey To The Green River",
         description: "A wonderful epic tale through the world of Penthetir. ",
         image:
@@ -172,7 +176,7 @@ describe("import-service", () => {
     it("should update author field when imported in the builder", async () => {
       localRepository.getUser = vi.fn(() =>
         Promise.resolve({
-          key: "bob-key",
+          key: importedStory.author!.key,
           username: "bob-bidou",
           email: "bob@mail.com",
         }),
@@ -185,7 +189,7 @@ describe("import-service", () => {
 
       expect(localRepository.createStory).toHaveBeenCalledWith({
         type: "builder",
-        originalStoryKey: "bloup",
+        originalStoryKey: importedStory.key,
         title: "The Great Journey To The Green River",
         description: "A wonderful epic tale through the world of Penthetir. ",
         image:
@@ -195,7 +199,7 @@ describe("import-service", () => {
         firstSceneKey: TEMPORARY_NULL_KEY,
         author: {
           username: "bob-bidou",
-          key: "bob-key",
+          key: importedStory.author?.key,
         },
       });
 
@@ -212,16 +216,18 @@ describe("import-service", () => {
         scenes: [
           {
             key: "old-source-scene",
-            storyKey: "bloup",
+            storyKey: importedStory.key,
             title: "Your first scene",
             content: BASIC_SCENE_CONTENT,
             actions: [
               {
                 text: "An action that leads to a scene",
                 sceneKey: "old-dest-scene",
+                type: "simple",
               },
               {
                 text: "An action that leads to another scene",
+                type: "simple",
               },
             ],
             builderParams: {
@@ -233,7 +239,7 @@ describe("import-service", () => {
           },
           {
             key: "old-dest-scene",
-            storyKey: "bloup",
+            storyKey: importedStory.key,
             title: "title",
             content: BASIC_SCENE_CONTENT,
             actions: [],
@@ -260,10 +266,12 @@ describe("import-service", () => {
           key: "new-source-scene",
           actions: [
             {
+              type: "simple",
               text: "An action that leads to a scene",
               sceneKey: "new-dest-scene",
             },
             {
+              type: "simple",
               text: "An action that leads to another scene",
             },
           ],

@@ -25,10 +25,12 @@ export const MOCK_IMPORTED_SCENE = {
   ),
   actions: [
     {
+      type: "simple" as const,
       text: "An action that leads to a scene",
       sceneKey: "dest-scene",
     },
     {
+      type: "simple" as const,
       text: "An action that leads to another scene",
     },
   ],

@@ -54,10 +54,24 @@ export type BuilderStory = StoryBase & { type: "builder" };
 
 export type Story = LibraryStory | BuilderStory;
 
-export type Action = {
+type ActionBase = {
   text: string;
   sceneKey?: string;
 };
+
+type SimpleAction = ActionBase & {
+  type: "simple";
+};
+
+type ConditionalAction = ActionBase & {
+  type: "conditional";
+  condition: {
+    type: "user-did-visit" | "user-did-not-visit";
+    sceneKey: string;
+  };
+};
+
+export type Action = SimpleAction | ConditionalAction;
 
 export type BuilderPosition = { x: number; y: number };
 

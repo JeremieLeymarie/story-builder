@@ -6,9 +6,9 @@ from utils.mongo.base_repository import (
     MongoBuilderParams,
     MongoBuilderPosition,
     MongoScene,
-    MongoSceneAction,
     MongoStory,
     MongoStoryAuthor,
+    MongoSimpleAction,
 )
 from utils.scene_content import make_simple_scene_content
 
@@ -209,7 +209,11 @@ def test_save_builder_state(api_test_infra_authenticated) -> None:
             userKey="me",
             scenes=[
                 MongoScene(
-                    actions=[MongoSceneAction(sceneKey="scene-1", text="Action Text")],
+                    actions=[
+                        MongoSimpleAction(
+                            type="simple", sceneKey="scene-1", text="Action Text"
+                        )
+                    ],
                     builderParams=MongoBuilderParams(
                         position=MongoBuilderPosition(x=400.0, y=200.0)
                     ),
@@ -236,7 +240,11 @@ def test_save_builder_state(api_test_infra_authenticated) -> None:
             userKey="me",
             scenes=[
                 MongoScene(
-                    actions=[MongoSceneAction(sceneKey="scene-1", text="Action Text")],
+                    actions=[
+                        MongoSimpleAction(
+                            type="simple", sceneKey="scene-1", text="Action Text"
+                        )
+                    ],
                     builderParams=MongoBuilderParams(
                         position=MongoBuilderPosition(x=400.0, y=200.0)
                     ),
