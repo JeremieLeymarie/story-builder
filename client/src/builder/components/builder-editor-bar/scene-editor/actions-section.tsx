@@ -9,7 +9,7 @@ export const ActionsSection = ({
 }: {
   form: UseFormReturn<SceneSchema>;
 }) => {
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     name: "actions",
     control: form.control,
   });
@@ -23,7 +23,7 @@ export const ActionsSection = ({
             variant="ghost"
             type="button"
             size="icon"
-            onClick={() => append({ type: "simple", text: "" })}
+            onClick={() => append({ showCondition: "always", text: "" })}
           >
             <PlusIcon />
           </Button>
@@ -38,10 +38,11 @@ export const ActionsSection = ({
         {fields.map((field, index) => (
           <ActionItem
             key={field.id}
-            field={field}
+            actionField={field}
             form={form}
             index={index}
             removeAction={remove}
+            updateAction={update}
           />
         ))}
       </div>

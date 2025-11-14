@@ -5,12 +5,12 @@ import { sceneToNodeAdapter } from "../adapters";
 import { Scene } from "@/lib/storage/domain";
 import { useBuilderError } from "./use-builder-error";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
-import { SceneSchema } from "../components/builder-editor-bar/scene-editor/schema";
 import { useScenePositioning } from "./use-scene-positioning";
 import { useAddFocusedNodes } from "./use-add-focused-nodes";
 import { Vec2 } from "@/lib/vec2";
 
-export const DEFAULT_SCENE: SceneSchema = {
+type AddScenePayload = Pick<Scene, "title" | "content" | "actions">;
+export const DEFAULT_SCENE: AddScenePayload = {
   title: "",
   content: makeSimpleLexicalContent(""),
   actions: [],
@@ -27,7 +27,7 @@ export const useAddScene = () => {
     payload = DEFAULT_SCENE,
     position,
   }: {
-    payload?: SceneSchema;
+    payload?: AddScenePayload;
     position: XYPosition | "auto";
   }): Promise<Scene | null> => {
     try {
