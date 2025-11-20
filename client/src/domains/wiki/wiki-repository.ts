@@ -25,6 +25,8 @@ export type WikiRepositoryPort = {
   ) => Promise<void>;
   getArticle: (articleKey: string) => Promise<WikiArticle | null>;
   createCategory: (payload: WithoutKey<WikiCategory>) => Promise<string>;
+  deleteCategory: (categoryKey: string) => Promise<void>;
+  deleteArticlesByCategory: (categoryKey: string) => Promise<void>;
   addArticleLink: (payload: WikiArticleLink) => Promise<void>;
   updateArticleLink: (payload: WikiArticleLink) => Promise<void>;
   removeArticleLink: (key: string, entityKey: string) => Promise<void>;
@@ -134,6 +136,14 @@ export const _getDexieWikiRepository = (
 
     createCategory: async (payload) => {
       return await db.wikiCategories.add(payload);
+    },
+
+    deleteCategory: async (categoryKey) => {
+      await db.wikiCategories.delete(categoryKey);
+    },
+
+    deleteArticlesByCategory: async (categoryKey) => {
+      await db.wikiArticles.where({ categoryKey }).delete();
     },
 
     addArticleLink: async (payload: WikiArticleLink) => {

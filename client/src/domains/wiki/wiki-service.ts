@@ -39,6 +39,7 @@ export type WikiServicePort = {
     payload: ArticleUpdatePayload,
   ) => Promise<void>;
   createCategory: (wikiKey: string, payload: CategorySchema) => Promise<string>;
+  deleteCategory: (wikiKey: string, categoryKey: string) => Promise<void>;
   addArticleLink: (payload: WikiArticleLink) => Promise<void>;
   updateArticleLink: (payload: WikiArticleLink) => Promise<void>;
   removeArticleLink: (
@@ -149,6 +150,14 @@ export const _getWikiService = ({
         color: payload.color,
         name: payload.name,
       });
+    },
+
+    deleteCategory: async (wikiKey, categoryKey) => {
+      const permissionContext = await getPermissionContext(wikiKey);
+      if (!permissionContext.canDeleteCategory) throw new ForbiddenError();
+
+      await repository.deleteArticlesByCategory(categoryKey);
+      await repository.deleteCategory(categoryKey);
     },
 
     addArticleLink: async (payload) => {
