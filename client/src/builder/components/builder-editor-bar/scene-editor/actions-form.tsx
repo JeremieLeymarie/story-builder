@@ -1,17 +1,21 @@
-import { useFieldArray, UseFormReturn } from "react-hook-form";
-import { SceneSchema } from "./schema";
 import { Button, FormDescription } from "@/design-system/primitives";
 import { PlusIcon } from "lucide-react";
 import { ActionItem } from "./action-item";
+import { useEditActionsForm } from "@/builder/hooks/use-edit-actions-form";
+import { Action } from "@/lib/storage/domain";
+import { useBuilderActions } from "@/builder/hooks/use-builder-actions";
 
-export const ActionsSection = ({
-  form,
+export const ActionsForm = ({
+  sceneKey,
+  actions,
 }: {
-  form: UseFormReturn<SceneSchema>;
+  sceneKey: string;
+  actions: Action[];
 }) => {
-  const { fields, append, remove, update } = useFieldArray({
-    name: "actions",
-    control: form.control,
+  const { updateScene } = useBuilderActions();
+  const { form, append, fields, remove, update } = useEditActionsForm({
+    actions,
+    onSave: (payload) => updateScene({ key: sceneKey, ...payload }),
   });
 
   return (

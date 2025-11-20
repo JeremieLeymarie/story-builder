@@ -1,18 +1,38 @@
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useDebouncer } from "@tanstack/react-pacer/debouncer";
-import {
-  SceneUpdatePayload,
-  SceneSchema,
-  sceneSchema,
-  SceneEditorActionSchema,
-} from "../components/builder-editor-bar/scene-editor/schema";
-import { Action } from "@/lib/storage/domain";
+import { Action, Scene } from "@/lib/storage/domain";
 import { match } from "ts-pattern";
+import z from "zod";
+
+const actionBase = z.object({
+  text: z.string({ message: "Text is required" }),
+  sceneKey: z.nanoid().optional(),
+});
+
+const actionSchema = z.discriminatedUnion("showCondition", [
+  actionBase.extend({ showCondition: z.literal("always") }),
+  actionBase.extend({
+    showCondition: z.literal("when-user-did-visit"),
+    targetSceneKey: z.nanoid(),
+  }),
+  actionBase.extend({
+    showCondition: z.literal("when-user-did-not-visit"),
+    targetSceneKey: z.nanoid(),
+  }),
+]);
+
+export type ActionSchema = z.infer<typeof actionSchema>;
+
+const schema = z.object({
+  actions: z.array(actionSchema),
+});
+
+export type EditActionsSchema = z.infer<typeof schema>;
 
 const adaptDomainAction = (action: Action) => {
-  return match<Action, SceneEditorActionSchema>(action)
+  return match<Action, ActionSchema>(action)
     .with({ type: "conditional" }, (a) => ({
       showCondition:
         a.condition.type === "user-did-visit"
@@ -30,8 +50,8 @@ const adaptDomainAction = (action: Action) => {
     .exhaustive();
 };
 
-const adaptFormAction = (formAction: SceneEditorActionSchema) => {
-  return match<SceneEditorActionSchema, Action>(formAction)
+const adaptFormAction = (formAction: ActionSchema) => {
+  return match<ActionSchema, Action>(formAction)
     .with({ showCondition: "always" }, (a) => ({
       type: "simple",
       text: a.text,
@@ -52,31 +72,30 @@ const adaptFormAction = (formAction: SceneEditorActionSchema) => {
     .exhaustive();
 };
 
-export const useSceneEditorForm = ({
-  scene,
+export const useEditActionsForm = ({
+  actions,
   onSave,
 }: {
-  scene: SceneUpdatePayload;
-  onSave: (scene: SceneUpdatePayload) => void;
+  actions: Scene["actions"];
+  onSave: (payload: { actions: Scene["actions"] }) => void;
 }) => {
-  const form = useForm<SceneSchema>({
-    resolver: zodResolver(sceneSchema),
+  const form = useForm<EditActionsSchema>({
+    resolver: zodResolver(schema),
     defaultValues: {
-      content: scene?.content,
-      title: scene?.title,
-      actions: scene.actions.map(adaptDomainAction),
+      actions: actions.map(adaptDomainAction),
     },
   });
 
+  const { fields, append, remove, update } = useFieldArray({
+    name: "actions",
+    control: form.control,
+  });
+
   const debouncer = useDebouncer(
-    (scene) => {
-      form.handleSubmit((values: SceneSchema) => {
+    () => {
+      form.handleSubmit((values: EditActionsSchema) => {
         onSave({
-          key: scene.key,
-          storyKey: scene.storyKey,
           actions: values.actions.map(adaptFormAction),
-          content: values.content,
-          title: values.title,
         });
       })();
     },
@@ -86,23 +105,23 @@ export const useSceneEditorForm = ({
 
   useEffect(() => {
     // Update the form when the default values change, which are 'cached' otherwise
-    if (scene)
+    if (actions)
       form.reset({
-        content: scene?.content,
-        title: scene?.title,
-        actions: scene.actions.map(adaptDomainAction),
+        actions: actions.map(adaptDomainAction),
       });
-  }, [scene, form, debouncer]);
+  }, [actions, form, debouncer]);
 
   useEffect(() => {
     const callback = form.subscribe({
       formState: {
         values: true,
       },
-      callback: () => debouncer.maybeExecute(scene),
+      callback: () => debouncer.maybeExecute(),
     });
     return () => callback();
-  }, [debouncer, form, scene]);
+  }, [debouncer, form]);
 
-  return form;
+  return { form, fields, append, remove, update };
 };
+
+export type EditActionsForm = UseFormReturn<EditActionsSchema>;

@@ -1,9 +1,4 @@
-import {
-  FieldArrayWithId,
-  UseFieldArrayUpdate,
-  UseFormReturn,
-} from "react-hook-form";
-import { SceneSchema } from "./schema";
+import { FieldArrayWithId, UseFieldArrayUpdate } from "react-hook-form";
 import {
   Button,
   Command,
@@ -39,6 +34,10 @@ import { ScrollArea } from "@/design-system/primitives/scroll-area";
 import { capitalize } from "@/lib/string";
 import { cn } from "@/lib/style";
 import { SimpleLoader } from "@/design-system/components/simple-loader";
+import {
+  EditActionsForm,
+  EditActionsSchema,
+} from "@/builder/hooks/use-edit-actions-form";
 
 export const SceneSelector = ({
   onChange,
@@ -114,11 +113,11 @@ export const ActionItem = ({
   removeAction,
   updateAction,
 }: {
-  actionField: FieldArrayWithId<SceneSchema, "actions", "id">;
-  form: UseFormReturn<SceneSchema>;
+  actionField: FieldArrayWithId<EditActionsSchema, "actions", "id">;
+  form: EditActionsForm;
   index: number;
   removeAction: (index: number) => void;
-  updateAction: UseFieldArrayUpdate<SceneSchema, "actions">;
+  updateAction: UseFieldArrayUpdate<EditActionsSchema, "actions">;
 }) => {
   const [open, setOpen] = useState(false);
   console.log({ actionField, open });
