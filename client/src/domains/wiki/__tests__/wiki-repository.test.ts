@@ -369,6 +369,16 @@ describe("wiki repository", () => {
       expect(resultKey2).toStrictEqual(null);
       expect(resultKey3).toStrictEqual(wikiArticleLink3);
     });
+    test("should remove article without key", async () => {
+      const wikiArticle = factory.wikiArticle();
+      await testDB.wikiArticles.add(wikiArticle);
+
+      await repo.removeArticle(wikiArticle.key);
+
+      const result = await repo.getArticle(wikiArticle.key);
+
+      expect(result).toStrictEqual(null);
+    });
   });
 
   describe("update article", () => {
