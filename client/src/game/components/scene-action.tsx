@@ -64,8 +64,6 @@ export const SceneAction = ({
   }
   const isTestMode = !progress;
 
-  console.log({ progress });
-
   if (isTestMode) {
     return (
       <ActionTooltip
