@@ -328,6 +328,49 @@ describe("wiki repository", () => {
     });
   });
 
+  describe("remove article", () => {
+    test("should remove article", async () => {
+      const wikiArticle = factory.wikiArticle();
+      const wikiArticle2 = factory.wikiArticle();
+      const wikiArticleLink = factory.wikiArticleLink({
+        articleKey: wikiArticle.key,
+      });
+      const wikiArticleLink2 = factory.wikiArticleLink({
+        articleKey: wikiArticle.key,
+      });
+      const wikiArticleLink3 = factory.wikiArticleLink({
+        articleKey: wikiArticle2.key,
+      });
+      await testDB.wikiArticles.add(wikiArticle);
+      await testDB.wikiArticles.add(wikiArticle2);
+      await testDB.wikiArticleLinks.add(wikiArticleLink);
+      await testDB.wikiArticleLinks.add(wikiArticleLink2);
+      await testDB.wikiArticleLinks.add(wikiArticleLink3);
+
+      await repo.removeArticle(wikiArticle.key);
+
+      const result = await repo.getArticle(wikiArticle.key);
+      const result2 = await repo.getArticle(wikiArticle2.key);
+      const resultKey = await repo.getArticleLink(
+        wikiArticleLink.key,
+        wikiArticleLink.entityKey,
+      );
+      const resultKey2 = await repo.getArticleLink(
+        wikiArticleLink2.key,
+        wikiArticleLink2.entityKey,
+      );
+      const resultKey3 = await repo.getArticleLink(
+        wikiArticleLink3.key,
+        wikiArticleLink3.entityKey,
+      );
+      expect(result).toStrictEqual(null);
+      expect(result2).toStrictEqual(wikiArticle2);
+      expect(resultKey).toStrictEqual(null);
+      expect(resultKey2).toStrictEqual(null);
+      expect(resultKey3).toStrictEqual(wikiArticleLink3);
+    });
+  });
+
   describe("update article", () => {
     test("should update article", async () => {
       vi.setSystemTime(new Date());
