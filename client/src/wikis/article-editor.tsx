@@ -37,9 +37,9 @@ export const ArticleEditor = ({
   articleKey,
   mode,
 }: UpdateProps) => {
-  const form = useForm({
+  const form = useForm<ArticleSchema>({
     resolver: zodResolver(articleSchema),
-    defaultValues: defaultValues ?? {},
+    defaultValues: defaultValues as Partial<ArticleSchema>,
   });
   const { createArticle, updateArticle } = useArticleActions();
   const {
