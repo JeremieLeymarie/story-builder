@@ -91,53 +91,38 @@ export const LibraryGameDetail = ({
           </div>
           <div className="flex-1 space-y-4">
             <h1 className="text-4xl font-bold text-gray-800">{story.title}</h1>
-            <p className="text-lg leading-relaxed text-gray-600">
-              {story.description ||
-                "Un arbre au centre du monde vous attend. Découvrez une histoire mystérieuse où la nature et la magie se rencontrent dans une aventure inoubliable."}
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {story.genres?.map((genre) => (
-                <StoryGenreBadge key={genre} variant={genre} />
-              )) || (
-                <>
-                  <span className="rounded-full bg-gray-800 px-3 py-1 text-sm text-white">
-                    Science-Fiction
-                  </span>
-                  <span className="rounded-full bg-gray-300 px-3 py-1 text-sm text-gray-700">
-                    Détective
-                  </span>
-                  <span className="rounded-full bg-gray-300 px-3 py-1 text-sm text-gray-700">
-                    Horreur
-                  </span>
-                  <span className="rounded-full bg-gray-300 px-3 py-1 text-sm text-gray-700">
-                    Suspense
-                  </span>
-                  <span className="rounded-full bg-gray-300 px-3 py-1 text-sm text-gray-700">
-                    Fantasy
-                  </span>
-                </>
-              )}
-            </div>
+            {story.description && (
+              <p className="text-lg leading-relaxed text-gray-600">
+                {story.description}
+              </p>
+            )}
+            {story.genres && story.genres.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {story.genres.map((genre) => (
+                  <StoryGenreBadge key={genre} variant={genre} />
+                ))}
+              </div>
+            )}
             <div className="flex gap-4">
               <button
                 onClick={playCurrentGame}
                 className="flex items-center gap-2 rounded-lg bg-yellow-400 px-6 py-3 font-semibold text-white shadow-lg transition-colors hover:bg-yellow-500"
               >
                 <Play size={20} />
-                Jouer
+                Play
               </button>
               <button
                 onClick={shareGame}
                 className="flex items-center gap-2 rounded-lg bg-gray-200 px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-300"
               >
                 <Share2 size={20} />
-                Partager
+                Share
               </button>
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="font-medium text-gray-600">
-                  Progression de l'histoire
+                  Story Progress
                 </span>
                 <span className="text-2xl font-bold text-gray-800">
                   {progressPercentage}%
@@ -162,7 +147,7 @@ export const LibraryGameDetail = ({
                 className="flex items-center gap-2 font-medium text-red-500 transition-colors hover:text-red-600"
               >
                 <Trash2 size={16} />
-                Supprimer le jeu
+                Delete game
               </button>
             </div>
           </div>
