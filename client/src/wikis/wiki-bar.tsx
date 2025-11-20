@@ -50,7 +50,7 @@ const ArticleTitle = ({
       <p className="text-md w-full truncate py-1 pl-6">{title}</p>
       <ConfirmDialog
         title="Are you sure?"
-        description={`Do want to delete ${title} from the wiki? Deletion is definitive.`}
+        description={<div>Do want to delete <span className="font-semibold">${title}</span> from the wiki? Deletion is definitive, and links to this article in scenes will also be deleted.</div>}
         confirmLabel="Delete"
         onConfirm={async (e) => {
           e.stopPropagation();
