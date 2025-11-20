@@ -37,55 +37,50 @@ export const SceneContentForm = ({
           ev.preventDefault();
         }}
       >
-        <div>
-          <SetFirstSceneSwitch
-            setFirstScene={() => setFirstScene(scenePayload.key)}
-            sceneKey={scenePayload.key}
-          />
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Title</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="A very suspicious crossroads"
-                    {...field}
+        <SetFirstSceneSwitch
+          setFirstScene={() => setFirstScene(scenePayload.key)}
+          sceneKey={scenePayload.key}
+        />
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Title</FormLabel>
+              <FormControl>
+                <Input placeholder="A very suspicious crossroads" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="content"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Content</FormLabel>
+              <FormControl>
+                <EditorContext
+                  value={{ entityType: "scene", entityKey: scenePayload.key }}
+                >
+                  <RichText
+                    onSerializedChange={field.onChange}
+                    initialState={scenePayload.content}
+                    editable
+                    className="h-[300px] max-w-[450px]"
+                    toolbarPlugins={[
+                      <WikiPlugin wikiKey={story.wikiKey ?? null} />,
+                    ]}
+                    editorNodes={[WikiNode]}
+                    textDisplayMode="scroll"
                   />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="content"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Content</FormLabel>
-                <FormControl>
-                  <EditorContext
-                    value={{ entityType: "scene", entityKey: scenePayload.key }}
-                  >
-                    <RichText
-                      onSerializedChange={field.onChange}
-                      initialState={scenePayload.content}
-                      editable
-                      className="h-[300px] max-w-[450px]"
-                      toolbarPlugins={[
-                        <WikiPlugin wikiKey={story.wikiKey ?? null} />,
-                      ]}
-                      editorNodes={[WikiNode]}
-                      textDisplayMode="scroll"
-                    />
-                  </EditorContext>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+                </EditorContext>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       </form>
     </Form>
   );
