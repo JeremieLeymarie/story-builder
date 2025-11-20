@@ -1,4 +1,4 @@
-import { FieldArrayWithId, UseFieldArrayUpdate } from "react-hook-form";
+import { FieldArrayWithId, UseFormStateReturn } from "react-hook-form";
 import {
   Button,
   Command,
@@ -35,6 +35,7 @@ import { capitalize } from "@/lib/string";
 import { cn } from "@/lib/style";
 import { SimpleLoader } from "@/design-system/components/simple-loader";
 import {
+  ActionSchema,
   EditActionsForm,
   EditActionsSchema,
 } from "@/builder/hooks/use-edit-actions-form";
@@ -59,7 +60,7 @@ export const SceneSelector = ({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="text-muted-foreground hover:text-muted-foreground h-8! w-[180px] justify-between text-xs font-normal"
+            className="text-foreground hover:text-foreground h-8! w-[180px] justify-between text-xs font-normal"
           >
             {value ? selectedScene?.title : "No scene"}
             <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -111,16 +112,36 @@ export const ActionItem = ({
   form,
   index,
   removeAction,
-  updateAction,
 }: {
   actionField: FieldArrayWithId<EditActionsSchema, "actions", "id">;
   form: EditActionsForm;
   index: number;
   removeAction: (index: number) => void;
-  updateAction: UseFieldArrayUpdate<EditActionsSchema, "actions">;
 }) => {
   const [open, setOpen] = useState(false);
-  console.log({ actionField, open });
+  const { story } = useBuilderContext();
+  const [showCondition, setShowCondition] = useState(actionField.showCondition);
+
+  const onShowConditionChange = (
+    value: string,
+    formState: UseFormStateReturn<EditActionsSchema>,
+  ) => {
+    form.setValue(
+      `actions.${index}.showCondition`,
+      value as ActionSchema["showCondition"],
+    );
+    const hasTargetSceneKeyBeenModified =
+      formState.dirtyFields.actions?.[index] &&
+      "targetSceneKey" in formState.dirtyFields.actions[index];
+
+    if (value !== "always" && !hasTargetSceneKeyBeenModified) {
+      form.setValue(`actions.${index}.targetSceneKey`, story.firstSceneKey);
+    }
+    // This is a workaround around the fact that:
+    // 1. form.watch doesn't work with react compiler for now
+    // 2. using form.setValue in a nested field of a field array doesn't trigger a rerender for the parent field
+    setShowCondition(value as ActionSchema["showCondition"]);
+  };
 
   return (
     <FormItem className="my-2" key={actionField.id}>
@@ -153,15 +174,12 @@ export const ActionItem = ({
           <FormField
             control={form.control}
             name={`actions.${index}.showCondition`}
-            render={({ field }) => (
+            render={({ field, formState }) => (
               <FormItem>
                 <FormControl>
                   <Select
                     onValueChange={(value) =>
-                      updateAction(index, {
-                        ...actionField,
-                        showCondition: value,
-                      })
+                      onShowConditionChange(value, formState)
                     }
                     value={field.value}
                   >
@@ -195,11 +213,11 @@ export const ActionItem = ({
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name={`actions.${index}.targetSceneKey`}
-            render={({ field }) =>
-              actionField.showCondition !== "always" ? (
+          {showCondition !== "always" && (
+            <FormField
+              control={form.control}
+              name={`actions.${index}.targetSceneKey`}
+              render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <SceneSelector
@@ -208,17 +226,21 @@ export const ActionItem = ({
                     />
                   </FormControl>
                 </FormItem>
-              ) : (
-                <></>
-              )
-            }
-          />
+              )}
+            />
+          )}
         </div>
       )}
       {Object.entries(form.formState.errors.actions?.[index] ?? {}).map(
         ([_fieldName, error]) =>
           error ? (
-            <FormError className="text-xs">{error.message}</FormError>
+            <FormError className="text-xs">
+              {typeof error === "string"
+                ? error
+                : "message" in error
+                  ? error.message
+                  : null}
+            </FormError>
           ) : null,
       )}
     </FormItem>
