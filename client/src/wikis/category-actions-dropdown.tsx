@@ -65,7 +65,7 @@ export const CategoryActionsDropdown = ({
                   setIsOpen(false);
                   setDeleteDialogOpen(true);
                 }}
-                className="flex cursor-pointer items-center gap-2 text-destructive focus:text-destructive"
+                className="text-destructive focus:text-destructive flex cursor-pointer items-center gap-2"
               >
                 <Trash2Icon size={16} />
                 <span>Delete category</span>
