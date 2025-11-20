@@ -30,7 +30,9 @@ export type BuilderServicePort = {
     >,
   ) => Promise<{ story: Story; scene: Scene } | null>;
   addScene: (scene: WithoutKey<Scene>) => Promise<Scene>;
-  updateScene: (props: Partial<Scene> & Pick<Scene, "key">) => Promise<void>;
+  updateScene: (
+    props: Partial<Scene> & Pick<Scene, "key">,
+  ) => Promise<Scene | null>;
   getAutoLayout: (props: {
     nodes: BuilderNode[];
     edges: Edge[];

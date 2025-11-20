@@ -3,7 +3,8 @@ import { BuilderNode } from "../types";
 import { useBuilderContext } from "./use-builder-context";
 import { getBuilderService } from "@/get-builder-service";
 import { useBuilderError } from "./use-builder-error";
-import { SceneUpdatePayload } from "../components/builder-editor-bar/scene-editor/schema";
+import { Scene } from "@/lib/storage/domain";
+import { sceneToNodeAdapter } from "../adapters";
 
 export const useBuilderActions = () => {
   const { story, setStory } = useBuilderContext();
@@ -12,24 +13,20 @@ export const useBuilderActions = () => {
 
   const builderService = getBuilderService();
 
-  const updateScene = (scene: SceneUpdatePayload) => {
-    builderService.updateScene(scene).catch(handleError);
-
-    setNodes((prev) =>
-      prev.map((n) =>
-        n.data.key === scene.key
-          ? {
-              ...n,
-              data: {
-                ...n.data,
-                title: scene.title,
-                content: scene.content,
-                actions: scene.actions,
-              },
-            }
-          : n,
-      ),
-    );
+  const updateScene = async (scene: Partial<Scene> & Pick<Scene, "key">) => {
+    try {
+      const updated = await builderService.updateScene(scene);
+      if (!updated) return handleError(`Failed to update scene ${scene.key}`);
+      setNodes((prev) =>
+        prev.map((n) =>
+          n.data.key === updated.key
+            ? sceneToNodeAdapter({ scene: updated, story })
+            : n,
+        ),
+      );
+    } catch (err) {
+      handleError(err);
+    }
   };
 
   const setFirstScene = (sceneKey: string) => {

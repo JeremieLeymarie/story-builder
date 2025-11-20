@@ -158,11 +158,9 @@ export const _getBuilderService = ({
       return await localRepository.createScene(scene);
     },
 
-    updateScene: async ({
-      key,
-      ...scene
-    }: Partial<Scene> & Pick<Scene, "key">) => {
+    updateScene: async ({ key, ...scene }) => {
       await localRepository.updatePartialScene(key, scene);
+      return await localRepository.getScene(key);
     },
 
     getAutoLayout: async ({
