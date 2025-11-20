@@ -132,7 +132,7 @@ export const _makeBulkSceneUpdatePayload = ({
             if (!newTargetSceneKey)
               throw new Error(
                 "sceneKey not found in old scene to new scenes mapping",
-              ); // Should we throw here or should gracefully fallback on a simple action
+              ); // Should we throw here or should gracefully fallback on a simple action?
             draft.condition.sceneKey = newTargetSceneKey;
           }
         }),
