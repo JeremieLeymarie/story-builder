@@ -206,7 +206,9 @@ const ArticleInfo = ({
   return (
     <PopoverContent>
       <div className="flex items-center justify-between">
-          <span className="text-muted-foreground">{!article ? "Error" : "Details"}</span>
+        <span className="text-muted-foreground">
+          {!article ? "Error" : "Details"}
+        </span>
         <div className="flex">
           {isLoading || !article || !articleKey ? (
             <></>
@@ -232,7 +234,9 @@ const ArticleInfo = ({
       </div>
       <div className="mt-1">
         {isLoading || !article || !articleKey ? (
-          <p className="text-muted-foreground">Article not found. Are you sure it still exists?</p>
+          <p className="text-muted-foreground">
+            Article not found. Are you sure it still exists?
+          </p>
         ) : (
           <div>
             Referenced article:&nbsp;
