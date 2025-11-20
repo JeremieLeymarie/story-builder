@@ -44,6 +44,7 @@
     "dexie": "^4.2.1",
     "dexie-react-hooks": "^4.2.0",
     "elkjs": "^0.11.0",
+    "immer": "^10.2.0",
     "lexical": "^0.38.2",
     "lucide-react": "^0.553.0",
     "nanoid": "^5.1.6",
