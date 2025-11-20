@@ -34,6 +34,7 @@ import { Divider } from "@/design-system/components";
 import { ConfirmLoadAction } from "./components/confirm-load-action";
 import { ConfirmSaveAction } from "./components/confirm-save-action";
 import { getUserService } from "@/domains/user/user-service";
+import { useIsOnline } from "@/hooks/use-is-online";
 
 const NavButton = ({
   children,
@@ -66,6 +67,7 @@ export const NavbarActions = ({
   loadRemoteData: () => void;
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const isOnline = useIsOnline();
 
   return user ? (
     <div className="pl-4">
@@ -117,7 +119,8 @@ export const NavbarActions = ({
           variant="outline"
           size="sm"
           className="gap-2"
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => isOnline && setIsModalOpen(true)}
+          disabled={!isOnline}
         >
           <LogInIcon size="16px" />
           Log in
