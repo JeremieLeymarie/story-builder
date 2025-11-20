@@ -10,6 +10,7 @@ import { WithoutKey } from "@/types";
 import { lexicalContentSchema } from "@/lib/lexical-content";
 import z from "zod";
 import { actionSchema } from "@/lib/action-schema";
+import { produce } from "immer";
 
 export const ANONYMOUS_AUTHOR = {
   key: "ANONYMOUS_AUTHOR_KEY",
@@ -121,12 +122,21 @@ export const _makeBulkSceneUpdatePayload = ({
 
       if (!actions.length) return null; // No need to update if the scene doesn't have any actions
 
-      const newActions = actions?.map((action) => ({
-        ...action,
-        ...(action.sceneKey
-          ? { sceneKey: oldScenesToNewScenes[action.sceneKey] }
-          : {}),
-      }));
+      const newActions = actions?.map((action) =>
+        produce(action, (draft) => {
+          if (draft.sceneKey)
+            draft.sceneKey = oldScenesToNewScenes[draft.sceneKey];
+          if (draft.type === "conditional") {
+            const newTargetSceneKey =
+              oldScenesToNewScenes[draft.condition.sceneKey];
+            if (!newTargetSceneKey)
+              throw new Error(
+                "sceneKey not found in old scene to new scenes mapping",
+              ); // Should we throw here or should gracefully fallback on a simple action
+            draft.condition.sceneKey = newTargetSceneKey;
+          }
+        }),
+      );
 
       const newSceneKey = oldScenesToNewScenes[scene.key];
 
