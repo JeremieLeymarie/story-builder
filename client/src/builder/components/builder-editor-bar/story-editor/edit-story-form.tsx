@@ -114,7 +114,7 @@ export const EditStoryForm = ({
                       className="hover:text-primary"
                     />
                   </TooltipTrigger>
-                  <TooltipContent className="text-muted-foreground max-w-[300px] text-xs font-normal">
+                  <TooltipContent className="max-w-[300px] text-xs font-normal">
                     You can link a story to a wiki and reference wiki articles
                     in scenes
                   </TooltipContent>
