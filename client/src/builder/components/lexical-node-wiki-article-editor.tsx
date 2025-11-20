@@ -40,6 +40,7 @@ import { WikiSectionArticle } from "@/domains/wiki/types";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
 import { useEditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
 import { WikiNode } from "../lexical-wiki-node";
+import { SimpleLoader } from "@/design-system/components/simple-loader";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $createTextNode } from "lexical";
 import { useBuilderContext } from "../hooks/use-builder-context";
@@ -233,22 +234,28 @@ const ArticleInfo = ({
         </div>
       </div>
       <div className="mt-1">
-        {isLoading || !article || !articleKey ? (
-          <p className="text-muted-foreground">
-            Article not found. Are you sure it still exists?
-          </p>
+        {isLoading ? (
+          <SimpleLoader />
         ) : (
-          <div>
-            Referenced article:&nbsp;
-            <Link
-              to="/wikis/$wikiKey/$articleKey"
-              params={{ wikiKey: article.wikiKey, articleKey: articleKey }}
-              target="_blank"
-              className="inline-flex items-center gap-1 font-semibold text-emerald-600 hover:underline"
-            >
-              {article?.title} <ExternalLinkIcon size={14} />
-            </Link>
-          </div>
+          <>
+            {!article || !articleKey ? (
+              <p className="text-muted-foreground">
+                Article not found. Are you sure it still exists?
+              </p>
+            ) : (
+              <div>
+                Referenced article:&nbsp;
+                <Link
+                  to="/wikis/$wikiKey/$articleKey"
+                  params={{ wikiKey: article.wikiKey, articleKey: articleKey }}
+                  target="_blank"
+                  className="inline-flex items-center gap-1 font-semibold text-emerald-600 hover:underline"
+                >
+                  {article?.title} <ExternalLinkIcon size={14} />
+                </Link>
+              </div>
+            )}
+          </>
         )}
       </div>
     </PopoverContent>
