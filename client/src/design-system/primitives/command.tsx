@@ -11,6 +11,8 @@ import {
   DialogTitle,
 } from "@/design-system/primitives/dialog";
 
+// Modified to use primary color as background for CommandItem on hover
+
 function Command({
   className,
   ...props
