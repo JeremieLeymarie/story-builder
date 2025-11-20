@@ -208,12 +208,10 @@ const ArticleInfo = ({
     <PopoverContent>
       <div className="flex items-center justify-between">
         <span className="text-muted-foreground">
-          {!article ? "Error" : "Details"}
+          {!article && !isLoading ? "Error" : "Details"}
         </span>
         <div className="flex">
-          {isLoading || !article || !articleKey ? (
-            <></>
-          ) : (
+          {isLoading || !article || !articleKey ? null : (
             <Dialog>
               <DialogTrigger asChild>
                 <Button size="xs" variant="ghost" disabled={!article}>
