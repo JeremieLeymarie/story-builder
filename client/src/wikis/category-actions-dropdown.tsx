@@ -49,6 +49,7 @@ export const CategoryActionsDropdown = ({
             <Link
               to="/wikis/$wikiKey/new"
               params={{ wikiKey }}
+              search={{ categoryKey: category.key }}
               className="flex cursor-pointer items-center gap-2"
             >
               <PlusIcon size={16} />

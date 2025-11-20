@@ -8,6 +8,7 @@ import { Button } from "@/design-system/primitives";
 
 const RouteComponent = () => {
   const { wikiKey } = Route.useParams();
+  const { categoryKey } = Route.useSearch();
   const { wikiData, permissions, refetch, isLoading } = useWikiQueries({
     wikiKey,
   });
@@ -29,6 +30,8 @@ const RouteComponent = () => {
     );
   }
 
+  const defaultValues = categoryKey ? { categoryKey } : undefined;
+
   return (
     <WikiProvider
       refresh={async () => {
@@ -38,7 +41,7 @@ const RouteComponent = () => {
       permissions={permissions}
     >
       <WikiContainer>
-        <ArticleEditor mode="create" />
+        <ArticleEditor mode="create" defaultValues={defaultValues} />
       </WikiContainer>
     </WikiProvider>
   );
@@ -46,4 +49,9 @@ const RouteComponent = () => {
 
 export const Route = createFileRoute("/wikis/$wikiKey/new")({
   component: RouteComponent,
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      categoryKey: search.categoryKey as string | undefined,
+    };
+  },
 });
