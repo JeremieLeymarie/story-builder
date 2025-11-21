@@ -24,8 +24,6 @@ export const _getLibraryService = ({
     const user = await localRepository.getUser();
     const story = await localRepository.getStory(storyKey);
 
-    console.log({ story });
-
     if (!story) throw new Error(`Error: invalid story key: ${storyKey}`);
 
     if (!story.firstSceneKey || story.firstSceneKey === TEMPORARY_NULL_KEY) {
