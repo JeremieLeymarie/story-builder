@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { ThemeProvider } from "@/providers/theme-provider";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -13,7 +14,7 @@ import { useIsMobile } from "@/hooks/use-is-mobile";
 import { MobileNavbar } from "@/navbar/mobile-navbar";
 import { MigrationProvider } from "@/providers/migration-provider";
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: { networkMode: "offlineFirst" },
     mutations: {
