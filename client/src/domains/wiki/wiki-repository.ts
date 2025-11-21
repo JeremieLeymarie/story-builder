@@ -25,7 +25,9 @@ export type WikiRepositoryPort = {
   ) => Promise<void>;
   removeArticle: (articleKey: string) => Promise<void>;
   getArticle: (articleKey: string) => Promise<WikiArticle | null>;
+  getArticles: (wikiKey: string) => Promise<WikiArticle[]>;
   createCategory: (payload: WithoutKey<WikiCategory>) => Promise<string>;
+  getCategories: (wikiKey: string) => Promise<WikiCategory[]>;
   addArticleLink: (payload: WikiArticleLink) => Promise<void>;
   updateArticleLink: (payload: WikiArticleLink) => Promise<void>;
   removeArticleLink: (key: string, entityKey: string) => Promise<void>;
@@ -33,6 +35,9 @@ export type WikiRepositoryPort = {
     key: string,
     entityKey: string,
   ) => Promise<WikiArticleLink | null>;
+  getArticleLinksFromArticleKeys: (
+    articleKeys: string[],
+  ) => Promise<WikiArticleLink[]>;
 };
 
 export const _getDexieWikiRepository = (
@@ -133,6 +138,12 @@ export const _getDexieWikiRepository = (
       return (await db.wikiArticles.get(articleKey)) ?? null;
     },
 
+    getArticles: async (wikiKey) => {
+      return await db.wikiArticles
+        .filter((a) => a.wikiKey === wikiKey)
+        .toArray();
+    },
+
     removeArticle: async (articleKey: string) => {
       await db.wikiArticles.delete(articleKey);
       await db.wikiArticleLinks.where("articleKey").equals(articleKey).delete();
@@ -140,6 +151,12 @@ export const _getDexieWikiRepository = (
 
     createCategory: async (payload) => {
       return await db.wikiCategories.add(payload);
+    },
+
+    getCategories: async (wikiKey) => {
+      return await db.wikiCategories
+        .filter((c) => c.wikiKey === wikiKey)
+        .toArray();
     },
 
     addArticleLink: async (payload: WikiArticleLink) => {
@@ -161,6 +178,12 @@ export const _getDexieWikiRepository = (
       return (
         (await db.wikiArticleLinks.where({ key, entityKey }).first()) ?? null
       );
+    },
+
+    getArticleLinksFromArticleKeys: async (articleKeys) => {
+      return await db.wikiArticleLinks
+        .filter((al) => articleKeys.includes(al.articleKey))
+        .toArray();
     },
   };
 };
