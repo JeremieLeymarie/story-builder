@@ -7,13 +7,13 @@ import { createFileRoute } from "@tanstack/react-router";
 const RouteComponent = () => {
   const { data: wikis } = useQuery({
     queryKey: ["WIKIS"],
-    queryFn: async () => (await getWikiService()).getAllWikis(),
+    queryFn: async () => getWikiService().getAllWikis(),
   });
 
   if (wikis === undefined) return <BackdropLoader />;
 
   return wikis ? (
-    <WikiList wikis={wikis} />
+    <WikiList userWikis={wikis.userWikis} importedWikis={wikis.importedWikis} />
   ) : (
     <ErrorMessage>Could not get wikis</ErrorMessage>
   );

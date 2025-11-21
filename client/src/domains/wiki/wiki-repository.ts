@@ -12,6 +12,7 @@ export const NO_CATEGORY = "NO_CATEGORY";
 
 export type WikiRepositoryPort = {
   getUserWikis: (userKey: string | undefined) => Promise<Wiki[]>;
+  getImportedWikis: () => Promise<Wiki[]>;
   bulkUpdate: (
     wikis: ({ key: string } & Partial<Omit<Wiki, "key">>)[],
   ) => Promise<void>;
@@ -57,6 +58,10 @@ export const _getDexieWikiRepository = (
             wiki.type === "created",
         )
         .toArray();
+    },
+
+    getImportedWikis: async () => {
+      return await db.wikis.filter((w) => w.type === "imported").toArray();
     },
 
     bulkUpdate: async (wikis) => {
