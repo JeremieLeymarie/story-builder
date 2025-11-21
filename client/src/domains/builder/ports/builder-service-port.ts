@@ -5,7 +5,7 @@ import {
   Scene,
   Story,
 } from "@/lib/storage/domain";
-import { StoryFromImport } from "@/services/common/import-service";
+import { StoryFromImport } from "@/services/common/schema";
 import { WithoutKey } from "@/types";
 import { Edge } from "@xyflow/react";
 

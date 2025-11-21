@@ -15,7 +15,7 @@ export type LocalRepositoryPort = {
     firstScene: WithoutKey<Omit<Scene, "storyKey">>;
   }) => Promise<{ story: Story; scene: Scene } | null>;
   updateOrCreateStories: (stories: Story[]) => Promise<string[] | null>;
-  updateStory: (story: Story) => Promise<Story>;
+  updateStory: (story: Partial<Story> & { key: string }) => Promise<void>;
   getStory: (key: string) => Promise<Story | null>;
   getStoriesByKeys: (keys: string[]) => Promise<Story[]>;
   getStoriesByAuthor: (userKey?: string) => Promise<Story[] | null>;

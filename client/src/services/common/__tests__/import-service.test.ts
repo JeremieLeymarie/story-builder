@@ -7,7 +7,6 @@ import {
   _getImportService,
   _makeBulkSceneUpdatePayload,
   ImportServicePort,
-  StoryFromImport,
   TEMPORARY_NULL_KEY,
 } from "../import-service";
 import {
@@ -16,10 +15,16 @@ import {
   BASIC_STORY,
 } from "@/repositories/stubs/data";
 import { nanoid } from "nanoid";
+import {
+  getStubWikiRepository,
+  MockWikiRepository,
+} from "@/domains/wiki/stubs/stub-wiki-repository";
+import { StoryFromImport } from "../schema";
 const SCENE_KEY = nanoid();
 
 describe("import-service", () => {
   let localRepository: MockLocalRepository;
+  let wikiRepository: MockWikiRepository;
   let importService: ImportServicePort;
 
   const importedStory: StoryFromImport["story"] = {
@@ -73,9 +78,11 @@ describe("import-service", () => {
 
   beforeEach(() => {
     localRepository = getLocalRepositoryStub();
+    wikiRepository = getStubWikiRepository();
 
     importService = _getImportService({
       localRepository,
+      wikiRepository,
     });
 
     vi.useFakeTimers();

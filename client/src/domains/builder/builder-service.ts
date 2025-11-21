@@ -2,10 +2,7 @@ import { BuilderPosition, Scene, Story } from "@/lib/storage/domain";
 import { LocalRepositoryPort } from "@/repositories/local-repository-port";
 import { BuilderNode } from "@/builder/types";
 import { Edge } from "@xyflow/react";
-import {
-  ImportServicePort,
-  StoryFromImport,
-} from "@/services/common/import-service";
+import { ImportServicePort } from "@/services/common/import-service";
 import { WithoutKey } from "@/types";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { BuilderServicePort } from "./ports/builder-service-port";
@@ -18,6 +15,7 @@ import {
   CannotDeleteFirstSceneError,
   DuplicationMissingPositionError,
 } from "./errors";
+import { StoryFromImport } from "@/services/common/schema";
 
 export const _getBuilderService = ({
   localRepository,
@@ -280,14 +278,33 @@ export const _getBuilderService = ({
             type: "builder",
           });
 
-          await importService.createScenes({
+          const oldScenesToNew = await importService.createScenes({
             story: storyFromImport,
             newStoryKey: storyResult.data.key,
           });
 
+          if (storyFromImport.wiki)
+            await importService.createWiki({
+              oldScenesToNew,
+              type: "imported",
+              wikiData: storyFromImport.wiki,
+              newStoryKey: storyResult.data.key,
+            });
+
           return storyResult.data.key;
         },
-        { entities: ["scene", "story", "user"], mode: "readwrite" },
+        {
+          entities: [
+            "scene",
+            "story",
+            "user",
+            "wiki",
+            "wiki-article",
+            "wiki-article-link",
+            "wiki-article-link",
+          ],
+          mode: "readwrite",
+        },
       );
 
       return { error: null, data: { storyKey } };

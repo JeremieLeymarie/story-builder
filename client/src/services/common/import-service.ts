@@ -1,16 +1,18 @@
-import {
-  BuilderStory,
-  LibraryStory,
-  Story,
-  STORY_GENRES,
-  STORY_TYPE,
-} from "@/lib/storage/domain";
+import { BuilderStory, LibraryStory, Story, Wiki } from "@/lib/storage/domain";
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 import { WithoutKey } from "@/types";
-import { lexicalContentSchema } from "@/lib/lexical-content";
 import z from "zod";
-import { actionSchema } from "@/lib/action-schema";
 import { produce } from "immer";
+import {
+  StoryFromImport,
+  storyFromImportSchema,
+  WikiFromImport,
+} from "./schema";
+import {
+  getDexieWikiRepository,
+  WikiRepositoryPort,
+} from "@/domains/wiki/wiki-repository";
+import { nanoid } from "nanoid";
 
 export const ANONYMOUS_AUTHOR = {
   key: "ANONYMOUS_AUTHOR_KEY",
@@ -18,53 +20,6 @@ export const ANONYMOUS_AUTHOR = {
 };
 
 export const TEMPORARY_NULL_KEY = "TEMPORARY_NULL_KEY";
-
-export const storyFromImportSchema = z.object({
-  story: z.object(
-    {
-      key: z.nanoid({ message: "storyKey is required" }),
-      title: z.string({ message: "Title is required" }),
-      description: z.string({ message: "Description is required" }),
-      firstSceneKey: z.nanoid({ message: "FirstSceneKey is required" }),
-      creationDate: z
-        .string({ message: "creationDate is required" })
-        .transform((val) => new Date(val)),
-      publicationDate: z
-        .string({ message: "publicationDate is required" })
-        .transform((val) => new Date(val))
-        .optional(),
-      genres: z.array(z.enum(STORY_GENRES)),
-      author: z
-        .object({
-          username: z.string(),
-          key: z.string(),
-        })
-        .optional(),
-      image: z.url({ message: "Image has to be a valid URL" }),
-      type: z.enum(STORY_TYPE, {
-        message: "Type has to be a valid StoryType",
-      }),
-    },
-    { message: "Story is required" },
-  ),
-  scenes: z.array(
-    z.object({
-      key: z.nanoid({ message: "Key is required" }),
-      storyKey: z.nanoid({ message: "StoryKey is required" }),
-      title: z.string({ message: "Title is required" }),
-      content: lexicalContentSchema,
-      actions: z.array(actionSchema),
-      builderParams: z.object({
-        position: z.object({
-          x: z.number({ message: "X is required" }),
-          y: z.number({ message: "Y is required" }),
-        }),
-      }),
-    }),
-    { message: "Scenes are required" },
-  ),
-});
-export type StoryFromImport = z.infer<typeof storyFromImportSchema>;
 
 export type ImportServiceError =
   | "Invalid JSON format"
@@ -96,7 +51,13 @@ export type ImportServicePort = {
   createScenes: (props: {
     story: StoryFromImport;
     newStoryKey: string;
-  }) => Promise<ImportStoryResult<null>>;
+  }) => Promise<Record<string, string>>;
+  createWiki: (props: {
+    wikiData: WikiFromImport;
+    type: Wiki["type"];
+    oldScenesToNew: Record<string, string>;
+    newStoryKey: string;
+  }) => Promise<void>;
 };
 
 export const _makeBulkSceneUpdatePayload = ({
@@ -151,9 +112,134 @@ export const _makeBulkSceneUpdatePayload = ({
 
 export const _getImportService = ({
   localRepository,
+  wikiRepository,
 }: {
   localRepository: LocalRepositoryPort;
+  wikiRepository: WikiRepositoryPort;
 }): ImportServicePort => {
+  const _createWikiCategories = async (
+    categories: WikiFromImport["categories"],
+    newWikiKey: string,
+  ) => {
+    const { oldToNew, bulkPayload } = categories.reduce(
+      (acc, curr) => {
+        const k = nanoid();
+
+        return produce(acc, (draft) => {
+          draft.bulkPayload.push({
+            key: k,
+            color: curr.color,
+            name: curr.name,
+            wikiKey: newWikiKey,
+          });
+          draft.oldToNew[curr.key] = k;
+        });
+      },
+      {
+        oldToNew: {},
+        bulkPayload: [],
+      } as {
+        oldToNew: Record<string, string>;
+        bulkPayload: Parameters<typeof wikiRepository.bulkAddCategories>[0];
+      },
+    );
+
+    await wikiRepository.bulkAddCategories(bulkPayload);
+    return oldToNew;
+  };
+
+  const _createWikiArticles = async ({
+    articles,
+    oldCategoriesToNew,
+    newWikiKey,
+  }: {
+    articles: WikiFromImport["articles"];
+    oldCategoriesToNew: Record<string, string>;
+    newWikiKey: string;
+  }) => {
+    const { oldToNew, bulkPayload } = articles.reduce(
+      (acc, curr) => {
+        const k = nanoid();
+        const date = new Date();
+        const newCatKey = curr.categoryKey
+          ? oldCategoriesToNew[curr.categoryKey]
+          : undefined;
+        if (curr.categoryKey && !newCatKey)
+          throw new Error(
+            `Wiki Article's old category key [${curr.categoryKey}] should be found in the old-key/new-key mapping`,
+          );
+
+        return produce(acc, (draft) => {
+          draft.bulkPayload.push({
+            key: k,
+            wikiKey: newWikiKey,
+            categoryKey: newCatKey,
+            createdAt: date,
+            updatedAt: date,
+            content: curr.content,
+            image: curr.image,
+            title: curr.title,
+          });
+          draft.oldToNew[curr.key] = k;
+        });
+      },
+      {
+        oldToNew: {},
+        bulkPayload: [],
+      } as {
+        oldToNew: Record<string, string>;
+        bulkPayload: Parameters<typeof wikiRepository.bulkAddArticles>[0];
+      },
+    );
+
+    await wikiRepository.bulkAddArticles(bulkPayload);
+    return oldToNew;
+  };
+
+  const _createWikiArticleLinks = async ({
+    articleLinks,
+    oldScenesToNew,
+    oldArticlesToNew,
+  }: {
+    articleLinks: WikiFromImport["articleLinks"];
+    oldScenesToNew: Record<string, string>;
+    oldArticlesToNew: Record<string, string>;
+  }) => {
+    const bulkPayload = articleLinks.map((curr) => {
+      const k = nanoid();
+
+      const newArticleKey = curr.articleKey
+        ? oldArticlesToNew[curr.articleKey]
+        : undefined;
+      if (!newArticleKey)
+        throw new Error(
+          `Wiki Article Link's old article key [${curr.articleKey}] should be found in the old-key/new-key mapping`,
+        );
+
+      if (curr.entityType !== "scene") {
+        throw new Error(
+          `Unsupported entity type for wiki article link ${curr.entityType}`,
+        );
+      }
+      const newEntityKey = curr.entityKey
+        ? oldScenesToNew[curr.entityKey]
+        : undefined;
+      if (!newEntityKey)
+        throw new Error(
+          `Wiki Article Link's old entity key [${curr.entityKey}] should be found in the old-key/new-key mapping`,
+        );
+
+      return {
+        key: k,
+        articleKey: newArticleKey,
+        entityKey: newEntityKey,
+        entityType: curr.entityType,
+      };
+    });
+
+    await wikiRepository.bulkAddArticleLinks(bulkPayload);
+  };
+
   return {
     parseJSON: (jsonData) => {
       let parsed: unknown;
@@ -179,6 +265,7 @@ export const _getImportService = ({
           type,
           originalStoryKey: importedStoryKey,
           firstSceneKey: TEMPORARY_NULL_KEY,
+          wikiKey: TEMPORARY_NULL_KEY,
         };
 
       if (type === "builder") {
@@ -227,10 +314,43 @@ export const _getImportService = ({
 
       await localRepository.updateFirstScene(newStoryKey, newFirstSceneKey);
 
-      return makeOk(null);
+      return oldScenesToNewScenes;
+    },
+
+    createWiki: async ({ wikiData, type, oldScenesToNew, newStoryKey }) => {
+      const wikiKey = await wikiRepository.create({
+        createdAt: new Date(),
+        image: wikiData.wiki.image,
+        name: wikiData.wiki.name,
+        type,
+        author: wikiData.wiki.author,
+        description: wikiData.wiki.description,
+      });
+
+      const oldCategoriesToOld = await _createWikiCategories(
+        wikiData.categories,
+        wikiKey,
+      );
+
+      const oldArticlesToNew = await _createWikiArticles({
+        articles: wikiData.articles,
+        newWikiKey: wikiKey,
+        oldCategoriesToNew: oldCategoriesToOld,
+      });
+
+      await _createWikiArticleLinks({
+        articleLinks: wikiData.articleLinks,
+        oldArticlesToNew: oldArticlesToNew,
+        oldScenesToNew,
+      });
+
+      localRepository.updateStory({ key: newStoryKey, wikiKey });
     },
   };
 };
 
 export const getImportService = () =>
-  _getImportService({ localRepository: getLocalRepository() });
+  _getImportService({
+    localRepository: getLocalRepository(),
+    wikiRepository: getDexieWikiRepository(),
+  });

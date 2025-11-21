@@ -3,9 +3,9 @@ import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 import {
   getImportService,
   ImportServicePort,
-  StoryFromImport,
   TEMPORARY_NULL_KEY,
 } from "@/services/common/import-service";
+import { StoryFromImport } from "@/services/common/schema";
 import { DexieError } from "dexie";
 
 // TODO: uniformize responses
@@ -23,6 +23,8 @@ export const _getLibraryService = ({
   }) => {
     const user = await localRepository.getUser();
     const story = await localRepository.getStory(storyKey);
+
+    console.log({ story });
 
     if (!story) throw new Error(`Error: invalid story key: ${storyKey}`);
 
@@ -109,15 +111,32 @@ export const _getLibraryService = ({
               type: "imported",
             });
 
-            await importService.createScenes({
+            const oldScenesToNew = await importService.createScenes({
               story: storyFromImport,
               newStoryKey: story.data.key,
             });
 
+            if (storyFromImport.wiki)
+              await importService.createWiki({
+                oldScenesToNew,
+                type: "imported",
+                wikiData: storyFromImport.wiki,
+                newStoryKey: story.data.key,
+              });
+
             await _createBlankStoryProgress({ storyKey: story.data.key });
           },
           {
-            entities: ["story-progress", "scene", "story", "user"],
+            entities: [
+              "story-progress",
+              "scene",
+              "story",
+              "user",
+              "wiki",
+              "wiki-article",
+              "wiki-article-link",
+              "wiki-category",
+            ],
             mode: "readwrite",
           },
         )
