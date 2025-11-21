@@ -711,10 +711,7 @@ describe("builder-service", () => {
           scenes: [MOCK_IMPORTED_SCENE],
         });
 
-        expect(result).toStrictEqual({
-          error: null,
-          data: { storyKey: BASIC_STORY.key },
-        });
+        expect(result).toStrictEqual(BASIC_STORY.key);
       });
     });
   });
