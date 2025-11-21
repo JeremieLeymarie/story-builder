@@ -32,7 +32,7 @@ export type WikiExportData = {
 };
 
 export type WikiServicePort = {
-  getAllWikis: () => Promise<Wiki[]>;
+  getAllWikis: () => Promise<{ userWikis: Wiki[]; importedWikis: Wiki[] }>;
   addAuthorToWikis: (userInfo: {
     username: string;
     key: string;
@@ -69,16 +69,23 @@ export const _getWikiService = ({
   authContext: AuthContextPort;
   getPermissionContext: (wikiKey: string) => Promise<WikiPermissionContext>;
 }): WikiServicePort => {
-  const getAllWikis = async () => {
+  const getUserWikis = async () => {
     const user = await authContext.getUser();
     return repository.getUserWikis(user?.key);
   };
 
   return {
-    getAllWikis,
+    getAllWikis: async () => {
+      const [userWikis, importedWikis] = await Promise.all([
+        getUserWikis(),
+        repository.getImportedWikis(),
+      ]);
+
+      return { userWikis, importedWikis };
+    },
 
     addAuthorToWikis: async ({ username, key }) => {
-      const wikis = (await getAllWikis()).filter(
+      const wikis = (await getUserWikis()).filter(
         (wiki) => wiki.author === undefined && wiki.type === "created",
       );
       await repository.bulkUpdate(

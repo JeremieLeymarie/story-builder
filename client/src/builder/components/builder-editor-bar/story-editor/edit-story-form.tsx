@@ -34,7 +34,9 @@ export const EditStoryForm = ({
 }) => {
   const { story } = useBuilderContext();
   const { wikis, isLoading: isWikisLoading } = useGetAllWikis();
-  const assignedWiki = wikis?.find((wiki) => wiki.key === story.wikiKey);
+  const assignedWiki = wikis?.userWikis.find(
+    (wiki) => wiki.key === story.wikiKey,
+  );
 
   return (
     <Form {...form}>
@@ -135,7 +137,7 @@ export const EditStoryForm = ({
                 <FormControl>
                   <WikiSelector
                     disabled={!wikis || isWikisLoading}
-                    wikis={wikis ?? []}
+                    wikis={wikis?.userWikis ?? []}
                     selectedWikiKey={field.value}
                     onChange={(wikiKey) => field.onChange(wikiKey)}
                   />
