@@ -24,6 +24,13 @@ const DEFAULT_CATEGORIES: Omit<WikiCategory, "key" | "wikiKey">[] = [
   { name: "Event", color: "#bb3e03" },
 ];
 
+export type WikiExportData = {
+  wiki: Wiki;
+  articles: WikiArticle[];
+  categories: WikiCategory[];
+  articleLinks: WikiArticleLink[];
+};
+
 export type WikiServicePort = {
   getAllWikis: () => Promise<Wiki[]>;
   addAuthorToWikis: (userInfo: {
@@ -50,6 +57,7 @@ export type WikiServicePort = {
     articleLinkKey: string,
     entityKey: string,
   ) => Promise<WikiArticleLink | null>;
+  getWikiExportData: (wikiKey: string) => Promise<WikiExportData | null>;
 };
 
 export const _getWikiService = ({
@@ -176,6 +184,22 @@ export const _getWikiService = ({
         entityKey,
       );
       return articleLink;
+    },
+
+    getWikiExportData: async (wikiKey) => {
+      const [wiki, categories, articles] = await Promise.all([
+        repository.get(wikiKey),
+        repository.getCategories(wikiKey),
+        repository.getArticles(wikiKey),
+      ]);
+
+      if (!wiki) return null;
+
+      const articleLinks = await repository.getArticleLinksFromArticleKeys(
+        articles.map((a) => a.key),
+      );
+
+      return { wiki, articles, categories, articleLinks };
     },
   };
 };
