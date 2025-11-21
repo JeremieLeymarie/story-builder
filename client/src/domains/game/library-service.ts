@@ -5,6 +5,7 @@ import {
   ImportServicePort,
   TEMPORARY_NULL_KEY,
 } from "@/services/common/import-service";
+import { StoryFromImport } from "@/services/common/schema";
 
 // TODO: uniformize responses
 export const _getLibraryService = ({

@@ -1,6 +1,13 @@
 import { cn } from "@/lib/style";
 import { FileIcon } from "lucide-react";
-import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  DragEvent,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from "react";
 
 const useFileUpload = ({
   onReadFile,
@@ -10,19 +17,16 @@ const useFileUpload = ({
   readAs: ReadAs;
 }) => {
   const reader = useRef(new FileReader());
+  const onReadFileHandler = useEffectEvent(() => {
+    if (typeof reader.current.result !== "string")
+      throw new Error(`Error when reading file: ${reader.current.result}`);
+
+    onReadFile(reader.current.result);
+  });
 
   useEffect(() => {
-    reader.current.addEventListener(
-      "load",
-      () => {
-        if (typeof reader.current.result !== "string")
-          throw new Error(`Error when reading file: ${reader.current.result}`);
-
-        onReadFile(reader.current.result);
-      },
-      false,
-    );
-  }, [onReadFile]);
+    reader.current.addEventListener("load", onReadFileHandler, false);
+  }, []);
 
   const readFile = (file: File) => {
     if (readAs === "text") reader.current.readAsText(file);
