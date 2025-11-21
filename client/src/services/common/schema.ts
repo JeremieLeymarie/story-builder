@@ -34,6 +34,7 @@ export const storyFromImportSchema = z.object({
       type: z.enum(STORY_TYPE, {
         message: "Type has to be a valid StoryType",
       }),
+      wikiKey: z.nanoid().optional(),
     },
     { message: "Story is required" },
   ),

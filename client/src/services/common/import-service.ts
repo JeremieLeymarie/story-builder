@@ -265,7 +265,9 @@ export const _getImportService = ({
           type,
           originalStoryKey: importedStoryKey,
           firstSceneKey: TEMPORARY_NULL_KEY,
-          wikiKey: TEMPORARY_NULL_KEY,
+          ...(storyFromImport.story.wikiKey
+            ? { wikiKey: TEMPORARY_NULL_KEY }
+            : {}),
         };
 
       if (type === "builder") {
