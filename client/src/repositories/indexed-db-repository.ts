@@ -14,9 +14,9 @@ const entityToDexieTableAdapter = (entity: Entity) => {
     user: "user",
     "story-progress": "storyProgresses",
     wiki: "wikis",
-    "wiki-article": "wikiArticle",
-    "wiki-category": "wikiCategory",
-    "wiki-article-link": "wikiArticleLink",
+    "wiki-article": "wikiArticles",
+    "wiki-category": "wikiCategories",
+    "wiki-article-link": "wikiArticleLinks",
   };
 
   return mapping[entity];
@@ -88,7 +88,6 @@ const indexedDBRepository: LocalRepositoryPort = {
 
   updateStory: async (story) => {
     await db.stories.update(story.key, story);
-    return story;
   },
 
   deleteStory: async (storyKey) => {

@@ -8,13 +8,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/design-system/primitives";
-import {
-  ANONYMOUS_AUTHOR,
-  StoryFromImport,
-} from "@/services/common/import-service";
+import { ANONYMOUS_AUTHOR } from "@/services/common/import-service";
 import { ReactNode, useState } from "react";
 import { Badge } from "../primitives/badge";
 import { StoryGenreBadge } from "./story-genre-badge";
+import { StoryFromImport } from "@/services/common/schema";
 
 const ImportPreview = ({
   storyFromImport,

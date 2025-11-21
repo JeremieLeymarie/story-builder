@@ -1,12 +1,10 @@
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { getBuilderService } from "@/get-builder-service";
-import {
-  getImportService,
-  StoryFromImport,
-} from "@/services/common/import-service";
+import { getImportService } from "@/services/common/import-service";
 import { Story } from "@/lib/storage/domain";
 import { WithoutKey } from "@/types";
+import { StoryFromImport } from "@/services/common/schema";
 
 export type CreateStoryPayload = Omit<
   WithoutKey<Story>,
