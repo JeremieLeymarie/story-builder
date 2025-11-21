@@ -1,8 +1,12 @@
 import { BuilderContainer } from "@/builder/components/builder-container";
-import { useGetBuilder } from "@/builder/hooks/use-get-builder";
+import {
+  makeGetBuilderQueryOptions,
+  useGetBuilder,
+} from "@/builder/hooks/use-get-builder";
 import { useBuilderEditorStore } from "@/builder/hooks/use-scene-editor-store";
 import { BackdropLoader, ErrorMessage } from "@/design-system/components";
 import { createFileRoute } from "@tanstack/react-router";
+import { queryClient } from "../__root";
 
 const Page = () => {
   const { storyKey } = Route.useParams();
@@ -31,7 +35,10 @@ const Page = () => {
 
 export const Route = createFileRoute("/builder/$storyKey")({
   component: Page,
-  onLeave: () => {
+  onLeave: ({ params: { storyKey } }) => {
+    queryClient.invalidateQueries({
+      queryKey: makeGetBuilderQueryOptions({ storyKey }).queryKey,
+    });
     useBuilderEditorStore.setState({ editor: null });
   },
 });
