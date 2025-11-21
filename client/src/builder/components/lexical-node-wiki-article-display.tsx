@@ -23,7 +23,7 @@ export const DisplayWikiNodeComponent = ({
   const { entityKey } = useEditorContext();
 
   const { data: article } = useQuery({
-    queryKey: ["get-article-link", articleLinkKey],
+    queryKey: ["get-article", articleLinkKey],
     queryFn: async () => {
       const wikiService = getWikiService();
       const articleLink = await wikiService.getArticleLink(

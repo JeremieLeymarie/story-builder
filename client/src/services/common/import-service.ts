@@ -206,8 +206,6 @@ export const _getImportService = ({
     oldArticlesToNew: Record<string, string>;
   }) => {
     const bulkPayload = articleLinks.map((curr) => {
-      const k = nanoid();
-
       const newArticleKey = curr.articleKey
         ? oldArticlesToNew[curr.articleKey]
         : undefined;
@@ -230,7 +228,7 @@ export const _getImportService = ({
         );
 
       return {
-        key: k,
+        key: curr.key, // important! Article link keys are persistent between imports
         articleKey: newArticleKey,
         entityKey: newEntityKey,
         entityType: curr.entityType,
