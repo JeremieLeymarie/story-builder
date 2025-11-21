@@ -286,7 +286,7 @@ export const _getBuilderService = ({
           if (storyFromImport.wiki)
             await importService.createWiki({
               oldScenesToNew,
-              type: "imported",
+              type: "created",
               wikiData: storyFromImport.wiki,
               newStoryKey: storyResult.data.key,
             });
