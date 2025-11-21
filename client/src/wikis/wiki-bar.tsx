@@ -52,7 +52,7 @@ const ArticleTitle = ({
         title="Are you sure?"
         description={
           <div>
-            Do want to delete <span className="font-semibold">${title}</span>{" "}
+            Do want to delete <span className="font-semibold">{title}</span>{" "}
             from the wiki? Deletion is definitive, and links to this article in
             scenes will also be deleted.
           </div>
