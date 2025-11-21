@@ -5,8 +5,6 @@ import {
   ImportServicePort,
   TEMPORARY_NULL_KEY,
 } from "@/services/common/import-service";
-import { StoryFromImport } from "@/services/common/schema";
-import { DexieError } from "dexie";
 
 // TODO: uniformize responses
 export const _getLibraryService = ({
@@ -101,46 +99,42 @@ export const _getLibraryService = ({
 
   return {
     importStory: async (storyFromImport: StoryFromImport) => {
-      await localRepository
-        .unitOfWork(
-          async () => {
-            const story = await importService.createStory({
-              story: storyFromImport,
-              type: "imported",
-            });
+      await localRepository.unitOfWork(
+        async () => {
+          const story = await importService.createStory({
+            story: storyFromImport,
+            type: "imported",
+          });
 
-            const oldScenesToNew = await importService.createScenes({
-              story: storyFromImport,
+          const oldScenesToNew = await importService.createScenes({
+            story: storyFromImport,
+            newStoryKey: story.data.key,
+          });
+
+          if (storyFromImport.wiki)
+            await importService.createWiki({
+              oldScenesToNew,
+              type: "imported",
+              wikiData: storyFromImport.wiki,
               newStoryKey: story.data.key,
             });
 
-            if (storyFromImport.wiki)
-              await importService.createWiki({
-                oldScenesToNew,
-                type: "imported",
-                wikiData: storyFromImport.wiki,
-                newStoryKey: story.data.key,
-              });
-
-            await _createBlankStoryProgress({ storyKey: story.data.key });
-          },
-          {
-            entities: [
-              "story-progress",
-              "scene",
-              "story",
-              "user",
-              "wiki",
-              "wiki-article",
-              "wiki-article-link",
-              "wiki-category",
-            ],
-            mode: "readwrite",
-          },
-        )
-        .catch((err) => {
-          console.error((err as DexieError).inner, (err as DexieError).stack);
-        });
+          await _createBlankStoryProgress({ storyKey: story.data.key });
+        },
+        {
+          entities: [
+            "story-progress",
+            "scene",
+            "story",
+            "user",
+            "wiki",
+            "wiki-article",
+            "wiki-article-link",
+            "wiki-category",
+          ],
+          mode: "readwrite",
+        },
+      );
 
       return { error: null };
     },
