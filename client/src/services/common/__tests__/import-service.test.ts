@@ -287,16 +287,18 @@ describe("import-service", () => {
     });
 
     it("should create scenes", async () => {
-      localRepository.createScene = vi.fn(() => Promise.resolve(BASIC_SCENE));
+      localRepository.createScene = vi.fn(() =>
+        Promise.resolve({ ...BASIC_SCENE, key: "new-scene-key" }),
+      );
 
       const result = await importService.createScenes({
         story: parsed,
-        newStoryKey: "new-key",
+        newStoryKey: "new-story-key",
       });
 
       // Scene is created with new story key & no actions at first
       expect(localRepository.createScene).toHaveBeenCalledWith({
-        storyKey: "new-key",
+        storyKey: "new-story-key",
         title: "Your first scene",
         content: BASIC_SCENE_CONTENT,
         actions: [],
@@ -310,10 +312,12 @@ describe("import-service", () => {
       // Scene is updated with the new keys in the action (only the ones with a sceneKey)
       expect(localRepository.updateScenes).toHaveBeenCalledOnce();
       expect(localRepository.updateFirstScene).toHaveBeenCalledWith(
-        "new-key",
-        BASIC_SCENE.key,
+        "new-story-key",
+        "new-scene-key",
       );
-      expect(result).toStrictEqual({ data: null, isOk: true });
+      expect(result).toStrictEqual({
+        [parsed.scenes[0]!.key]: "new-scene-key",
+      });
     });
   });
 });
