@@ -307,7 +307,7 @@ export const _getBuilderService = ({
         },
       );
 
-      return { error: null, data: { storyKey } };
+      return storyKey;
     },
 
     updateStory: async (key, payload) => {

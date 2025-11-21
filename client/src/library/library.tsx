@@ -32,24 +32,24 @@ export const Library = ({ stories }: Library) => {
     const result = getImportService().parseJSON(content);
 
     if (!result.isOk) {
-      toast.error("Import failed", { description: result.error });
+      toast.error("Import failed", {
+        description: result.error,
+        duration: Infinity,
+      });
       return null;
     }
     return result.data;
   };
 
   const importStory = async (storyFromImport: StoryFromImport) => {
-    const result = await getLibraryService().importStory(storyFromImport);
-
-    // TODO: error is always null
-    if (result.error) {
-      toast.error("Import failed!", { description: result.error });
-      return;
+    try {
+      await getLibraryService().importStory(storyFromImport);
+      toast.success("Import complete!", {
+        description: "Game was successfully downloaded on this device.",
+      });
+    } catch (error) {
+      toast.error("Import failed!", { description: (error as Error).message });
     }
-
-    toast.success("Import complete!", {
-      description: "Game was successfully downloaded on this device.",
-    });
   };
 
   return (

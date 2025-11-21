@@ -57,9 +57,7 @@ export type BuilderServicePort = {
     sceneKeys: string[];
   }) => Promise<void>;
   deleteStory: (storyKey: string) => Promise<void>;
-  importStory: (
-    storyFromImport: StoryFromImport,
-  ) => Promise<{ error: null; data: { storyKey: string } }>;
+  importStory: (storyFromImport: StoryFromImport) => Promise<string>;
   updateStory: (
     storyKey: string,
     payload: Partial<BuilderStory>,

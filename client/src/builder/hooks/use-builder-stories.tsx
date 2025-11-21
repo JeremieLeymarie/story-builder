@@ -31,21 +31,19 @@ export const useBuilderStories = () => {
   };
 
   const handleImportFromJSON = async (storyFromImport: StoryFromImport) => {
-    const { error, data } = await builderService.importStory(storyFromImport);
-
-    if (error) {
-      toast.error("Import failed!", { description: error });
-      return;
+    try {
+      const storyKey = await builderService.importStory(storyFromImport);
+      if (!storyKey) throw new Error("Data should be defined");
+      navigate({
+        to: "/builder/$storyKey",
+        params: { storyKey },
+      });
+      toast.success("Import complete!", {
+        description: "You can start working on this story in the builder!",
+      });
+    } catch (error) {
+      toast.error("Import failed!", { description: (error as Error).message });
     }
-    if (!data) throw new Error("Data should be defined");
-
-    navigate({
-      to: "/builder/$storyKey",
-      params: { storyKey: data.storyKey },
-    });
-    toast.success("Import complete!", {
-      description: "You can start working on this story in the builder!",
-    });
   };
 
   const parseFile = (content: string) => {
