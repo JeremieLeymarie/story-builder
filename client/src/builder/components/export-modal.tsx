@@ -8,30 +8,35 @@ import {
   DialogTrigger,
 } from "../../design-system/primitives";
 import { DownloadIcon, CopyIcon } from "lucide-react";
-import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
 
 import { toast } from "sonner";
 import { useExportModalStore } from "../hooks/use-export-modal-store";
 import { SimpleLoader } from "@/design-system/components/simple-loader";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, ReactNode } from "react";
 import { useGetExportData } from "../hooks/use-get-export-data";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/design-system/primitives/tooltip";
 
-export const ExportModal = () => {
+export const ExportModal = ({
+  trigger,
+  tooltip,
+}: {
+  trigger: ReactNode;
+  tooltip?: string;
+}) => {
   const { isOpen, setOpen } = useExportModalStore();
 
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="w-full justify-start gap-4"
-          size="sm"
-        >
-          <DownloadIcon />
-          Export
-          <ButtonShortCutDoc doc="E" />
-        </Button>
-      </DialogTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DialogTrigger asChild>{trigger}</DialogTrigger>
+        </TooltipTrigger>
+        {tooltip && <TooltipContent>{tooltip}</TooltipContent>}
+      </Tooltip>
       <DialogContent>
         <ExportModalContent />
       </DialogContent>
