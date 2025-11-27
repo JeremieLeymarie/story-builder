@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-import { getLocalRepository } from "@/repositories";
+import { getLibraryService } from "@/domains/game/library-service";
+import { toast } from "sonner";
 
 export const useDeleteProgress = () => {
   const {
@@ -8,11 +9,11 @@ export const useDeleteProgress = () => {
     isError,
   } = useMutation({
     mutationFn: async (progressKey: string) => {
-      const localRepository = getLocalRepository();
-      await localRepository.deleteStoryProgresses([progressKey]);
+      const libraryService = getLibraryService();
+      await libraryService.deleteStoryProgress(progressKey);
     },
     onError: () => {
-      // TODO: handle error, show toast...
+      toast.error("Could not delete progress");
     },
   });
 

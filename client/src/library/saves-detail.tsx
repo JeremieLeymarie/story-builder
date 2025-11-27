@@ -89,7 +89,7 @@ export const SavesDetail = ({
               </GameLink>
 
               {progress.finished && (
-                <div className="absolute top-2 right-2">
+                <div className="absolute top-4 right-4">
                   <span className="rounded-full bg-green-500 px-2 py-1 text-xs text-white">
                     COMPLETED
                   </span>
