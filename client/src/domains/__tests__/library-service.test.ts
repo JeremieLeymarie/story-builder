@@ -206,6 +206,10 @@ describe("library-service", () => {
       ]);
 
       localRepository.getStory.mockResolvedValueOnce(STORY);
+      
+      localRepository.getScenesByStoryKey.mockResolvedValueOnce([
+        CURRENT_SCENE,
+      ]);
     });
 
     it("should retrieve details about a story", async () => {
@@ -228,6 +232,7 @@ describe("library-service", () => {
           { ...OTHER, lastScene: OTHER_SCENE },
           { ...FINISHED, lastScene: FINISHED_SCENE },
         ],
+        totalScenes: 1,
       });
     });
   });
