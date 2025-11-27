@@ -41,15 +41,14 @@ export const LibraryGameDetail = ({
     });
   };
 
-
   // Progress percentage calculation using real number of scenes
-  const progressPercentage = totalScenes > 0 
-    ? Math.min(
-        Math.round((currentProgress.history.length / totalScenes) * 100),
-        100,
-      )
-    : 0;
-
+  const progressPercentage =
+    totalScenes > 0
+      ? Math.min(
+          Math.round((currentProgress.history.length / totalScenes) * 100),
+          100,
+        )
+      : 0;
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -206,7 +206,7 @@ describe("library-service", () => {
       ]);
 
       localRepository.getStory.mockResolvedValueOnce(STORY);
-      
+
       localRepository.getScenesByStoryKey.mockResolvedValueOnce([
         CURRENT_SCENE,
       ]);
