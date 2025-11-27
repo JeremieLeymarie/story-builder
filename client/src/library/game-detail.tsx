@@ -3,19 +3,21 @@ import { Story } from "@/lib/storage/domain";
 import { ExtendedProgress } from "./types";
 import { useRouter } from "@tanstack/react-router";
 import { getLibraryService } from "@/domains/game/library-service";
-import { Play, Share2, Trash2 } from "lucide-react";
+import { Play, Trash2 } from "lucide-react";
 import { StoryGenreBadge } from "@/design-system/components";
 
 type Props = {
   story: Story;
   currentProgress: ExtendedProgress;
   otherProgresses: ExtendedProgress[];
+  totalScenes: number;
 };
 
 export const LibraryGameDetail = ({
   story,
   currentProgress,
   otherProgresses,
+  totalScenes,
 }: Props) => {
   const { navigate } = useRouter();
 
@@ -39,33 +41,22 @@ export const LibraryGameDetail = ({
     });
   };
 
-  const shareGame = () => {
-    navigator.clipboard.writeText(window.location.href);
-  };
 
-  // Progress percentage calculation based on history
-  // Estimation: a typical story has around 10-20 scenes (TODO: find a better solution)
-  const estimatedTotalScenes = 15;
-  const progressPercentage = Math.min(
-    Math.round((currentProgress.history.length / estimatedTotalScenes) * 100),
-    100,
-  );
+  // Progress percentage calculation using real number of scenes
+  const progressPercentage = totalScenes > 0 
+    ? Math.min(
+        Math.round((currentProgress.history.length / totalScenes) * 100),
+        100,
+      )
+    : 0;
 
-  // Image URL validation - exclude Google search redirect URLs
-  const isValidImageUrl = (url: string | undefined): boolean => {
-    if (!url) return false;
-    // Exclude Google redirect URLs
-    if (url.includes("google.com/url") || url.includes("google.com/search"))
-      return false;
-    return true;
-  };
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-6xl px-6 py-8">
         <div className="mb-12 flex gap-8">
           <div className="flex-shrink-0">
-            {isValidImageUrl(story.image) ? (
+            {story.image ? (
               <img
                 src={story.image}
                 alt={story.title}
@@ -110,13 +101,6 @@ export const LibraryGameDetail = ({
               >
                 <Play size={20} />
                 Play
-              </button>
-              <button
-                onClick={shareGame}
-                className="flex items-center gap-2 rounded-lg bg-gray-200 px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-300"
-              >
-                <Share2 size={20} />
-                Share
               </button>
             </div>
             <div className="space-y-2">
