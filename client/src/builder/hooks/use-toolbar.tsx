@@ -16,6 +16,10 @@ export const useToolbar = ({ storyKey }: ToolbarProps) => {
     navigate({ to: "/builder/stories" });
   };
 
+  const openUIEditor = () => {
+    navigate({ to: "/builder/stories" });
+  };
+
   return {
     testStory,
     deleteStory,
