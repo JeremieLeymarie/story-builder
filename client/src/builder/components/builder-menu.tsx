@@ -9,7 +9,6 @@ import {
   TestTubesIcon,
 } from "lucide-react";
 import { ExportModal } from "./export-modal";
-import { DeleteModal } from "./delete-modal";
 import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
 import { useBuilderContext } from "../hooks/use-builder-context";
 import {
@@ -31,8 +30,7 @@ type ContentProps = {
 
 const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
   const { story } = useBuilderContext();
-  const { addScene, deleteStory, openBuilderEditor, testStory } =
-    useToolbarActions();
+  const { addScene, openBuilderEditor, testStory } = useToolbarActions();
   const btnClassname = "flex w-full justify-start gap-4 w-[225px]";
 
   return (
@@ -46,7 +44,7 @@ const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
         </div>
         <p className="text-muted-foreground truncate italic">{story.title}</p>
       </ToolbarHeader>
-      <div className="mt-2 flex w-full flex-col gap-2">
+      <div className="flex w-full flex-col gap-2">
         <Button
           size="sm"
           className={btnClassname}
@@ -103,8 +101,6 @@ const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
             Edit Game UI
           </Button>
         </Link>
-        {/* TODO: move this in scene editor */}
-        <DeleteModal deleteStory={deleteStory} />
       </div>
     </>
   );

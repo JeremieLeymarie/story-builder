@@ -21,7 +21,7 @@ export const ToolbarHeader = ({
   className,
   ...props
 }: { className?: string } & React.HTMLAttributes<HTMLHeadingElement>) => {
-  return <div className={cn("flex flex-col", className)} {...props} />;
+  return <div className={cn("mb-2 flex flex-col", className)} {...props} />;
 };
 
 export const ToolbarTitle = ({
