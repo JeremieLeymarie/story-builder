@@ -7,6 +7,18 @@ import {
 import { SceneUpdatePayload } from "./schema";
 import { SceneContentForm } from "./scene-content-form";
 import { ActionsForm } from "./actions-form";
+import {
+  ToolbarHeader,
+  ToolbarTitle,
+} from "@/design-system/components/toolbar";
+
+export const SceneEditorHeader = () => {
+  return (
+    <ToolbarHeader>
+      <ToolbarTitle>Edit scene</ToolbarTitle>
+    </ToolbarHeader>
+  );
+};
 
 export const SceneEditor = ({ scene }: { scene: SceneUpdatePayload }) => {
   return (
