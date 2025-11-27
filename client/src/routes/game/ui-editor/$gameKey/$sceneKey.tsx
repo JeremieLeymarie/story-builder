@@ -22,10 +22,14 @@ export const Component = () => {
   }
 
   return (
-    <GameScene scene={scene} isLastScene={!scene.actions.length} mode="test" />
+    <GameScene
+      scene={scene}
+      isLastScene={!scene.actions.length}
+      mode="ui-editor"
+    />
   );
 };
 
-export const Route = createFileRoute("/game/test/$gameKey/$sceneKey")({
+export const Route = createFileRoute("/game/ui-editor/$gameKey/$sceneKey")({
   component: Component,
 });

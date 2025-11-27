@@ -38,6 +38,7 @@ export const Component = () => {
       scene={scene}
       isLastScene={!scene.actions.length}
       progress={storyProgress}
+      mode="game"
     />
   );
 };

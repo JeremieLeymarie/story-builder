@@ -9,17 +9,27 @@ import { RichText } from "@/design-system/components/editor/components/rich-text
 import { EditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
 import { WikiNode } from "@/builder/lexical-wiki-node";
 
-type GameSceneProps = {
+type BaseProps = {
   scene: Scene;
   isLastScene: boolean;
-  progress: StoryProgress | null;
 };
 
-export const GameScene = ({
-  progress,
-  scene: { key, content, title, actions, storyKey },
-  isLastScene,
-}: GameSceneProps) => {
+type GameModeProps = BaseProps & {
+  mode: "game";
+  progress: StoryProgress;
+};
+
+type TestModeProps = BaseProps & { mode: "test" };
+
+type UIEditorModeProps = BaseProps & { mode: "ui-editor" };
+
+type GameSceneProps = GameModeProps | TestModeProps | UIEditorModeProps;
+
+export const GameScene = (props: GameSceneProps) => {
+  const {
+    scene: { key, content, title, actions, storyKey },
+    isLastScene,
+  } = props;
   return (
     <div className="flex w-full justify-center py-8">
       <div className="w-11/12 lg:w-8/12">
@@ -44,7 +54,7 @@ export const GameScene = ({
                   key={action.text}
                   action={action}
                   storyKey={storyKey}
-                  progress={progress}
+                  progress={props.mode === "game" ? props.progress : null}
                 />
               ))}
             </div>
