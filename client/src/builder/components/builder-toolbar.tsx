@@ -176,7 +176,7 @@ const MinifiedToolbarContent = ({ toggleExpanded }: ContentProps) => {
   );
 };
 
-export const BuilderMenu = () => {
+export const BuilderToolbar = () => {
   const { isExpanded, toggleExpanded } = useToolbar();
 
   return (
