@@ -5,6 +5,7 @@ import { useRouter } from "@tanstack/react-router";
 import { getLibraryService } from "@/domains/game/library-service";
 import { Play, Trash2 } from "lucide-react";
 import { StoryGenreBadge } from "@/design-system/components";
+import { Button } from "@/design-system/primitives/button";
 
 type Props = {
   story: Story;
@@ -51,11 +52,11 @@ export const LibraryGameDetail = ({
       : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-background min-h-screen">
       <div className="mx-auto max-w-6xl px-6 py-8">
         <div className="mb-12 flex gap-8">
-          <div className="flex-shrink-0">
-            {story.image ? (
+          {story.image && (
+            <div className="flex-shrink-0">
               <img
                 src={story.image}
                 alt={story.title}
@@ -65,24 +66,14 @@ export const LibraryGameDetail = ({
                 }}
                 className="rounded-lg object-cover shadow-lg"
               />
-            ) : (
-              <div
-                style={{
-                  width: "calc(var(--spacing) * 104)",
-                  height: "calc(var(--spacing) * 78)",
-                }}
-                className="flex items-center justify-center rounded-lg border-4 border-dashed border-gray-300 bg-gray-100"
-              >
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gray-300">
-                  <div className="h-12 w-12 rounded-full bg-gray-400"></div>
-                </div>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
           <div className="flex-1 space-y-4">
-            <h1 className="text-4xl font-bold text-gray-800">{story.title}</h1>
+            <h1 className="text-foreground text-4xl font-bold">
+              {story.title}
+            </h1>
             {story.description && (
-              <p className="text-lg leading-relaxed text-gray-600">
+              <p className="text-muted-foreground text-lg leading-relaxed">
                 {story.description}
               </p>
             )}
@@ -94,44 +85,46 @@ export const LibraryGameDetail = ({
               </div>
             )}
             <div className="flex gap-4">
-              <button
+              <Button
                 onClick={playCurrentGame}
-                className="flex items-center gap-2 rounded-lg bg-yellow-400 px-6 py-3 font-semibold text-white shadow-lg transition-colors hover:bg-yellow-500"
+                size="lg"
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 <Play size={20} />
                 Play
-              </button>
+              </Button>
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="font-medium text-gray-600">
+                <span className="text-muted-foreground font-medium">
                   Story Progress
                 </span>
-                <span className="text-2xl font-bold text-gray-800">
+                <span className="text-foreground text-2xl font-bold">
                   {progressPercentage}%
                 </span>
               </div>
-              <div className="h-3 w-full rounded-full bg-gray-200">
+              <div className="bg-secondary h-3 w-full rounded-full">
                 <div
-                  className="h-3 rounded-full bg-yellow-400 transition-all duration-500"
+                  className="bg-primary h-3 rounded-full transition-all duration-500"
                   style={{ width: `${progressPercentage}%` }}
                 ></div>
               </div>
             </div>
             <div className="flex items-center justify-between pt-4">
               {story.author && (
-                <p className="text-gray-500 italic">
+                <p className="text-muted-foreground italic">
                   Story by{" "}
                   <span className="font-medium">{story.author.username}</span>
                 </p>
               )}
-              <button
+              <Button
                 onClick={deleteGame}
-                className="flex items-center gap-2 font-medium text-red-500 transition-colors hover:text-red-600"
+                variant="ghost"
+                className="text-destructive hover:text-destructive/80"
               >
                 <Trash2 size={16} />
                 Delete game
-              </button>
+              </Button>
             </div>
           </div>
         </div>
