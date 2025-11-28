@@ -56,7 +56,7 @@ export type Story = LibraryStory | BuilderStory;
 
 type ActionBase = {
   text: string;
-  sceneKey?: string;
+  targets: { sceneKey: string; probability: number }[];
 };
 
 type SimpleAction = ActionBase & {

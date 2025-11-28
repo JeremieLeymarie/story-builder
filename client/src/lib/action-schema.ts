@@ -2,7 +2,7 @@ import z from "zod";
 
 export const baseActionSchema = z.object({
   text: z.string({ message: "Text is required" }),
-  sceneKey: z.nanoid().optional(),
+  targets: z.array(z.object({ sceneKey: z.nanoid(), probability: z.number() })),
 });
 
 export const actionSchema = z.discriminatedUnion("type", [

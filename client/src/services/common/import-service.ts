@@ -123,9 +123,10 @@ export const _makeBulkSceneUpdatePayload = ({
 
       const newActions = actions?.map((action) => ({
         ...action,
-        ...(action.sceneKey
-          ? { sceneKey: oldScenesToNewScenes[action.sceneKey] }
-          : {}),
+        targets: action.targets.map((target) => ({
+          probability: target.probability,
+          sceneKey: oldScenesToNewScenes[target.sceneKey]!,
+        })),
       }));
 
       const newSceneKey = oldScenesToNewScenes[scene.key];

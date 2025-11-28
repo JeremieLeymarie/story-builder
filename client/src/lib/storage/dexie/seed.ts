@@ -29,20 +29,22 @@ export const DEMO_SCENES: Scene[] = [
     actions: [
       {
         text: "You head north towards the mountain ",
-        sceneKey: "hTv4yXZ-8hRFIzQ3lY0Hx",
+        targets: [{ sceneKey: "hTv4yXZ-8hRFIzQ3lY0Hx", probability: 100 }],
         type: "simple",
       },
       {
         text: "You head east towards Glitterlake",
-        sceneKey: "cTbuqI9NR2QhSMfZnPkht",
+        targets: [{ sceneKey: "cTbuqI9NR2QhSMfZnPkht", probability: 100 }],
         type: "simple",
       },
       {
         text: "You head South and go back on you tracks in the Molin Forest",
+        targets: [],
         type: "simple",
       },
       {
         text: "You head west towards the village of Loriath",
+        targets: [],
         type: "simple",
       },
     ],
@@ -57,12 +59,12 @@ export const DEMO_SCENES: Scene[] = [
     actions: [
       {
         text: "You take in this marvelous sight and continue walking towards the direction of the song",
-        sceneKey: "QzcLyUR6XigrC1cXi-wit",
+        targets: [{ sceneKey: "QzcLyUR6XigrC1cXi-wit", probability: 100 }],
         type: "simple",
       },
       {
         text: "You go back",
-        sceneKey: "HD0HctAmKp075yXwujHOW",
+        targets: [{ sceneKey: "HD0HctAmKp075yXwujHOW", probability: 100 }],
         type: "simple",
       },
     ],
@@ -83,12 +85,12 @@ export const DEMO_SCENES: Scene[] = [
     actions: [
       {
         text: "You head towards the provenance of this song ",
-        sceneKey: "6QHCEM8VprXJRh43-oriO",
+        targets: [{ sceneKey: "6QHCEM8VprXJRh43-oriO", probability: 100 }],
         type: "simple",
       },
       {
         text: "You choose to ignore the song an set camp  and try your in the morning",
-        sceneKey: "cTbuqI9NR2QhSMfZnPkht",
+        targets: [{ sceneKey: "cTbuqI9NR2QhSMfZnPkht", probability: 100 }],
         type: "simple",
       },
     ],
@@ -109,12 +111,12 @@ export const DEMO_SCENES: Scene[] = [
     actions: [
       {
         text: "You walk towards the silouhette ",
-        sceneKey: "gB_MDqzZpR4TLm7DeqNvJ",
+        targets: [{ sceneKey: "gB_MDqzZpR4TLm7DeqNvJ", probability: 100 }],
         type: "simple",
       },
       {
         text: "You go back",
-        sceneKey: "QzcLyUR6XigrC1cXi-wit",
+        targets: [{ sceneKey: "QzcLyUR6XigrC1cXi-wit", probability: 100 }],
         type: "simple",
       },
     ],
@@ -135,12 +137,12 @@ export const DEMO_SCENES: Scene[] = [
     actions: [
       {
         text: "You go in and row towards the center of the Lake",
-        sceneKey: "OAG0l62bXL3H2FFd8nkP0",
+        targets: [{ sceneKey: "OAG0l62bXL3H2FFd8nkP0", probability: 100 }],
         type: "simple",
       },
       {
         text: "Go back on your tracks",
-        sceneKey: "6QHCEM8VprXJRh43-oriO",
+        targets: [{ sceneKey: "6QHCEM8VprXJRh43-oriO", probability: 100 }],
         type: "simple",
       },
     ],
@@ -174,17 +176,17 @@ export const DEMO_SCENES: Scene[] = [
     actions: [
       {
         text: "You stop a few minutes to take on this beautiful sight",
-        sceneKey: "cTbuqI9NR2QhSMfZnPkht",
+        targets: [{ sceneKey: "cTbuqI9NR2QhSMfZnPkht", probability: 100 }],
         type: "simple",
       },
       {
         text: "You continue walking while admiring the ancient trees ",
-        sceneKey: "HD0HctAmKp075yXwujHOW",
+        targets: [{ sceneKey: "HD0HctAmKp075yXwujHOW", probability: 100 }],
         type: "simple",
       },
       {
         text: "You go back on your tracks",
-        sceneKey: "27of_GQ4ZnaMU5BeQ5qPx",
+        targets: [{ sceneKey: "27of_GQ4ZnaMU5BeQ5qPx", probability: 100 }],
         type: "simple",
       },
     ],
@@ -205,12 +207,12 @@ export const DEMO_SCENES: Scene[] = [
     actions: [
       {
         text: "You walk towards the creature waiting foe an eventual interaction",
-        sceneKey: "lXYahsi23G1QL766LaVK4",
+        targets: [{ sceneKey: "lXYahsi23G1QL766LaVK4", probability: 100 }],
         type: "simple",
       },
       {
         text: "You go back on your tracks",
-        sceneKey: "OAG0l62bXL3H2FFd8nkP0",
+        targets: [{ sceneKey: "OAG0l62bXL3H2FFd8nkP0", probability: 100 }],
         type: "simple",
       },
     ],
@@ -231,18 +233,22 @@ export const DEMO_SCENES: Scene[] = [
     actions: [
       {
         text: "I light a candle and try to find my way through the fog.",
+        targets: [],
         type: "simple",
       },
       {
         text: "I look a the stars far far above and try to find my way using the oldest map in the world",
+        targets: [],
         type: "simple",
       },
       {
         text: "You open the ancient scroll which contains an ancient map that allowed to make your way to the mountain",
+        targets: [],
         type: "simple",
       },
       {
         text: "You go back on you tracks and try to visit other places before heading to the mountain",
+        targets: [],
         type: "simple",
       },
     ],
@@ -263,12 +269,12 @@ export const DEMO_SCENES: Scene[] = [
     actions: [
       {
         text: "You try speaking to her",
-        sceneKey: "mysJlUr2Q9wfrmH2YF7jq",
+        targets: [{ sceneKey: "mysJlUr2Q9wfrmH2YF7jq", probability: 100 }],
         type: "simple",
       },
       {
         text: "You go back",
-        sceneKey: "gB_MDqzZpR4TLm7DeqNvJ",
+        targets: [{ sceneKey: "gB_MDqzZpR4TLm7DeqNvJ", probability: 100 }],
         type: "simple",
       },
     ],
@@ -289,12 +295,12 @@ export const DEMO_SCENES: Scene[] = [
     actions: [
       {
         text: "She stops singing and gazes at you with an inquisitive look",
-        sceneKey: "WTLrmPxeGXZRfnCk6DDk5",
+        targets: [{ sceneKey: "WTLrmPxeGXZRfnCk6DDk5", probability: 100 }],
         type: "simple",
       },
       {
         text: "You go back ",
-        sceneKey: "lXYahsi23G1QL766LaVK4",
+        targets: [{ sceneKey: "lXYahsi23G1QL766LaVK4", probability: 100 }],
         type: "simple",
       },
     ],

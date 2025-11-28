@@ -114,7 +114,12 @@ const _sceneFactory = {
       .fill(null)
       .map(() => ({
         text: faker.word.sample(),
-        sceneKey: Math.random() > 0.5 ? nanoid() : undefined,
+        targets: [
+          {
+            sceneKey: Math.random() > 0.5 ? nanoid() : undefined,
+            probability: 100,
+          },
+        ],
         type: "simple",
       })),
   builderParams: () => ({

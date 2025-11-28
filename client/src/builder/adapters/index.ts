@@ -21,14 +21,14 @@ export const sceneToNodeAdapter = ({
 
 export const sceneToEdgesAdapter = (scene: Scene): Edge[] => {
   const edges = scene.actions
-    .map((action, i) => {
-      return {
+    .flatMap((action, i) => {
+      return action.targets.map((target) => ({
         sourceHandle: `${scene.key}-${i}`,
         source: scene.key.toString(),
-        target: action.sceneKey?.toString() ?? null,
+        target: target.sceneKey,
         targetHandle: null,
         id: `${scene.key}-${i}`,
-      };
+      }));
     })
     .filter((action) => !!action.target) as Edge[];
   return edges;

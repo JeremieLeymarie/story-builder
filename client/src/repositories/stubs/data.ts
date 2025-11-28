@@ -36,8 +36,16 @@ export const BASIC_SCENE_CONTENT: LexicalContent = {
 export const BASIC_SCENE: Scene = {
   key: "vroum",
   actions: [
-    { text: "action A", type: "simple" },
-    { text: "action B", type: "simple" },
+    {
+      text: "action A",
+      targets: [{ sceneKey: "scene1", probability: 100 }],
+      type: "simple",
+    },
+    {
+      text: "action B",
+      targets: [{ sceneKey: "scene2", probability: 100 }],
+      type: "simple",
+    },
   ],
   builderParams: { position: { x: 0, y: 0 } },
   content: BASIC_SCENE_CONTENT,

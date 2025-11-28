@@ -47,7 +47,7 @@ export const createDb = (
   { seed }: { seed: boolean } = { seed: true },
 ) => {
   db.version(6).stores(tables);
-  // Migration: add type `simple` to actions ton handle conditional actions in the future
+  // Migration: add type `simple` to actions to handle conditional actions
   db.version(7)
     .stores(tables)
     .upgrade(async () => {
@@ -67,6 +67,30 @@ export const createDb = (
       await db.scenes.bulkUpdate(bulkPayload);
     });
 
+  db.version(8)
+    .stores(tables)
+    .upgrade(async () => {
+      const bulkPayload: {
+        key: string;
+        changes: Partial<Scene>;
+      }[] = [];
+
+      await db.scenes.each((scene) => {
+        const actions = scene.actions.map((action) => ({
+          ...action,
+          targets: [
+            {
+              // @ts-expect-error action.sceneKey is replaced by action.targets
+              sceneKey: action.sceneKey,
+              probability: 100,
+            },
+          ],
+        })) satisfies Action[];
+        bulkPayload.push({ key: scene.key, changes: { actions } });
+      });
+
+      await db.scenes.bulkUpdate(bulkPayload);
+    });
   if (seed)
     db.on("populate", async () => {
       // Add story to builder
