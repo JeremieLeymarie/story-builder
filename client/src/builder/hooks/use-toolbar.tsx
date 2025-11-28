@@ -1,7 +1,12 @@
 import { useTestStory } from "./use-test-story";
 import { useAddScene } from "./use-add-scene";
 import { useBuilderEditorStore } from "./use-scene-editor-store";
-import { useState } from "react";
+import { useSafeLocalStorage } from "@/hooks/use-safe-local-storage";
+import {
+  USER_SETTINGS_KEY,
+  userSettingsSchema,
+} from "@/lib/storage/local-storage";
+import { produce } from "immer";
 
 export const useToolbarActions = () => {
   const { testStory } = useTestStory();
@@ -16,10 +21,20 @@ export const useToolbarActions = () => {
 };
 
 export const useToolbar = () => {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [userSettings, setUserSettings] = useSafeLocalStorage(
+    USER_SETTINGS_KEY,
+    userSettingsSchema,
+  );
+
+  const toggleExpanded = () =>
+    setUserSettings((prev) =>
+      produce(prev, (draft) => {
+        draft.builder.toolbarExpanded = !draft.builder.toolbarExpanded;
+      }),
+    );
 
   return {
-    isExpanded,
-    toggleExpanded: () => setIsExpanded((prev) => !prev),
+    isExpanded: userSettings.builder.toolbarExpanded,
+    toggleExpanded,
   };
 };
