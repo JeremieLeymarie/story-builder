@@ -1,5 +1,5 @@
 import { ErrorMessage, BackdropLoader } from "@/design-system/components";
-import { GameScene } from "@/game/components/scene";
+import { GameScene } from "@/game/components/game-scene";
 import { useUpdateStoryProgress } from "@/game/hooks/use-update-story-progress";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
@@ -7,6 +7,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { z } from "zod";
 import { zodSearchValidator } from "@tanstack/router-zod-adapter";
 import { getGameService } from "@/domains/game/game-service";
+import { DEFAULT_STORY_THEME } from "@/domains/builder/story-theme";
 
 export const Component = () => {
   const { sceneKey, gameKey } = Route.useParams();
@@ -38,6 +39,7 @@ export const Component = () => {
       scene={scene}
       isLastScene={!scene.actions.length}
       progress={storyProgress}
+      theme={DEFAULT_STORY_THEME} // TODO: pass real theme
       mode="game"
     />
   );

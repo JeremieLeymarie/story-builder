@@ -1,14 +1,20 @@
 import { StoryThemeConfig } from "../../lib/storage/domain";
 
+const PRIMARY = "#facc15";
+const PRIMARY_FOREGROUND = "#422006";
+
+const FOREGROUND = "#0a0a0a";
+const BACKGROUND = "#ffffff";
+
 export const DEFAULT_STORY_THEME = {
-  title: { color: "var(--foreground)", hidden: false, size: "medium" },
+  title: { color: FOREGROUND, hidden: false, size: "large" },
   action: {
-    backgroundColor: "var(--primary)",
-    textColor: "var(--primary-foreground)",
+    backgroundColor: PRIMARY,
+    textColor: PRIMARY_FOREGROUND,
   },
   scene: {
     background: {
-      color: "var(--background)",
+      color: BACKGROUND,
     },
   },
 } satisfies StoryThemeConfig;

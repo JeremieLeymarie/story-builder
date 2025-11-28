@@ -21,7 +21,7 @@ import { Route as WikisWikiKeyNewRouteImport } from './routes/wikis/$wikiKey/new
 import { Route as GameGameKeySceneKeyRouteImport } from './routes/game/$gameKey/$sceneKey'
 import { Route as WikisWikiKeyArticleKeyIndexRouteImport } from './routes/wikis/$wikiKey/$articleKey/index'
 import { Route as WikisWikiKeyArticleKeyEditRouteImport } from './routes/wikis/$wikiKey/$articleKey/edit'
-import { Route as GameUiEditorGameKeySceneKeyRouteImport } from './routes/game/ui-editor/$gameKey/$sceneKey'
+import { Route as GameThemeEditorGameKeySceneKeyRouteImport } from './routes/game/theme-editor/$gameKey/$sceneKey'
 import { Route as GameTestGameKeySceneKeyRouteImport } from './routes/game/test/$gameKey/$sceneKey'
 
 const AboutRoute = AboutRouteImport.update({
@@ -86,10 +86,10 @@ const WikisWikiKeyArticleKeyEditRoute =
     path: '/wikis/$wikiKey/$articleKey/edit',
     getParentRoute: () => rootRouteImport,
   } as any)
-const GameUiEditorGameKeySceneKeyRoute =
-  GameUiEditorGameKeySceneKeyRouteImport.update({
-    id: '/game/ui-editor/$gameKey/$sceneKey',
-    path: '/game/ui-editor/$gameKey/$sceneKey',
+const GameThemeEditorGameKeySceneKeyRoute =
+  GameThemeEditorGameKeySceneKeyRouteImport.update({
+    id: '/game/theme-editor/$gameKey/$sceneKey',
+    path: '/game/theme-editor/$gameKey/$sceneKey',
     getParentRoute: () => rootRouteImport,
   } as any)
 const GameTestGameKeySceneKeyRoute = GameTestGameKeySceneKeyRouteImport.update({
@@ -110,7 +110,7 @@ export interface FileRoutesByFullPath {
   '/wikis/$wikiKey/new': typeof WikisWikiKeyNewRoute
   '/wikis/$wikiKey': typeof WikisWikiKeyIndexRoute
   '/game/test/$gameKey/$sceneKey': typeof GameTestGameKeySceneKeyRoute
-  '/game/ui-editor/$gameKey/$sceneKey': typeof GameUiEditorGameKeySceneKeyRoute
+  '/game/theme-editor/$gameKey/$sceneKey': typeof GameThemeEditorGameKeySceneKeyRoute
   '/wikis/$wikiKey/$articleKey/edit': typeof WikisWikiKeyArticleKeyEditRoute
   '/wikis/$wikiKey/$articleKey': typeof WikisWikiKeyArticleKeyIndexRoute
 }
@@ -126,7 +126,7 @@ export interface FileRoutesByTo {
   '/wikis/$wikiKey/new': typeof WikisWikiKeyNewRoute
   '/wikis/$wikiKey': typeof WikisWikiKeyIndexRoute
   '/game/test/$gameKey/$sceneKey': typeof GameTestGameKeySceneKeyRoute
-  '/game/ui-editor/$gameKey/$sceneKey': typeof GameUiEditorGameKeySceneKeyRoute
+  '/game/theme-editor/$gameKey/$sceneKey': typeof GameThemeEditorGameKeySceneKeyRoute
   '/wikis/$wikiKey/$articleKey/edit': typeof WikisWikiKeyArticleKeyEditRoute
   '/wikis/$wikiKey/$articleKey': typeof WikisWikiKeyArticleKeyIndexRoute
 }
@@ -143,7 +143,7 @@ export interface FileRoutesById {
   '/wikis/$wikiKey/new': typeof WikisWikiKeyNewRoute
   '/wikis/$wikiKey/': typeof WikisWikiKeyIndexRoute
   '/game/test/$gameKey/$sceneKey': typeof GameTestGameKeySceneKeyRoute
-  '/game/ui-editor/$gameKey/$sceneKey': typeof GameUiEditorGameKeySceneKeyRoute
+  '/game/theme-editor/$gameKey/$sceneKey': typeof GameThemeEditorGameKeySceneKeyRoute
   '/wikis/$wikiKey/$articleKey/edit': typeof WikisWikiKeyArticleKeyEditRoute
   '/wikis/$wikiKey/$articleKey/': typeof WikisWikiKeyArticleKeyIndexRoute
 }
@@ -161,7 +161,7 @@ export interface FileRouteTypes {
     | '/wikis/$wikiKey/new'
     | '/wikis/$wikiKey'
     | '/game/test/$gameKey/$sceneKey'
-    | '/game/ui-editor/$gameKey/$sceneKey'
+    | '/game/theme-editor/$gameKey/$sceneKey'
     | '/wikis/$wikiKey/$articleKey/edit'
     | '/wikis/$wikiKey/$articleKey'
   fileRoutesByTo: FileRoutesByTo
@@ -177,7 +177,7 @@ export interface FileRouteTypes {
     | '/wikis/$wikiKey/new'
     | '/wikis/$wikiKey'
     | '/game/test/$gameKey/$sceneKey'
-    | '/game/ui-editor/$gameKey/$sceneKey'
+    | '/game/theme-editor/$gameKey/$sceneKey'
     | '/wikis/$wikiKey/$articleKey/edit'
     | '/wikis/$wikiKey/$articleKey'
   id:
@@ -193,7 +193,7 @@ export interface FileRouteTypes {
     | '/wikis/$wikiKey/new'
     | '/wikis/$wikiKey/'
     | '/game/test/$gameKey/$sceneKey'
-    | '/game/ui-editor/$gameKey/$sceneKey'
+    | '/game/theme-editor/$gameKey/$sceneKey'
     | '/wikis/$wikiKey/$articleKey/edit'
     | '/wikis/$wikiKey/$articleKey/'
   fileRoutesById: FileRoutesById
@@ -210,7 +210,7 @@ export interface RootRouteChildren {
   WikisWikiKeyNewRoute: typeof WikisWikiKeyNewRoute
   WikisWikiKeyIndexRoute: typeof WikisWikiKeyIndexRoute
   GameTestGameKeySceneKeyRoute: typeof GameTestGameKeySceneKeyRoute
-  GameUiEditorGameKeySceneKeyRoute: typeof GameUiEditorGameKeySceneKeyRoute
+  GameThemeEditorGameKeySceneKeyRoute: typeof GameThemeEditorGameKeySceneKeyRoute
   WikisWikiKeyArticleKeyEditRoute: typeof WikisWikiKeyArticleKeyEditRoute
   WikisWikiKeyArticleKeyIndexRoute: typeof WikisWikiKeyArticleKeyIndexRoute
 }
@@ -301,11 +301,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WikisWikiKeyArticleKeyEditRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/game/ui-editor/$gameKey/$sceneKey': {
-      id: '/game/ui-editor/$gameKey/$sceneKey'
-      path: '/game/ui-editor/$gameKey/$sceneKey'
-      fullPath: '/game/ui-editor/$gameKey/$sceneKey'
-      preLoaderRoute: typeof GameUiEditorGameKeySceneKeyRouteImport
+    '/game/theme-editor/$gameKey/$sceneKey': {
+      id: '/game/theme-editor/$gameKey/$sceneKey'
+      path: '/game/theme-editor/$gameKey/$sceneKey'
+      fullPath: '/game/theme-editor/$gameKey/$sceneKey'
+      preLoaderRoute: typeof GameThemeEditorGameKeySceneKeyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/game/test/$gameKey/$sceneKey': {
@@ -330,7 +330,7 @@ const rootRouteChildren: RootRouteChildren = {
   WikisWikiKeyNewRoute: WikisWikiKeyNewRoute,
   WikisWikiKeyIndexRoute: WikisWikiKeyIndexRoute,
   GameTestGameKeySceneKeyRoute: GameTestGameKeySceneKeyRoute,
-  GameUiEditorGameKeySceneKeyRoute: GameUiEditorGameKeySceneKeyRoute,
+  GameThemeEditorGameKeySceneKeyRoute: GameThemeEditorGameKeySceneKeyRoute,
   WikisWikiKeyArticleKeyEditRoute: WikisWikiKeyArticleKeyEditRoute,
   WikisWikiKeyArticleKeyIndexRoute: WikisWikiKeyArticleKeyIndexRoute,
 }

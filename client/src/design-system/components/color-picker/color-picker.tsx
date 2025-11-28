@@ -18,10 +18,11 @@ type Size = "sm" | "md";
 type InputProps = {
   size: Size;
   color: string;
+  disabled?: boolean;
 } & HTMLAttributes<HTMLButtonElement>;
 
 const ColorPickerInput = forwardRef<HTMLButtonElement, InputProps>(
-  ({ size, color, ...props }, ref) => {
+  ({ size, color, disabled, ...props }, ref) => {
     return match(size)
       .with("sm", () => (
         <button
@@ -30,6 +31,7 @@ const ColorPickerInput = forwardRef<HTMLButtonElement, InputProps>(
           aria-description="color picker"
           className="group flex h-8 w-8 items-center justify-center rounded-full transition-all ease-in-out hover:opacity-90"
           style={{ backgroundColor: color }}
+          disabled={disabled}
         >
           <PencilIcon
             size={14}
@@ -45,6 +47,7 @@ const ColorPickerInput = forwardRef<HTMLButtonElement, InputProps>(
           variant="outline"
           role="color-picker"
           className="flex w-max gap-0 p-0"
+          disabled={disabled}
         >
           <div
             className="h-full w-16 rounded-l-md"
@@ -65,12 +68,14 @@ export const ColorPicker = ({
   position,
   offset,
   size = "md",
+  disabled,
 }: {
   defaultValue?: string;
   onChange: (color: string) => void;
   position?: "bottom" | "top" | "right" | "left";
   offset?: number;
   size?: Size;
+  disabled?: boolean;
 }) => {
   const [color, setColor] = useState(
     defaultValue?.match(HEX_COLOR_REGEX)
@@ -89,7 +94,7 @@ export const ColorPicker = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <ColorPickerInput color={color} size={size} />
+        <ColorPickerInput color={color} size={size} disabled={disabled} />
       </PopoverTrigger>
       <PopoverContent className="w-max" side={position} sideOffset={offset}>
         <div className="flex gap-1">
@@ -97,11 +102,13 @@ export const ColorPicker = ({
             className="h-8 w-full"
             placeholder={color}
             onChange={(e) => _onChange((e.target as HTMLInputElement).value)}
+            disabled={disabled}
           />
           <Button
             size="sm"
             variant="outline"
             onClick={() => _onChange(randomInArray(DEFAULT_COLORS))}
+            disabled={disabled}
           >
             <RefreshCcwIcon />
           </Button>
