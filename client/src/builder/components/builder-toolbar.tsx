@@ -85,7 +85,7 @@ const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
           Edit story
         </Button>
         <Link
-          to="/game/ui-editor/$gameKey/$sceneKey"
+          to="/game/theme-editor/$gameKey/$sceneKey"
           target="_blank"
           params={{ gameKey: story.key, sceneKey: story.firstSceneKey }} // For now, always open UI Editor with first scene
         >
@@ -98,7 +98,7 @@ const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
             }
           >
             <PaletteIcon />
-            Edit Game UI
+            Edit Game Theme
           </Button>
         </Link>
       </div>
@@ -158,7 +158,7 @@ const MinifiedToolbarContent = ({ toggleExpanded }: ContentProps) => {
       <Tooltip>
         <TooltipTrigger asChild>
           <Link
-            to="/game/ui-editor/$gameKey/$sceneKey"
+            to="/game/theme-editor/$gameKey/$sceneKey"
             target="_blank"
             params={{ gameKey: story.key, sceneKey: story.firstSceneKey }} // For now, always open UI Editor with first scene
           >
@@ -167,7 +167,7 @@ const MinifiedToolbarContent = ({ toggleExpanded }: ContentProps) => {
             </Button>
           </Link>
         </TooltipTrigger>
-        <TooltipContent> Open game UI editor</TooltipContent>
+        <TooltipContent> Open Game Theme editor</TooltipContent>
       </Tooltip>
       <Button size="icon" variant="ghost" onClick={toggleExpanded}>
         <ArrowDownFromLineIcon />

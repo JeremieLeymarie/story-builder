@@ -2,16 +2,49 @@ import { SceneAction } from "./scene-action";
 import { Button } from "@/design-system/primitives";
 import { LibraryBigIcon } from "lucide-react";
 
-import { Scene, StoryProgress } from "@/lib/storage/domain";
+import { Scene, StoryProgress, StoryThemeConfig } from "@/lib/storage/domain";
 import { Divider } from "@/design-system/components/divider";
 import { Link } from "@tanstack/react-router";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
 import { EditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
 import { WikiNode } from "@/builder/lexical-wiki-node";
+import { cva } from "class-variance-authority";
+import { cn } from "@/lib/style";
+
+const titleVariants = cva("", {
+  variants: {
+    size: {
+      huge: "text-4xl lg:text-5xl",
+      large: "text-3xl lg:text-4xl",
+      medium: "text-2xl lg:text-3xl",
+      small: "text-xl lg:text-2xl",
+    },
+  },
+});
+
+const GameTitle = ({
+  color,
+  hidden,
+  size,
+  title,
+}: StoryThemeConfig["title"] & { title: string }) => {
+  return hidden ? null : (
+    <h1
+      className={cn(
+        titleVariants({ size }),
+        "scroll-m-20 font-bold tracking-tight",
+      )}
+      style={{ color }}
+    >
+      {title}
+    </h1>
+  );
+};
 
 type BaseProps = {
   scene: Scene;
   isLastScene: boolean;
+  theme: Omit<StoryThemeConfig, "action" | "scene">;
 };
 
 type GameModeProps = BaseProps & {
@@ -21,23 +54,28 @@ type GameModeProps = BaseProps & {
 
 type TestModeProps = BaseProps & { mode: "test" };
 
-type UIEditorModeProps = BaseProps & { mode: "ui-editor" };
+type ThemeEditorModeProps = BaseProps & { mode: "theme-editor" };
 
-type GameSceneProps = GameModeProps | TestModeProps | UIEditorModeProps;
+type GameSceneProps = GameModeProps | TestModeProps | ThemeEditorModeProps;
 
 export const GameScene = (props: GameSceneProps) => {
   const {
     scene: { key, content, title, actions, storyKey },
     isLastScene,
+    theme,
   } = props;
+
   return (
     <div className="flex w-full justify-center py-8">
       <div className="w-11/12 lg:w-8/12">
         <div className="w-full px-6 py-8">
           <div>
-            <h1 className="scroll-m-20 text-3xl font-bold tracking-tight lg:text-4xl">
-              {title}
-            </h1>
+            <GameTitle
+              color={theme.title.color}
+              hidden={theme.title.hidden}
+              size={theme.title.size}
+              title={title}
+            />
             <div className="leading-7 wrap-break-word not-first:mt-6">
               <EditorContext value={{ entityType: "scene", entityKey: key }}>
                 <RichText
