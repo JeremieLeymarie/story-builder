@@ -54,6 +54,29 @@ export type BuilderStory = StoryBase & { type: "builder" };
 
 export type Story = LibraryStory | BuilderStory;
 
+export const TITLE_SIZES = ["small", "medium", "large", "huge"] as const;
+
+export type StoryThemeConfig = {
+  title: {
+    hidden: boolean;
+    size: (typeof TITLE_SIZES)[number];
+    color: string;
+  };
+  action: {
+    backgroundColor: string;
+    textColor: string;
+  };
+  scene: {
+    background: { color: string; image?: string };
+  };
+};
+
+export type StoryTheme = {
+  key: string;
+  storyKey: string;
+  theme: StoryThemeConfig;
+};
+
 type ActionBase = {
   text: string;
   sceneKey?: string;
