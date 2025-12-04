@@ -25,7 +25,7 @@ describe("theme-service", () => {
 
       const theme = await svc.getTheme(mockTheme.storyKey);
 
-      expect(theme).toStrictEqual(mockTheme);
+      expect(theme).toStrictEqual(mockTheme.theme);
     });
 
     test("should get default theme when theme does not exists yet", async () => {
