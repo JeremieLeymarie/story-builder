@@ -15,3 +15,11 @@ export const randomInArray = <T>(array: T[]) => {
   const index = randomNumber(0, array.length - 1);
   return array[index]!;
 };
+
+export const randomHexColor = () => {
+  const HEX_CHARACTERS = "0123456789abcdef".split("");
+  const value = Array.from(Array(6), () => randomInArray(HEX_CHARACTERS)).join(
+    "",
+  );
+  return `#${value}`;
+};

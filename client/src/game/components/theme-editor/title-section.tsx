@@ -26,7 +26,6 @@ export const TitleSection = ({
 }) => {
   return (
     <div className="space-y-2">
-      <p className="font-semibold">Title</p>
       <FormField
         control={form.control}
         name="title.hidden"
@@ -59,7 +58,9 @@ export const TitleSection = ({
             <FormControl>
               <ToggleGroup
                 type="single"
-                onValueChange={field.onChange}
+                onValueChange={(value) => {
+                  if (value) field.onChange(value);
+                }}
                 value={field.value}
                 disabled={values.title.hidden}
               >

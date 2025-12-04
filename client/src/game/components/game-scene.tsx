@@ -8,43 +8,12 @@ import { Link } from "@tanstack/react-router";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
 import { EditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
 import { WikiNode } from "@/builder/lexical-wiki-node";
-import { cva } from "class-variance-authority";
-import { cn } from "@/lib/style";
-
-const titleVariants = cva("", {
-  variants: {
-    size: {
-      huge: "text-4xl lg:text-5xl",
-      large: "text-3xl lg:text-4xl",
-      medium: "text-2xl lg:text-3xl",
-      small: "text-xl lg:text-2xl",
-    },
-  },
-});
-
-const GameTitle = ({
-  color,
-  hidden,
-  size,
-  title,
-}: StoryThemeConfig["title"] & { title: string }) => {
-  return hidden ? null : (
-    <h1
-      className={cn(
-        titleVariants({ size }),
-        "scroll-m-20 font-bold tracking-tight",
-      )}
-      style={{ color }}
-    >
-      {title}
-    </h1>
-  );
-};
+import { SceneTitle } from "./scene-title";
 
 type BaseProps = {
   scene: Scene;
   isLastScene: boolean;
-  theme: Omit<StoryThemeConfig, "action" | "scene">;
+  theme: Omit<StoryThemeConfig, "scene">;
 };
 
 type GameModeProps = BaseProps & {
@@ -70,7 +39,7 @@ export const GameScene = (props: GameSceneProps) => {
       <div className="w-11/12 lg:w-8/12">
         <div className="w-full px-6 py-8">
           <div>
-            <GameTitle
+            <SceneTitle
               color={theme.title.color}
               hidden={theme.title.hidden}
               size={theme.title.size}
@@ -93,6 +62,7 @@ export const GameScene = (props: GameSceneProps) => {
                   action={action}
                   storyKey={storyKey}
                   progress={props.mode === "game" ? props.progress : null}
+                  actionTheme={theme.action}
                 />
               ))}
             </div>

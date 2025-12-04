@@ -1,6 +1,6 @@
 import { forwardRef, HTMLAttributes, useState } from "react";
 import { chunk } from "@/lib/array";
-import { randomInArray } from "@/lib/random";
+import { randomHexColor, randomInArray } from "@/lib/random";
 import { PencilIcon, RefreshCcwIcon } from "lucide-react";
 import { HEX_COLOR_REGEX } from "@/lib/colors";
 import {
@@ -50,7 +50,7 @@ const ColorPickerInput = forwardRef<HTMLButtonElement, InputProps>(
           disabled={disabled}
         >
           <div
-            className="h-full w-16 rounded-l-md"
+            className="h-full w-12 rounded-l-md"
             style={{ backgroundColor: color }}
           ></div>
           <div className="px-3">
@@ -107,13 +107,14 @@ export const ColorPicker = ({
           <Button
             size="sm"
             variant="outline"
-            onClick={() => _onChange(randomInArray(DEFAULT_COLORS))}
+            onClick={() => _onChange(randomHexColor())}
             disabled={disabled}
           >
             <RefreshCcwIcon />
           </Button>
         </div>
         <p className="mt-2 text-sm font-semibold">Presets</p>
+        {/* TODO: improve accessibility - these presets are not selectable via keyboard  */}
         {chunk(DEFAULT_COLORS, 8).map((colors) => (
           <div className="my-2 flex gap-2" key={colors.join("-")}>
             {colors.map((color) => (

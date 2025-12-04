@@ -11,6 +11,7 @@ export const DEFAULT_STORY_THEME = {
   action: {
     backgroundColor: PRIMARY,
     textColor: PRIMARY_FOREGROUND,
+    size: "medium",
   },
   scene: {
     background: {

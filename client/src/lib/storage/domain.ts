@@ -55,6 +55,12 @@ export type BuilderStory = StoryBase & { type: "builder" };
 export type Story = LibraryStory | BuilderStory;
 
 export const TITLE_SIZES = ["small", "medium", "large", "huge"] as const;
+export const ACTION_BUTTON_SIZES = [
+  "small",
+  "medium",
+  "large",
+  "huge",
+] as const;
 
 export type StoryThemeConfig = {
   title: {
@@ -65,6 +71,7 @@ export type StoryThemeConfig = {
   action: {
     backgroundColor: string;
     textColor: string;
+    size: (typeof ACTION_BUTTON_SIZES)[number];
   };
   scene: {
     background: { color: string; image?: string };
