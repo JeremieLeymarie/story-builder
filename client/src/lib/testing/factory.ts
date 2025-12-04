@@ -1,4 +1,5 @@
 import {
+  ACTION_BUTTON_SIZES,
   BuilderStory,
   LibraryStory,
   Scene,
@@ -113,6 +114,7 @@ const _storyThemeFactory = {
     action: {
       backgroundColor: faker.color.rgb(),
       textColor: faker.color.rgb(),
+      size: faker.helpers.arrayElement(ACTION_BUTTON_SIZES),
     },
     scene: {
       background: {

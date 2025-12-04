@@ -1,5 +1,5 @@
 import { Button } from "@/design-system/primitives";
-import { Action, StoryProgress } from "@/lib/storage/domain";
+import { Action, StoryProgress, StoryThemeConfig } from "@/lib/storage/domain";
 import { cn } from "@/lib/style";
 import { Link } from "@tanstack/react-router";
 import { useActionVisibility } from "../hooks/use-action-visibility";
@@ -9,6 +9,7 @@ import {
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
 import { PropsWithChildren } from "react";
+import { match } from "ts-pattern";
 
 const ActionTooltip = ({
   children,
@@ -33,15 +34,27 @@ const ActionTooltip = ({
 const ActionButton = ({
   text,
   isVisible,
+  actionTheme,
 }: {
   text: string;
   isVisible: boolean;
+  actionTheme: StoryThemeConfig["action"];
 }) => (
   <Button
     className={cn(
-      "h-max cursor-pointer text-left text-wrap whitespace-normal select-none",
+      "cursor-pointer text-left text-wrap whitespace-normal select-none",
     )}
+    style={{
+      backgroundColor: actionTheme.backgroundColor,
+      color: actionTheme.textColor,
+    }}
     disabled={!isVisible}
+    size={match(actionTheme.size)
+      .with("huge", () => "xl" as const)
+      .with("large", () => "lg" as const)
+      .with("medium", () => "default" as const)
+      .with("small", () => "sm" as const)
+      .exhaustive()}
   >
     {isVisible ? text : "????"}
   </Button>
@@ -51,10 +64,12 @@ export const SceneAction = ({
   action,
   progress,
   storyKey,
+  actionTheme,
 }: {
   action: Action;
   progress: StoryProgress | null;
   storyKey: string;
+  actionTheme: StoryThemeConfig["action"];
 }) => {
   const isVisible = useActionVisibility({ action, progress });
 
@@ -75,7 +90,11 @@ export const SceneAction = ({
           to="/game/test/$gameKey/$sceneKey"
           params={{ gameKey: storyKey, sceneKey: action.sceneKey }}
         >
-          <ActionButton text={action.text} isVisible={isVisible} />
+          <ActionButton
+            text={action.text}
+            isVisible={isVisible}
+            actionTheme={actionTheme}
+          />
         </Link>
       </ActionTooltip>
     );
@@ -90,7 +109,11 @@ export const SceneAction = ({
         search={{ storyProgressKey: progress.key }}
         disabled={!isVisible}
       >
-        <ActionButton text={action.text} isVisible={isVisible} />
+        <ActionButton
+          text={action.text}
+          isVisible={isVisible}
+          actionTheme={actionTheme}
+        />
       </Link>
     </ActionTooltip>
   );
