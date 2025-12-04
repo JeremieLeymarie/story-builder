@@ -3,20 +3,19 @@ import { GameScene } from "@/game/components/game-scene";
 import { useUpdateStoryProgress } from "@/game/hooks/use-update-story-progress";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useLiveQuery } from "dexie-react-hooks";
 import { z } from "zod";
 import { zodSearchValidator } from "@tanstack/router-zod-adapter";
 import { getGameService } from "@/domains/game/game-service";
-import { DEFAULT_STORY_THEME } from "@/domains/builder/story-theme";
+import { useGetGameSceneData } from "@/game/hooks/use-get-game-scene-data";
 
 export const Component = () => {
   const { sceneKey, gameKey } = Route.useParams();
   const { storyProgressKey } = Route.useSearch();
   const gameService = getGameService();
-  const scene = useLiveQuery(
-    () => gameService.getSceneData(sceneKey),
-    [sceneKey, gameKey],
-  );
+  const { scene, theme, isLoading } = useGetGameSceneData({
+    storyKey: gameKey,
+    sceneKey,
+  });
 
   const { data: storyProgress } = useQuery({
     queryFn: () => gameService.getStoryProgress(storyProgressKey),
@@ -25,11 +24,16 @@ export const Component = () => {
 
   useUpdateStoryProgress({ scene, storyProgress });
 
-  if (scene === undefined || storyProgress === undefined) {
+  if (
+    isLoading ||
+    scene === undefined ||
+    storyProgress === undefined ||
+    theme === undefined
+  ) {
     return <BackdropLoader />;
   }
 
-  if (scene === null || storyProgress === null) {
+  if (scene === null || storyProgress === null || theme === null) {
     console.error("Error while loading scene: ", scene);
     return <ErrorMessage />;
   }
@@ -39,7 +43,7 @@ export const Component = () => {
       scene={scene}
       isLastScene={!scene.actions.length}
       progress={storyProgress}
-      theme={DEFAULT_STORY_THEME} // TODO: pass real theme
+      theme={theme}
       mode="game"
     />
   );

@@ -1,5 +1,4 @@
-import { DEFAULT_STORY_THEME } from "@/domains/builder/story-theme";
-import { TITLE_SIZES } from "@/lib/storage/domain";
+import { StoryTheme, TITLE_SIZES } from "@/lib/storage/domain";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
@@ -12,11 +11,14 @@ const schema = z.object({
   }),
 });
 
-export const useThemeEditorForm = () => {
+export const useThemeEditorForm = ({
+  theme,
+}: {
+  theme: StoryTheme["theme"];
+}) => {
   const form = useForm({
     resolver: zodResolver(schema),
-    // TODO: use values from DB instead of default theme
-    defaultValues: DEFAULT_STORY_THEME,
+    defaultValues: theme,
   });
 
   return form;

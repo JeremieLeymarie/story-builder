@@ -1,56 +1,25 @@
 import { ErrorMessage, BackdropLoader } from "@/design-system/components";
-import { Form } from "@/design-system/primitives";
-import { getGameService } from "@/domains/game/game-service";
-import { GameScene } from "@/game/components/game-scene";
-import { ThemeEditor } from "@/game/components/theme-editor/theme-editor";
-import { useThemeEditorForm } from "@/game/hooks/use-theme-editor-form";
+import { GameWithThemeEditor } from "@/game/components/theme-editor/theme-editor";
+import { useGetGameSceneData } from "@/game/hooks/use-get-game-scene-data";
 import { createFileRoute } from "@tanstack/react-router";
-import { useLiveQuery } from "dexie-react-hooks";
-import { useEffect, useState } from "react";
 
 export const Component = () => {
   const { sceneKey, gameKey } = Route.useParams();
-  const gameService = getGameService();
-  const scene = useLiveQuery(
-    () => gameService.getSceneData(sceneKey),
-    [sceneKey, gameKey],
-  );
-  const form = useThemeEditorForm();
-  const [formValues, setFormValues] = useState(() => form.getValues());
+  const { scene, theme, isLoading } = useGetGameSceneData({
+    storyKey: gameKey,
+    sceneKey,
+  });
 
-  useEffect(() => {
-    // This is a hack since form.watch() does not work with React Compiler yet
-    const callback = form.subscribe({
-      formState: {
-        values: true,
-      },
-      callback: () => setFormValues(form.getValues()),
-    });
-    return () => callback();
-  }, [form]);
-
-  if (scene === undefined) {
+  if (isLoading || scene === undefined || theme === undefined) {
     return <BackdropLoader />;
   }
 
-  if (scene === null) {
-    console.error("Error while loading scene: ", scene);
+  if (scene === null || theme === null) {
+    console.error(`Error while loading scene: ${sceneKey}`);
     return <ErrorMessage />;
   }
 
-  return (
-    <>
-      <Form {...form}>
-        <GameScene
-          scene={scene}
-          isLastScene={!scene.actions.length}
-          mode="theme-editor"
-          theme={formValues}
-        />
-        <ThemeEditor form={form} values={formValues} />
-      </Form>
-    </>
-  );
+  return <GameWithThemeEditor theme={theme} scene={scene} />;
 };
 
 export const Route = createFileRoute("/game/theme-editor/$gameKey/$sceneKey")({
