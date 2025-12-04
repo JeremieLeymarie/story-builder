@@ -19,7 +19,7 @@ export const Component = () => {
     return <ErrorMessage />;
   }
 
-  return <GameWithThemeEditor theme={theme} scene={scene} />;
+  return <GameWithThemeEditor theme={theme} scene={scene} storyKey={gameKey} />;
 };
 
 export const Route = createFileRoute("/game/theme-editor/$gameKey/$sceneKey")({

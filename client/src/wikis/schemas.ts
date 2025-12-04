@@ -1,4 +1,5 @@
 import { lexicalContentSchema } from "@/lib/lexical-content";
+import { hexColorValidator } from "@/lib/validation";
 import z from "zod";
 
 export const articleSchema = z.object({
@@ -16,7 +17,7 @@ export const categorySchema = z.object({
   name: z
     .string()
     .max(250, { error: "Name has to be less than 250 characters" }),
-  color: z.string(), // TODO: use HEX_COLOR_REGEX from https://github.com/JeremieLeymarie/story-builder/pull/287
+  color: hexColorValidator,
 });
 
 export type CategorySchema = z.infer<typeof categorySchema>;
