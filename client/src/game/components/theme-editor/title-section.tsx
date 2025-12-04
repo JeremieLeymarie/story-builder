@@ -85,23 +85,26 @@ export const TitleSection = ({
       <FormField
         control={form.control}
         name="title.color"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel
-              className={cn(values.title.hidden && "text-muted-foreground")}
-            >
-              Color
-            </FormLabel>
-            <FormControl>
-              <ColorPicker
-                onChange={field.onChange}
-                defaultValue={field.value}
-                disabled={values.title.hidden}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
+        render={({ field }) => {
+          console.log(field.value);
+          return (
+            <FormItem>
+              <FormLabel
+                className={cn(values.title.hidden && "text-muted-foreground")}
+              >
+                Color
+              </FormLabel>
+              <FormControl>
+                <ColorPicker
+                  onChange={field.onChange}
+                  defaultValue={field.value}
+                  disabled={values.title.hidden}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          );
+        }}
       />
     </div>
   );
