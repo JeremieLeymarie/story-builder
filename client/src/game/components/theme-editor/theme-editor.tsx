@@ -36,8 +36,6 @@ export const GameWithThemeEditor = ({
     return () => callback();
   }, [form]);
 
-  console.log(formValues);
-
   return (
     <Form {...form}>
       <GameScene
