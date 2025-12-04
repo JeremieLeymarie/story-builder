@@ -5,6 +5,7 @@ import {
 } from "../stubs/stub-theme-repository";
 import { _getThemeService, ThemeServicePort } from "../theme-service";
 import { getTestFactory } from "@/lib/testing/factory";
+import { DEFAULT_STORY_THEME } from "../story-theme";
 
 const factory = getTestFactory();
 
@@ -25,6 +26,14 @@ describe("theme-service", () => {
       const theme = await svc.getTheme(mockTheme.storyKey);
 
       expect(theme).toStrictEqual(mockTheme);
+    });
+
+    test("should get default theme when theme does not exists yet", async () => {
+      repository.get.mockResolvedValue(null);
+
+      const theme = await svc.getTheme("plouf");
+
+      expect(theme).toStrictEqual(DEFAULT_STORY_THEME);
     });
   });
 

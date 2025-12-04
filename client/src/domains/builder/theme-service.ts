@@ -3,9 +3,10 @@ import {
   getDexieThemeRepository,
   ThemeRepositoryPort,
 } from "./theme-repository";
+import { DEFAULT_STORY_THEME } from "./story-theme";
 
 export type ThemeServicePort = {
-  getTheme: (storyKey: string) => Promise<StoryTheme | null>;
+  getTheme: (storyKey: string) => Promise<StoryTheme["theme"]>;
   /**
    * Update a story theme, or create it if it doesn't exists
    */
@@ -21,7 +22,10 @@ export const _getThemeService = ({
   repository: ThemeRepositoryPort;
 }): ThemeServicePort => {
   return {
-    getTheme: repository.get,
+    getTheme: async (storyKey) => {
+      const themeEntity = await repository.get(storyKey);
+      return themeEntity !== null ? themeEntity.theme : DEFAULT_STORY_THEME;
+    },
 
     updateTheme: async (storyKey, themeConfig) => {
       const theme = await repository.get(storyKey);
