@@ -163,6 +163,7 @@ export type WikiArticleLink = {
 export const ENTITIES = [
   "story",
   "scene",
+  "story-theme",
   "user",
   "story-progress",
   "wiki",

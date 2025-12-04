@@ -5,6 +5,8 @@ import {
   STORY_GENRES,
   StoryBase,
   StoryProgress,
+  StoryTheme,
+  TITLE_SIZES,
   User,
   Wiki,
   WikiArticle,
@@ -103,6 +105,29 @@ const _libraryStoryFactory = {
   type: () => "imported",
 } satisfies LibraryStoryFactory;
 
+type StoryThemeFactory = _BaseFactory<StoryTheme>;
+const _storyThemeFactory = {
+  key: nanoid,
+  storyKey: nanoid,
+  theme: () => ({
+    action: {
+      backgroundColor: faker.color.rgb(),
+      textColor: faker.color.rgb(),
+    },
+    scene: {
+      background: {
+        color: faker.color.rgb(),
+        image: Math.random() > 0.5 ? faker.image.url() : undefined,
+      },
+    },
+    title: {
+      color: faker.color.rgb(),
+      hidden: Math.random() > 0.5,
+      size: faker.helpers.arrayElement(TITLE_SIZES),
+    },
+  }),
+} satisfies StoryThemeFactory;
+
 type SceneFactory = _BaseFactory<Scene>;
 const _sceneFactory = {
   key: nanoid,
@@ -166,6 +191,10 @@ export const getTestFactory = () => {
       library: (partial: Partial<LibraryStory> = {}) => {
         return makeRandomEntity(_libraryStoryFactory, partial);
       },
+    },
+
+    storyTheme: (partial: Partial<StoryTheme> = {}) => {
+      return makeRandomEntity(_storyThemeFactory, partial);
     },
 
     scene: (partial: Partial<Scene> = {}) => {

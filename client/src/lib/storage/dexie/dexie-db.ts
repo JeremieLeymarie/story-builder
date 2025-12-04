@@ -18,8 +18,8 @@ import { getLibraryService } from "@/domains/game/library-service";
 type Tables = {
   user: EntityTable<User, "key">;
   stories: EntityTable<Story, "key">;
-  storyThemes: EntityTable<StoryTheme, "key">;
   scenes: EntityTable<Scene, "key">;
+  storyThemes: EntityTable<StoryTheme, "key">;
   storyProgresses: EntityTable<StoryProgress, "key">;
   wikis: EntityTable<Wiki, "key">;
   wikiArticles: EntityTable<WikiArticle, "key">;
@@ -34,8 +34,8 @@ const tables: Record<keyof Tables, string> = {
   user: "&key, &username, email",
   stories:
     "&key, firstSceneKey, title, description, image, status, genres, publicationDate, creationDate, author, finished",
-  storyThemes: "&key, &storyKey",
   scenes: "&key, storyKey, title, content, actions, builderParams",
+  storyThemes: "&key, &storyKey",
   storyProgresses:
     "&key, storyKey, userKey, currentSceneKey, character, inventory, history, lastPlayedAt",
   wikis: "&key, userKey",

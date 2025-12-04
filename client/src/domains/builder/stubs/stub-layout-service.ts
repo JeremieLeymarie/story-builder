@@ -1,9 +1,8 @@
-import { Mock, vi } from "vitest";
+import { vi } from "vitest";
 import { LayoutServicePort } from "../ports/layout-service-port";
+import { MockPort } from "@/types";
 
-export type MockLayoutService = {
-  [K in keyof LayoutServicePort]: Mock<LayoutServicePort[K]>;
-};
+export type MockLayoutService = MockPort<LayoutServicePort>;
 
 export const getStubLayoutService = (): MockLayoutService => {
   return {
