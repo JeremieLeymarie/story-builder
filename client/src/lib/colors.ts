@@ -30,16 +30,3 @@ export const getIsColorDark = (hexColor: string) => {
 
   return luminance <= 0.179;
 };
-
-export const isCSSVariable = (value: string) => value.startsWith("--");
-
-/**
- * Take a CSS variable name and returns the computed Hex value
- * @param variableKey the string that identifies the CSS variables in following format : --variable-name
- * @returns the Hex value
- */
-export const getHexFromCSSVariable = (variableKey: string) => {
-  return window
-    .getComputedStyle(window.document.body)
-    .getPropertyValue(variableKey);
-};
