@@ -77,12 +77,11 @@ export const CategoryActionsDropdown = ({
 
       <ConfirmDialog
         title="Delete category?"
-        description="Are you sure you want to delete this category? All articles in this category will also be deleted. This action cannot be undone."
+        description="Are you sure you want to delete this category? All articles in this category will be moved to uncategorized. This action cannot be undone."
         confirmLabel="Delete"
         open={deleteDialogOpen}
         setOpen={setDeleteDialogOpen}
         onConfirm={handleDelete}
-        trigger={<></>}
       />
     </>
   );

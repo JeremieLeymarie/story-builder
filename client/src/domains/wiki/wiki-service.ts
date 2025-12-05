@@ -158,7 +158,7 @@ export const _getWikiService = ({
       const permissionContext = await getPermissionContext(wikiKey);
       if (!permissionContext.canDeleteCategory) throw new ForbiddenError();
 
-      await repository.deleteArticlesByCategory(categoryKey);
+      await repository.uncategorizeArticlesByCategory(categoryKey);
       await repository.deleteCategory(categoryKey);
     },
 
