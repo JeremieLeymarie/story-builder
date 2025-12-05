@@ -7,8 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { useEditTheme } from "./use-edit-theme";
-import { DEFAULT_STORY_THEME } from "@/domains/builder/story-theme";
 import { hexColorValidator } from "@/lib/validation";
+import { useAutoSubmitForm } from "@/hooks/use-auto-submit-form";
 
 const schema = z.object({
   title: z.object({
@@ -21,6 +21,12 @@ const schema = z.object({
     textColor: hexColorValidator,
     size: z.enum(ACTION_BUTTON_SIZES),
   }),
+  scene: z.object({
+    background: z.object({
+      color: hexColorValidator,
+      image: z.union([z.url(), z.hex()]).optional(),
+    }),
+  }),
 });
 
 export const useThemeEditorForm = ({
@@ -30,25 +36,27 @@ export const useThemeEditorForm = ({
   theme: StoryTheme["theme"];
   storyKey: string;
 }) => {
-  const { editTheme, isLoading } = useEditTheme();
+  const { editTheme } = useEditTheme();
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: theme,
   });
 
-  const onSubmit = form.handleSubmit((data) =>
-    editTheme({
-      theme: {
-        title: data.title,
-        action: data.action,
-        scene: DEFAULT_STORY_THEME.scene, // TODO: use real values from form
-      },
-      storyKey,
-    }),
-  );
+  useAutoSubmitForm({
+    form,
+    onSubmit: (data) =>
+      editTheme({
+        theme: {
+          title: data.title,
+          action: data.action,
+          scene: data.scene,
+        },
+        storyKey,
+      }),
+  });
 
-  return { form, onSubmit, isEditing: isLoading };
+  return form;
 };
 
 export type ThemeEditorSchema = z.infer<typeof schema>;
-export type ThemeEditorForm = ReturnType<typeof useThemeEditorForm>["form"];
+export type ThemeEditorForm = ReturnType<typeof useThemeEditorForm>;

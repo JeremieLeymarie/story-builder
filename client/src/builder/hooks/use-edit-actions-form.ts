@@ -1,10 +1,10 @@
 import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import { useDebouncer } from "@tanstack/react-pacer/debouncer";
 import { Action, Scene } from "@/lib/storage/domain";
 import { match } from "ts-pattern";
 import z from "zod";
+import { useAutoSubmitForm } from "@/hooks/use-auto-submit-form";
 
 const actionBase = z.object({
   text: z.string({ message: "Text is required" }),
@@ -91,17 +91,13 @@ export const useEditActionsForm = ({
     control: form.control,
   });
 
-  const debouncer = useDebouncer(
-    () => {
-      form.handleSubmit((values: EditActionsSchema) => {
-        onSave({
-          actions: values.actions.map(adaptFormAction),
-        });
-      })();
-    },
-    { wait: 500 },
-    () => {}, // Never re-render when internal debouncer state changes
-  );
+  useAutoSubmitForm({
+    form,
+    onSubmit: (values) =>
+      onSave({
+        actions: values.actions.map(adaptFormAction),
+      }),
+  });
 
   useEffect(() => {
     // Update the form when the default values change, which are 'cached' otherwise
@@ -109,17 +105,7 @@ export const useEditActionsForm = ({
       form.reset({
         actions: actions.map(adaptDomainAction),
       });
-  }, [actions, form, debouncer]);
-
-  useEffect(() => {
-    const callback = form.subscribe({
-      formState: {
-        values: true,
-      },
-      callback: () => debouncer.maybeExecute(),
-    });
-    return () => callback();
-  }, [debouncer, form]);
+  }, [actions, form]);
 
   return { form, fields, append, remove, update };
 };
