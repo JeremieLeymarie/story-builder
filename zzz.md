@@ -231,3 +231,8 @@ Parfait ! Voici la documentation complète des modifications :
   - ✅ Stubs de test à jour
   - ✅ Types stricts respectés (TanStack Router +
   react-hook-form)
+
+
+
+  rajouter poubelle pour supprimer article individuellement
+  supprimer un article ca supprime les link egalement (dans le message d'erreur)

@@ -29,4 +29,7 @@ export const getStubWikiRepository = (): WikiRepositoryPort => ({
   getArticleLink: vi.fn(async () => Promise.resolve(factory.wikiArticleLink())),
   removeArticleLink: vi.fn(),
   updateArticleLink: vi.fn(),
+  deleteArticle: vi.fn(async () => Promise.resolve()),
+  getArticleLinksByArticle: vi.fn(async () => Promise.resolve([])),
+  deleteArticleLinksByArticle: vi.fn(async () => Promise.resolve()),
 });

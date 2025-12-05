@@ -50,6 +50,8 @@ export type WikiServicePort = {
     articleLinkKey: string,
     entityKey: string,
   ) => Promise<WikiArticleLink | null>;
+  deleteArticle: (wikiKey: string, articleKey: string) => Promise<void>;
+  getArticleLinkCountByArticle: (articleKey: string) => Promise<number>;
 };
 
 export const _getWikiService = ({
@@ -180,6 +182,22 @@ export const _getWikiService = ({
         entityKey,
       );
       return articleLink;
+    },
+
+    deleteArticle: async (wikiKey, articleKey) => {
+      const permissionContext = await getPermissionContext(wikiKey);
+      if (!permissionContext.canDeleteArticle) throw new ForbiddenError();
+
+      const article = await repository.getArticle(articleKey);
+      if (!article) throw new EntityNotExistError("wiki-article", articleKey);
+
+      await repository.deleteArticleLinksByArticle(articleKey);
+      await repository.deleteArticle(articleKey);
+    },
+
+    getArticleLinkCountByArticle: async (articleKey) => {
+      const links = await repository.getArticleLinksByArticle(articleKey);
+      return links.length;
     },
   };
 };
