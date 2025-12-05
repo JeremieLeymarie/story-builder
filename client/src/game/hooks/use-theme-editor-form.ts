@@ -24,9 +24,12 @@ const schema = z.object({
   scene: z.object({
     background: z.object({
       color: hexColorValidator,
-      image: z.union([z.url(), z.hex()]).optional(),
+      image: z.url().optional(),
     }),
-    textColor: hexColorValidator,
+    text: z.object({
+      color: hexColorValidator,
+      backgroundColor: hexColorValidator.optional().nullable(),
+    }),
   }),
 });
 
@@ -50,7 +53,7 @@ export const useThemeEditorForm = ({
         theme: {
           title: data.title,
           action: data.action,
-          scene: data.scene,
+          scene: data.scene, // TODO: data.scene.backgroundColor can be null, which is not reflected in the type and is not handled in the service
         },
         storyKey,
       }),

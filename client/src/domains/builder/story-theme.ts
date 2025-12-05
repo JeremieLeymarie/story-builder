@@ -17,6 +17,6 @@ export const DEFAULT_STORY_THEME = {
     background: {
       color: BACKGROUND,
     },
-    textColor: FOREGROUND,
+    text: { color: FOREGROUND },
   },
 } satisfies StoryThemeConfig;

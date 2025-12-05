@@ -75,7 +75,7 @@ export type StoryThemeConfig = {
   };
   scene: {
     background: { color: string; image?: string };
-    textColor: string;
+    text: { color: string };
   };
 };
 
