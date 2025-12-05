@@ -13,7 +13,7 @@ import { SceneTitle } from "./scene-title";
 type BaseProps = {
   scene: Scene;
   isLastScene: boolean;
-  theme: Omit<StoryThemeConfig, "scene">;
+  theme: StoryThemeConfig;
 };
 
 type GameModeProps = BaseProps & {
@@ -35,7 +35,10 @@ export const GameScene = (props: GameSceneProps) => {
   } = props;
 
   return (
-    <div className="flex w-full justify-center py-8">
+    <div
+      className="flex h-full w-full justify-center py-8"
+      style={{ backgroundColor: theme.scene.background.color }}
+    >
       <div className="w-11/12 lg:w-8/12">
         <div className="w-full px-6 py-8">
           <div>
@@ -52,6 +55,7 @@ export const GameScene = (props: GameSceneProps) => {
                   initialState={content}
                   editorNodes={[WikiNode]}
                   textDisplayMode="full"
+                  textColor={theme.scene.textColor}
                 />
               </EditorContext>
             </div>

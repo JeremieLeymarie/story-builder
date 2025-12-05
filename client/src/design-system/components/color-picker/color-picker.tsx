@@ -123,7 +123,7 @@ export const ColorPicker = ({
                 onClick={() => {
                   _onChange(color);
                 }}
-                className="h-6 w-8 cursor-pointer rounded"
+                className="h-6 w-8 cursor-pointer rounded shadow-md"
                 style={{ backgroundColor: color }}
               ></div>
             ))}
