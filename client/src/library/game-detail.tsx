@@ -6,6 +6,7 @@ import { getLibraryService } from "@/domains/game/library-service";
 import { Play, Trash2 } from "lucide-react";
 import { StoryGenreBadge } from "@/design-system/components";
 import { Button } from "@/design-system/primitives/button";
+import { Progress } from "@/design-system/primitives/progress";
 
 type Props = {
   story: Story;
@@ -55,28 +56,24 @@ export const LibraryGameDetail = ({
     <div className="bg-background min-h-screen">
       <div className="mx-auto max-w-6xl px-6 py-8">
         <div className="mb-12 flex gap-8">
-          {story.image && (
-            <div className="flex-shrink-0">
-              <img
-                src={story.image}
-                alt={story.title}
-                style={{
-                  width: "calc(var(--spacing) * 104)",
-                  height: "calc(var(--spacing) * 78)",
-                }}
-                className="rounded-lg object-cover shadow-lg"
-              />
-            </div>
-          )}
+          <div className="flex-shrink-0">
+            <img
+              src={story.image}
+              alt={story.title}
+              style={{
+                width: "calc(var(--spacing) * 104)",
+                height: "calc(var(--spacing) * 78)",
+              }}
+              className="rounded-lg object-cover shadow-lg"
+            />
+          </div>
           <div className="flex-1 space-y-4">
             <h1 className="text-foreground text-4xl font-bold">
               {story.title}
             </h1>
-            {story.description && (
-              <p className="text-muted-foreground text-lg leading-relaxed">
-                {story.description}
-              </p>
-            )}
+            <p className="text-muted-foreground text-lg leading-relaxed">
+              {story.description}
+            </p>
             {story.genres && story.genres.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {story.genres.map((genre) => (
@@ -103,12 +100,7 @@ export const LibraryGameDetail = ({
                   {progressPercentage}%
                 </span>
               </div>
-              <div className="bg-secondary h-3 w-full rounded-full">
-                <div
-                  className="bg-primary h-3 rounded-full transition-all duration-500"
-                  style={{ width: `${progressPercentage}%` }}
-                ></div>
-              </div>
+              <Progress value={progressPercentage} className="h-3" />
             </div>
             <div className="flex items-center justify-between pt-4">
               {story.author && (
