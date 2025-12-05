@@ -13,6 +13,7 @@ import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
 import { useBuilderContext } from "../hooks/use-builder-context";
 import {
   Toolbar,
+  ToolbarDescription,
   ToolbarHeader,
   ToolbarTitle,
 } from "@/design-system/components/toolbar";
@@ -42,7 +43,9 @@ const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
             <ArrowUpFromLineIcon size={16} />
           </Button>
         </div>
-        <p className="text-muted-foreground truncate italic">{story.title}</p>
+        <ToolbarDescription className="truncate">
+          {story.title}
+        </ToolbarDescription>
       </ToolbarHeader>
       <div className="flex w-full flex-col gap-2">
         <Button

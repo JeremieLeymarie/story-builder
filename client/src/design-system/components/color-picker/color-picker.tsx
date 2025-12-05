@@ -53,7 +53,7 @@ const ColorPickerInput = forwardRef<HTMLButtonElement, InputProps>(
             className="h-full w-12 rounded-l-md"
             style={{ backgroundColor: color }}
           ></div>
-          <div className="px-3">
+          <div className="flex h-full items-center border-l px-3">
             <p>{color}</p>
           </div>
         </Button>
@@ -115,7 +115,7 @@ export const ColorPicker = ({
         </div>
         <p className="mt-2 text-sm font-semibold">Presets</p>
         {/* TODO: improve accessibility - these presets are not selectable via keyboard  */}
-        {chunk(DEFAULT_COLORS, 8).map((colors) => (
+        {chunk(DEFAULT_COLORS, 6).map((colors) => (
           <div className="my-2 flex gap-2" key={colors.join("-")}>
             {colors.map((color) => (
               <div
@@ -123,7 +123,7 @@ export const ColorPicker = ({
                 onClick={() => {
                   _onChange(color);
                 }}
-                className="h-6 w-8 cursor-pointer rounded shadow-md"
+                className="h-6 w-8 cursor-pointer rounded shadow"
                 style={{ backgroundColor: color }}
               ></div>
             ))}
