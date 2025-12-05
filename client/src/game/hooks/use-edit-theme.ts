@@ -12,9 +12,6 @@ export const useEditTheme = () => {
       storyKey: string;
       theme: StoryTheme["theme"];
     }) => getThemeService().updateTheme(storyKey, theme),
-    onSuccess: () => {
-      toast.success("Theme successfully updated!");
-    },
     onError: () => {
       toast.error("Error: could not update the theme");
     },

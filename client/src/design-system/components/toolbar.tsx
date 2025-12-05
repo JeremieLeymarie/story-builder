@@ -10,7 +10,7 @@ export const Toolbar = ({
 }) => {
   return (
     <div
-      className={cn("z-50 rounded border bg-white/95 p-4 shadow-sm", className)}
+      className={cn("z-40 rounded border bg-white/95 p-4 shadow-sm", className)}
     >
       {children}
     </div>
