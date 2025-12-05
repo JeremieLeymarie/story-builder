@@ -37,7 +37,12 @@ export const GameScene = (props: GameSceneProps) => {
   return (
     <div
       className="flex h-full w-full justify-center py-8"
-      style={{ backgroundColor: theme.scene.background.color }}
+      style={{
+        backgroundColor: theme.scene.background.color,
+        background: `url(${theme.scene.background.image})`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+      }}
     >
       <div className="w-11/12 lg:w-8/12">
         <div className="w-full px-6 py-8">
@@ -55,7 +60,7 @@ export const GameScene = (props: GameSceneProps) => {
                   initialState={content}
                   editorNodes={[WikiNode]}
                   textDisplayMode="full"
-                  textColor={theme.scene.textColor}
+                  textColor={theme.scene.text.color}
                 />
               </EditorContext>
             </div>

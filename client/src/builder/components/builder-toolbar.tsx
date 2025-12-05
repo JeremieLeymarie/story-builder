@@ -24,6 +24,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
+import { cn } from "@/lib/style";
 
 type ContentProps = {
   toggleExpanded: () => void;
@@ -32,7 +33,7 @@ type ContentProps = {
 const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
   const { story } = useBuilderContext();
   const { addScene, openBuilderEditor, testStory } = useToolbarActions();
-  const btnClassname = "flex w-full justify-start gap-4 w-[225px]";
+  const btnClassname = "flex w-full justify-start gap-4";
 
   return (
     <>
@@ -183,7 +184,7 @@ export const BuilderToolbar = () => {
   const { isExpanded, toggleExpanded } = useToolbar();
 
   return (
-    <Toolbar>
+    <Toolbar className={cn(isExpanded && "w-[250px]")}>
       {isExpanded ? (
         <ExpandedToolbarContent toggleExpanded={toggleExpanded} />
       ) : (
