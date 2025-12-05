@@ -121,6 +121,7 @@ const _storyThemeFactory = {
         color: faker.color.rgb(),
         image: Math.random() > 0.5 ? faker.image.url() : undefined,
       },
+      textColor: faker.color.rgb(),
     },
     title: {
       color: faker.color.rgb(),

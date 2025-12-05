@@ -26,6 +26,7 @@ const schema = z.object({
       color: hexColorValidator,
       image: z.union([z.url(), z.hex()]).optional(),
     }),
+    textColor: hexColorValidator,
   }),
 });
 
