@@ -3,7 +3,7 @@ import { getLibraryService } from "@/domains/game/library-service";
 import { toast } from "sonner";
 import { useRouter } from "@tanstack/react-router";
 
-export const useDeleteProgress = (storyKey?: string) => {
+export const useDeleteProgress = (storyKey: string) => {
   const { navigate } = useRouter();
 
   const {
