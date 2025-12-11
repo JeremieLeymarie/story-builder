@@ -23,12 +23,10 @@ export const CategoryActionsDropdown = ({
   canDelete: boolean;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { deleteCategory } = useDeleteCategory();
 
   const handleDelete = async () => {
     await deleteCategory(category.key);
-    setDeleteDialogOpen(false);
   };
 
   return (
@@ -60,29 +58,25 @@ export const CategoryActionsDropdown = ({
           {canDelete && (
             <>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => {
-                  setIsOpen(false);
-                  setDeleteDialogOpen(true);
-                }}
-                className="text-destructive focus:text-destructive flex cursor-pointer items-center gap-2"
-              >
-                <Trash2Icon size={16} />
-                <span>Delete category</span>
-              </DropdownMenuItem>
+              <ConfirmDialog
+                title="Delete category?"
+                description="Are you sure you want to delete this category? All articles in this category will be moved to uncategorized. This action cannot be undone."
+                confirmLabel="Delete"
+                onConfirm={handleDelete}
+                trigger={
+                  <DropdownMenuItem
+                    onSelect={(e) => e.preventDefault()}
+                    className="text-destructive focus:text-destructive flex cursor-pointer items-center gap-2"
+                  >
+                    <Trash2Icon size={16} />
+                    <span>Delete category</span>
+                  </DropdownMenuItem>
+                }
+              />
             </>
           )}
         </DropdownMenuContent>
       </DropdownMenu>
-
-      <ConfirmDialog
-        title="Delete category?"
-        description="Are you sure you want to delete this category? All articles in this category will be moved to uncategorized. This action cannot be undone."
-        confirmLabel="Delete"
-        open={deleteDialogOpen}
-        setOpen={setDeleteDialogOpen}
-        onConfirm={handleDelete}
-      />
     </>
   );
 };
