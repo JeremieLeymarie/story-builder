@@ -6,7 +6,7 @@ import { useRouter } from "@tanstack/react-router";
 export const useDeleteProgress = (storyKey: string) => {
   const { navigate } = useRouter();
 
-    const {
+  const {
     mutateAsync: deleteProgress,
     isPending: isDeleting,
     isError,
@@ -32,7 +32,6 @@ export const useDeleteProgress = (storyKey: string) => {
       toast.success("Save deleted successfully");
     },
   });
-
 
   return {
     deleteProgress,
