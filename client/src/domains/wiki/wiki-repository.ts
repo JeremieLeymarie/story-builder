@@ -5,13 +5,14 @@ import {
   WikiArticleLink,
   WikiCategory,
 } from "@/lib/storage/domain";
-import { WithoutKey } from "@/types";
+import { MaybeWithoutKey, WithoutKey } from "@/types";
 import { ArticleUpdatePayload, WikiSection } from "./types";
 
 export const NO_CATEGORY = "NO_CATEGORY";
 
 export type WikiRepositoryPort = {
   getUserWikis: (userKey: string | undefined) => Promise<Wiki[]>;
+  getImportedWikis: () => Promise<Wiki[]>;
   bulkUpdate: (
     wikis: ({ key: string } & Partial<Omit<Wiki, "key">>)[],
   ) => Promise<void>;
@@ -19,16 +20,24 @@ export type WikiRepositoryPort = {
   get: (wikiKey: string) => Promise<Wiki | null>;
   getSections: (wikiKey: string) => Promise<WikiSection[]>;
   createArticle: (payload: WithoutKey<WikiArticle>) => Promise<string>;
+  bulkAddArticles: (payload: MaybeWithoutKey<WikiArticle>[]) => Promise<string>;
   updateArticle: (
     articleKey: string,
     payload: ArticleUpdatePayload,
   ) => Promise<void>;
+  removeArticle: (articleKey: string) => Promise<void>;
   getArticle: (articleKey: string) => Promise<WikiArticle | null>;
+  getArticles: (wikiKey: string) => Promise<WikiArticle[]>;
   createCategory: (payload: WithoutKey<WikiCategory>) => Promise<string>;
   deleteCategory: (categoryKey: string) => Promise<void>;
   deleteArticlesByCategory: (categoryKey: string) => Promise<void>;
   uncategorizeArticlesByCategory: (categoryKey: string) => Promise<void>;
+  bulkAddCategories: (
+    payload: MaybeWithoutKey<WikiCategory>[],
+  ) => Promise<void>;
+  getCategories: (wikiKey: string) => Promise<WikiCategory[]>;
   addArticleLink: (payload: WikiArticleLink) => Promise<void>;
+  bulkAddArticleLinks: (payload: WikiArticleLink[]) => Promise<void>;
   updateArticleLink: (payload: WikiArticleLink) => Promise<void>;
   removeArticleLink: (key: string, entityKey: string) => Promise<void>;
   getArticleLink: (
@@ -38,6 +47,9 @@ export type WikiRepositoryPort = {
   deleteArticle: (articleKey: string) => Promise<void>;
   getArticleLinksByArticle: (articleKey: string) => Promise<WikiArticleLink[]>;
   deleteArticleLinksByArticle: (articleKey: string) => Promise<void>;
+  getArticleLinksFromArticleKeys: (
+    articleKeys: string[],
+  ) => Promise<WikiArticleLink[]>;
 };
 
 export const _getDexieWikiRepository = (
@@ -53,6 +65,11 @@ export const _getDexieWikiRepository = (
         )
         .toArray();
     },
+
+    getImportedWikis: async () => {
+      return await db.wikis.filter((w) => w.type === "imported").toArray();
+    },
+
     bulkUpdate: async (wikis) => {
       const uniqueKeys = new Set(wikis.map(({ key }) => key));
       if (uniqueKeys.size !== wikis.length) {
@@ -127,6 +144,10 @@ export const _getDexieWikiRepository = (
       return await db.wikiArticles.add(payload);
     },
 
+    bulkAddArticles: async (payload) => {
+      return await db.wikiArticles.bulkAdd(payload);
+    },
+
     updateArticle: async (articleKey, payload) => {
       await db.wikiArticles.update(articleKey, {
         ...payload,
@@ -136,6 +157,17 @@ export const _getDexieWikiRepository = (
 
     getArticle: async (articleKey) => {
       return (await db.wikiArticles.get(articleKey)) ?? null;
+    },
+
+    getArticles: async (wikiKey) => {
+      return await db.wikiArticles
+        .filter((a) => a.wikiKey === wikiKey)
+        .toArray();
+    },
+
+    removeArticle: async (articleKey: string) => {
+      await db.wikiArticles.delete(articleKey);
+      await db.wikiArticleLinks.where("articleKey").equals(articleKey).delete();
     },
 
     createCategory: async (payload) => {
@@ -154,10 +186,22 @@ export const _getDexieWikiRepository = (
       await db.wikiArticles
         .where({ categoryKey })
         .modify({ categoryKey: undefined });
+    bulkAddCategories: async (payload) => {
+      await db.wikiCategories.bulkAdd(payload);
+    },
+
+    getCategories: async (wikiKey) => {
+      return await db.wikiCategories
+        .filter((c) => c.wikiKey === wikiKey)
+        .toArray();
     },
 
     addArticleLink: async (payload: WikiArticleLink) => {
       await db.wikiArticleLinks.add(payload, [payload.key, payload.entityKey]);
+    },
+
+    bulkAddArticleLinks: async (payload) => {
+      await db.wikiArticleLinks.bulkAdd(payload);
     },
 
     updateArticleLink: async (payload: WikiArticleLink) => {
@@ -195,6 +239,10 @@ export const _getDexieWikiRepository = (
         (link) => [link.key, link.entityKey] as [string, string],
       );
       await db.wikiArticleLinks.bulkDelete(keysToDelete);
+    getArticleLinksFromArticleKeys: async (articleKeys) => {
+      return await db.wikiArticleLinks
+        .filter((al) => articleKeys.includes(al.articleKey))
+        .toArray();
     },
   };
 };

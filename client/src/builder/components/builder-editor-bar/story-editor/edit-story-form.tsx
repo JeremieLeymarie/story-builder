@@ -34,7 +34,9 @@ export const EditStoryForm = ({
 }) => {
   const { story } = useBuilderContext();
   const { wikis, isLoading: isWikisLoading } = useGetAllWikis();
-  const assignedWiki = wikis?.find((wiki) => wiki.key === story.wikiKey);
+  const assignedWiki = wikis?.userWikis.find(
+    (wiki) => wiki.key === story.wikiKey,
+  );
 
   return (
     <Form {...form}>
@@ -114,7 +116,7 @@ export const EditStoryForm = ({
                       className="hover:text-primary"
                     />
                   </TooltipTrigger>
-                  <TooltipContent className="text-muted-foreground max-w-[300px] text-xs font-normal">
+                  <TooltipContent className="max-w-[300px] text-xs font-normal">
                     You can link a story to a wiki and reference wiki articles
                     in scenes
                   </TooltipContent>
@@ -135,7 +137,7 @@ export const EditStoryForm = ({
                 <FormControl>
                   <WikiSelector
                     disabled={!wikis || isWikisLoading}
-                    wikis={wikis ?? []}
+                    wikis={wikis?.userWikis ?? []}
                     selectedWikiKey={field.value}
                     onChange={(wikiKey) => field.onChange(wikiKey)}
                   />

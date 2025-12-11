@@ -2,10 +2,7 @@ import { BuilderPosition, Scene, Story } from "@/lib/storage/domain";
 import { LocalRepositoryPort } from "@/repositories/local-repository-port";
 import { BuilderNode } from "@/builder/types";
 import { Edge } from "@xyflow/react";
-import {
-  ImportServicePort,
-  StoryFromImport,
-} from "@/services/common/import-service";
+import { ImportServicePort } from "@/services/common/import-service";
 import { WithoutKey } from "@/types";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { BuilderServicePort } from "./ports/builder-service-port";
@@ -18,6 +15,7 @@ import {
   CannotDeleteFirstSceneError,
   DuplicationMissingPositionError,
 } from "./errors";
+import { StoryFromImport } from "@/services/common/schema";
 
 export const _getBuilderService = ({
   localRepository,
@@ -158,11 +156,9 @@ export const _getBuilderService = ({
       return await localRepository.createScene(scene);
     },
 
-    updateScene: async ({
-      key,
-      ...scene
-    }: Partial<Scene> & Pick<Scene, "key">) => {
+    updateScene: async ({ key, ...scene }) => {
       await localRepository.updatePartialScene(key, scene);
+      return await localRepository.getScene(key);
     },
 
     getAutoLayout: async ({
@@ -282,17 +278,36 @@ export const _getBuilderService = ({
             type: "builder",
           });
 
-          await importService.createScenes({
+          const oldScenesToNew = await importService.createScenes({
             story: storyFromImport,
             newStoryKey: storyResult.data.key,
           });
 
+          if (storyFromImport.wiki)
+            await importService.createWiki({
+              oldScenesToNew,
+              type: "created",
+              wikiData: storyFromImport.wiki,
+              newStoryKey: storyResult.data.key,
+            });
+
           return storyResult.data.key;
         },
-        { entities: ["scene", "story", "user"], mode: "readwrite" },
+        {
+          entities: [
+            "scene",
+            "story",
+            "user",
+            "wiki",
+            "wiki-article",
+            "wiki-article-link",
+            "wiki-article-link",
+          ],
+          mode: "readwrite",
+        },
       );
 
-      return { error: null, data: { storyKey } };
+      return storyKey;
     },
 
     updateStory: async (key, payload) => {
@@ -327,15 +342,16 @@ export const _getBuilderService = ({
               y: newPositions[scene.key]!.y,
             },
           },
-          actions: scene.actions.map(({ sceneKey, text, ...action }) => {
-            if (sceneKey && originalSceneKeys.includes(sceneKey))
-              return {
-                ...action,
-                text,
-                sceneKey: oldKeyToNewKey[sceneKey]!,
-              };
-            return { text, type: "simple" as const }; // Do not copy links that target a scene that is not within the batch of duplicated scenes
-          }),
+          actions: scene.actions.map(
+            ({ sceneKey, ...actionWithoutSceneKey }) => {
+              if (sceneKey && originalSceneKeys.includes(sceneKey))
+                return {
+                  ...structuredClone(actionWithoutSceneKey),
+                  sceneKey: oldKeyToNewKey[sceneKey]!,
+                };
+              return structuredClone(actionWithoutSceneKey); // Do not copy links that target a scene that is not within the batch of duplicated scenes
+            },
+          ),
         };
       });
 

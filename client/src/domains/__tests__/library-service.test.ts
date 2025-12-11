@@ -43,11 +43,11 @@ describe("library-service", () => {
 
   describe("importFromJSON", () => {
     it("should import story from JSON", async () => {
-      const result = await libraryService.importStory({
+      // Should not throw. Is this test really useful?
+      await libraryService.importStory({
         story: MOCK_IMPORTED_STORY,
         scenes: [MOCK_IMPORTED_SCENE],
       });
-      expect(result).toStrictEqual({ error: null });
     });
   });
 

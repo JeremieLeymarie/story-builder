@@ -45,10 +45,10 @@ describe("wiki service", () => {
         ]);
       });
 
-      const wikis = await svc.getAllWikis();
+      const { userWikis } = await svc.getAllWikis();
 
-      expect(wikis).toHaveLength(1);
-      expect(wikis).toContainEqual({
+      expect(userWikis).toHaveLength(1);
+      expect(userWikis).toContainEqual({
         image: "image.fr",
         name: "wiki #1",
         author: { username: "bob_bidou", key: "userKey" },

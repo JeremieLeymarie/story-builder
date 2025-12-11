@@ -10,6 +10,7 @@ import {
   WikiCategory,
   WikiArticleLink,
   Action,
+  StoryTheme,
 } from "../domain";
 import { DEMO_IMPORTED_STORY, DEMO_SCENES, DEMO_STORY } from "./seed";
 import { getLibraryService } from "@/domains/game/library-service";
@@ -18,6 +19,7 @@ type Tables = {
   user: EntityTable<User, "key">;
   stories: EntityTable<Story, "key">;
   scenes: EntityTable<Scene, "key">;
+  storyThemes: EntityTable<StoryTheme, "key">;
   storyProgresses: EntityTable<StoryProgress, "key">;
   wikis: EntityTable<Wiki, "key">;
   wikiArticles: EntityTable<WikiArticle, "key">;
@@ -33,12 +35,13 @@ const tables: Record<keyof Tables, string> = {
   stories:
     "&key, firstSceneKey, title, description, image, status, genres, publicationDate, creationDate, author, finished",
   scenes: "&key, storyKey, title, content, actions, builderParams",
+  storyThemes: "&key, &storyKey",
   storyProgresses:
     "&key, storyKey, userKey, currentSceneKey, character, inventory, history, lastPlayedAt",
   wikis: "&key, userKey",
   wikiArticles: "&key, wikiKey, categoryKey, title",
   wikiCategories: "&key, name",
-  wikiArticleLinks: "[key+entityKey], key, entityKey, entityType",
+  wikiArticleLinks: "[key+entityKey], key, entityKey, entityType, articleKey",
 };
 export const TABLE_NAMES = Object.keys(tables);
 

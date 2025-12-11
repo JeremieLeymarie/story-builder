@@ -7,7 +7,6 @@ import {
   _getImportService,
   _makeBulkSceneUpdatePayload,
   ImportServicePort,
-  StoryFromImport,
   TEMPORARY_NULL_KEY,
 } from "../import-service";
 import {
@@ -16,10 +15,16 @@ import {
   BASIC_STORY,
 } from "@/repositories/stubs/data";
 import { nanoid } from "nanoid";
+import {
+  getStubWikiRepository,
+  MockWikiRepository,
+} from "@/domains/wiki/stubs/stub-wiki-repository";
+import { StoryFromImport } from "../schema";
 const SCENE_KEY = nanoid();
 
 describe("import-service", () => {
   let localRepository: MockLocalRepository;
+  let wikiRepository: MockWikiRepository;
   let importService: ImportServicePort;
 
   const importedStory: StoryFromImport["story"] = {
@@ -73,9 +78,11 @@ describe("import-service", () => {
 
   beforeEach(() => {
     localRepository = getLocalRepositoryStub();
+    wikiRepository = getStubWikiRepository();
 
     importService = _getImportService({
       localRepository,
+      wikiRepository,
     });
 
     vi.useFakeTimers();
@@ -280,16 +287,18 @@ describe("import-service", () => {
     });
 
     it("should create scenes", async () => {
-      localRepository.createScene = vi.fn(() => Promise.resolve(BASIC_SCENE));
+      localRepository.createScene = vi.fn(() =>
+        Promise.resolve({ ...BASIC_SCENE, key: "new-scene-key" }),
+      );
 
       const result = await importService.createScenes({
         story: parsed,
-        newStoryKey: "new-key",
+        newStoryKey: "new-story-key",
       });
 
       // Scene is created with new story key & no actions at first
       expect(localRepository.createScene).toHaveBeenCalledWith({
-        storyKey: "new-key",
+        storyKey: "new-story-key",
         title: "Your first scene",
         content: BASIC_SCENE_CONTENT,
         actions: [],
@@ -303,10 +312,12 @@ describe("import-service", () => {
       // Scene is updated with the new keys in the action (only the ones with a sceneKey)
       expect(localRepository.updateScenes).toHaveBeenCalledOnce();
       expect(localRepository.updateFirstScene).toHaveBeenCalledWith(
-        "new-key",
-        BASIC_SCENE.key,
+        "new-story-key",
+        "new-scene-key",
       );
-      expect(result).toStrictEqual({ data: null, isOk: true });
+      expect(result).toStrictEqual({
+        [parsed.scenes[0]!.key]: "new-scene-key",
+      });
     });
   });
 });

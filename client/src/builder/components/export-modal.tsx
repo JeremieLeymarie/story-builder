@@ -8,73 +8,45 @@ import {
   DialogTrigger,
 } from "../../design-system/primitives";
 import { DownloadIcon, CopyIcon } from "lucide-react";
-import { Scene, Story } from "@/lib/storage/domain";
-import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
 
 import { toast } from "sonner";
 import { useExportModalStore } from "../hooks/use-export-modal-store";
-import { useQuery } from "@tanstack/react-query";
-import { getBuilderService } from "@/get-builder-service";
 import { SimpleLoader } from "@/design-system/components/simple-loader";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, ReactNode } from "react";
+import { useGetExportData } from "../hooks/use-get-export-data";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/design-system/primitives/tooltip";
 
-export const ExportModal = ({ storyKey }: { storyKey: string }) => {
+export const ExportModal = ({
+  trigger,
+  tooltip,
+}: {
+  trigger: ReactNode;
+  tooltip?: string;
+}) => {
   const { isOpen, setOpen } = useExportModalStore();
 
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="w-full justify-start gap-4"
-          size="sm"
-        >
-          <DownloadIcon />
-          Export
-          <ButtonShortCutDoc doc="E" />
-        </Button>
-      </DialogTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DialogTrigger asChild>{trigger}</DialogTrigger>
+        </TooltipTrigger>
+        {tooltip && <TooltipContent>{tooltip}</TooltipContent>}
+      </Tooltip>
       <DialogContent>
-        <ExportModalContent storyKey={storyKey} />
+        <ExportModalContent />
       </DialogContent>
     </Dialog>
   );
 };
 
-const getExportData = ({
-  story,
-  scenes,
-}: {
-  story: Story;
-  scenes: Scene[];
-}) => {
-  const storyJson = JSON.stringify({ story, scenes }, null, 2);
-  const blob = new Blob([storyJson], { type: "text/json" });
-  const url = URL.createObjectURL(blob);
-  return { url, data: storyJson };
-};
-
-export const ExportModalContent = ({ storyKey }: { storyKey: string }) => {
+export const ExportModalContent = () => {
   const { setOpen } = useExportModalStore();
-  const {
-    data,
-    isPending,
-    isLoading: isLoading_,
-  } = useQuery({
-    queryKey: ["EXPORT-MODAL", storyKey],
-    queryFn: async () => {
-      const { story, scenes } =
-        await getBuilderService().getBuilderStoryData(storyKey);
-
-      if (!story) {
-        toast.error("Something went wrong");
-        return null;
-      }
-      return { exportData: getExportData({ story, scenes }), story };
-    },
-  });
-
-  const isLoading = isLoading_ || isPending || data === undefined;
+  const { data, isLoading } = useGetExportData();
 
   return (
     <>

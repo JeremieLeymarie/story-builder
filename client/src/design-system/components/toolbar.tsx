@@ -1,5 +1,4 @@
 import { cn } from "@/lib/style";
-import { cx } from "class-variance-authority";
 import { ReactNode } from "react";
 
 export const Toolbar = ({
@@ -11,11 +10,18 @@ export const Toolbar = ({
 }) => {
   return (
     <div
-      className={cx("z-50 rounded border bg-white/95 p-4 shadow-sm", className)}
+      className={cn("z-50 rounded border bg-white/95 p-4 shadow-sm", className)}
     >
       {children}
     </div>
   );
+};
+
+export const ToolbarHeader = ({
+  className,
+  ...props
+}: { className?: string } & React.HTMLAttributes<HTMLHeadingElement>) => {
+  return <div className={cn("mb-2 flex flex-col", className)} {...props} />;
 };
 
 export const ToolbarTitle = ({
@@ -32,5 +38,3 @@ export const ToolbarTitle = ({
     />
   );
 };
-
-<p className="text-primary text-2xl font-semibold">TOOLS</p>;

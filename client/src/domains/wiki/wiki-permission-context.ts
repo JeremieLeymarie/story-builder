@@ -20,15 +20,17 @@ export const _getWikiPermissionContext = async ({
   wikiRepository: WikiRepositoryPort;
 }): Promise<WikiPermissionContext> => {
   const user = await authContext.getUser();
-  const wikiAuthor = (await wikiRepository.get(wikiKey))?.author;
+  const wiki = await wikiRepository.get(wikiKey);
+
+  const isCreatedByMe = wiki?.author?.key === user?.key;
 
   return {
-    canCreateArticle: wikiAuthor?.key === user?.key,
-    canEditArticle: wikiAuthor?.key === user?.key,
-    canDeleteArticle: wikiAuthor?.key === user?.key,
-    canCreateCategory: wikiAuthor?.key === user?.key,
-    canEditCategory: wikiAuthor?.key === user?.key,
-    canDeleteCategory: wikiAuthor?.key === user?.key,
+    canCreateArticle: isCreatedByMe && wiki?.type === "created",
+    canEditArticle: isCreatedByMe && wiki?.type === "created",
+    canDeleteArticle: isCreatedByMe && wiki?.type === "created",
+    canCreateCategory: isCreatedByMe && wiki?.type === "created",
+    canEditCategory: isCreatedByMe && wiki?.type === "created",
+    canDeleteCategory: isCreatedByMe && wiki?.type === "created",
   };
 };
 

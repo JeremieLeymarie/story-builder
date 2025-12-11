@@ -2,35 +2,37 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useDebouncer } from "@tanstack/react-pacer/debouncer";
-import {
-  SceneUpdatePayload,
-  SceneSchema,
-  sceneSchema,
-} from "../components/builder-editor-bar/scene-editor/schema";
+import { Scene } from "@/lib/storage/domain";
+import z from "zod";
+import { lexicalContentSchema } from "@/lib/lexical-content";
 
-export const useSceneEditorForm = ({
-  scene,
+export const sceneSchema = z.object({
+  title: z
+    .string()
+    .max(250, { message: "Title has to be less than 250 characters" }),
+  content: lexicalContentSchema,
+});
+
+export type SceneSchema = z.infer<typeof sceneSchema>;
+
+export type SceneUpdatePayload = Omit<Scene, "builderParams" | "actions">;
+
+export const useEditSceneContentForm = ({
+  defaultValues,
   onSave,
 }: {
-  scene: SceneUpdatePayload;
-  onSave: (scene: SceneUpdatePayload) => void;
+  defaultValues: Partial<SceneSchema>;
+  onSave: (payload: SceneSchema) => void;
 }) => {
   const form = useForm<SceneSchema>({
     resolver: zodResolver(sceneSchema),
-    defaultValues: {
-      content: scene?.content,
-      title: scene?.title,
-      actions: scene?.actions,
-    },
+    defaultValues,
   });
 
   const debouncer = useDebouncer(
-    (scene) => {
+    () => {
       form.handleSubmit((values: SceneSchema) => {
         onSave({
-          key: scene.key,
-          storyKey: scene.storyKey,
-          actions: values.actions,
           content: values.content,
           title: values.title,
         });
@@ -42,18 +44,18 @@ export const useSceneEditorForm = ({
 
   useEffect(() => {
     // Update the form when the default values change, which are 'cached' otherwise
-    if (scene) form.reset(scene);
-  }, [scene, form, debouncer]);
+    if (defaultValues) form.reset(defaultValues);
+  }, [defaultValues, debouncer, form]);
 
   useEffect(() => {
     const callback = form.subscribe({
       formState: {
         values: true,
       },
-      callback: () => debouncer.maybeExecute(scene),
+      callback: debouncer.maybeExecute,
     });
     return () => callback();
-  }, [debouncer, form, scene]);
+  }, [defaultValues, debouncer, form]);
 
   return form;
 };

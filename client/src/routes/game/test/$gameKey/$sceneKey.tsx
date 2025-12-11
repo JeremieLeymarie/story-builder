@@ -1,23 +1,21 @@
 import { ErrorMessage, BackdropLoader } from "@/design-system/components";
-import { getGameService } from "@/domains/game/game-service";
-import { GameScene } from "@/game/components/scene";
+import { GameScene } from "@/game/components/game-scene";
+import { useGetGameSceneData } from "@/game/hooks/use-get-game-scene-data";
 import { createFileRoute } from "@tanstack/react-router";
-import { useLiveQuery } from "dexie-react-hooks";
 
 export const Component = () => {
   const { sceneKey, gameKey } = Route.useParams();
-  const gameService = getGameService();
-  const scene = useLiveQuery(
-    () => gameService.getSceneData(sceneKey),
-    [sceneKey, gameKey],
-  );
+  const { scene, theme, isLoading } = useGetGameSceneData({
+    storyKey: gameKey,
+    sceneKey,
+  });
 
-  if (scene === undefined) {
+  if (isLoading || scene === undefined || theme === undefined) {
     return <BackdropLoader />;
   }
 
-  if (scene === null) {
-    console.error("Error while loading scene: ", scene);
+  if (scene === null || theme === null) {
+    console.error(`Error while loading scene: ${sceneKey}`);
     return <ErrorMessage />;
   }
 
@@ -25,7 +23,8 @@ export const Component = () => {
     <GameScene
       scene={scene}
       isLastScene={!scene.actions.length}
-      progress={null}
+      mode="test"
+      theme={theme}
     />
   );
 };

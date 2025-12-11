@@ -48,7 +48,7 @@ export const ActionsDropdown = ({
               <TooltipTrigger asChild>
                 <CircleHelpIcon size="16px" className="hover:text-primary" />
               </TooltipTrigger>
-              <TooltipContent className="text-muted-foreground max-w-[300px] text-xs font-normal">
+              <TooltipContent className="max-w-[300px] text-xs font-normal">
                 Story Builder is designed to be local-first. This means that by
                 default data is only stored locally. To allow playing and
                 building on multiple devices or browsers, you can manually save

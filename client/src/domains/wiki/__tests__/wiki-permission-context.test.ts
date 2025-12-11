@@ -9,7 +9,7 @@ import { getTestFactory } from "@/lib/testing/factory";
 
 const factory = getTestFactory();
 
-const expectNoPermissions = (context: WikiPermissionContext) => {
+const expectHasNoPermissions = (context: WikiPermissionContext) => {
   expect(context.canCreateArticle).toBeFalsy();
   expect(context.canDeleteArticle).toBeFalsy();
   expect(context.canEditArticle).toBeFalsy();
@@ -18,7 +18,7 @@ const expectNoPermissions = (context: WikiPermissionContext) => {
   expect(context.canDeleteCategory).toBeFalsy();
 };
 
-const expectPermissions = (context: WikiPermissionContext) => {
+const expectHasPermissions = (context: WikiPermissionContext) => {
   expect(context.canCreateArticle).toBeTruthy();
   expect(context.canDeleteArticle).toBeTruthy();
   expect(context.canEditArticle).toBeTruthy();
@@ -41,7 +41,7 @@ describe("wiki permission context", async () => {
   test("no permissions when wiki doesn't exist", async () => {
     wikiRepository.get = vi.fn(() => Promise.resolve(null));
     const context = await _getContext();
-    expectNoPermissions(context);
+    expectHasNoPermissions(context);
   });
 
   test("no permissions when user isn't wiki's author", async () => {
@@ -54,7 +54,7 @@ describe("wiki permission context", async () => {
     authContext.getUser = vi.fn(() => Promise.resolve(user));
 
     const context = await _getContext();
-    expectNoPermissions(context);
+    expectHasNoPermissions(context);
   });
 
   test("no permissions when user is not logged in & wiki has author", async () => {
@@ -65,28 +65,43 @@ describe("wiki permission context", async () => {
     authContext.getUser = vi.fn(() => Promise.resolve(null));
 
     const context = await _getContext();
-    expectNoPermissions(context);
+    expectHasNoPermissions(context);
   });
 
-  test("permissions when user is wiki's author", async () => {
+  test("permissions when user is wiki's author and wiki has type `created`", async () => {
     const user = factory.user({ key: "bob-key", username: "bob-bidou" });
     const wiki = factory.wiki({
       author: { key: "bob-key", username: "bob-bidou" },
+      type: "created",
     });
 
     wikiRepository.get = vi.fn(() => Promise.resolve(wiki));
     authContext.getUser = vi.fn(() => Promise.resolve(user));
 
     const context = await _getContext();
-    expectPermissions(context);
+    expectHasPermissions(context);
   });
 
-  test("permissions when user is not logged in and wiki has no author", async () => {
-    const wiki = factory.wiki({ author: undefined });
+  test("permissions when user is wiki's author and wiki has type `imported`", async () => {
+    const user = factory.user({ key: "bob-key", username: "bob-bidou" });
+    const wiki = factory.wiki({
+      author: { key: "bob-key", username: "bob-bidou" },
+      type: "imported",
+    });
+
+    wikiRepository.get = vi.fn(() => Promise.resolve(wiki));
+    authContext.getUser = vi.fn(() => Promise.resolve(user));
+
+    const context = await _getContext();
+    expectHasNoPermissions(context);
+  });
+
+  test("permissions when user is not logged in and wiki has no author and has type `created`", async () => {
+    const wiki = factory.wiki({ author: undefined, type: "created" });
     wikiRepository.get = vi.fn(() => Promise.resolve(wiki));
     authContext.getUser = vi.fn(() => Promise.resolve(null));
 
     const context = await _getContext();
-    expectPermissions(context);
+    expectHasPermissions(context);
   });
 });

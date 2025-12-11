@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { randomInArray, randomNumber } from "../random";
+import { randomHexColor, randomInArray, randomNumber } from "../random";
+import { HEX_COLOR_REGEX } from "../colors";
 
 describe("random", () => {
   describe("randomNumber", () => {
@@ -42,6 +43,12 @@ describe("random", () => {
 
     test("simple", () => {
       expect(randomInArray([1, 2, 3])).toBeOneOf([1, 2, 3]);
+    });
+  });
+
+  describe("randomHexColor", () => {
+    test("simple", () => {
+      expect(randomHexColor()).toMatch(HEX_COLOR_REGEX);
     });
   });
 });

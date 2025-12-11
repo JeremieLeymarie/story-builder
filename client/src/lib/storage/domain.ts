@@ -54,6 +54,36 @@ export type BuilderStory = StoryBase & { type: "builder" };
 
 export type Story = LibraryStory | BuilderStory;
 
+export const TITLE_SIZES = ["small", "medium", "large", "huge"] as const;
+export const ACTION_BUTTON_SIZES = [
+  "small",
+  "medium",
+  "large",
+  "huge",
+] as const;
+
+export type StoryThemeConfig = {
+  title: {
+    hidden: boolean;
+    size: (typeof TITLE_SIZES)[number];
+    color: string;
+  };
+  action: {
+    backgroundColor: string;
+    textColor: string;
+    size: (typeof ACTION_BUTTON_SIZES)[number];
+  };
+  scene: {
+    background: { color: string; image?: string };
+  };
+};
+
+export type StoryTheme = {
+  key: string;
+  storyKey: string;
+  theme: StoryThemeConfig;
+};
+
 type ActionBase = {
   text: string;
   sceneKey?: string;
@@ -123,16 +153,24 @@ export type WikiCategory = {
   name: string;
   color: string;
 };
+
+export const WIKI_ARTICLE_LINKS_ENTITY_TYPES = [
+  "scene",
+] as const satisfies Entity[]; // maybe wiki articles in the future?
+
+type WikiArticleEntityType = (typeof WIKI_ARTICLE_LINKS_ENTITY_TYPES)[number];
+
 export type WikiArticleLink = {
   key: string; // This is not a primary key, multiple WikiArticleLinks can have the same articleLinkKey
   articleKey: string;
-  entityType: Extract<Entity, "scene">; // maybe wiki articles in the future?
+  entityType: WikiArticleEntityType;
   entityKey: string;
 };
 
 export const ENTITIES = [
   "story",
   "scene",
+  "story-theme",
   "user",
   "story-progress",
   "wiki",

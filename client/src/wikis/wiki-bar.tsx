@@ -12,6 +12,18 @@ import { AddCategoryPopover } from "./add-category-popover";
 import { CategoryBadge } from "./category-badge";
 import { CategoryActionsDropdown } from "./category-actions-dropdown";
 import { useState, useEffect } from "react";
+import { Link, useNavigate, useParams } from "@tanstack/react-router";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/design-system/primitives/tooltip";
+import { cn } from "@/lib/style";
+import { AddCategoryPopover } from "./add-category-popover";
+import { CategoryBadge } from "./category-badge";
+import { ConfirmDialog } from "@/design-system/components";
+import { useState } from "react";
+import { getWikiService } from "@/domains/wiki/wiki-service";
 
 const ArticleTitle = ({
   title,
@@ -22,9 +34,15 @@ const ArticleTitle = ({
   articleKey: string;
   canDelete: boolean;
 }) => {
-  const wikiKey = useWikiStore((state) => state.wikiData.wiki.key);
+  const [wikiKey, refresh] = useWikiStore((state) => [
+    state.wikiData.wiki.key,
+    state.refresh,
+  ]);
   const { articleKey: selectedArticleKey } = useParams({ strict: false });
   const isSelected = selectedArticleKey === articleKey;
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const wikiService = getWikiService();
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [linkCount, setLinkCount] = useState<number | null>(null);
@@ -52,47 +70,53 @@ const ArticleTitle = ({
   };
 
   return (
-    <>
-      <div className="group/article flex items-center justify-between">
-        <Link
-          to="/wikis/$wikiKey/$articleKey"
-          params={{ articleKey, wikiKey }}
-          className="min-w-0 flex-1"
-        >
-          <p
-            className={cn(
-              isSelected && "bg-accent font-semibold",
-              "hover:bg-accent text-md w-full truncate rounded py-1 pl-6",
-            )}
-          >
-            {title}
-          </p>
-        </Link>
-        {canDelete && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setDeleteDialogOpen(true);
-            }}
-            className="invisible h-6 w-6 flex-shrink-0 cursor-pointer transition-transform ease-in-out group-hover/article:visible hover:scale-105"
-          >
-            <Trash2Icon size={14} className="text-destructive" />
-          </Button>
-        )}
-      </div>
-
+    <div
+      onClick={() =>
+        navigate({
+          to: "/wikis/$wikiKey/$articleKey",
+          params: { articleKey, wikiKey },
+        })
+      }
+      className={cn(
+        isSelected && "bg-accent font-semibold",
+        "hover:bg-accent group/article flex items-center justify-between rounded",
+      )}
+    >
+      <p className="text-md w-full truncate py-1 pl-6">{title}</p>
       <ConfirmDialog
-        title="Delete article?"
-        description={getDeleteDescription()}
+        title="Are you sure?"
+        description={
+          <div>
+            Do want to delete <span className="font-semibold">{title}</span>{" "}
+            from the wiki? Deletion is definitive, and links to this article in
+            scenes will also be deleted.
+          </div>
+        }
         confirmLabel="Delete"
-        open={deleteDialogOpen}
-        setOpen={setDeleteDialogOpen}
-        onConfirm={handleDelete}
+        onConfirm={async (e) => {
+          e.stopPropagation();
+          await wikiService.removeArticle(articleKey);
+          refresh();
+        }}
+        onCancel={(e) => {
+          e.stopPropagation();
+        }}
+        open={open}
+        setOpen={setOpen}
+        trigger={
+          <Button
+            size="xs"
+            variant="ghost"
+            className="invisible cursor-pointer group-hover/article:visible"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <Trash2Icon />
+          </Button>
+        }
       />
-    </>
+    </div>
   );
 };
 

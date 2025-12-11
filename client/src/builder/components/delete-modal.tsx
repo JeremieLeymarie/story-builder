@@ -1,12 +1,14 @@
 import { ConfirmDialog } from "@/design-system/components";
 import { Button } from "@/design-system/primitives";
 import { Trash2Icon } from "lucide-react";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 
-export const DeleteModal = ({
+export const DeleteStoryModal = ({
   deleteStory,
+  trigger,
 }: {
   deleteStory: () => Promise<void>;
+  trigger?: ReactNode;
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -20,14 +22,16 @@ export const DeleteModal = ({
         open={open}
         setOpen={setOpen}
         trigger={
-          <Button
-            variant="destructive"
-            className="w-full justify-start gap-4"
-            size="sm"
-          >
-            <Trash2Icon />
-            Delete
-          </Button>
+          trigger ?? (
+            <Button
+              variant="destructive"
+              className="w-full justify-start gap-4"
+              size="sm"
+            >
+              <Trash2Icon />
+              Delete
+            </Button>
+          )
         }
       />
     </>
