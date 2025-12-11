@@ -6,7 +6,7 @@ import { useRouter } from "@tanstack/react-router";
 export const useDeleteProgress = (storyKey: string) => {
   const { navigate } = useRouter();
 
-  const {
+    const {
     mutateAsync: deleteProgress,
     isPending: isDeleting,
     isError,
@@ -15,29 +15,24 @@ export const useDeleteProgress = (storyKey: string) => {
       const libraryService = getLibraryService();
 
       // Check if this is the last progress for the story
-      if (storyKey) {
-        const { otherProgresses, currentProgress } =
-          await libraryService.getGameDetail(storyKey);
-        const totalProgresses = [currentProgress, ...otherProgresses].filter(
-          Boolean,
-        );
-
-        if (totalProgresses.length === 1) {
-          // This is the last progress, redirect to library after deletion
-          await libraryService.deleteStoryProgress(progressKey);
-          navigate({ to: "/library" });
-          toast.success("Last save deleted. Returning to library.");
-          return;
-        }
-      }
+      const { otherProgresses, currentProgress } =
+        await libraryService.getGameDetail(storyKey);
+      const totalProgresses = [currentProgress, ...otherProgresses];
 
       await libraryService.deleteStoryProgress(progressKey);
-      toast.success("Save deleted successfully");
+
+      return { redirectToLibrary: totalProgresses.length === 1 };
     },
     onError: () => {
       toast.error("Could not delete progress");
     },
+
+    onSuccess: ({ redirectToLibrary }) => {
+      if (redirectToLibrary) navigate({ to: "/library" });
+      toast.success("Save deleted successfully");
+    },
   });
+
 
   return {
     deleteProgress,
