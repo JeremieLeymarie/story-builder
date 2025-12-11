@@ -4,31 +4,18 @@ import { Button, Input } from "@/design-system/primitives";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
 import { HomeIcon, PlusIcon, SearchIcon, Trash2Icon } from "lucide-react";
 import { useWikiStore } from "./hooks/use-wiki-store";
-import { useDeleteArticle } from "./hooks/use-delete-article";
 import { WikiSection } from "@/domains/wiki/types";
-import { Link, useParams } from "@tanstack/react-router";
 import { cn } from "@/lib/style";
 import { AddCategoryPopover } from "./add-category-popover";
 import { CategoryBadge } from "./category-badge";
 import { CategoryActionsDropdown } from "./category-actions-dropdown";
-import { useState, useEffect } from "react";
-import { Link, useNavigate, useParams } from "@tanstack/react-router";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/design-system/primitives/tooltip";
-import { cn } from "@/lib/style";
-import { AddCategoryPopover } from "./add-category-popover";
-import { CategoryBadge } from "./category-badge";
-import { ConfirmDialog } from "@/design-system/components";
 import { useState } from "react";
+import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import { getWikiService } from "@/domains/wiki/wiki-service";
 
 const ArticleTitle = ({
   title,
   articleKey,
-  canDelete,
 }: {
   title: string;
   articleKey: string;
@@ -43,31 +30,6 @@ const ArticleTitle = ({
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const wikiService = getWikiService();
-
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [linkCount, setLinkCount] = useState<number | null>(null);
-  const { deleteArticle, getArticleLinkCount } = useDeleteArticle();
-
-  useEffect(() => {
-    if (deleteDialogOpen) {
-      getArticleLinkCount(articleKey).then(setLinkCount);
-    }
-  }, [deleteDialogOpen, articleKey, getArticleLinkCount]);
-
-  const handleDelete = async () => {
-    await deleteArticle(articleKey);
-    setDeleteDialogOpen(false);
-  };
-
-  const getDeleteDescription = () => {
-    if (linkCount === null) {
-      return "Loading...";
-    }
-    if (linkCount > 0) {
-      return `Are you sure you want to delete this article? This article is referenced by ${linkCount} scene(s). All references will also be deleted. This action cannot be undone.`;
-    }
-    return "Are you sure you want to delete this article? This action cannot be undone.";
-  };
 
   return (
     <div

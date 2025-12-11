@@ -30,7 +30,6 @@ export const getStubWikiRepository = (): MockWikiRepository => ({
   removeArticle: vi.fn(),
   createCategory: vi.fn(async () => Promise.resolve(nanoid())),
   deleteCategory: vi.fn(async () => Promise.resolve()),
-  deleteArticlesByCategory: vi.fn(async () => Promise.resolve()),
   uncategorizeArticlesByCategory: vi.fn(async () => Promise.resolve()),
   bulkAddCategories: vi.fn(),
   getCategories: vi.fn(async () => Promise.resolve([])),

@@ -218,6 +218,8 @@ export const _getWikiService = ({
     getArticleLinkCountByArticle: async (articleKey) => {
       const links = await repository.getArticleLinksByArticle(articleKey);
       return links.length;
+    },
+
     getWikiExportData: async (wikiKey) => {
       const [wiki, categories, articles] = await Promise.all([
         repository.get(wikiKey),
