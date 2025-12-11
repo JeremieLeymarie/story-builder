@@ -83,11 +83,11 @@ const ArticleTitle = ({
 };
 
 const Section = ({ category, articles }: WikiSection) => {
-  const { wikiKey, canDeleteCategory, canDeleteArticle } = useWikiStore(
+  const { wikiKey, canDeleteCategory, canRemoveArticle } = useWikiStore(
     (state) => ({
       wikiKey: state.wikiData.wiki.key,
       canDeleteCategory: state.permissions.canDeleteCategory,
-      canDeleteArticle: state.permissions.canDeleteArticle,
+      canRemoveArticle: state.permissions.canRemoveArticle,
     }),
   );
 
@@ -109,7 +109,7 @@ const Section = ({ category, articles }: WikiSection) => {
             key={key}
             title={title}
             articleKey={key}
-            canDelete={canDeleteArticle}
+            canDelete={canRemoveArticle}
           />
         ))}
       </div>

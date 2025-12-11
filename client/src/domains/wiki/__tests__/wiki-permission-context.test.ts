@@ -11,7 +11,7 @@ const factory = getTestFactory();
 
 const expectHasNoPermissions = (context: WikiPermissionContext) => {
   expect(context.canCreateArticle).toBeFalsy();
-  expect(context.canDeleteArticle).toBeFalsy();
+  expect(context.canRemoveArticle).toBeFalsy();
   expect(context.canEditArticle).toBeFalsy();
   expect(context.canCreateCategory).toBeFalsy();
   expect(context.canEditCategory).toBeFalsy();
@@ -20,7 +20,7 @@ const expectHasNoPermissions = (context: WikiPermissionContext) => {
 
 const expectHasPermissions = (context: WikiPermissionContext) => {
   expect(context.canCreateArticle).toBeTruthy();
-  expect(context.canDeleteArticle).toBeTruthy();
+  expect(context.canRemoveArticle).toBeTruthy();
   expect(context.canEditArticle).toBeTruthy();
   expect(context.canCreateCategory).toBeTruthy();
   expect(context.canEditCategory).toBeTruthy();
