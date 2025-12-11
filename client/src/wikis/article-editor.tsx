@@ -51,10 +51,10 @@ export const ArticleEditor = ({
     .filter((cat) => !!cat);
 
   useEffect(() => {
-    if (mode === "create" && defaultValues?.categoryKey) {
-      form.reset({ categoryKey: defaultValues.categoryKey });
+    if (defaultValues) {
+      form.reset(defaultValues);
     }
-  }, [defaultValues?.categoryKey, mode, form]);
+  }, [defaultValues, mode, form]);
 
   const handleSubmit = async (data: ArticleSchema) => {
     if (mode === "update") await updateArticle(articleKey, data);
