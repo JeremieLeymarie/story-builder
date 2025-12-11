@@ -67,18 +67,18 @@ export const SceneSection = ({ form }: { form: ThemeEditorForm }) => {
             </div>
             <FormControl>
               <div className="flex flex-col items-center">
-                {/* TODO: default value */}
                 <Input
                   type="url"
                   placeholder="https://example.com"
-                  {...field}
+                  onChange={(v) => field.onChange(v.target.value || null)}
+                  value={field.value || ""}
                 />
                 <p className="text-muted-foreground">--- OR ---</p>
                 <FileDropInput
+                  onUploadFile={(v) => field.onChange(v || null)}
                   size="sm"
                   accept="image"
                   readAs="dataURL"
-                  onUploadFile={field.onChange}
                 />
               </div>
             </FormControl>

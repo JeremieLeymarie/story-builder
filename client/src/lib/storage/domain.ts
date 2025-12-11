@@ -74,7 +74,7 @@ export type StoryThemeConfig = {
     size: (typeof ACTION_BUTTON_SIZES)[number];
   };
   scene: {
-    background: { color: string; image?: string };
+    background: { color: string; image?: string | null };
     text: { color: string };
   };
 };
