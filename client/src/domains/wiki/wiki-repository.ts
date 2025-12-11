@@ -43,9 +43,7 @@ export type WikiRepositoryPort = {
     key: string,
     entityKey: string,
   ) => Promise<WikiArticleLink | null>;
-  deleteArticle: (articleKey: string) => Promise<void>;
   getArticleLinksByArticle: (articleKey: string) => Promise<WikiArticleLink[]>;
-  deleteArticleLinksByArticle: (articleKey: string) => Promise<void>;
   getArticleLinksFromArticleKeys: (
     articleKeys: string[],
   ) => Promise<WikiArticleLink[]>;
@@ -217,24 +215,10 @@ export const _getDexieWikiRepository = (
       );
     },
 
-    deleteArticle: async (articleKey) => {
-      await db.wikiArticles.delete(articleKey);
-    },
-
     getArticleLinksByArticle: async (articleKey) => {
       return await db.wikiArticleLinks
         .filter((link) => link.articleKey === articleKey)
         .toArray();
-    },
-
-    deleteArticleLinksByArticle: async (articleKey) => {
-      const links = await db.wikiArticleLinks
-        .filter((link) => link.articleKey === articleKey)
-        .toArray();
-      const keysToDelete = links.map(
-        (link) => [link.key, link.entityKey] as [string, string],
-      );
-      await db.wikiArticleLinks.bulkDelete(keysToDelete);
     },
 
     getArticleLinksFromArticleKeys: async (articleKeys) => {

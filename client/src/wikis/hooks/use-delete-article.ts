@@ -15,7 +15,7 @@ export const useDeleteArticle = () => {
 
   const deleteArticle = async (articleKey: string) => {
     try {
-      await svc.deleteArticle(wikiKey, articleKey);
+      await svc.removeArticle(articleKey);
       toast.success("Article deleted successfully.");
 
       if (currentArticleKey === articleKey) {
