@@ -63,6 +63,7 @@ type FileInputProps = {
   onUploadFile: (content: string | null) => void;
   readAs: ReadAs;
   size?: VariantProps<typeof variants>["size"];
+  showNameAfterUpload?: boolean;
 };
 
 const fileTypeMapping: Record<Accept, string> = {
@@ -75,6 +76,7 @@ export const FileDropInput = ({
   accept,
   readAs,
   size,
+  showNameAfterUpload = false,
 }: FileInputProps) => {
   const { readFile } = useFileUpload({
     onReadFile: onUploadFile,
@@ -135,7 +137,7 @@ export const FileDropInput = ({
         )}
         onClick={handleDropzoneClick}
       >
-        {fileName ? (
+        {showNameAfterUpload && fileName ? (
           <p>
             <span className="font-semibold">Uploaded:</span> {fileName}
           </p>

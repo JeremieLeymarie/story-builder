@@ -39,7 +39,9 @@ export const GameScene = (props: GameSceneProps) => {
       className="flex h-full w-full justify-center py-8"
       style={{
         backgroundColor: theme.scene.background.color,
-        background: `url(${theme.scene.background.image})`,
+        backgroundImage: theme.scene.background.image
+          ? `url(${theme.scene.background.image})`
+          : undefined,
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
       }}

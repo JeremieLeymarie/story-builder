@@ -32,7 +32,6 @@ export const useEditSceneContentForm = ({
   useAutoSubmitForm({
     form,
     onSubmit: (values) => {
-      console.log(values);
       return onSave({
         content: values.content,
         title: values.title,
