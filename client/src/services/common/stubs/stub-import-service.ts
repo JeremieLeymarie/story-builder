@@ -7,10 +7,11 @@ export type MockImportService = MockPort<ImportServicePort>;
 
 export const getImportServiceStub = (): MockImportService => {
   return {
-    createScenes: vi.fn(() => Promise.resolve({ isOk: true, data: null })),
+    createScenes: vi.fn(() => Promise.resolve({})),
     createStory: vi.fn(() =>
       Promise.resolve({ isOk: true, data: BASIC_STORY }),
     ),
+    createWiki: vi.fn(() => Promise.resolve()),
     parseJSON: vi.fn(() => ({
       isOk: true,
       data: {

@@ -1,12 +1,10 @@
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { getBuilderService } from "@/get-builder-service";
-import {
-  getImportService,
-  StoryFromImport,
-} from "@/services/common/import-service";
+import { getImportService } from "@/services/common/import-service";
 import { Story } from "@/lib/storage/domain";
 import { WithoutKey } from "@/types";
+import { StoryFromImport } from "@/services/common/schema";
 
 export type CreateStoryPayload = Omit<
   WithoutKey<Story>,
@@ -33,21 +31,19 @@ export const useBuilderStories = () => {
   };
 
   const handleImportFromJSON = async (storyFromImport: StoryFromImport) => {
-    const { error, data } = await builderService.importStory(storyFromImport);
-
-    if (error) {
-      toast.error("Import failed!", { description: error });
-      return;
+    try {
+      const storyKey = await builderService.importStory(storyFromImport);
+      if (!storyKey) throw new Error("Data should be defined");
+      navigate({
+        to: "/builder/$storyKey",
+        params: { storyKey },
+      });
+      toast.success("Import complete!", {
+        description: "You can start working on this story in the builder!",
+      });
+    } catch (error) {
+      toast.error("Import failed!", { description: (error as Error).message });
     }
-    if (!data) throw new Error("Data should be defined");
-
-    navigate({
-      to: "/builder/$storyKey",
-      params: { storyKey: data.storyKey },
-    });
-    toast.success("Import complete!", {
-      description: "You can start working on this story in the builder!",
-    });
   };
 
   const parseFile = (content: string) => {

@@ -5,7 +5,7 @@ import {
   Scene,
   Story,
 } from "@/lib/storage/domain";
-import { StoryFromImport } from "@/services/common/import-service";
+import { StoryFromImport } from "@/services/common/schema";
 import { WithoutKey } from "@/types";
 import { Edge } from "@xyflow/react";
 
@@ -30,7 +30,9 @@ export type BuilderServicePort = {
     >,
   ) => Promise<{ story: Story; scene: Scene } | null>;
   addScene: (scene: WithoutKey<Scene>) => Promise<Scene>;
-  updateScene: (props: Partial<Scene> & Pick<Scene, "key">) => Promise<void>;
+  updateScene: (
+    props: Partial<Scene> & Pick<Scene, "key">,
+  ) => Promise<Scene | null>;
   getAutoLayout: (props: {
     nodes: BuilderNode[];
     edges: Edge[];
@@ -55,9 +57,7 @@ export type BuilderServicePort = {
     sceneKeys: string[];
   }) => Promise<void>;
   deleteStory: (storyKey: string) => Promise<void>;
-  importStory: (
-    storyFromImport: StoryFromImport,
-  ) => Promise<{ error: null; data: { storyKey: string } }>;
+  importStory: (storyFromImport: StoryFromImport) => Promise<string>;
   updateStory: (
     storyKey: string,
     payload: Partial<BuilderStory>,

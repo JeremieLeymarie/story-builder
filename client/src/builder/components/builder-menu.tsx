@@ -44,7 +44,7 @@ export const BuilderMenu = () => {
           Test
           <ButtonShortCutDoc doc="T" />
         </Button>
-        <ExportModal storyKey={story.key} />
+        <ExportModal />
         <Button
           className={btnClassname}
           size="sm"

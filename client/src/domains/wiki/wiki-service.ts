@@ -24,8 +24,15 @@ const DEFAULT_CATEGORIES: Omit<WikiCategory, "key" | "wikiKey">[] = [
   { name: "Event", color: "#bb3e03" },
 ];
 
+export type WikiExportData = {
+  wiki: Wiki;
+  articles: WikiArticle[];
+  categories: WikiCategory[];
+  articleLinks: WikiArticleLink[];
+};
+
 export type WikiServicePort = {
-  getAllWikis: () => Promise<Wiki[]>;
+  getAllWikis: () => Promise<{ userWikis: Wiki[]; importedWikis: Wiki[] }>;
   addAuthorToWikis: (userInfo: {
     username: string;
     key: string;
@@ -50,6 +57,7 @@ export type WikiServicePort = {
     articleLinkKey: string,
     entityKey: string,
   ) => Promise<WikiArticleLink | null>;
+  getWikiExportData: (wikiKey: string) => Promise<WikiExportData | null>;
 };
 
 export const _getWikiService = ({
@@ -61,16 +69,23 @@ export const _getWikiService = ({
   authContext: AuthContextPort;
   getPermissionContext: (wikiKey: string) => Promise<WikiPermissionContext>;
 }): WikiServicePort => {
-  const getAllWikis = async () => {
+  const getUserWikis = async () => {
     const user = await authContext.getUser();
     return repository.getUserWikis(user?.key);
   };
 
   return {
-    getAllWikis,
+    getAllWikis: async () => {
+      const [userWikis, importedWikis] = await Promise.all([
+        getUserWikis(),
+        repository.getImportedWikis(),
+      ]);
+
+      return { userWikis, importedWikis };
+    },
 
     addAuthorToWikis: async ({ username, key }) => {
-      const wikis = (await getAllWikis()).filter(
+      const wikis = (await getUserWikis()).filter(
         (wiki) => wiki.author === undefined && wiki.type === "created",
       );
       await repository.bulkUpdate(
@@ -176,6 +191,22 @@ export const _getWikiService = ({
         entityKey,
       );
       return articleLink;
+    },
+
+    getWikiExportData: async (wikiKey) => {
+      const [wiki, categories, articles] = await Promise.all([
+        repository.get(wikiKey),
+        repository.getCategories(wikiKey),
+        repository.getArticles(wikiKey),
+      ]);
+
+      if (!wiki) return null;
+
+      const articleLinks = await repository.getArticleLinksFromArticleKeys(
+        articles.map((a) => a.key),
+      );
+
+      return { wiki, articles, categories, articleLinks };
     },
   };
 };

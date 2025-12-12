@@ -1,9 +1,9 @@
 import { match } from "ts-pattern";
 import { cn } from "@/lib/style";
-import { SceneForm } from "./scene-editor/scene-form";
 import { useBuilderEditorStore } from "@/builder/hooks/use-scene-editor-store";
 import { Toolbar, ToolbarTitle } from "@/design-system/components/toolbar";
 import { StoryEditor } from "./story-editor/story-editor";
+import { SceneEditor } from "./scene-editor/scene-editor";
 
 export const EditorBar = () => {
   const currentEditor = useBuilderEditorStore((state) => state.editor);
@@ -22,7 +22,7 @@ export const EditorBar = () => {
       </ToolbarTitle>
       {match(currentEditor)
         .with({ type: "scene-editor" }, ({ payload }) => (
-          <SceneForm scene={payload.scene} />
+          <SceneEditor scene={payload.scene} />
         ))
         .with({ type: "story-editor" }, () => <StoryEditor />)
         .exhaustive()}

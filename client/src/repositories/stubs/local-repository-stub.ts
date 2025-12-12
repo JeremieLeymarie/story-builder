@@ -21,7 +21,7 @@ export const getLocalRepositoryStub = (): MockLocalRepository => {
 
     updateOrCreateStories: mock(["key"]),
 
-    updateStory: mock(BASIC_STORY),
+    updateStory: mock(),
 
     getStory: mock(BASIC_STORY),
 

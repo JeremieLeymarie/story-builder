@@ -1,5 +1,4 @@
 import z from "zod/v4";
-import { sceneSchema } from "../components/builder-editor-bar/scene-editor/schema";
 import { useReactFlow } from "@xyflow/react";
 import { BuilderNode, SceneProps } from "../types";
 import { nodeToSceneAdapter } from "../adapters";
@@ -7,14 +6,23 @@ import { getBuilderService } from "@/get-builder-service";
 import { isAnyInputFocused } from "./use-builder-shortcuts";
 import { useDuplicateScenes } from "./use-duplicate-scenes";
 import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
-import { makeSimpleLexicalContent } from "@/lib/lexical-content";
+import {
+  lexicalContentSchema,
+  makeSimpleLexicalContent,
+} from "@/lib/lexical-content";
 import { useBuilderError } from "./use-builder-error";
 import { MouseEvent as ReactMouseEvent } from "react";
 import { useBuilderContext } from "./use-builder-context";
+import { actionSchema } from "@/lib/action-schema";
 
-const clipboardSchema = z.array(
-  sceneSchema.extend({
+const clipboardScenesSchema = z.array(
+  z.object({
     key: z.nanoid(),
+    title: z
+      .string()
+      .max(250, { message: "Title has to be less than 250 characters" }),
+    content: lexicalContentSchema,
+    actions: z.array(actionSchema),
     builderParams: z.object({
       position: z.object({ x: z.number(), y: z.number() }),
     }),
@@ -65,7 +73,7 @@ export const useCopyPaste = () => {
       const data = JSON.parse(text);
       if (Array.isArray(data)) {
         // Paste from scene payload
-        const scenes = clipboardSchema.parse(data);
+        const scenes = clipboardScenesSchema.parse(data);
         duplicateScenes(scenes);
       } else {
         // Paste from freeform text

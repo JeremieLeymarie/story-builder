@@ -123,10 +123,17 @@ export type WikiCategory = {
   name: string;
   color: string;
 };
+
+export const WIKI_ARTICLE_LINKS_ENTITY_TYPES = [
+  "scene",
+] as const satisfies Entity[]; // maybe wiki articles in the future?
+
+type WikiArticleEntityType = (typeof WIKI_ARTICLE_LINKS_ENTITY_TYPES)[number];
+
 export type WikiArticleLink = {
   key: string; // This is not a primary key, multiple WikiArticleLinks can have the same articleLinkKey
   articleKey: string;
-  entityType: Extract<Entity, "scene">; // maybe wiki articles in the future?
+  entityType: WikiArticleEntityType;
   entityKey: string;
 };
 

@@ -1,26 +1,22 @@
 import { BuilderContainer } from "@/builder/components/builder-container";
+import {
+  makeGetBuilderQueryOptions,
+  useGetBuilder,
+} from "@/builder/hooks/use-get-builder";
 import { useBuilderEditorStore } from "@/builder/hooks/use-scene-editor-store";
 import { BackdropLoader, ErrorMessage } from "@/design-system/components";
-import { getBuilderService } from "@/get-builder-service";
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { queryClient } from "../__root";
 
 const Page = () => {
   const { storyKey } = Route.useParams();
-  const builderService = getBuilderService();
-  const { data, isLoading, refetch } = useQuery({
-    queryFn: () => builderService.getBuilderStoryData(storyKey),
-    queryKey: ["builder-story-data", storyKey],
-    refetchOnWindowFocus: false,
-  });
+  const { story, scenes, isLoading, refetch } = useGetBuilder({ storyKey });
 
-  if (isLoading || !data) {
+  if (isLoading) {
     return <BackdropLoader />;
   }
 
-  const { scenes, story } = data;
-
-  if (!story) {
+  if (!story || !scenes) {
     return <ErrorMessage />;
   }
 
@@ -39,7 +35,10 @@ const Page = () => {
 
 export const Route = createFileRoute("/builder/$storyKey")({
   component: Page,
-  onLeave: () => {
+  onLeave: ({ params: { storyKey } }) => {
+    queryClient.invalidateQueries({
+      queryKey: makeGetBuilderQueryOptions({ storyKey }).queryKey,
+    });
     useBuilderEditorStore.setState({ editor: null });
   },
 });

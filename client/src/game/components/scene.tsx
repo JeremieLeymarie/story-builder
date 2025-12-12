@@ -44,7 +44,7 @@ export const GameScene = ({
                   key={action.text}
                   action={action}
                   storyKey={storyKey}
-                  progressKey={progress?.key ?? null}
+                  progress={progress}
                 />
               ))}
             </div>

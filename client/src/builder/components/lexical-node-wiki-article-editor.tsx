@@ -247,7 +247,7 @@ const ArticleInfo = ({
                   to="/wikis/$wikiKey/$articleKey"
                   params={{ wikiKey: article.wikiKey, articleKey: articleKey }}
                   target="_blank"
-                  className="inline-flex items-center gap-1 font-semibold text-emerald-600 hover:underline"
+                  className="inline-flex items-center gap-1 font-semibold text-emerald-600 select-none hover:underline"
                 >
                   {article?.title} <ExternalLinkIcon size={14} />
                 </Link>

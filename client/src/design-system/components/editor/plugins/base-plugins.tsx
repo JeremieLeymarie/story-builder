@@ -24,6 +24,7 @@ const RichTextContainer = ({
     .with("summary", () => (
       <div
         {...props}
+        className="[&_img]:hidden"
         style={
           {
             display: "-webkit-box",
