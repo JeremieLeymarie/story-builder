@@ -196,7 +196,6 @@ export const useImageCommands = ({
 
     editor.update(() => {
       const node = $getNodeByKey(nodeKey);
-      console.log("ça dit quoi", { nextWidth, nextHeight });
       if ($isImageNode(node)) {
         node.setWidthAndHeight(nextWidth, nextHeight);
       }
