@@ -5,6 +5,7 @@ import { ArticleEditor } from "@/wikis/article-editor";
 import { WikiContainer } from "@/wikis/wiki-container";
 import { useWikiQueries } from "./-hooks/use-wiki-queries";
 import { Button } from "@/design-system/primitives";
+import { z } from "zod";
 
 const RouteComponent = () => {
   const { wikiKey } = Route.useParams();
@@ -49,9 +50,6 @@ const RouteComponent = () => {
 
 export const Route = createFileRoute("/wikis/$wikiKey/new")({
   component: RouteComponent,
-  validateSearch: (search: Record<string, unknown>) => {
-    return {
-      categoryKey: search.categoryKey as string | undefined,
-    };
-  },
+  validateSearch: (search) =>
+    z.object({ categoryKey: z.string().optional() }).parse(search),
 });
