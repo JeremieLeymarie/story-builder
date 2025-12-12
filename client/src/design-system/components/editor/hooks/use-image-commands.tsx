@@ -1,4 +1,11 @@
-import { RefObject, useEffect, useRef, useState } from "react";
+import {
+  CSSProperties,
+  RefObject,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
 import { useLexicalNodeSelection } from "@lexical/react/useLexicalNodeSelection";
@@ -31,10 +38,10 @@ export const RIGHT_CLICK_IMAGE_COMMAND: LexicalCommand<MouseEvent> =
 
 export const useImageCommands = ({
   nodeKey,
-  imageRef,
+  imageContainerRef,
 }: {
   nodeKey: NodeKey;
-  imageRef: RefObject<HTMLImageElement | null>;
+  imageContainerRef: RefObject<HTMLDivElement | null>;
 }) => {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [isSelected, setSelected, clearSelection] =
@@ -45,9 +52,7 @@ export const useImageCommands = ({
   const activeEditorRef = useRef<LexicalEditor | null>(null);
   const isEditable = useLexicalEditable();
 
-  // Exhaustive-deps rules doesn't work well with the compiler, see: https://github.com/reactwg/react-compiler/discussions/18
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const $onDelete = (event: KeyboardEvent) => {
+  const $onDelete = useEffectEvent((event: KeyboardEvent) => {
     const deleteSelection = $getSelection();
     if (isSelected && $isNodeSelection(deleteSelection)) {
       event.preventDefault();
@@ -60,11 +65,9 @@ export const useImageCommands = ({
       });
     }
     return false;
-  };
+  });
 
-  // Exhaustive-deps rules doesn't work well with the compiler, see: https://github.com/reactwg/react-compiler/discussions/18
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const $onEnter = (event: KeyboardEvent) => {
+  const $onEnter = useEffectEvent((event: KeyboardEvent) => {
     const latestSelection = $getSelection();
     const buttonElem = buttonRef.current;
     if (
@@ -79,11 +82,9 @@ export const useImageCommands = ({
       }
     }
     return false;
-  };
+  });
 
-  // Exhaustive-deps rules doesn't work well with the compiler, see: https://github.com/reactwg/react-compiler/discussions/18
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const $onEscape = (event: KeyboardEvent) => {
+  const $onEscape = useEffectEvent((event: KeyboardEvent) => {
     if (buttonRef.current === event.target) {
       $setSelection(null);
       editor.update(() => {
@@ -96,17 +97,15 @@ export const useImageCommands = ({
       return true;
     }
     return false;
-  };
+  });
 
-  // Exhaustive-deps rules doesn't work well with the compiler, see: https://github.com/reactwg/react-compiler/discussions/18
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const onClick = (payload: MouseEvent) => {
+  const onClick = useEffectEvent((payload: MouseEvent) => {
     const event = payload;
 
     if (isResizing) {
       return true;
     }
-    if (event.target === imageRef.current) {
+    if (event.target === imageContainerRef.current?.firstChild) {
       if (event.shiftKey) {
         setSelected(!isSelected);
       } else {
@@ -117,7 +116,7 @@ export const useImageCommands = ({
     }
 
     return false;
-  };
+  });
 
   useEffect(() => {
     const unregister = mergeRegister(
@@ -145,7 +144,7 @@ export const useImageCommands = ({
       editor.registerCommand(
         DRAGSTART_COMMAND,
         (event) => {
-          if (event.target === imageRef.current) {
+          if (event.target === imageContainerRef.current) {
             // TODO This is just a temporary workaround for FF to behave like other browsers.
             // Ideally, this handles drag & drop too (and all browsers).
             event.preventDefault();
@@ -182,17 +181,13 @@ export const useImageCommands = ({
     isResizing,
     isSelected,
     nodeKey,
-    imageRef,
-    $onDelete,
-    $onEnter,
-    $onEscape,
-    onClick,
+    imageContainerRef,
     setSelected,
   ]);
 
   const onResizeEnd = (
-    nextWidth: "inherit" | number,
-    nextHeight: "inherit" | number,
+    nextWidth: CSSProperties["width"],
+    nextHeight: CSSProperties["height"],
   ) => {
     // Delay hiding the resize bars for click case
     setTimeout(() => {
@@ -201,6 +196,7 @@ export const useImageCommands = ({
 
     editor.update(() => {
       const node = $getNodeByKey(nodeKey);
+      console.log("ça dit quoi", { nextWidth, nextHeight });
       if ($isImageNode(node)) {
         node.setWidthAndHeight(nextWidth, nextHeight);
       }

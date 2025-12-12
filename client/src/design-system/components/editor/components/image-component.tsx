@@ -1,4 +1,4 @@
-import { Suspense, useRef, useState } from "react";
+import { CSSProperties, Suspense, useRef, useState } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import type { NodeKey } from "lexical";
 import { $isNodeSelection } from "lexical";
@@ -7,37 +7,22 @@ import { SimpleLoader } from "../../simple-loader";
 import { getEditorContainerInfo } from "../lib/get-editor-container-dimensions";
 import { useImageCommands } from "../hooks/use-image-commands";
 import { ImageResizer } from "./image-resizer";
+import { cn } from "@/lib/style";
 
 const LazyImage = ({
   altText,
-  className,
-  imageRef,
   src,
-  width,
-  height,
-  maxWidth,
   onError,
 }: {
   altText: string;
-  className: string | null;
-  height: "inherit" | number;
-  imageRef: { current: null | HTMLImageElement };
-  maxWidth: number;
   src: string;
-  width: "inherit" | number;
   onError: () => void;
 }) => {
   return (
     <img
-      className={className || undefined}
+      className="w-full"
       src={src}
       alt={altText}
-      ref={imageRef}
-      style={{
-        height,
-        maxWidth,
-        width,
-      }}
       onError={onError}
       draggable="false"
     />
@@ -67,55 +52,62 @@ const ImageComponent = ({
   resizable,
 }: {
   altText: string;
-  height: "inherit" | number;
+  height: CSSProperties["width"];
+  width: CSSProperties["height"];
   maxWidth: number;
   nodeKey: NodeKey;
   resizable: boolean;
   src: string;
-  width: "inherit" | number;
 }) => {
-  const imageRef = useRef<null | HTMLImageElement>(null);
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const [editor] = useLexicalComposerContext();
   const [isLoadError, setIsLoadError] = useState<boolean>(false);
   const { draggable, isFocused, selection, onResizeEnd, onResizeStart } =
-    useImageCommands({ nodeKey, imageRef });
+    useImageCommands({ nodeKey, imageContainerRef });
   const { maxWidthContainer } = getEditorContainerInfo(editor);
+
+  const isSelected = isFocused && $isNodeSelection(selection);
+
+  console.log({ isSelected });
 
   return (
     <Suspense fallback={<SimpleLoader />}>
-      <span className="user-select-none editor-image relative inline-block cursor-default">
-        <div draggable={draggable}>
+      <span className="relative inline-block w-full cursor-default">
+        <div
+          draggable={draggable}
+          className={cn(
+            "relative block cursor-default",
+            isSelected &&
+              "focused ring-primary draggable cursor-grab ring-2 ring-offset-2 active:cursor-grabbing",
+          )}
+          style={{
+            height,
+            maxWidth: maxWidthContainer,
+            width,
+          }}
+          ref={imageContainerRef}
+        >
           {isLoadError ? (
             <BrokenImage />
           ) : (
             <LazyImage
-              className={`max-w-full cursor-default ${
-                isFocused
-                  ? `${$isNodeSelection(selection) ? "draggable cursor-grab active:cursor-grabbing" : ""} focused ring-primary ring-2 ring-offset-2`
-                  : null
-              }`}
               src={src}
               altText={altText}
-              imageRef={imageRef}
-              width={width}
-              height={height}
-              maxWidth={maxWidthContainer}
               onError={() => setIsLoadError(true)}
             />
           )}
+          {resizable && isSelected && (
+            <ImageResizer
+              editor={editor}
+              buttonRef={buttonRef}
+              imageContainerRef={imageContainerRef}
+              maxWidth={maxWidthContainer}
+              onResizeStart={onResizeStart}
+              onResizeEnd={onResizeEnd}
+            />
+          )}
         </div>
-
-        {resizable && $isNodeSelection(selection) && isFocused && (
-          <ImageResizer
-            editor={editor}
-            buttonRef={buttonRef}
-            imageRef={imageRef}
-            maxWidth={maxWidthContainer}
-            onResizeStart={onResizeStart}
-            onResizeEnd={onResizeEnd}
-          />
-        )}
       </span>
     </Suspense>
   );
