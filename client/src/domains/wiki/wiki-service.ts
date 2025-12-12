@@ -58,7 +58,6 @@ export type WikiServicePort = {
     articleLinkKey: string,
     entityKey: string,
   ) => Promise<WikiArticleLink | null>;
-  getArticleLinkCountByArticle: (articleKey: string) => Promise<number>;
   getWikiExportData: (wikiKey: string) => Promise<WikiExportData | null>;
 };
 
@@ -201,11 +200,6 @@ export const _getWikiService = ({
         entityKey,
       );
       return articleLink;
-    },
-
-    getArticleLinkCountByArticle: async (articleKey) => {
-      const links = await repository.getArticleLinksByArticle(articleKey);
-      return links.length;
     },
 
     getWikiExportData: async (wikiKey) => {
