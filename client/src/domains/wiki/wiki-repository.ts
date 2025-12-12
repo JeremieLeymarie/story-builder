@@ -43,7 +43,6 @@ export type WikiRepositoryPort = {
     key: string,
     entityKey: string,
   ) => Promise<WikiArticleLink | null>;
-  getArticleLinksByArticle: (articleKey: string) => Promise<WikiArticleLink[]>;
   getArticleLinksFromArticleKeys: (
     articleKeys: string[],
   ) => Promise<WikiArticleLink[]>;
@@ -213,12 +212,6 @@ export const _getDexieWikiRepository = (
       return (
         (await db.wikiArticleLinks.where({ key, entityKey }).first()) ?? null
       );
-    },
-
-    getArticleLinksByArticle: async (articleKey) => {
-      return await db.wikiArticleLinks
-        .filter((link) => link.articleKey === articleKey)
-        .toArray();
     },
 
     getArticleLinksFromArticleKeys: async (articleKeys) => {

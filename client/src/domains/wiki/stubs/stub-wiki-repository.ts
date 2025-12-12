@@ -38,6 +38,5 @@ export const getStubWikiRepository = (): MockWikiRepository => ({
   getArticleLinksFromArticleKeys: vi.fn(async () => Promise.resolve([])),
   removeArticleLink: vi.fn(),
   updateArticleLink: vi.fn(),
-  getArticleLinksByArticle: vi.fn(async () => Promise.resolve([])),
   bulkAddArticleLinks: vi.fn(),
 });
