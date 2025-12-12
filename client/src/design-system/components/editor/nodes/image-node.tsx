@@ -1,4 +1,4 @@
-import { JSX, Suspense } from "react";
+import { CSSProperties, JSX, Suspense } from "react";
 import type {
   DOMConversionMap,
   DOMConversionOutput,
@@ -18,11 +18,11 @@ const ImageComponent = React.lazy(
 
 export type ImagePayload = {
   altText: string;
-  height?: number;
-  key?: NodeKey;
+  height?: CSSProperties["height"];
+  width?: CSSProperties["width"];
   maxWidth?: number;
+  key?: NodeKey;
   src: string;
-  width?: number;
 };
 
 const $convertImageElement = (domNode: Node): null | DOMConversionOutput => {
@@ -38,10 +38,10 @@ const $convertImageElement = (domNode: Node): null | DOMConversionOutput => {
 export type SerializedImageNode = Spread<
   {
     altText: string;
-    height?: number;
+    width?: CSSProperties["width"];
+    height?: CSSProperties["height"];
     maxWidth: number;
     src: string;
-    width?: number;
   },
   SerializedLexicalNode
 >;
@@ -49,8 +49,8 @@ export type SerializedImageNode = Spread<
 export class ImageNode extends DecoratorNode<JSX.Element> {
   __src: string;
   __altText: string;
-  __width: "inherit" | number;
-  __height: "inherit" | number;
+  __width: CSSProperties["width"];
+  __height: CSSProperties["height"];
   __maxWidth: number;
 
   static getType(): string {
@@ -69,6 +69,7 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
   }
 
   static importJSON(serializedNode: SerializedImageNode): ImageNode {
+    console.log("import", { serializedNode });
     const { altText, height, width, maxWidth, src } = serializedNode;
     const node = $createImageNode({
       altText,
@@ -80,12 +81,32 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     return node;
   }
 
+  exportJSON(): SerializedImageNode {
+    console.log("export", {
+      altText: this.getAltText(),
+      width: this.__width,
+      height: this.__height,
+      maxWidth: this.__maxWidth,
+      src: this.getSrc(),
+      type: "image",
+      version: 1,
+    });
+    return {
+      altText: this.getAltText(),
+      width: this.__width,
+      height: this.__height,
+      maxWidth: this.__maxWidth,
+      src: this.getSrc(),
+      type: "image",
+      version: 1,
+    };
+  }
   exportDOM(): DOMExportOutput {
     const element = document.createElement("img");
     element.setAttribute("src", this.__src);
     element.setAttribute("alt", this.__altText);
-    element.setAttribute("width", this.__width.toString());
-    element.setAttribute("height", this.__height.toString());
+    element.setAttribute("width", this.__width?.toString() ?? "inherit");
+    element.setAttribute("height", this.__height?.toString() ?? "inherit");
     return { element };
   }
 
@@ -102,8 +123,8 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     src: string,
     altText: string,
     maxWidth: number,
-    width?: "inherit" | number,
-    height?: "inherit" | number,
+    width?: CSSProperties["width"],
+    height?: CSSProperties["height"],
     key?: NodeKey,
   ) {
     super(key);
@@ -114,21 +135,9 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     this.__height = height || "inherit";
   }
 
-  exportJSON(): SerializedImageNode {
-    return {
-      altText: this.getAltText(),
-      height: this.__height === "inherit" ? 0 : this.__height,
-      maxWidth: this.__maxWidth,
-      src: this.getSrc(),
-      type: "image",
-      version: 1,
-      width: this.__width === "inherit" ? 0 : this.__width,
-    };
-  }
-
   setWidthAndHeight(
-    width: "inherit" | number,
-    height: "inherit" | number,
+    width: CSSProperties["width"],
+    height: CSSProperties["height"],
   ): void {
     const writable = this.getWritable();
     writable.__width = width;

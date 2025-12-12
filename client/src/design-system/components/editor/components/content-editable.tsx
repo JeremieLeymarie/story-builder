@@ -1,13 +1,13 @@
-import { JSX, RefObject } from "react";
+import { JSX } from "react";
 import { ContentEditable as LexicalContentEditable } from "@lexical/react/LexicalContentEditable";
 import { cn } from "@/lib/style";
+import { useEditorContext } from "../hooks/use-editor-context";
 
 type Props = {
   placeholder: string;
   className?: string;
   textColor?: string;
   placeholderClassName?: string;
-  ref: RefObject<HTMLDivElement | null>;
 };
 
 export const ContentEditable = ({
@@ -15,11 +15,12 @@ export const ContentEditable = ({
   className,
   textColor,
   placeholderClassName,
-  ref,
 }: Props): JSX.Element => {
+  const { contentEditableRef } = useEditorContext();
+
   return (
     <LexicalContentEditable
-      ref={ref}
+      ref={contentEditableRef}
       className={cn(
         "relative block min-h-full py-4 focus:outline-none",
         className,

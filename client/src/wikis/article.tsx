@@ -7,7 +7,7 @@ import { useWikiStore } from "./hooks/use-wiki-store";
 import { WikiDataCategory } from "@/domains/wiki/types";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
 import { CategoryBadge } from "./category-badge";
-import { EditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
+import { EditorContextProvider } from "@/design-system/components/editor/hooks/use-editor-context";
 
 export const Article = ({
   article,
@@ -52,15 +52,16 @@ export const Article = ({
         />
       </div>
       <article>
-        <EditorContext
-          value={{ entityType: "wiki-article", entityKey: article.key }}
+        <EditorContextProvider
+          entityType="wiki-article"
+          entityKey={article.key}
         >
           <RichText
             initialState={article.content}
             editable={false}
             textDisplayMode="full"
           />
-        </EditorContext>
+        </EditorContextProvider>
       </article>
     </div>
   );

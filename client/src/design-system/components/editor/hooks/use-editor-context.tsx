@@ -1,10 +1,17 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Entity } from "@/lib/storage/domain";
-import { createContext, PropsWithChildren, useContext } from "react";
+import {
+  createContext,
+  PropsWithChildren,
+  RefObject,
+  useContext,
+  useRef,
+} from "react";
 
 type EditorContext = {
   entityType: Extract<Entity, "scene" | "wiki-article">;
   entityKey?: string;
+  contentEditableRef: RefObject<HTMLDivElement | null>;
 };
 
 export const EditorContext = createContext<EditorContext | null>(null);
@@ -12,9 +19,13 @@ export const EditorContext = createContext<EditorContext | null>(null);
 export const EditorContextProvider = ({
   children,
   ...value
-}: PropsWithChildren<EditorContext>) => {
+}: PropsWithChildren<Pick<EditorContext, "entityKey" | "entityType">>) => {
+  const contentEditableRef = useRef<HTMLDivElement>(null);
+
   return (
-    <EditorContext.Provider value={value}>{children}</EditorContext.Provider>
+    <EditorContext.Provider value={{ ...value, contentEditableRef }}>
+      {children}
+    </EditorContext.Provider>
   );
 };
 
