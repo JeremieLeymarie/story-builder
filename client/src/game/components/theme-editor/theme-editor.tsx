@@ -72,14 +72,17 @@ export const GameWithThemeEditor = ({
         theme={structuredClone(formValues)} // formValues's reference is stable, causing React Compiler to not detect theme changes
       />
       <div className="absolute top-8 right-5 flex gap-2">
-        <Button variant="outline" onClick={() => form.reset(oldValues.current)}>
-          <Tooltip>
-            <TooltipTrigger>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              onClick={() => form.reset(oldValues.current)}
+            >
               <RotateCcwIcon />
-            </TooltipTrigger>
-            <TooltipContent>Revert all changes</TooltipContent>
-          </Tooltip>
-        </Button>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Revert all changes</TooltipContent>
+        </Tooltip>
         <Toolbar className="h-[85dvh] w-[350px] p-0">
           <ScrollArea className="h-full p-4">
             <ToolbarHeader>
