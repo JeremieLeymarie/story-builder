@@ -2,13 +2,15 @@ import { getBuilderService } from "@/get-builder-service";
 import { useBuilderContext } from "./use-builder-context";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Scene, Story } from "@/lib/storage/domain";
+import { Scene, Story, StoryThemeConfig } from "@/lib/storage/domain";
 import { getWikiService, WikiExportData } from "@/domains/wiki/wiki-service";
+import { getThemeService } from "@/domains/builder/theme-service";
 
 const getExportData = (data: {
   story: Story;
   scenes: Scene[];
   wiki: WikiExportData | null;
+  theme: StoryThemeConfig;
 }) => {
   const storyJson = JSON.stringify(data, null, 2);
   const blob = new Blob([storyJson], { type: "text/json" });
@@ -39,7 +41,12 @@ export const useGetExportData = () => {
       const wiki = story.wikiKey
         ? await getWikiService().getWikiExportData(story.wikiKey)
         : null;
-      return { exportData: getExportData({ story, scenes, wiki }), story };
+
+      const theme = await getThemeService().getTheme(storyKey);
+      return {
+        exportData: getExportData({ story, scenes, wiki, theme }),
+        story,
+      };
     },
   });
 
