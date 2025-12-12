@@ -20,7 +20,6 @@ export type ImagePayload = {
   altText: string;
   height?: CSSProperties["height"];
   width?: CSSProperties["width"];
-  maxWidth?: number;
   key?: NodeKey;
   src: string;
 };
@@ -40,7 +39,6 @@ export type SerializedImageNode = Spread<
     altText: string;
     width?: CSSProperties["width"];
     height?: CSSProperties["height"];
-    maxWidth: number;
     src: string;
   },
   SerializedLexicalNode
@@ -51,7 +49,6 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
   __altText: string;
   __width: CSSProperties["width"];
   __height: CSSProperties["height"];
-  __maxWidth: number;
 
   static getType(): string {
     return "image";
@@ -61,7 +58,6 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     return new ImageNode(
       node.__src,
       node.__altText,
-      node.__maxWidth,
       node.__width,
       node.__height,
       node.__key,
@@ -69,12 +65,10 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
   }
 
   static importJSON(serializedNode: SerializedImageNode): ImageNode {
-    console.log("import", { serializedNode });
-    const { altText, height, width, maxWidth, src } = serializedNode;
+    const { altText, height, width, src } = serializedNode;
     const node = $createImageNode({
       altText,
       height,
-      maxWidth,
       src,
       width,
     });
@@ -82,20 +76,10 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
   }
 
   exportJSON(): SerializedImageNode {
-    console.log("export", {
-      altText: this.getAltText(),
-      width: this.__width,
-      height: this.__height,
-      maxWidth: this.__maxWidth,
-      src: this.getSrc(),
-      type: "image",
-      version: 1,
-    });
     return {
       altText: this.getAltText(),
       width: this.__width,
       height: this.__height,
-      maxWidth: this.__maxWidth,
       src: this.getSrc(),
       type: "image",
       version: 1,
@@ -122,7 +106,6 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
   constructor(
     src: string,
     altText: string,
-    maxWidth: number,
     width?: CSSProperties["width"],
     height?: CSSProperties["height"],
     key?: NodeKey,
@@ -130,7 +113,6 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     super(key);
     this.__src = src;
     this.__altText = altText;
-    this.__maxWidth = maxWidth;
     this.__width = width || "inherit";
     this.__height = height || "inherit";
   }
@@ -176,7 +158,6 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
           altText={this.__altText}
           width={this.__width}
           height={this.__height}
-          maxWidth={this.__maxWidth}
           nodeKey={this.getKey()}
           resizable={true}
         />
@@ -188,14 +169,11 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
 export const $createImageNode = ({
   altText,
   height,
-  maxWidth = 500,
   src,
   width,
   key,
 }: ImagePayload): ImageNode => {
-  return $applyNodeReplacement(
-    new ImageNode(src, altText, maxWidth, width, height, key),
-  );
+  return $applyNodeReplacement(new ImageNode(src, altText, width, height, key));
 };
 
 export const $isImageNode = (

@@ -32,7 +32,7 @@ const LazyImage = ({
 const BrokenImage = () => {
   return (
     <img
-      src={""}
+      src=""
       style={{
         height: 200,
         opacity: 0.2,
@@ -43,7 +43,7 @@ const BrokenImage = () => {
   );
 };
 
-const ImageComponent = ({
+export const ImageComponent = ({
   src,
   altText,
   nodeKey,
@@ -54,7 +54,6 @@ const ImageComponent = ({
   altText: string;
   height: CSSProperties["width"];
   width: CSSProperties["height"];
-  maxWidth: number;
   nodeKey: NodeKey;
   resizable: boolean;
   src: string;
@@ -69,8 +68,6 @@ const ImageComponent = ({
 
   const isSelected = isFocused && $isNodeSelection(selection);
 
-  console.log({ isSelected });
-
   return (
     <Suspense fallback={<SimpleLoader />}>
       <span className="relative inline-block w-full cursor-default">
@@ -84,6 +81,7 @@ const ImageComponent = ({
           style={{
             height,
             maxWidth: maxWidthContainer,
+            minWidth: 100,
             width,
           }}
           ref={imageContainerRef}
@@ -102,7 +100,6 @@ const ImageComponent = ({
               editor={editor}
               buttonRef={buttonRef}
               imageContainerRef={imageContainerRef}
-              maxWidth={maxWidthContainer}
               onResizeStart={onResizeStart}
               onResizeEnd={onResizeEnd}
             />
@@ -112,4 +109,5 @@ const ImageComponent = ({
     </Suspense>
   );
 };
+
 export default ImageComponent;
