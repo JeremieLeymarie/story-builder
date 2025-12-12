@@ -29,6 +29,8 @@ export type WikiRepositoryPort = {
   getArticle: (articleKey: string) => Promise<WikiArticle | null>;
   getArticles: (wikiKey: string) => Promise<WikiArticle[]>;
   createCategory: (payload: WithoutKey<WikiCategory>) => Promise<string>;
+  deleteCategory: (categoryKey: string) => Promise<void>;
+  uncategorizeArticlesByCategory: (categoryKey: string) => Promise<void>;
   bulkAddCategories: (
     payload: MaybeWithoutKey<WikiCategory>[],
   ) => Promise<void>;
@@ -168,6 +170,15 @@ export const _getDexieWikiRepository = (
       return await db.wikiCategories.add(payload);
     },
 
+    deleteCategory: async (categoryKey) => {
+      await db.wikiCategories.delete(categoryKey);
+    },
+
+    uncategorizeArticlesByCategory: async (categoryKey) => {
+      await db.wikiArticles
+        .where({ categoryKey })
+        .modify({ categoryKey: undefined });
+    },
     bulkAddCategories: async (payload) => {
       await db.wikiCategories.bulkAdd(payload);
     },

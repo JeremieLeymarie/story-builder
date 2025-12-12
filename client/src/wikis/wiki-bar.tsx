@@ -1,20 +1,16 @@
 import { Toolbar } from "@/design-system/components/toolbar";
+import { ConfirmDialog } from "@/design-system/components";
 import { Button, Input } from "@/design-system/primitives";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
 import { HomeIcon, PlusIcon, SearchIcon, Trash2Icon } from "lucide-react";
 import { useWikiStore } from "./hooks/use-wiki-store";
 import { WikiSection } from "@/domains/wiki/types";
-import { Link, useNavigate, useParams } from "@tanstack/react-router";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/design-system/primitives/tooltip";
 import { cn } from "@/lib/style";
 import { AddCategoryPopover } from "./add-category-popover";
 import { CategoryBadge } from "./category-badge";
-import { ConfirmDialog } from "@/design-system/components";
+import { CategoryActionsDropdown } from "./category-actions-dropdown";
 import { useState } from "react";
+import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import { getWikiService } from "@/domains/wiki/wiki-service";
 
 const ArticleTitle = ({
@@ -23,6 +19,7 @@ const ArticleTitle = ({
 }: {
   title: string;
   articleKey: string;
+  canDelete: boolean;
 }) => {
   const [wikiKey, refresh] = useWikiStore((state) => [
     state.wikiData.wiki.key,
@@ -86,27 +83,34 @@ const ArticleTitle = ({
 };
 
 const Section = ({ category, articles }: WikiSection) => {
-  const wikiKey = useWikiStore((state) => state.wikiData.wiki.key);
+  const { wikiKey, canDeleteCategory, canRemoveArticle } = useWikiStore(
+    (state) => ({
+      wikiKey: state.wikiData.wiki.key,
+      canDeleteCategory: state.permissions.canDeleteCategory,
+      canRemoveArticle: state.permissions.canRemoveArticle,
+    }),
+  );
 
   return (
     <div className="group my-2">
       <div className="flex items-center justify-between">
         <CategoryBadge color={category?.color} name={category?.name} />
-        <Tooltip>
-          <TooltipTrigger>
-            <Link to="/wikis/$wikiKey/new" params={{ wikiKey }}>
-              <PlusIcon
-                size={18}
-                className="invisible cursor-pointer transition-transform ease-in-out group-hover:visible hover:scale-105"
-              />
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent>Create an article in this category</TooltipContent>
-        </Tooltip>
+        {category && (
+          <CategoryActionsDropdown
+            category={category}
+            wikiKey={wikiKey}
+            canDelete={canDeleteCategory}
+          />
+        )}
       </div>
       <div className="mt-1">
         {articles.map(({ key, title }) => (
-          <ArticleTitle key={key} title={title} articleKey={key} />
+          <ArticleTitle
+            key={key}
+            title={title}
+            articleKey={key}
+            canDelete={canRemoveArticle}
+          />
         ))}
       </div>
     </div>

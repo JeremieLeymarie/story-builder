@@ -18,6 +18,7 @@ import { ArticleSchema, articleSchema } from "./schemas";
 import { CategoryPicker } from "./category-picker";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
 import { EditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
+import { useEffect } from "react";
 
 type UpdateProps =
   | {
@@ -25,16 +26,20 @@ type UpdateProps =
       articleKey: string;
       mode: "update";
     }
-  | { defaultValues?: undefined; articleKey?: undefined; mode: "create" };
+  | {
+      defaultValues?: Partial<ArticleSchema>;
+      articleKey?: undefined;
+      mode: "create";
+    };
 
 export const ArticleEditor = ({
   defaultValues,
   articleKey,
   mode,
 }: UpdateProps) => {
-  const form = useForm({
+  const form = useForm<ArticleSchema>({
     resolver: zodResolver(articleSchema),
-    defaultValues: defaultValues ?? {},
+    defaultValues: defaultValues as Partial<ArticleSchema>,
   });
   const { createArticle, updateArticle } = useArticleActions();
   const {
@@ -44,6 +49,12 @@ export const ArticleEditor = ({
   const categories = sections
     .map((section) => section.category)
     .filter((cat) => !!cat);
+
+  useEffect(() => {
+    if (defaultValues) {
+      form.reset(defaultValues);
+    }
+  }, [defaultValues, mode, form]);
 
   const handleSubmit = async (data: ArticleSchema) => {
     if (mode === "update") await updateArticle(articleKey, data);

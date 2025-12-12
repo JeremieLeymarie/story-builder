@@ -84,7 +84,7 @@ export const ImportModal = ({
             readAs="text"
             onUploadFile={(content) => {
               // TODO: test what happens when parsing fails
-              setStoryFromImport(parseFile(content));
+              if (content) setStoryFromImport(parseFile(content));
             }}
           />
         )}

@@ -43,10 +43,12 @@ const RichTextContainer = ({
 export const BasePlugins = ({
   editable,
   className,
+  textColor,
   textDisplayMode,
 }: {
   editable: boolean;
   className?: string;
+  textColor?: string;
   textDisplayMode: TextDisplayMode;
 }) => {
   const [_floatingAnchorElem, setFloatingAnchorElem] =
@@ -73,6 +75,7 @@ export const BasePlugins = ({
           <ContentEditable
             className={cn(editable ? "max-w-[400px] px-4" : "px-0 py-0")}
             placeholder={editable ? "Once upon a time..." : ""}
+            textColor={textColor}
             ref={contentRef}
           />
         </RichTextContainer>

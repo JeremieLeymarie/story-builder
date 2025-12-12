@@ -29,6 +29,7 @@ export const WikiHome = () => {
           <Link
             to="/wikis/$wikiKey/new"
             params={{ wikiKey: wikiData.wiki.key }}
+            search={{ categoryKey: undefined }}
           >
             <Button>Create {isWikiEmpty ? "a first" : "a new"} article</Button>
           </Link>

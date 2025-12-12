@@ -5,9 +5,11 @@ import { ArticleEditor } from "@/wikis/article-editor";
 import { WikiContainer } from "@/wikis/wiki-container";
 import { useWikiQueries } from "./-hooks/use-wiki-queries";
 import { Button } from "@/design-system/primitives";
+import { z } from "zod";
 
 const RouteComponent = () => {
   const { wikiKey } = Route.useParams();
+  const { categoryKey } = Route.useSearch();
   const { wikiData, permissions, refetch, isLoading } = useWikiQueries({
     wikiKey,
   });
@@ -29,6 +31,8 @@ const RouteComponent = () => {
     );
   }
 
+  const defaultValues = categoryKey ? { categoryKey } : undefined;
+
   return (
     <WikiProvider
       refresh={async () => {
@@ -38,7 +42,7 @@ const RouteComponent = () => {
       permissions={permissions}
     >
       <WikiContainer>
-        <ArticleEditor mode="create" />
+        <ArticleEditor mode="create" defaultValues={defaultValues} />
       </WikiContainer>
     </WikiProvider>
   );
@@ -46,4 +50,6 @@ const RouteComponent = () => {
 
 export const Route = createFileRoute("/wikis/$wikiKey/new")({
   component: RouteComponent,
+  validateSearch: (search) =>
+    z.object({ categoryKey: z.string().optional() }).parse(search),
 });

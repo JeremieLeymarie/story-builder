@@ -4,7 +4,7 @@ import { getDexieWikiRepository, WikiRepositoryPort } from "./wiki-repository";
 export type WikiPermissionContext = {
   canCreateArticle: boolean;
   canEditArticle: boolean;
-  canDeleteArticle: boolean;
+  canRemoveArticle: boolean;
   canCreateCategory: boolean;
   canEditCategory: boolean;
   canDeleteCategory: boolean;
@@ -27,7 +27,7 @@ export const _getWikiPermissionContext = async ({
   return {
     canCreateArticle: isCreatedByMe && wiki?.type === "created",
     canEditArticle: isCreatedByMe && wiki?.type === "created",
-    canDeleteArticle: isCreatedByMe && wiki?.type === "created",
+    canRemoveArticle: isCreatedByMe && wiki?.type === "created",
     canCreateCategory: isCreatedByMe && wiki?.type === "created",
     canEditCategory: isCreatedByMe && wiki?.type === "created",
     canDeleteCategory: isCreatedByMe && wiki?.type === "created",
