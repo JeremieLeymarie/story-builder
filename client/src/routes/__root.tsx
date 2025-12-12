@@ -3,8 +3,6 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 import { DesktopNavbar } from "@/navbar/desktop-navbar";
-import { useSync } from "@/navbar/hooks/use-sync";
-import { BackdropLoader } from "@/design-system/components";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRegisterServiceWorker } from "@/hooks/use-register-service-worker";
 import { TooltipProvider } from "@/design-system/primitives/tooltip";
@@ -25,7 +23,6 @@ export const queryClient = new QueryClient({
 
 const Component = () => {
   const user = useLiveQuery(getUserService().getCurrentUser);
-  const { state, load, save } = useSync();
   const isMobile = useIsMobile();
 
   useRegisterServiceWorker();
@@ -39,22 +36,18 @@ const Component = () => {
               {isMobile ? (
                 <MobileNavbar
                   user={user}
-                  loadRemoteData={load}
-                  saveLocalData={save}
+                  loadRemoteData={() => {}}
+                  saveLocalData={() => {}}
                 />
               ) : (
                 <DesktopNavbar
                   user={user}
-                  loadRemoteData={load}
-                  saveLocalData={save}
+                  loadRemoteData={() => {}}
+                  saveLocalData={() => {}}
                 />
               )}
               <div className="relative w-full flex-1">
-                {state.loading ? (
-                  <BackdropLoader text="Loading application data..." />
-                ) : (
-                  <Outlet />
-                )}
+                <Outlet />
               </div>
             </div>
             <Toaster closeButton />
