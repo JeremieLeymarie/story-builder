@@ -12,12 +12,12 @@ import { ANONYMOUS_AUTHOR } from "@/services/common/import-service";
 import { ReactNode, useState } from "react";
 import { Badge } from "../primitives/badge";
 import { StoryGenreBadge } from "./story-genre-badge";
-import { StoryFromImport } from "@/services/common/schema";
+import { ImportData } from "@/services/common/schema";
 
 const ImportPreview = ({
   storyFromImport,
 }: {
-  storyFromImport: StoryFromImport;
+  storyFromImport: ImportData;
 }) => {
   return (
     <div className="flex flex-col gap-1">
@@ -47,8 +47,8 @@ const ImportPreview = ({
 };
 
 type ImportModalProps = {
-  onImportStory: (story: StoryFromImport) => Promise<void>;
-  parseFile: (content: string) => StoryFromImport | null;
+  onImportStory: (story: ImportData) => Promise<void>;
+  parseFile: (content: string) => ImportData | null;
   trigger: ReactNode;
 };
 
@@ -58,8 +58,9 @@ export const ImportModal = ({
   trigger,
 }: ImportModalProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [storyFromImport, setStoryFromImport] =
-    useState<StoryFromImport | null>(null);
+  const [storyFromImport, setStoryFromImport] = useState<ImportData | null>(
+    null,
+  );
 
   return (
     <Dialog

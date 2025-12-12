@@ -15,7 +15,7 @@ import {
   CannotDeleteFirstSceneError,
   DuplicationMissingPositionError,
 } from "./errors";
-import { StoryFromImport } from "@/services/common/schema";
+import { ImportData } from "@/services/common/schema";
 
 export const _getBuilderService = ({
   localRepository,
@@ -270,24 +270,30 @@ export const _getBuilderService = ({
         },
       );
     },
-    importStory: async (storyFromImport: StoryFromImport) => {
+    importStory: async (importData: ImportData) => {
       const storyKey = await localRepository.unitOfWork(
         async () => {
           const storyResult = await importService.createStory({
-            story: storyFromImport,
+            story: importData,
             type: "builder",
           });
 
           const oldScenesToNew = await importService.createScenes({
-            story: storyFromImport,
+            story: importData,
             newStoryKey: storyResult.data.key,
           });
 
-          if (storyFromImport.wiki)
+          if (importData.theme)
+            await importService.createTheme({
+              newStoryKey: storyResult.data.key,
+              theme: importData.theme,
+            });
+
+          if (importData.wiki)
             await importService.createWiki({
               oldScenesToNew,
               type: "created",
-              wikiData: storyFromImport.wiki,
+              wikiData: importData.wiki,
               newStoryKey: storyResult.data.key,
             });
 
@@ -297,6 +303,7 @@ export const _getBuilderService = ({
           entities: [
             "scene",
             "story",
+            "story-theme",
             "user",
             "wiki",
             "wiki-article",

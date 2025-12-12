@@ -5,7 +5,7 @@ import {
   ImportServicePort,
   TEMPORARY_NULL_KEY,
 } from "@/services/common/import-service";
-import { StoryFromImport } from "@/services/common/schema";
+import { ImportData } from "@/services/common/schema";
 
 // TODO: uniformize responses
 export const _getLibraryService = ({
@@ -99,24 +99,30 @@ export const _getLibraryService = ({
   };
 
   return {
-    importStory: async (storyFromImport: StoryFromImport) => {
+    importStory: async (importData: ImportData) => {
       await localRepository.unitOfWork(
         async () => {
           const story = await importService.createStory({
-            story: storyFromImport,
+            story: importData,
             type: "imported",
           });
 
           const oldScenesToNew = await importService.createScenes({
-            story: storyFromImport,
+            story: importData,
             newStoryKey: story.data.key,
           });
 
-          if (storyFromImport.wiki)
+          if (importData.theme)
+            await importService.createTheme({
+              newStoryKey: story.data.key,
+              theme: importData.theme,
+            });
+
+          if (importData.wiki)
             await importService.createWiki({
               oldScenesToNew,
               type: "imported",
-              wikiData: storyFromImport.wiki,
+              wikiData: importData.wiki,
               newStoryKey: story.data.key,
             });
 
@@ -127,6 +133,7 @@ export const _getLibraryService = ({
             "story-progress",
             "scene",
             "story",
+            "story-theme",
             "user",
             "wiki",
             "wiki-article",

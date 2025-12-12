@@ -1,3 +1,4 @@
+import { gameThemeSchema } from "@/domains/builder/story-theme";
 import { actionSchema } from "@/lib/action-schema";
 import { lexicalContentSchema } from "@/lib/lexical-content";
 import {
@@ -14,7 +15,7 @@ const authorSchema = z
   })
   .optional();
 
-export const storyFromImportSchema = z.object({
+export const importDataSchema = z.object({
   story: z.object(
     {
       key: z.nanoid({ message: "Story key is required" }),
@@ -96,7 +97,9 @@ export const storyFromImportSchema = z.object({
     })
     .nullable()
     .optional(),
+  theme: gameThemeSchema.optional(),
 });
 
-export type StoryFromImport = z.infer<typeof storyFromImportSchema>;
-export type WikiFromImport = NonNullable<StoryFromImport["wiki"]>;
+export type ImportData = z.infer<typeof importDataSchema>;
+export type WikiFromImport = NonNullable<ImportData["wiki"]>;
+export type ThemeFromImport = NonNullable<ImportData["theme"]>;

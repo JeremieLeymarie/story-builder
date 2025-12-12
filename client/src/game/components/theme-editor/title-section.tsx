@@ -11,11 +11,9 @@ import {
   ToggleGroupItem,
 } from "@/design-system/primitives/toggle-group";
 import { ColorPicker } from "@/design-system/components";
-import {
-  ThemeEditorForm,
-  ThemeEditorSchema,
-} from "@/game/hooks/use-theme-editor-form";
+import { ThemeEditorForm } from "@/game/hooks/use-theme-editor-form";
 import { cn } from "@/lib/style";
+import { ThemeEditorSchema } from "@/domains/builder/story-theme";
 
 export const TitleSection = ({
   form,
