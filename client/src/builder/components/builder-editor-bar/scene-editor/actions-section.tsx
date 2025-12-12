@@ -28,7 +28,7 @@ export const ActionsSection = ({
             variant="ghost"
             type="button"
             size="icon"
-            onClick={() => append({ type: "simple", text: "" })}
+            onClick={() => append({ type: "simple", targets: [], text: "" })}
           >
             <PlusIcon size="16px" />
           </Button>

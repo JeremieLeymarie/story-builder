@@ -27,10 +27,11 @@ export const MOCK_IMPORTED_SCENE = {
     {
       type: "simple" as const,
       text: "An action that leads to a scene",
-      sceneKey: "dest-scene",
+      targets: [{ sceneKey: "dest-scene", probability: 100 }],
     },
     {
       type: "simple" as const,
+      targets: [],
       text: "An action that leads to another scene",
     },
   ],

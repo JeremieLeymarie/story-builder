@@ -116,7 +116,7 @@ const _sceneFactory = {
         text: faker.word.sample(),
         targets: [
           {
-            sceneKey: Math.random() > 0.5 ? nanoid() : undefined,
+            sceneKey: nanoid(),
             probability: 100,
           },
         ],

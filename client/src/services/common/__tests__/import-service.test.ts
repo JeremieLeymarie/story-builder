@@ -46,11 +46,12 @@ describe("import-service", () => {
       {
         type: "simple",
         text: "An action that leads to a scene",
-        sceneKey: nanoid(),
-      },
-      {
-        type: "simple",
-        text: "An action that leads to another scene",
+        targets: [
+          {
+            sceneKey: nanoid(),
+            probability: 100,
+          },
+        ],
       },
     ],
     builderParams: {
@@ -222,11 +223,12 @@ describe("import-service", () => {
             actions: [
               {
                 text: "An action that leads to a scene",
-                sceneKey: "old-dest-scene",
-                type: "simple",
-              },
-              {
-                text: "An action that leads to another scene",
+                targets: [
+                  {
+                    sceneKey: "old-dest-scene",
+                    probability: 100,
+                  },
+                ],
                 type: "simple",
               },
             ],

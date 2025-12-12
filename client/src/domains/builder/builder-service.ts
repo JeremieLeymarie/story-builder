@@ -141,10 +141,12 @@ export const _getBuilderService = ({
           actions: [
             {
               type: "simple",
+              targets: [],
               text: "An action that leads to a scene",
             },
             {
               type: "simple",
+              targets: [],
               text: "An action that leads to another scene",
             },
           ],

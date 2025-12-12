@@ -139,8 +139,16 @@ describe("builder-service", () => {
         sourceScene: {
           ...BASIC_SCENE,
           actions: [
-            { type: "simple", text: "action A", sceneKey: "zut" },
-            { type: "simple", text: "action B", sceneKey: "flûte" },
+            {
+              type: "simple",
+              text: "action A",
+              targets: [{ sceneKey: "zut", probability: 100 }],
+            },
+            {
+              type: "simple",
+              text: "action B",
+              targets: [{ sceneKey: "flûte", probability: 100 }],
+            },
           ],
         },
         actionIndex: 0,
@@ -150,8 +158,16 @@ describe("builder-service", () => {
         BASIC_SCENE.key,
         {
           actions: [
-            { type: "simple", text: "action A", sceneKey: undefined },
-            { type: "simple", text: "action B", sceneKey: "flûte" },
+            {
+              type: "simple",
+              text: "action A",
+              targets: [],
+            },
+            {
+              type: "simple",
+              text: "action B",
+              targets: [{ sceneKey: "flûte", probability: 100 }],
+            },
           ],
         },
       );
@@ -162,8 +178,16 @@ describe("builder-service", () => {
         sourceScene: {
           ...BASIC_SCENE,
           actions: [
-            { type: "simple", text: "action A", sceneKey: "zut" },
-            { type: "simple", text: "action B", sceneKey: "flûte" },
+            {
+              type: "simple",
+              text: "action A",
+              targets: [{ sceneKey: "zut", probability: 100 }],
+            },
+            {
+              type: "simple",
+              text: "action B",
+              targets: [{ sceneKey: "flûte", probability: 100 }],
+            },
           ],
         },
         actionIndex: 42,
@@ -173,8 +197,16 @@ describe("builder-service", () => {
         BASIC_SCENE.key,
         {
           actions: [
-            { type: "simple", text: "action A", sceneKey: "zut" },
-            { type: "simple", text: "action B", sceneKey: "flûte" },
+            {
+              type: "simple",
+              text: "action A",
+              targets: [{ sceneKey: "zut", probability: 100 }],
+            },
+            {
+              type: "simple",
+              text: "action B",
+              targets: [{ sceneKey: "flûte", probability: 100 }],
+            },
           ],
         },
       );
@@ -185,8 +217,16 @@ describe("builder-service", () => {
         sourceScene: {
           ...BASIC_SCENE,
           actions: [
-            { type: "simple", text: "action A", sceneKey: "zut" },
-            { type: "simple", text: "action B", sceneKey: "flûte" },
+            {
+              type: "simple",
+              text: "action A",
+              targets: [{ sceneKey: "zut", probability: 100 }],
+            },
+            {
+              type: "simple",
+              text: "action B",
+              targets: [{ sceneKey: "flûte", probability: 100 }],
+            },
           ],
         },
         actionIndex: -42,
@@ -196,8 +236,16 @@ describe("builder-service", () => {
         BASIC_SCENE.key,
         {
           actions: [
-            { type: "simple", text: "action A", sceneKey: "zut" },
-            { type: "simple", text: "action B", sceneKey: "flûte" },
+            {
+              type: "simple",
+              text: "action A",
+              targets: [{ sceneKey: "zut", probability: 100 }],
+            },
+            {
+              type: "simple",
+              text: "action B",
+              targets: [{ sceneKey: "flûte", probability: 100 }],
+            },
           ],
         },
       );
@@ -472,8 +520,8 @@ describe("builder-service", () => {
               "You arrive at a crossroads. On the left, a sinuous dirt path leads to a tree mass. The road on the right is a well-maintained paved trail that runs towards a little village in the hills.",
             ),
             actions: [
-              { type: "simple", text: "Go to the forest" },
-              { type: "simple", text: "Go to the village" },
+              { type: "simple", targets: [], text: "Go to the forest" },
+              { type: "simple", targets: [], text: "Go to the village" },
             ],
             isFirstScene: false,
             key: "first-fake-scene-key",
@@ -584,8 +632,8 @@ describe("builder-service", () => {
               "You arrive at a crossroads. On the left, a sinuous dirt path leads to a tree mass. The road on the right is a well-maintained paved trail that runs towards a little village in the hills.",
             ),
             actions: [
-              { type: "simple", text: "Go to the forest" },
-              { type: "simple", text: "Go to the village" },
+              { type: "simple", targets: [], text: "Go to the forest" },
+              { type: "simple", targets: [], text: "Go to the village" },
             ],
             isFirstScene: false,
             key: "first-fake-scene-key",
@@ -777,7 +825,13 @@ describe("builder-service", () => {
 
     test("one scene", async () => {
       const scene = factory.scene({
-        actions: [{ type: "simple", text: "action", sceneKey: "something" }],
+        actions: [
+          {
+            type: "simple",
+            text: "action",
+            targets: [{ sceneKey: "something", probability: 100 }],
+          },
+        ],
       });
       sceneRepository.bulkAdd = vi.fn((payload) => {
         const scenePayload = payload[0]!;
@@ -807,7 +861,7 @@ describe("builder-service", () => {
           {
             type: "simple",
             text: "action1",
-            sceneKey: "something",
+            targets: [{ sceneKey: "something", probability: 100 }],
           },
         ],
       });
@@ -816,7 +870,7 @@ describe("builder-service", () => {
           {
             type: "simple",
             text: "action2",
-            sceneKey: "scene-1",
+            targets: [{ sceneKey: "scene-1", probability: 100 }],
           },
         ],
       });
