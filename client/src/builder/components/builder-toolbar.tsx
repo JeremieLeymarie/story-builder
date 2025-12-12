@@ -13,6 +13,7 @@ import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
 import { useBuilderContext } from "../hooks/use-builder-context";
 import {
   Toolbar,
+  ToolbarDescription,
   ToolbarHeader,
   ToolbarTitle,
 } from "@/design-system/components/toolbar";
@@ -23,6 +24,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
+import { cn } from "@/lib/style";
 
 type ContentProps = {
   toggleExpanded: () => void;
@@ -31,7 +33,7 @@ type ContentProps = {
 const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
   const { story } = useBuilderContext();
   const { addScene, openBuilderEditor, testStory } = useToolbarActions();
-  const btnClassname = "flex w-full justify-start gap-4 w-[225px]";
+  const btnClassname = "flex w-full justify-start gap-4";
 
   return (
     <>
@@ -42,7 +44,9 @@ const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
             <ArrowUpFromLineIcon size={16} />
           </Button>
         </div>
-        <p className="text-muted-foreground truncate italic">{story.title}</p>
+        <ToolbarDescription className="truncate">
+          {story.title}
+        </ToolbarDescription>
       </ToolbarHeader>
       <div className="flex w-full flex-col gap-2">
         <Button
@@ -180,7 +184,7 @@ export const BuilderToolbar = () => {
   const { isExpanded, toggleExpanded } = useToolbar();
 
   return (
-    <Toolbar>
+    <Toolbar className={cn(isExpanded && "w-[250px]")}>
       {isExpanded ? (
         <ExpandedToolbarContent toggleExpanded={toggleExpanded} />
       ) : (

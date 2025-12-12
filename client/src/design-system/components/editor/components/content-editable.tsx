@@ -5,6 +5,7 @@ import { cn } from "@/lib/style";
 type Props = {
   placeholder: string;
   className?: string;
+  textColor?: string;
   placeholderClassName?: string;
   ref: RefObject<HTMLDivElement | null>;
 };
@@ -12,6 +13,7 @@ type Props = {
 export const ContentEditable = ({
   placeholder,
   className,
+  textColor,
   placeholderClassName,
   ref,
 }: Props): JSX.Element => {
@@ -22,6 +24,7 @@ export const ContentEditable = ({
         "relative block min-h-full py-4 focus:outline-none",
         className,
       )}
+      style={{ color: textColor }}
       aria-placeholder={placeholder}
       placeholder={
         <div

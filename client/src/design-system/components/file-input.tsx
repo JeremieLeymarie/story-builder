@@ -1,4 +1,5 @@
 import { cn } from "@/lib/style";
+import { cva, VariantProps } from "class-variance-authority";
 import { FileIcon } from "lucide-react";
 import {
   ChangeEvent,
@@ -42,10 +43,27 @@ type ReadAs = "text" | "dataURL";
 
 type Accept = "image" | "json";
 
+const variants = cva(
+  "text-muted-foreground flex items-center justify-center rounded border border-dashed p-2 text-sm transition-all",
+  {
+    variants: {
+      size: {
+        sm: "min-h-10 text-xs",
+        md: "min-h-40",
+      },
+    },
+    defaultVariants: {
+      size: "md",
+    },
+  },
+);
+
 type FileInputProps = {
   accept: Accept;
-  onUploadFile: (content: string) => void;
+  onUploadFile: (content: string | null) => void;
   readAs: ReadAs;
+  size?: VariantProps<typeof variants>["size"];
+  showNameAfterUpload?: boolean;
 };
 
 const fileTypeMapping: Record<Accept, string> = {
@@ -57,6 +75,8 @@ export const FileDropInput = ({
   onUploadFile,
   accept,
   readAs,
+  size,
+  showNameAfterUpload = false,
 }: FileInputProps) => {
   const { readFile } = useFileUpload({
     onReadFile: onUploadFile,
@@ -112,20 +132,20 @@ export const FileDropInput = ({
         }}
         onDrop={handleDrop}
         className={cn(
-          "text-muted-foreground flex min-h-40 items-center justify-center rounded border border-dashed p-2 text-sm",
+          variants({ size }),
           isDraggingOver && "border-primary border-2",
         )}
         onClick={handleDropzoneClick}
       >
-        {fileName ? (
+        {showNameAfterUpload && fileName ? (
           <p>
             <span className="font-semibold">Uploaded:</span> {fileName}
           </p>
         ) : (
-          <p className="flex items-center gap-2">
-            <FileIcon size="16px" /> Drop your file here or click to browse your
-            files
-          </p>
+          <div className="flex items-center gap-2">
+            <FileIcon size="16px" />
+            <p>Drop your file here or click to browse your files</p>
+          </div>
         )}
       </div>
       <input

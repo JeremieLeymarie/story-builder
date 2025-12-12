@@ -24,11 +24,13 @@ export const RichText = ({
   initialState,
   editable,
   className,
+  textColor,
   toolbarPlugins,
   editorNodes,
   textDisplayMode,
 }: {
   className?: string;
+  textColor?: string;
   editable: boolean;
   initialState?: LexicalContent;
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
@@ -59,6 +61,7 @@ export const RichText = ({
           {editable && <EditorPlugins toolbarPlugins={toolbarPlugins} />}
           <BasePlugins
             className={className}
+            textColor={textColor}
             editable={editable}
             textDisplayMode={textDisplayMode}
           />
