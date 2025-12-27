@@ -2,7 +2,6 @@ import z from "zod/v4";
 import { useReactFlow } from "@xyflow/react";
 import { BuilderNode, SceneProps } from "../types";
 import { nodeToSceneAdapter } from "../adapters";
-import { getBuilderService } from "@/get-builder-service";
 import { isAnyInputFocused } from "./use-builder-shortcuts";
 import { useDuplicateScenes } from "./use-duplicate-scenes";
 import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
@@ -32,10 +31,9 @@ const clipboardScenesSchema = z.array(
 export const useCopyPaste = () => {
   const { duplicateScenes } = useDuplicateScenes();
   const { getNodes, setNodes } = useReactFlow<BuilderNode>();
-  const { deleteScenes } = getBuilderService();
   const { addScene } = useAddScene();
   const { handleError } = useBuilderError();
-  const { story } = useBuilderContext();
+  const { story, builderService } = useBuilderContext();
 
   const onCopyOrCut = (ev: ClipboardEvent) => {
     if (isAnyInputFocused()) return;
@@ -48,7 +46,7 @@ export const useCopyPaste = () => {
     );
     if (ev.type === "cut") {
       setNodes((nds) => nds.filter((nd) => !nd.selected));
-      deleteScenes({
+      builderService.deleteScenes({
         sceneKeys: nodes.map((nd) => nd.data.key),
         storyKey: story.key,
       });

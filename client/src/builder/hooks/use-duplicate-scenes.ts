@@ -1,5 +1,4 @@
 import { useBuilderContext } from "./use-builder-context";
-import { getBuilderService } from "@/get-builder-service";
 import { useBuilderError } from "./use-builder-error";
 import { BuilderPosition, Scene } from "@/lib/storage/domain";
 import { useScenePositioning } from "./use-scene-positioning";
@@ -10,9 +9,8 @@ import { StorylessScene } from "../types";
 import { Vec2 } from "@/lib/vec2";
 
 export const useDuplicateScenes = () => {
-  const builderService = getBuilderService();
   const { handleError } = useBuilderError();
-  const { story } = useBuilderContext();
+  const { story, builderService } = useBuilderContext();
   const { getNewScenePosition: getInitialPosition, getOffset } =
     useScenePositioning();
   const addNodes = useAddFocusedNodes();

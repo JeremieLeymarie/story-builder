@@ -1,4 +1,3 @@
-import { getBuilderService } from "@/get-builder-service";
 import { useBuilderContext } from "./use-builder-context";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -21,6 +20,7 @@ const getExportData = (data: {
 export const useGetExportData = () => {
   const {
     story: { key: storyKey },
+    builderService,
   } = useBuilderContext();
 
   const {
@@ -31,7 +31,7 @@ export const useGetExportData = () => {
     queryKey: ["get-export-data", storyKey],
     queryFn: async () => {
       const { story, scenes } =
-        await getBuilderService().getBuilderStoryData(storyKey);
+        await builderService.getBuilderStoryData(storyKey);
 
       if (!story) {
         toast.error("Something went wrong");

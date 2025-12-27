@@ -1,10 +1,10 @@
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { getBuilderService } from "@/get-builder-service";
 import { getImportService } from "@/services/common/import-service";
 import { Story } from "@/lib/storage/domain";
 import { WithoutKey } from "@/types";
 import { ImportData } from "@/services/common/schema";
+import { useBuilderContext } from "./use-builder-context";
 
 export type CreateStoryPayload = Omit<
   WithoutKey<Story>,
@@ -13,7 +13,7 @@ export type CreateStoryPayload = Omit<
 
 export const useBuilderStories = () => {
   const navigate = useNavigate();
-  const builderService = getBuilderService();
+  const { builderService } = useBuilderContext();
 
   const createStory = async (storyData: CreateStoryPayload) => {
     const result = await builderService.createStoryWithFirstScene(storyData);

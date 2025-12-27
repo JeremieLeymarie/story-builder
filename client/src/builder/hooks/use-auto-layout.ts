@@ -3,7 +3,6 @@ import { BuilderNode } from "../types";
 import { useRef } from "react";
 import { Scene } from "@/lib/storage/domain";
 import { useBuilderContext } from "./use-builder-context";
-import { getBuilderService } from "@/get-builder-service";
 import { useBuilderError } from "./use-builder-error";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
 
@@ -11,8 +10,7 @@ export const useAutoLayout = () => {
   const { setNodes, setEdges, getNodes, getEdges, fitView } =
     useReactFlow<BuilderNode>();
   const stateBeforeChanges = useRef<Scene[]>(null);
-  const { story } = useBuilderContext();
-  const svc = getBuilderService();
+  const { story, builderService } = useBuilderContext();
   const { handleError } = useBuilderError();
 
   const updateOptimistically = (scenes_: Scene[]) => {
@@ -25,7 +23,7 @@ export const useAutoLayout = () => {
   };
 
   const organizeNodes = async () => {
-    const { before, after } = await svc.getAutoLayout({
+    const { before, after } = await builderService.getAutoLayout({
       storyKey: story.key,
       edges: getEdges(),
       nodes: getNodes(),
@@ -33,7 +31,7 @@ export const useAutoLayout = () => {
 
     stateBeforeChanges.current = JSON.parse(JSON.stringify(before)); // Deep copy
 
-    svc.bulkUpdateScenes({ scenes: after }).catch(handleError);
+    builderService.bulkUpdateScenes({ scenes: after }).catch(handleError);
     updateOptimistically(after);
     fitView();
   };
@@ -44,7 +42,7 @@ export const useAutoLayout = () => {
         "The previous state should always be set when reverting to previous state",
       );
     }
-    svc
+    builderService
       .bulkUpdateScenes({ scenes: stateBeforeChanges.current })
       .catch(handleError);
     updateOptimistically(stateBeforeChanges.current);

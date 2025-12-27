@@ -14,6 +14,8 @@ import { BuilderNode } from "../types";
 import { Edge } from "@xyflow/react";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
 import { RefreshFunction } from "../components/types";
+import { BuilderServicePort } from "@/domains/builder/ports/builder-service-port";
+import { getBuilderService } from "@/get-builder-service";
 
 type BuilderContext = {
   refresh: RefreshFunction;
@@ -22,6 +24,7 @@ type BuilderContext = {
   setStory: Dispatch<SetStateAction<Story>>;
   initialNodes: BuilderNode[];
   initialEdges: Edge[];
+  builderService: BuilderServicePort;
 };
 
 export const BuilderContext = createContext<BuilderContext | null>(null);
@@ -44,6 +47,8 @@ export const BuilderContextProvider = ({
     story: story_,
   });
 
+  const builderService = getBuilderService();
+
   return (
     <BuilderContext.Provider
       value={{
@@ -53,6 +58,7 @@ export const BuilderContextProvider = ({
         story,
         setStory,
         refresh,
+        builderService,
       }}
     >
       {children}
