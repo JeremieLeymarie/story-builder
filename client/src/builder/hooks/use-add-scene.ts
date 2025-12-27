@@ -1,6 +1,5 @@
 import { useBuilderContext } from "./use-builder-context";
 import { XYPosition } from "@xyflow/react";
-import { getBuilderService } from "@/get-builder-service";
 import { sceneToNodeAdapter } from "../adapters";
 import { Scene } from "@/lib/storage/domain";
 import { useBuilderError } from "./use-builder-error";
@@ -17,9 +16,8 @@ export const DEFAULT_SCENE: AddScenePayload = {
 };
 
 export const useAddScene = () => {
-  const builderService = getBuilderService();
   const { handleError } = useBuilderError();
-  const { story } = useBuilderContext();
+  const { story, builderService } = useBuilderContext();
   const addNodes = useAddFocusedNodes();
   const { getNewScenePosition, getOffset } = useScenePositioning();
 
