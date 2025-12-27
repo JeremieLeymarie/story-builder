@@ -1,6 +1,6 @@
 import { match } from "ts-pattern";
 import { cn } from "@/lib/style";
-import { useBuilderEditorStore } from "@/builder/hooks/use-scene-editor-store";
+import { useBuilderEditorStore } from "@/builder/hooks/use-builder-editor-store";
 import { Toolbar } from "@/design-system/components/toolbar";
 import { StoryEditor, StoryEditorHeader } from "./story-editor/story-editor";
 import { SceneEditor, SceneEditorHeader } from "./scene-editor/scene-editor";

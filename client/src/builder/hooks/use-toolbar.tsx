@@ -1,6 +1,6 @@
 import { useTestStory } from "./use-test-story";
 import { useAddScene } from "./use-add-scene";
-import { useBuilderEditorStore } from "./use-scene-editor-store";
+import { useBuilderEditorStore } from "./use-builder-editor-store";
 import { useSafeLocalStorage } from "@/hooks/use-safe-local-storage";
 import {
   USER_SETTINGS_KEY,

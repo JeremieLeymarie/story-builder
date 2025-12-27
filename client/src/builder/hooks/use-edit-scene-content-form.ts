@@ -4,8 +4,6 @@ import { Scene } from "@/lib/storage/domain";
 import z from "zod";
 import { lexicalContentSchema } from "@/lib/lexical-content";
 import { useAutoSubmitForm } from "@/hooks/use-auto-submit-form";
-import { useQuery } from "@tanstack/react-query";
-import { useBuilderContext } from "./use-builder-context";
 
 export const sceneSchema = z.object({
   title: z
@@ -19,11 +17,9 @@ export type SceneSchema = z.infer<typeof sceneSchema>;
 export type SceneUpdatePayload = Omit<Scene, "builderParams" | "actions">;
 
 export const useEditSceneContentForm = ({
-  sceneKey,
   defaultValues,
   onSave,
 }: {
-  sceneKey: string;
   defaultValues: Partial<SceneSchema>;
   onSave: (payload: SceneSchema) => void;
 }) => {
@@ -31,9 +27,6 @@ export const useEditSceneContentForm = ({
     resolver: zodResolver(sceneSchema),
     defaultValues,
   });
-  const { builderService} = useBuilderContext()
-
-  const {} = useQuery({ queryKey: ["get-scene-data", sceneKey], queryFn : async () => });
 
   useAutoSubmitForm({
     form,
@@ -44,11 +37,6 @@ export const useEditSceneContentForm = ({
       });
     },
   });
-
-  // useEffect(() => {
-  //   // Update the form when the default values change, which are 'cached' otherwise
-  //   if (defaultValues) form.reset(defaultValues);
-  // }, [defaultValues, form]);
 
   return form;
 };
