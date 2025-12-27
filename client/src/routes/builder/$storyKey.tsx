@@ -3,7 +3,7 @@ import {
   makeGetBuilderQueryOptions,
   useGetBuilder,
 } from "@/builder/hooks/use-get-builder";
-import { useBuilderEditorStore } from "@/builder/hooks/use-scene-editor-store";
+import { useBuilderEditorStore } from "@/builder/hooks/use-builder-editor-store";
 import { BackdropLoader, ErrorMessage } from "@/design-system/components";
 import { createFileRoute } from "@tanstack/react-router";
 import { queryClient } from "../__root";

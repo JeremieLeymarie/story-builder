@@ -1,6 +1,5 @@
 import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
 import { Action, Scene } from "@/lib/storage/domain";
 import { match } from "ts-pattern";
 import z from "zod";
@@ -98,14 +97,6 @@ export const useEditActionsForm = ({
         actions: values.actions.map(adaptFormAction),
       }),
   });
-
-  useEffect(() => {
-    // Update the form when the default values change, which are 'cached' otherwise
-    if (actions)
-      form.reset({
-        actions: actions.map(adaptDomainAction),
-      });
-  }, [actions, form]);
 
   return { form, fields, append, remove, update };
 };

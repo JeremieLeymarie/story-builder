@@ -4,11 +4,15 @@ import { useBuilderContext } from "./use-builder-context";
 import { useBuilderError } from "./use-builder-error";
 import { Scene } from "@/lib/storage/domain";
 import { sceneToNodeAdapter } from "../adapters";
+import { useBuilderEditorStore } from "./use-builder-editor-store";
 
 export const useBuilderActions = () => {
   const { story, setStory, builderService } = useBuilderContext();
   const { setNodes } = useReactFlow<BuilderNode>();
   const { handleError } = useBuilderError();
+  const updateSceneEditor = useBuilderEditorStore(
+    (state) => state.updatePayload,
+  );
 
   const updateScene = async (scene: Partial<Scene> & Pick<Scene, "key">) => {
     try {
@@ -21,6 +25,13 @@ export const useBuilderActions = () => {
             : n,
         ),
       );
+      updateSceneEditor({
+        type: "scene-editor",
+        payload: {
+          scene: updated,
+          isFirstScene: story.firstSceneKey === updated.key,
+        },
+      });
     } catch (err) {
       handleError(err);
     }
