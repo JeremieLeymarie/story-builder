@@ -4,7 +4,7 @@ import { getImportService } from "@/services/common/import-service";
 import { Story } from "@/lib/storage/domain";
 import { WithoutKey } from "@/types";
 import { ImportData } from "@/services/common/schema";
-import { useBuilderContext } from "./use-builder-context";
+import { getBuilderService } from "@/get-builder-service";
 
 export type CreateStoryPayload = Omit<
   WithoutKey<Story>,
@@ -13,7 +13,7 @@ export type CreateStoryPayload = Omit<
 
 export const useBuilderStories = () => {
   const navigate = useNavigate();
-  const { builderService } = useBuilderContext();
+  const builderService = getBuilderService();
 
   const createStory = async (storyData: CreateStoryPayload) => {
     const result = await builderService.createStoryWithFirstScene(storyData);
