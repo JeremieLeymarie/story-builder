@@ -6,14 +6,17 @@ import {
   TEMPORARY_NULL_KEY,
 } from "@/services/common/import-service";
 import { ImportData } from "@/services/common/schema";
+import { GameRepositoryPort, getDexieGameRepository } from "./game-repository";
 
 // TODO: uniformize responses
 export const _getLibraryService = ({
   localRepository,
   importService,
+  gameRepository,
 }: {
   localRepository: LocalRepositoryPort;
   importService: ImportServicePort;
+  gameRepository: GameRepositoryPort;
 }) => {
   const _createBlankStoryProgress = async ({
     storyKey,
@@ -192,13 +195,22 @@ export const _getLibraryService = ({
             await localRepository.getStoryProgresses(storyKey)
           ).map((p) => p.key);
 
+          await gameRepository.deleteWiki(storyKey);
           await localRepository.deleteStoryProgresses(storyProgressKeys);
           await localRepository.deleteScenes(scenesKeys);
           await localRepository.deleteStory(storyKey);
         },
         {
           mode: "readwrite",
-          entities: ["scene", "story", "story-progress"],
+          entities: [
+            "scene",
+            "story",
+            "story-progress",
+            "wiki",
+            "wiki-category",
+            "wiki-article",
+            "wiki-article-link",
+          ],
         },
       );
     },
@@ -253,4 +265,5 @@ export const getLibraryService = () =>
   _getLibraryService({
     localRepository: getLocalRepository(),
     importService: getImportService(),
+    gameRepository: getDexieGameRepository(),
   });
