@@ -38,6 +38,10 @@ export default defineConfig([
       "react-refresh": reactRefresh,
     },
 
+    linterOptions: {
+      reportUnusedDisableDirectives: "off",
+    },
+
     rules: {
       "react-refresh/only-export-components": [
         "warn",

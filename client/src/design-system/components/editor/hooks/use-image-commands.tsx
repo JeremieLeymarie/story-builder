@@ -33,9 +33,12 @@ import {
 } from "lexical";
 
 import { $isImageNode } from "@/design-system/components/editor/nodes/image-node";
+
+// eslint-disable-next-line react-refresh/only-export-components
 export const RIGHT_CLICK_IMAGE_COMMAND: LexicalCommand<MouseEvent> =
   createCommand("RIGHT_CLICK_IMAGE_COMMAND");
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useImageCommands = ({
   nodeKey,
   imageContainerRef,
