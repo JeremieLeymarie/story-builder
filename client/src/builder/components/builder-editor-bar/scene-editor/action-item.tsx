@@ -149,7 +149,6 @@ export const ActionItem = ({
         <Input
           placeholder="Go to the village"
           {...form.register(`actions.${index}.text` as const)}
-          {...actionField}
         />
         <Button
           variant="outline"
