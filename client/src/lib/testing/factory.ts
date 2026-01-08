@@ -92,6 +92,7 @@ const _baseStoryFactory = {
   firstSceneKey: nanoid,
   genres: () => faker.helpers.arrayElements(STORY_GENRES, 3),
   image: faker.image.url,
+  wikiKey: () => undefined,
 } satisfies StoryBaseFactory;
 
 type BuilderStoryFactory = _BaseFactory<BuilderStory>;
