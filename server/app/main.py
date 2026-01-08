@@ -1,23 +1,14 @@
 from http import HTTPStatus
 from typing import Annotated
-from fastapi import Depends, FastAPI, Header
+from fastapi import FastAPI, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRoute
 
 from domains.auth.auth_service import AuthService
 from domains.auth.repositories.user_repository import UserRepository
 from domains.auth.type_defs import AuthUser, FullUser
-from endpoints.synchronization.load import SynchronizationLoadHandler
-from endpoints.synchronization.save_stories import StorySynchronizationHandler
-from endpoints.synchronization.save_progress import ProgressSynchronizationHandler
-from endpoints.synchronization.type_defs import (
-    FullStoriesRequest,
-    StoryProgress,
-    SynchronizationLoadResponse,
-)
 from request_types import (
     CreateUserRequest,
-    GenericAPIResponse,
     LoginUserRequest,
 )
 from utils.errors import BadAuthError
@@ -94,36 +85,3 @@ async def create_user(data: CreateUserRequest):
         return result
     except Exception as err:
         raise get_http_error(err)
-
-
-# SYNCHRONIZATION ENDPOINTS
-
-
-@app.get(
-    "/api/load",
-    status_code=HTTPStatus.OK,
-    response_model=SynchronizationLoadResponse,
-    dependencies=[Depends(check_auth)],
-)
-async def get_synchronization_data():
-    return SynchronizationLoadHandler().handle()
-
-
-@app.put(
-    "/api/save/progresses",
-    status_code=HTTPStatus.OK,
-    response_model=GenericAPIResponse,
-    dependencies=[Depends(check_auth)],
-)
-async def synchronize_progress(payload: list[StoryProgress]):
-    return ProgressSynchronizationHandler().handle(payload)
-
-
-@app.put(
-    "/api/save/stories",
-    status_code=HTTPStatus.OK,
-    response_model=GenericAPIResponse,
-    dependencies=[Depends(check_auth)],
-)
-async def save_stories(body: FullStoriesRequest):
-    return StorySynchronizationHandler().handle(body)
