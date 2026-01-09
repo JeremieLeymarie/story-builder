@@ -3,7 +3,6 @@ import {
   Edge,
   FinalConnectionState,
   addEdge,
-  reconnectEdge,
   useReactFlow,
 } from "@xyflow/react";
 import { nodeToSceneAdapter } from "../adapters";
@@ -48,17 +47,8 @@ export const useBuilderEdges = () => {
       })
       .catch(handleError);
 
-    // Optimistic update: replace the existing edge if existed, otherwise simply add a new edge
-    setEdges((prev) => {
-      const existingEdgeAtHandle = prev.find(
-        (ed) => ed.sourceHandle === connection.sourceHandle,
-      );
-      if (existingEdgeAtHandle)
-        return reconnectEdge(existingEdgeAtHandle, connection, prev, {
-          shouldReplaceId: false,
-        });
-      else return addEdge(connection, prev);
-    });
+    // Optimistic update
+    setEdges((prev) => addEdge(connection, prev));
   };
 
   const onConnectEnd = async (
@@ -111,10 +101,12 @@ export const useBuilderEdges = () => {
         return;
       }
 
+      console.log({ edge });
       builderService
         .removeSceneConnection({
           sourceScene: sceneData.sceneToUpdate,
           actionIndex: sceneData.actionIndex,
+          targetSceneKey: edge.target,
         })
         .catch(handleError);
     });

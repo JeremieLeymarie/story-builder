@@ -76,20 +76,18 @@ export const _getBuilderService = ({
       sourceSceneKey,
       destinationSceneKey,
       actionIndex,
-    }: {
-      sourceSceneKey: string;
-      destinationSceneKey: string;
-      actionIndex: number;
     }) => {
       const sourceScene = await localRepository.getScene(sourceSceneKey);
       if (!sourceScene) throw new EntityNotExistError("scene", sourceSceneKey);
 
-      // TODO: implement random events logic (cf https://github.com/JeremieLeymarie/story-builder/issues/361)
       const actions = sourceScene.actions.map((action, i) => {
         if (i === actionIndex) {
           return {
             ...action,
-            targets: [{ sceneKey: destinationSceneKey, probability: 100 }],
+            targets: [
+              ...action.targets,
+              { sceneKey: destinationSceneKey, probability: 100 },
+            ],
           } satisfies Action;
         }
         return action;
@@ -101,14 +99,16 @@ export const _getBuilderService = ({
     removeSceneConnection: async ({
       sourceScene,
       actionIndex,
-    }: {
-      sourceScene: Scene;
-      actionIndex: number;
+      targetSceneKey,
     }) => {
-      // TODO: implement random events logic (cf https://github.com/JeremieLeymarie/story-builder/issues/361)
       const actions = sourceScene.actions.map((action, i) => {
         if (i === actionIndex) {
-          return { ...action, targets: [] };
+          return {
+            ...action,
+            targets: action.targets.filter(
+              (t) => t.sceneKey !== targetSceneKey,
+            ),
+          };
         }
         return action;
       });
@@ -357,18 +357,15 @@ export const _getBuilderService = ({
           actions: scene.actions.map((action) => {
             return {
               ...action,
-              targets: action.targets.flatMap(
-                (
-                  target, // TODO: add probability logic (cf https://github.com/JeremieLeymarie/story-builder/issues/361)
-                ) =>
-                  originalSceneKeys.includes(target.sceneKey) // Do not copy links that target a scene that is not within the batch of duplicated scenes
-                    ? [
-                        {
-                          ...target,
-                          sceneKey: oldKeyToNewKey[target.sceneKey]!,
-                        },
-                      ]
-                    : [],
+              targets: action.targets.flatMap((target) =>
+                originalSceneKeys.includes(target.sceneKey) // Do not copy links that target a scene that is not within the batch of duplicated scenes
+                  ? [
+                      {
+                        ...target,
+                        sceneKey: oldKeyToNewKey[target.sceneKey]!,
+                      },
+                    ]
+                  : [],
               ),
             };
           }),
