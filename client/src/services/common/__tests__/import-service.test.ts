@@ -24,7 +24,7 @@ import {
   getStubThemeRepository,
   MockThemeRepository,
 } from "@/domains/builder/stubs/stub-theme-repository";
-const SCENE_KEY_A = nanoid();
+const SCENE_KEY_B = nanoid();
 
 describe("import-service", () => {
   let localRepository: MockLocalRepository;
@@ -41,7 +41,7 @@ describe("import-service", () => {
     type: "builder" as const,
     genres: ["adventure" as const, "fantasy" as const],
     creationDate: new Date(),
-    firstSceneKey: SCENE_KEY_A,
+    firstSceneKey: SCENE_KEY_B,
     author: {
       username: "author",
       key: nanoid(),
@@ -63,7 +63,7 @@ describe("import-service", () => {
   };
 
   const sourceSceneB: ImportData["scenes"][number] = {
-    key: SCENE_KEY_A,
+    key: SCENE_KEY_B,
     storyKey: sourceSceneA.key,
     title: "Your first scene",
     content: BASIC_SCENE_CONTENT,
