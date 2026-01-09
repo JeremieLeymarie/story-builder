@@ -73,22 +73,19 @@ export const SceneAction = ({
 }) => {
   const isVisible = useActionVisibility({ action, progress });
 
-  if (action.targets.length !== 0) {
-    // Only show actions that lead somewhere
+  // Only show actions that lead somewhere
+  if (action.targets.length === 0) {
     return null;
   }
   const isTestMode = !progress;
 
   if (isTestMode) {
     return (
-      <ActionTooltip
-        isTestMode={isTestMode}
-        isVisible={isVisible}
-        key={action.text}
-      >
+      <ActionTooltip isTestMode isVisible={isVisible} key={action.text}>
+        {/* TODO: implement probability logic to handle multiple targets cf (https://github.com/JeremieLeymarie/story-builder/issues/367) */}
         <Link
           to="/game/test/$gameKey/$sceneKey"
-          params={{ gameKey: storyKey, sceneKey: action.sceneKey }}
+          params={{ gameKey: storyKey, sceneKey: action.targets[0]!.sceneKey }}
         >
           <ActionButton
             text={action.text}
@@ -101,11 +98,12 @@ export const SceneAction = ({
   }
 
   return (
-    <ActionTooltip isTestMode={isTestMode} isVisible={isVisible}>
+    <ActionTooltip isTestMode={false} isVisible={isVisible}>
+      {/* TODO: implement probability logic to handle multiple targets cf (https://github.com/JeremieLeymarie/story-builder/issues/367) */}
       <Link
         key={action.text}
         to="/game/$gameKey/$sceneKey"
-        params={{ gameKey: storyKey, sceneKey: action.sceneKey }}
+        params={{ gameKey: storyKey, sceneKey: action.targets[0]!.sceneKey }}
         search={{ storyProgressKey: progress.key }}
         disabled={!isVisible}
       >

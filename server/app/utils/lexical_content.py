@@ -1,7 +1,7 @@
 from typing import Any
 
 
-def make_simple_scene_content(text: str) -> dict[str, Any]:
+def make_simple_lexical_content(text: str) -> dict[str, Any]:
     return {
         "root": {
             "children": [

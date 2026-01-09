@@ -2,7 +2,9 @@ from datetime import datetime
 from http import HTTPStatus
 from unittest.mock import ANY
 
+from utils.lexical_content import make_simple_lexical_content
 from utils.mongo.base_repository import (
+    MongoActionTarget,
     MongoBuilderParams,
     MongoBuilderPosition,
     MongoScene,
@@ -10,7 +12,6 @@ from utils.mongo.base_repository import (
     MongoStoryAuthor,
     MongoSimpleAction,
 )
-from utils.scene_content import make_simple_scene_content
 
 
 URL = "/api/save/stories"
@@ -160,25 +161,43 @@ def test_save_builder_state(api_test_infra_authenticated) -> None:
             ],
             "scenes": [
                 {
-                    "actions": [{"sceneKey": "scene-1", "text": "Action Text"}],
+                    "actions": [
+                        {
+                            "targets": [{"sceneKey": "scene-1", "probability": 100}],
+                            "text": "Action Text",
+                            "type": "simple",
+                        }
+                    ],
                     "builderParams": {"position": {"x": 400.0, "y": 200.0}},
-                    "content": "Content",
+                    "content": make_simple_lexical_content("Content"),
                     "key": "scene-1",
                     "storyKey": "builder-key",
                     "title": "Scene title",
                 },
                 {
-                    "actions": [{"sceneKey": "scene-1", "text": "Action Text"}],
+                    "actions": [
+                        {
+                            "targets": [{"sceneKey": "scene-1", "probability": 100}],
+                            "text": "Action Text",
+                            "type": "simple",
+                        }
+                    ],
                     "builderParams": {"position": {"x": 400.0, "y": 200.0}},
-                    "content": "Content",
+                    "content": make_simple_lexical_content("Content"),
                     "key": "scene-1",
                     "storyKey": "imported-key",
                     "title": "Scene title",
                 },
                 {
-                    "actions": [{"sceneKey": "scene-1", "text": "Action Text"}],
+                    "actions": [
+                        {
+                            "targets": [{"sceneKey": "scene-1", "probability": 100}],
+                            "text": "Action Text",
+                            "type": "simple",
+                        }
+                    ],
                     "builderParams": {"position": {"x": 400.0, "y": 200.0}},
-                    "content": "Not in the story",
+                    "content": make_simple_lexical_content("Not in the story"),
                     "key": "scene-2",
                     "storyKey": "wrong-key",
                     "title": "Not in the story",
@@ -211,13 +230,17 @@ def test_save_builder_state(api_test_infra_authenticated) -> None:
                 MongoScene(
                     actions=[
                         MongoSimpleAction(
-                            type="simple", sceneKey="scene-1", text="Action Text"
+                            type="simple",
+                            targets=[
+                                MongoActionTarget(sceneKey="scene-1", probability=100)
+                            ],
+                            text="Action Text",
                         )
                     ],
                     builderParams=MongoBuilderParams(
                         position=MongoBuilderPosition(x=400.0, y=200.0)
                     ),
-                    content=make_simple_scene_content("Content"),
+                    content=make_simple_lexical_content("Content"),
                     key="scene-1",
                     storyKey="builder-key",
                     title="Scene title",
@@ -242,13 +265,17 @@ def test_save_builder_state(api_test_infra_authenticated) -> None:
                 MongoScene(
                     actions=[
                         MongoSimpleAction(
-                            type="simple", sceneKey="scene-1", text="Action Text"
+                            type="simple",
+                            targets=[
+                                MongoActionTarget(sceneKey="scene-1", probability=100)
+                            ],
+                            text="Action Text",
                         )
                     ],
                     builderParams=MongoBuilderParams(
                         position=MongoBuilderPosition(x=400.0, y=200.0)
                     ),
-                    content=make_simple_scene_content("Content"),
+                    content=make_simple_lexical_content("Content"),
                     key="scene-1",
                     storyKey="imported-key",
                     title="Scene title",

@@ -2,6 +2,7 @@ from datetime import datetime
 from http import HTTPStatus
 
 from utils.mongo.base_repository import (
+    MongoActionTarget,
     MongoBuilderParams,
     MongoBuilderPosition,
     MongoScene,
@@ -10,7 +11,7 @@ from utils.mongo.base_repository import (
     MongoStoryAuthor,
     MongoStoryProgress,
 )
-from utils.scene_content import make_simple_scene_content
+from utils.lexical_content import make_simple_lexical_content
 from utils.type_defs import StoryGenre, StoryType
 
 URL = "/api/load"
@@ -42,13 +43,19 @@ def test_load(api_test_infra_authenticated) -> None:
                     MongoScene(
                         actions=[
                             MongoSimpleAction(
-                                type="simple", sceneKey="scene-1", text="Action  Text"
+                                type="simple",
+                                targets=[
+                                    MongoActionTarget(
+                                        sceneKey="scene-1", probability=100
+                                    )
+                                ],
+                                text="Action  Text",
                             )
                         ],
                         builderParams=MongoBuilderParams(
                             position=MongoBuilderPosition(x=400.0, y=200.0)
                         ),
-                        content=make_simple_scene_content("Content"),
+                        content=make_simple_lexical_content("Content"),
                         key="scene-1",
                         storyKey="key",
                         title="Scene title",
@@ -150,9 +157,17 @@ def test_load(api_test_infra_authenticated) -> None:
                 "publicationDate": datetime(2025, 6, 2).isoformat(),
                 "scenes": [
                     {
-                        "actions": [{"sceneKey": "scene-1", "text": "Action  Text"}],
+                        "actions": [
+                            {
+                                "targets": [
+                                    {"sceneKey": "scene-1", "probability": 100.0}
+                                ],
+                                "text": "Action  Text",
+                                "type": "simple",
+                            }
+                        ],
                         "builderParams": {"position": {"x": 400.0, "y": 200.0}},
-                        "content": "Content",
+                        "content": make_simple_lexical_content("Content"),
                         "key": "scene-1",
                         "storyKey": "key",
                         "title": "Scene title",

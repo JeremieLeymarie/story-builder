@@ -3,11 +3,17 @@ from typing import Any, Literal, Union
 from pydantic import BaseModel
 
 from utils.type_defs import StoryGenre, StoryType
+from endpoints.common import BaseAPIModel
+
+
+class SyncActionTarget(BaseAPIModel):
+    scene_key: str
+    probability: float
 
 
 class _ActionBase(BaseModel):
     text: str
-    scene_key: str | None = None
+    targets: list[SyncActionTarget]
 
 
 class SyncSimpleAction(_ActionBase):

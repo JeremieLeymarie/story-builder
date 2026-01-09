@@ -12,6 +12,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "ts": "tsc --noEmit",
+    "ts:watch": "tsc --noEmit --watch",
     "format:check": "prettier --check --ignore-unknown .",
     "format:write": "prettier --write --ignore-unknown .",
     "test": "vitest",

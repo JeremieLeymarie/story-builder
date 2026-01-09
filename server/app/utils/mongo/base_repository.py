@@ -20,9 +20,14 @@ class MongoUser(WithId):
     password: str
 
 
+class MongoActionTarget(TypedDict):
+    sceneKey: str
+    probability: float
+
+
 class _ActionBase(TypedDict):
     text: str
-    sceneKey: str | None
+    targets: list[MongoActionTarget]
 
 
 class MongoSimpleAction(_ActionBase):

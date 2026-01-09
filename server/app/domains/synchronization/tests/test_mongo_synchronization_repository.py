@@ -5,6 +5,7 @@ from domains.synchronization.repositories.synchronization_repository import (
     MongoSynchronizationRepository,
 )
 from domains.synchronization.type_defs import (
+    SyncActionTarget,
     SynchronizationBuilderParams,
     SynchronizationBuilderPosition,
     SynchronizationScene,
@@ -14,6 +15,7 @@ from domains.synchronization.type_defs import (
     SynchronizationStoryProgress,
 )
 from utils.mongo.base_repository import (
+    MongoActionTarget,
     MongoBuilderParams,
     MongoBuilderPosition,
     MongoScene,
@@ -24,7 +26,7 @@ from utils.mongo.base_repository import (
     TestMongoRepository,
 )
 from utils.result import Result
-from utils.scene_content import make_simple_scene_content
+from utils.lexical_content import make_simple_lexical_content
 from utils.type_defs import StoryGenre, StoryType
 from unittest.mock import ANY
 
@@ -43,13 +45,15 @@ FAKE_STORY_A = SynchronizationStory(
         SynchronizationScene(
             actions=[
                 SyncSimpleAction(
-                    type="simple", scene_key="scene-1", text="Action  Text"
+                    type="simple",
+                    targets=[SyncActionTarget(scene_key="scene-1", probability=100)],
+                    text="Action  Text",
                 )
             ],
             builder_params=SynchronizationBuilderParams(
                 position=SynchronizationBuilderPosition(x=400.0, y=200.0)
             ),
-            content=make_simple_scene_content("Content"),
+            content=make_simple_lexical_content("Content"),
             key="scene-1",
             story_key="key",
             title="Scene title",
@@ -123,13 +127,17 @@ def _assert_fake_stories_match(stories: list[MongoStory]) -> None:
                 MongoScene(
                     actions=[
                         MongoSimpleAction(
-                            type="simple", sceneKey="scene-1", text="Action  Text"
+                            type="simple",
+                            targets=[
+                                MongoActionTarget(sceneKey="scene-1", probability=100)
+                            ],
+                            text="Action  Text",
                         )
                     ],
                     builderParams=MongoBuilderParams(
                         position=MongoBuilderPosition(x=400, y=200)
                     ),
-                    content=make_simple_scene_content("Content"),
+                    content=make_simple_lexical_content("Content"),
                     key="scene-1",
                     storyKey="key",
                     title="Scene title",
@@ -216,13 +224,19 @@ def test_save_stories_with_existing_stories() -> None:
                     MongoScene(
                         actions=[
                             MongoSimpleAction(
-                                type="simple", sceneKey="scene-1", text="Action  Text"
+                                type="simple",
+                                targets=[
+                                    MongoActionTarget(
+                                        sceneKey="scene-1", probability=100
+                                    )
+                                ],
+                                text="Action  Text",
                             )
                         ],
                         builderParams=MongoBuilderParams(
                             position=MongoBuilderPosition(x=400, y=200)
                         ),
-                        content=make_simple_scene_content("Content"),
+                        content=make_simple_lexical_content("Content"),
                         key="scene-1",
                         storyKey="key",
                         title="Scene title",
@@ -416,13 +430,19 @@ def test_get_stories() -> None:
                     MongoScene(
                         actions=[
                             MongoSimpleAction(
-                                type="simple", sceneKey="scene-1", text="Action  Text"
+                                type="simple",
+                                targets=[
+                                    MongoActionTarget(
+                                        sceneKey="scene-1", probability=100
+                                    )
+                                ],
+                                text="Action  Text",
                             )
                         ],
                         builderParams=MongoBuilderParams(
                             position=MongoBuilderPosition(x=400, y=200)
                         ),
-                        content=make_simple_scene_content("Content"),
+                        content=make_simple_lexical_content("Content"),
                         key="scene-1",
                         storyKey="key",
                         title="Scene title",
@@ -466,13 +486,17 @@ def test_get_stories() -> None:
                 SynchronizationScene(
                     actions=[
                         SyncSimpleAction(
-                            type="simple", scene_key="scene-1", text="Action  Text"
+                            type="simple",
+                            targets=[
+                                SyncActionTarget(scene_key="scene-1", probability=100)
+                            ],
+                            text="Action  Text",
                         )
                     ],
                     builder_params=SynchronizationBuilderParams(
                         position=SynchronizationBuilderPosition(x=400, y=200)
                     ),
-                    content=make_simple_scene_content("Content"),
+                    content=make_simple_lexical_content("Content"),
                     key="scene-1",
                     story_key="key",
                     title="Scene title",

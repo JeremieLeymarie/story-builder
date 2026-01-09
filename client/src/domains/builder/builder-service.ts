@@ -1,4 +1,4 @@
-import { BuilderPosition, Scene, Story } from "@/lib/storage/domain";
+import { Action, BuilderPosition, Scene, Story } from "@/lib/storage/domain";
 import { LocalRepositoryPort } from "@/repositories/local-repository-port";
 import { BuilderNode } from "@/builder/types";
 import { Edge } from "@xyflow/react";
@@ -84,16 +84,18 @@ export const _getBuilderService = ({
       const sourceScene = await localRepository.getScene(sourceSceneKey);
       if (!sourceScene) throw new EntityNotExistError("scene", sourceSceneKey);
 
+      // TODO: implement random events logic (cf https://github.com/JeremieLeymarie/story-builder/issues/361)
       const actions = sourceScene.actions.map((action, i) => {
         if (i === actionIndex) {
-          return { ...action, sceneKey: destinationSceneKey };
+          return {
+            ...action,
+            targets: [{ sceneKey: destinationSceneKey, probability: 100 }],
+          } satisfies Action;
         }
         return action;
       });
 
-      await localRepository.updatePartialScene(sourceScene.key, {
-        actions,
-      });
+      await localRepository.updatePartialScene(sourceScene.key, { actions });
     },
 
     removeSceneConnection: async ({
@@ -103,9 +105,10 @@ export const _getBuilderService = ({
       sourceScene: Scene;
       actionIndex: number;
     }) => {
+      // TODO: implement random events logic (cf https://github.com/JeremieLeymarie/story-builder/issues/361)
       const actions = sourceScene.actions.map((action, i) => {
         if (i === actionIndex) {
-          return { ...action, sceneKey: undefined };
+          return { ...action, targets: [] };
         }
         return action;
       });
@@ -349,7 +352,7 @@ export const _getBuilderService = ({
               ...action,
               targets: action.targets.flatMap(
                 (
-                  target, // TODO: add probability logic
+                  target, // TODO: add probability logic (cf https://github.com/JeremieLeymarie/story-builder/issues/361)
                 ) =>
                   originalSceneKeys.includes(target.sceneKey) // Do not copy links that target a scene that is not within the batch of duplicated scenes
                     ? [

@@ -1,5 +1,6 @@
 from domains.synchronization.type_defs import (
     SyncActionCondition,
+    SyncActionTarget,
     SyncConditionalAction,
     SyncSimpleAction,
     SynchronizationBuilderParams,
@@ -12,6 +13,7 @@ from domains.synchronization.type_defs import (
 )
 from utils.mongo.base_repository import (
     MongoActionCondition,
+    MongoActionTarget,
     MongoBuilderParams,
     MongoBuilderPosition,
     MongoConditionalAction,
@@ -41,13 +43,23 @@ def make_mongo_scene_action(domain: SynchronizationSceneAction) -> MongoSceneAct
         return MongoSimpleAction(
             type="simple",
             text=domain.text,
-            sceneKey=domain.scene_key,
+            targets=[
+                MongoActionTarget(
+                    sceneKey=target.scene_key, probability=target.probability
+                )
+                for target in domain.targets
+            ],
         )
     if isinstance(domain, SyncConditionalAction):
         return MongoConditionalAction(
             type="conditional",
             text=domain.text,
-            sceneKey=domain.scene_key,
+            targets=[
+                MongoActionTarget(
+                    sceneKey=target.scene_key, probability=target.probability
+                )
+                for target in domain.targets
+            ],
             condition=MongoActionCondition(
                 type=domain.condition.type, sceneKey=domain.condition.scene_key
             ),
@@ -71,7 +83,7 @@ def make_mongo_scene(domain: SynchronizationScene) -> MongoScene:
 
 
 def make_story_type(type: str) -> StoryType:
-    match (type):
+    match type:
         case "builder":
             return StoryType.BUILDER
         case "imported":
@@ -82,7 +94,7 @@ def make_story_type(type: str) -> StoryType:
 
 # TODO: do something smarter
 def make_story_genre(genre: str) -> StoryGenre:
-    match (genre):
+    match genre:
         case "adventure":
             return StoryGenre.ADVENTURE
         case "children":
@@ -168,13 +180,25 @@ def make_synchronization_author(
 def make_synchronization_action(action: MongoSceneAction) -> SynchronizationSceneAction:
     if action["type"] == "simple":
         return SyncSimpleAction(
-            type="simple", text=action["text"], scene_key=action.get("sceneKey")
+            type="simple",
+            text=action["text"],
+            targets=[
+                SyncActionTarget(
+                    scene_key=target["sceneKey"], probability=target["probability"]
+                )
+                for target in action["targets"]
+            ],
         )
     if action["type"] == "conditional":
         return SyncConditionalAction(
             type="conditional",
             text=action["text"],
-            scene_key=action.get("sceneKey"),
+            targets=[
+                SyncActionTarget(
+                    scene_key=target["sceneKey"], probability=target["probability"]
+                )
+                for target in action["targets"]
+            ],
             condition=SyncActionCondition(
                 type=action["condition"]["type"],
                 scene_key=action["condition"]["sceneKey"],

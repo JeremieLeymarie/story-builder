@@ -38,12 +38,12 @@ export const BASIC_SCENE: Scene = {
   actions: [
     {
       text: "action A",
-      targets: [{ sceneKey: "scene1", probability: 100 }],
+      targets: [],
       type: "simple",
     },
     {
       text: "action B",
-      targets: [{ sceneKey: "scene2", probability: 100 }],
+      targets: [],
       type: "simple",
     },
   ],
@@ -56,7 +56,7 @@ export const BASIC_SCENE: Scene = {
 export const BASIC_STORY: Story = {
   key: "zioup",
   title: "Tidididoudoum tidididoudoum",
-  description: "Sacré histoire...",
+  description: "Sacrée histoire...",
   image: "http://ton-image.fr",
   type: "builder",
   firstSceneKey: "zut",

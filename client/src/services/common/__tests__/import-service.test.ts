@@ -20,7 +20,7 @@ import {
   MockWikiRepository,
 } from "@/domains/wiki/stubs/stub-wiki-repository";
 import { StoryFromImport } from "../schema";
-const SCENE_KEY = nanoid();
+const SCENE_KEY_A = nanoid();
 
 describe("import-service", () => {
   let localRepository: MockLocalRepository;
@@ -36,15 +36,30 @@ describe("import-service", () => {
     type: "builder" as const,
     genres: ["adventure" as const, "fantasy" as const],
     creationDate: new Date(),
-    firstSceneKey: SCENE_KEY,
+    firstSceneKey: SCENE_KEY_A,
     author: {
       username: "author",
       key: nanoid(),
     },
   };
-  const sourceScene: StoryFromImport["scenes"][number] = {
-    key: SCENE_KEY,
+
+  const sourceSceneA: StoryFromImport["scenes"][number] = {
+    key: nanoid(),
     storyKey: nanoid(),
+    title: "Your second scene",
+    content: BASIC_SCENE_CONTENT,
+    actions: [],
+    builderParams: {
+      position: {
+        x: 0,
+        y: 0,
+      },
+    },
+  };
+
+  const sourceSceneB: StoryFromImport["scenes"][number] = {
+    key: SCENE_KEY_A,
+    storyKey: sourceSceneA.key,
     title: "Your first scene",
     content: BASIC_SCENE_CONTENT,
     actions: [
@@ -53,7 +68,7 @@ describe("import-service", () => {
         text: "An action that leads to a scene",
         targets: [
           {
-            sceneKey: nanoid(),
+            sceneKey: sourceSceneA.key,
             probability: 100,
           },
         ],
@@ -66,7 +81,8 @@ describe("import-service", () => {
       },
     },
   };
-  const importedScenes = [sourceScene];
+
+  const importedScenes = [sourceSceneA, sourceSceneB];
   const fileContent = JSON.stringify({
     story: importedStory,
     scenes: importedScenes,
@@ -238,6 +254,11 @@ describe("import-service", () => {
                 ],
                 type: "simple",
               },
+              {
+                text: "An action that leads to another scene",
+                targets: [],
+                type: "simple",
+              },
             ],
             builderParams: {
               position: {
@@ -277,11 +298,12 @@ describe("import-service", () => {
             {
               type: "simple",
               text: "An action that leads to a scene",
-              sceneKey: "new-dest-scene",
+              targets: [{ sceneKey: "new-dest-scene", probability: 100 }],
             },
             {
               type: "simple",
               text: "An action that leads to another scene",
+              targets: [],
             },
           ],
         },
@@ -319,6 +341,7 @@ describe("import-service", () => {
       );
       expect(result).toStrictEqual({
         [parsed.scenes[0]!.key]: "new-scene-key",
+        [parsed.scenes[1]!.key]: "new-scene-key",
       });
     });
   });

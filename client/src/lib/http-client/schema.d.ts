@@ -93,6 +93,13 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** ActionTarget */
+        ActionTarget: {
+            /** Scenekey */
+            sceneKey: string;
+            /** Probability */
+            probability: number;
+        };
         /** AuthUser */
         AuthUser: {
             /** Key */
@@ -129,8 +136,8 @@ export interface components {
         ConditionalAction: {
             /** Text */
             text: string;
-            /** Scenekey */
-            sceneKey?: string | null;
+            /** Targets */
+            targets: components["schemas"]["ActionTarget"][];
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
@@ -272,8 +279,8 @@ export interface components {
         SimpleAction: {
             /** Text */
             text: string;
-            /** Scenekey */
-            sceneKey?: string | null;
+            /** Targets */
+            targets: components["schemas"]["ActionTarget"][];
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}

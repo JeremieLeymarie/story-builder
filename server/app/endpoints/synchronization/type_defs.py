@@ -4,6 +4,7 @@ from pydantic import Field, JsonValue
 
 from domains.synchronization.type_defs import (
     SyncActionCondition,
+    SyncActionTarget,
     SyncConditionalAction,
     SyncSimpleAction,
     SynchronizationBuilderParams,
@@ -18,9 +19,14 @@ from endpoints.common import BaseAPIModel
 from utils.type_defs import StoryGenre, StoryType
 
 
+class ActionTarget(BaseAPIModel):
+    scene_key: str
+    probability: float
+
+
 class _ActionBase(BaseAPIModel):
     text: str
-    scene_key: str | None = None
+    targets: list[ActionTarget]
 
 
 class SimpleAction(_ActionBase):
@@ -64,13 +70,23 @@ class Scene(BaseAPIModel):
         if isinstance(domain_action, SyncSimpleAction):
             return SimpleAction(
                 text=domain_action.text,
-                scene_key=domain_action.scene_key,
+                targets=[
+                    ActionTarget(
+                        scene_key=target.scene_key, probability=target.probability
+                    )
+                    for target in domain_action.targets
+                ],
                 type="simple",
             )
         if isinstance(domain_action, SyncConditionalAction):
             return ConditionalAction(
                 text=domain_action.text,
-                scene_key=domain_action.scene_key,
+                targets=[
+                    ActionTarget(
+                        scene_key=target.scene_key, probability=target.probability
+                    )
+                    for target in domain_action.targets
+                ],
                 type="conditional",
                 condition=Condition(
                     type=domain_action.condition.type,
@@ -98,12 +114,24 @@ class Scene(BaseAPIModel):
     def _action_to_domain(self, action: Action) -> SynchronizationSceneAction:
         if isinstance(action, SimpleAction):
             return SyncSimpleAction(
-                text=action.text, scene_key=action.scene_key, type="simple"
+                text=action.text,
+                targets=[
+                    SyncActionTarget(
+                        scene_key=target.scene_key, probability=target.probability
+                    )
+                    for target in action.targets
+                ],
+                type="simple",
             )
         if isinstance(action, ConditionalAction):
             return SyncConditionalAction(
                 text=action.text,
-                scene_key=action.scene_key,
+                targets=[
+                    SyncActionTarget(
+                        scene_key=target.scene_key, probability=target.probability
+                    )
+                    for target in action.targets
+                ],
                 type="conditional",
                 condition=SyncActionCondition(
                     type=action.condition.type, scene_key=action.condition.scene_key

@@ -95,8 +95,12 @@ describe("builder-service", () => {
         BASIC_SCENE.key,
         {
           actions: [
-            { type: "simple", text: "action A", sceneKey: "dest" },
-            { type: "simple", text: "action B" },
+            {
+              type: "simple",
+              text: "action A",
+              targets: [{ sceneKey: "dest", probability: 100 }],
+            },
+            { type: "simple", text: "action B", targets: [] },
           ],
         },
       );
@@ -283,10 +287,12 @@ describe("builder-service", () => {
             {
               type: "simple",
               text: "An action that leads to a scene",
+              targets: [],
             },
             {
               type: "simple",
               text: "An action that leads to another scene",
+              targets: [],
             },
           ],
         },
@@ -322,10 +328,12 @@ describe("builder-service", () => {
             {
               type: "simple",
               text: "An action that leads to a scene",
+              targets: [],
             },
             {
               type: "simple",
               text: "An action that leads to another scene",
+              targets: [],
             },
           ],
         },
@@ -835,7 +843,7 @@ describe("builder-service", () => {
         expect(scenePayload.title).toStrictEqual(scene.title);
         expect(scenePayload.content).toStrictEqual(scene.content);
         expect(scenePayload.actions).toStrictEqual([
-          { type: "simple", text: "action" },
+          { type: "simple", text: "action", targets: [] },
         ]);
         expect(scenePayload.storyKey).toStrictEqual("VROUM");
         expect(scenePayload.builderParams).toStrictEqual({
@@ -879,7 +887,7 @@ describe("builder-service", () => {
         expect(scene1Payload.title).toStrictEqual(scene1.title);
         expect(scene1Payload.content).toStrictEqual(scene1.content);
         expect(scene1Payload.actions).toStrictEqual([
-          { type: "simple", text: "action1" },
+          { type: "simple", text: "action1", targets: [] },
         ]);
         expect(scene1Payload.storyKey).toStrictEqual("VROUM");
         expect(scene1Payload.builderParams).toStrictEqual({
@@ -893,7 +901,9 @@ describe("builder-service", () => {
           {
             type: "simple",
             text: "action2",
-            sceneKey: (scene1Payload as Scene).key,
+            targets: [
+              { sceneKey: (scene1Payload as Scene).key, probability: 100 },
+            ],
           },
         ]);
         expect(scene2Payload.storyKey).toStrictEqual("VROUM");

@@ -72,22 +72,12 @@ const fromAPIActionAdapter = (action: APISceneAction): Action => {
     .with({ type: "simple" }, (a) => ({
       type: "simple",
       text: a.text,
-      targets: [
-        {
-          sceneKey: a.sceneKey ?? undefined,
-          probability: 100,
-        },
-      ],
+      targets: a.targets,
     }))
     .with({ type: "conditional" }, (a) => ({
       type: "conditional",
       text: a.text,
-      targets: [
-        {
-          sceneKey: a.sceneKey ?? undefined,
-          probability: 100,
-        },
-      ],
+      targets: a.targets,
       condition: a.condition,
     }))
     .exhaustive();
