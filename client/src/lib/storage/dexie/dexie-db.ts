@@ -81,13 +81,16 @@ export const createDb = (
       await db.scenes.each((scene) => {
         const actions = scene.actions.map((action) => ({
           ...action,
-          targets: [
-            {
-              // @ts-expect-error action.sceneKey is replaced by action.targets
-              sceneKey: action.sceneKey,
-              probability: 100,
-            },
-          ],
+          // @ts-expect-error action.sceneKey is replaced by action.targets
+          targets: action.sceneKey
+            ? [
+                {
+                  // @ts-expect-error action.sceneKey is replaced by action.targets
+                  sceneKey: action.sceneKey,
+                  probability: 100,
+                },
+              ]
+            : [],
         })) satisfies Action[];
         bulkPayload.push({ key: scene.key, changes: { actions } });
       });
