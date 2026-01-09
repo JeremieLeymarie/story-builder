@@ -66,10 +66,11 @@ export const SceneContentForm = ({
                   entityKey={scenePayload.key}
                 >
                   <RichText
+                    key={scenePayload.key}
                     onSerializedChange={field.onChange}
                     initialState={scenePayload.content}
                     editable
-                    className="h-[300px] max-w-[450px]"
+                    className="h-75 max-w-112.5"
                     toolbarPlugins={[
                       <WikiPlugin wikiKey={story.wikiKey ?? null} />,
                     ]}
