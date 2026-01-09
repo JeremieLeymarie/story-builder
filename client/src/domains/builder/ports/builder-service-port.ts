@@ -22,6 +22,7 @@ export type BuilderServicePort = {
   removeSceneConnection: (props: {
     sourceScene: Scene;
     actionIndex: number;
+    targetSceneKey: string;
   }) => Promise<void>;
   createStoryWithFirstScene: (
     storyData: Omit<

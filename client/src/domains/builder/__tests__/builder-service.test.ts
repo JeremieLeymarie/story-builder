@@ -156,6 +156,7 @@ describe("builder-service", () => {
           ],
         },
         actionIndex: 0,
+        targetSceneKey: "zut",
       });
 
       expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
@@ -195,6 +196,7 @@ describe("builder-service", () => {
           ],
         },
         actionIndex: 42,
+        targetSceneKey: "n'importe quoi",
       });
 
       expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
@@ -234,6 +236,7 @@ describe("builder-service", () => {
           ],
         },
         actionIndex: -42,
+        targetSceneKey: "n'importe quoi",
       });
 
       expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
