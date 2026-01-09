@@ -11,6 +11,8 @@ import { getUserService } from "@/domains/user/user-service";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 import { MobileNavbar } from "@/navbar/mobile-navbar";
 import { MigrationProvider } from "@/providers/migration-provider";
+import { useSync } from "@/navbar/hooks/use-sync";
+import { BackdropLoader } from "@/design-system/components";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,6 +27,8 @@ const Component = () => {
   const user = useLiveQuery(getUserService().getCurrentUser);
   const isMobile = useIsMobile();
 
+  const { state, load, save } = useSync();
+
   useRegisterServiceWorker();
 
   return (
@@ -36,18 +40,22 @@ const Component = () => {
               {isMobile ? (
                 <MobileNavbar
                   user={user}
-                  loadRemoteData={() => {}}
-                  saveLocalData={() => {}}
+                  loadRemoteData={load}
+                  saveLocalData={save}
                 />
               ) : (
                 <DesktopNavbar
                   user={user}
-                  loadRemoteData={() => {}}
-                  saveLocalData={() => {}}
+                  loadRemoteData={load}
+                  saveLocalData={save}
                 />
               )}
               <div className="relative w-full flex-1">
-                <Outlet />
+                {state.loading ? (
+                  <BackdropLoader text="Loading application data..." />
+                ) : (
+                  <Outlet />
+                )}
               </div>
             </div>
             <Toaster closeButton />

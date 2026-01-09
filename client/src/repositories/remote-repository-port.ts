@@ -37,9 +37,4 @@ export type RemoteRepositoryPort = {
       storyProgresses: StoryProgress[];
     }>
   >;
-
-  deleteStoryProgress: (
-    progressKey: string,
-    user: User,
-  ) => Promise<RemoteRepositoryResponse<StandardAPIResponse>>;
 };
