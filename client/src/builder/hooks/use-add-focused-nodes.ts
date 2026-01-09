@@ -1,6 +1,6 @@
 import { useReactFlow, useStoreApi } from "@xyflow/react";
 import { BuilderNode } from "../types";
-import { useBuilderEditorStore } from "./use-scene-editor-store";
+import { useBuilderEditorStore } from "./use-builder-editor-store";
 import { nodeToSceneAdapter } from "../adapters";
 
 export const useAddFocusedNodes = () => {

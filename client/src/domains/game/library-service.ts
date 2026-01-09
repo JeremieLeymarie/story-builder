@@ -5,15 +5,18 @@ import {
   ImportServicePort,
   TEMPORARY_NULL_KEY,
 } from "@/services/common/import-service";
-import { StoryFromImport } from "@/services/common/schema";
+import { ImportData } from "@/services/common/schema";
+import { GameRepositoryPort, getDexieGameRepository } from "./game-repository";
 
 // TODO: uniformize responses
 export const _getLibraryService = ({
   localRepository,
   importService,
+  gameRepository,
 }: {
   localRepository: LocalRepositoryPort;
   importService: ImportServicePort;
+  gameRepository: GameRepositoryPort;
 }) => {
   const _createBlankStoryProgress = async ({
     storyKey,
@@ -99,24 +102,30 @@ export const _getLibraryService = ({
   };
 
   return {
-    importStory: async (storyFromImport: StoryFromImport) => {
+    importStory: async (importData: ImportData) => {
       await localRepository.unitOfWork(
         async () => {
           const story = await importService.createStory({
-            story: storyFromImport,
+            story: importData,
             type: "imported",
           });
 
           const oldScenesToNew = await importService.createScenes({
-            story: storyFromImport,
+            story: importData,
             newStoryKey: story.data.key,
           });
 
-          if (storyFromImport.wiki)
+          if (importData.theme)
+            await importService.createTheme({
+              newStoryKey: story.data.key,
+              theme: importData.theme,
+            });
+
+          if (importData.wiki)
             await importService.createWiki({
               oldScenesToNew,
               type: "imported",
-              wikiData: storyFromImport.wiki,
+              wikiData: importData.wiki,
               newStoryKey: story.data.key,
             });
 
@@ -127,6 +136,7 @@ export const _getLibraryService = ({
             "story-progress",
             "scene",
             "story",
+            "story-theme",
             "user",
             "wiki",
             "wiki-article",
@@ -153,6 +163,10 @@ export const _getLibraryService = ({
         storyKey,
       );
 
+      // Get total number of scenes for this story
+      const allScenes = await localRepository.getScenesByStoryKey(storyKey);
+      const totalScenes = allScenes.length;
+
       // Get more data about the last scene of every story progress (scene title, etc...)
       const lastSceneKeys = progresses.map((p) => p.currentSceneKey);
 
@@ -170,6 +184,7 @@ export const _getLibraryService = ({
         story,
         currentProgress: currentProgress ?? null,
         otherProgresses,
+        totalScenes,
       };
     },
 
@@ -185,15 +200,28 @@ export const _getLibraryService = ({
             await localRepository.getStoryProgresses(storyKey)
           ).map((p) => p.key);
 
+          await gameRepository.deleteWiki(storyKey);
           await localRepository.deleteStoryProgresses(storyProgressKeys);
           await localRepository.deleteScenes(scenesKeys);
           await localRepository.deleteStory(storyKey);
         },
         {
           mode: "readwrite",
-          entities: ["scene", "story", "story-progress"],
+          entities: [
+            "scene",
+            "story",
+            "story-progress",
+            "wiki",
+            "wiki-category",
+            "wiki-article",
+            "wiki-article-link",
+          ],
         },
       );
+    },
+
+    deleteStoryProgress: async (progressKey: string) => {
+      await localRepository.deleteStoryProgresses([progressKey]);
     },
 
     loadLibraryState: async ({
@@ -246,4 +274,5 @@ export const getLibraryService = () =>
   _getLibraryService({
     localRepository: getLocalRepository(),
     importService: getImportService(),
+    gameRepository: getDexieGameRepository(),
   });

@@ -1,4 +1,3 @@
-import { getBuilderService } from "@/get-builder-service";
 import { useMutation } from "@tanstack/react-query";
 import { useBuilderError } from "./use-builder-error";
 import { useBuilderContext } from "./use-builder-context";
@@ -12,12 +11,11 @@ type MutationParams = {
 
 export const useUpdateStory = () => {
   const { handleError } = useBuilderError();
-  const { setStory } = useBuilderContext();
-  const svc = getBuilderService();
+  const { setStory, builderService } = useBuilderContext();
 
   const { mutateAsync: updateStory, isPending } = useMutation({
     mutationFn: async ({ key, payload }: MutationParams) => {
-      const updated = await svc.updateStory(key, payload);
+      const updated = await builderService.updateStory(key, payload);
       return updated;
     },
     onError: handleError,

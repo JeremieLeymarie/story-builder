@@ -5,7 +5,7 @@ import {
   Scene,
   Story,
 } from "@/lib/storage/domain";
-import { StoryFromImport } from "@/services/common/schema";
+import { ImportData } from "@/services/common/schema";
 import { WithoutKey } from "@/types";
 import { Edge } from "@xyflow/react";
 
@@ -57,7 +57,7 @@ export type BuilderServicePort = {
     sceneKeys: string[];
   }) => Promise<void>;
   deleteStory: (storyKey: string) => Promise<void>;
-  importStory: (storyFromImport: StoryFromImport) => Promise<string>;
+  importStory: (storyFromImport: ImportData) => Promise<string>;
   updateStory: (
     storyKey: string,
     payload: Partial<BuilderStory>,

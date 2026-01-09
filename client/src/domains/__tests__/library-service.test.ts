@@ -21,6 +21,10 @@ import {
 } from "./data/imported-story-mocks";
 import { getTestFactory } from "@/lib/testing/factory";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
+import {
+  getStubGameRepository,
+  MockGameRepository,
+} from "../game/stubs/game-repository-stub";
 
 const factory = getTestFactory();
 
@@ -28,14 +32,17 @@ describe("library-service", () => {
   let libraryService: ReturnType<typeof _getLibraryService>;
   let localRepository: MockLocalRepository;
   let importService: MockImportService;
+  let gameRepository: MockGameRepository;
 
   beforeEach(() => {
     localRepository = getLocalRepositoryStub();
     importService = getImportServiceStub();
+    gameRepository = getStubGameRepository();
 
     libraryService = _getLibraryService({
       localRepository,
       importService,
+      gameRepository,
     });
 
     vi.useFakeTimers();
@@ -199,6 +206,10 @@ describe("library-service", () => {
       ]);
 
       localRepository.getStory.mockResolvedValueOnce(STORY);
+
+      localRepository.getScenesByStoryKey.mockResolvedValueOnce([
+        CURRENT_SCENE,
+      ]);
     });
 
     it("should retrieve details about a story", async () => {
@@ -221,6 +232,7 @@ describe("library-service", () => {
           { ...OTHER, lastScene: OTHER_SCENE },
           { ...FINISHED, lastScene: FINISHED_SCENE },
         ],
+        totalScenes: 1,
       });
     });
   });
@@ -255,6 +267,10 @@ describe("library-service", () => {
 
       await libraryService.deleteGame("tutu");
 
+      expect(gameRepository.deleteWiki).toHaveBeenCalledWith("tutu");
+      expect(gameRepository.deleteWiki).toHaveBeenCalledBefore(
+        localRepository.deleteStory,
+      );
       expect(localRepository.deleteStory).toHaveBeenCalledWith("tutu");
       expect(localRepository.deleteScenes).toHaveBeenCalledWith([
         "pshit",

@@ -19,15 +19,20 @@ import {
   getStubWikiRepository,
   MockWikiRepository,
 } from "@/domains/wiki/stubs/stub-wiki-repository";
-import { StoryFromImport } from "../schema";
+import { ImportData } from "../schema";
+import {
+  getStubThemeRepository,
+  MockThemeRepository,
+} from "@/domains/builder/stubs/stub-theme-repository";
 const SCENE_KEY_A = nanoid();
 
 describe("import-service", () => {
   let localRepository: MockLocalRepository;
   let wikiRepository: MockWikiRepository;
+  let themeRepository: MockThemeRepository;
   let importService: ImportServicePort;
 
-  const importedStory: StoryFromImport["story"] = {
+  const importedStory: ImportData["story"] = {
     key: nanoid(),
     title: "The Great Journey To The Green River",
     description: "A wonderful epic tale through the world of Penthetir. ",
@@ -43,7 +48,7 @@ describe("import-service", () => {
     },
   };
 
-  const sourceSceneA: StoryFromImport["scenes"][number] = {
+  const sourceSceneA: ImportData["scenes"][number] = {
     key: nanoid(),
     storyKey: nanoid(),
     title: "Your second scene",
@@ -57,7 +62,7 @@ describe("import-service", () => {
     },
   };
 
-  const sourceSceneB: StoryFromImport["scenes"][number] = {
+  const sourceSceneB: ImportData["scenes"][number] = {
     key: SCENE_KEY_A,
     storyKey: sourceSceneA.key,
     title: "Your first scene",
@@ -96,10 +101,12 @@ describe("import-service", () => {
   beforeEach(() => {
     localRepository = getLocalRepositoryStub();
     wikiRepository = getStubWikiRepository();
+    themeRepository = getStubThemeRepository();
 
     importService = _getImportService({
       localRepository,
       wikiRepository,
+      themeRepository,
     });
 
     vi.useFakeTimers();
@@ -235,7 +242,7 @@ describe("import-service", () => {
 
   describe("createScenes", () => {
     it("should produce correct bulk update payload", () => {
-      const storyFromImport: StoryFromImport = {
+      const storyFromImport: ImportData = {
         story: importedStory,
         scenes: [
           {

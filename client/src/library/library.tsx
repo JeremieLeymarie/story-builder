@@ -14,7 +14,7 @@ import { ImportModal } from "@/design-system/components/import-modal";
 import { toast } from "sonner";
 import { getLibraryService } from "@/domains/game/library-service";
 import { getImportService } from "@/services/common/import-service";
-import { StoryFromImport } from "@/services/common/schema";
+import { ImportData } from "@/services/common/schema";
 
 type Library = {
   stories: Story[];
@@ -41,7 +41,7 @@ export const Library = ({ stories }: Library) => {
     return result.data;
   };
 
-  const importStory = async (storyFromImport: StoryFromImport) => {
+  const importStory = async (storyFromImport: ImportData) => {
     try {
       await getLibraryService().importStory(storyFromImport);
       toast.success("Import complete!", {

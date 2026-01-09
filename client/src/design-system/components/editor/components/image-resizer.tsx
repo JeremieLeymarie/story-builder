@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { CSSProperties, RefObject, useRef } from "react";
 import type { LexicalEditor } from "lexical";
 import { cn } from "@/lib/style";
 import { Direction, useResizeImage } from "../hooks/use-resize-image";
@@ -15,7 +15,10 @@ const ResizeHandle = ({
 }) => {
   return (
     <div
-      className={cn("bg-primary absolute", className)}
+      className={cn(
+        "border-primary absolute h-4 w-4 border-4 transition-all hover:scale-125",
+        className,
+      )}
       onPointerDown={(event) => {
         onPointerDown(event, { vertical: "north" });
       }}
@@ -26,74 +29,50 @@ const ResizeHandle = ({
 export const ImageResizer = ({
   onResizeStart,
   onResizeEnd,
-  imageRef,
-  maxWidth,
+  imageContainerRef,
   editor,
 }: {
   editor: LexicalEditor;
-  buttonRef: { current: null | HTMLButtonElement };
-  imageRef: { current: null | HTMLElement };
-  maxWidth?: number;
-  onResizeEnd: (width: "inherit" | number, height: "inherit" | number) => void;
+  buttonRef: RefObject<HTMLButtonElement | null>;
+  imageContainerRef: RefObject<HTMLDivElement | null>;
+  onResizeEnd: (
+    width: CSSProperties["width"],
+    height: CSSProperties["height"],
+  ) => void;
   onResizeStart: () => void;
 }) => {
   const controlWrapperRef = useRef<HTMLDivElement>(null);
 
   const { handlePointerDown } = useResizeImage({
-    imageRef,
     onResizeEnd,
     onResizeStart,
     editor,
-    maxWidth,
+    imageContainerRef,
     controlWrapperRef,
   });
 
   return (
     <div ref={controlWrapperRef}>
       <ResizeHandle
-        className="-top-1.75 left-1/2 h-2 w-2 -translate-x-1/2 cursor-ns-resize"
-        onPointerDown={(event) => {
-          handlePointerDown(event, { vertical: "north" });
-        }}
-      />
-      <ResizeHandle
-        className="-top-1.75 -right-1.75 h-2 w-2 cursor-nesw-resize"
+        className="-top-2.5 -right-2.5 cursor-nesw-resize border-b-0 border-l-0"
         onPointerDown={(event) => {
           handlePointerDown(event, { vertical: "north", horizontal: "east" });
         }}
       />
       <ResizeHandle
-        className="top-1/2 -right-1.75 h-2 w-2 -translate-y-1/2 cursor-ew-resize"
-        onPointerDown={(event) => {
-          handlePointerDown(event, { horizontal: "east" });
-        }}
-      />
-      <ResizeHandle
-        className="-right-1.75 -bottom-1.75 h-2 w-2 cursor-nwse-resize"
+        className="-right-2.5 -bottom-2.5 cursor-nwse-resize border-t-0 border-l-0"
         onPointerDown={(event) => {
           handlePointerDown(event, { vertical: "south", horizontal: "east" });
         }}
       />
       <ResizeHandle
-        className="-bottom-1.75 left-1/2 h-2 w-2 -translate-x-1/2 cursor-ns-resize"
-        onPointerDown={(event) => {
-          handlePointerDown(event, { vertical: "south" });
-        }}
-      />
-      <ResizeHandle
-        className="-bottom-1.75 -left-1.75 h-2 w-2 cursor-nesw-resize"
+        className="-bottom-2.5 -left-2.5 cursor-nesw-resize border-t-0 border-r-0"
         onPointerDown={(event) => {
           handlePointerDown(event, { vertical: "south", horizontal: "west" });
         }}
       />
       <ResizeHandle
-        className="top-1/2 -left-1.75 h-2 w-2 -translate-y-1/2 cursor-ew-resize"
-        onPointerDown={(event) => {
-          handlePointerDown(event, { horizontal: "west" });
-        }}
-      />
-      <ResizeHandle
-        className="-top-1.75 -left-1.75 h-2 w-2 cursor-nwse-resize"
+        className="-top-2.5 -left-2.5 cursor-nwse-resize border-r-0 border-b-0"
         onPointerDown={(event) => {
           handlePointerDown(event, { vertical: "north", horizontal: "west" });
         }}

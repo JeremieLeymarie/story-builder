@@ -1,6 +1,6 @@
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { Scene, Story } from "../domain";
-import { StoryFromImport } from "@/services/common/schema";
+import { ImportData } from "@/services/common/schema";
 
 export const DEMO_STORY: Story = {
   title: "[DEMO] The Enchanted Mountain",
@@ -315,7 +315,7 @@ export const DEMO_SCENES: Scene[] = [
   },
 ];
 
-export const DEMO_IMPORTED_STORY: StoryFromImport = {
+export const DEMO_IMPORTED_STORY: ImportData = {
   story: {
     ...DEMO_STORY,
     title: "[DEMO] The Enchanted Mountain (imported)",

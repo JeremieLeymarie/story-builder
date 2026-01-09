@@ -3,8 +3,6 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 import { DesktopNavbar } from "@/navbar/desktop-navbar";
-import { useSync } from "@/navbar/hooks/use-sync";
-import { BackdropLoader } from "@/design-system/components";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRegisterServiceWorker } from "@/hooks/use-register-service-worker";
 import { TooltipProvider } from "@/design-system/primitives/tooltip";
@@ -13,6 +11,8 @@ import { getUserService } from "@/domains/user/user-service";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 import { MobileNavbar } from "@/navbar/mobile-navbar";
 import { MigrationProvider } from "@/providers/migration-provider";
+import { useSync } from "@/navbar/hooks/use-sync";
+import { BackdropLoader } from "@/design-system/components";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,8 +25,9 @@ export const queryClient = new QueryClient({
 
 const Component = () => {
   const user = useLiveQuery(getUserService().getCurrentUser);
-  const { state, load, save } = useSync();
   const isMobile = useIsMobile();
+
+  const { state, load, save } = useSync();
 
   useRegisterServiceWorker();
 

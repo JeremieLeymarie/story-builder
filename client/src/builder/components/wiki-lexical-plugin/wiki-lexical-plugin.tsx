@@ -132,7 +132,7 @@ export const WikiPlugin = ({ wikiKey }: { wikiKey: string | null }) => {
             onValueChange={(search) => setSearchValue(search)}
           />
           <CommandList>
-            <ScrollArea className="h-[150px]">
+            <ScrollArea className="h-37.5">
               <CommandGroup>
                 {articles?.map((article) => (
                   <CommandItem

@@ -8,7 +8,7 @@ import {
 import { Link } from "@tanstack/react-router";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
 import {
-  EditorContext,
+  EditorContextProvider,
   useEditorContext,
 } from "@/design-system/components/editor/hooks/use-editor-context";
 import { WikiNode } from "../lexical-wiki-node";
@@ -63,8 +63,9 @@ export const DisplayWikiNodeComponent = ({
             {article.title}
           </p>
           <img src={article.image} className="rounded object-scale-down" />
-          <EditorContext
-            value={{ entityType: "wiki-article", entityKey: article.wikiKey }}
+          <EditorContextProvider
+            entityType="wiki-article"
+            entityKey={article.wikiKey}
           >
             <RichText
               editable={false}
@@ -72,7 +73,7 @@ export const DisplayWikiNodeComponent = ({
               editorNodes={[WikiNode]}
               textDisplayMode="summary"
             />
-          </EditorContext>
+          </EditorContextProvider>
         </TooltipContent>
       </Tooltip>
     </>

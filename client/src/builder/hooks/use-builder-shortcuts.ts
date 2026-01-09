@@ -5,7 +5,7 @@ import { BuilderNode } from "../types";
 import { getUserOS } from "@/lib/get-os";
 import { useCopyPaste } from "./use-copy-paste";
 import { useEffect } from "react";
-import { useBuilderEditorStore } from "./use-scene-editor-store";
+import { useBuilderEditorStore } from "./use-builder-editor-store";
 import { useAddScene } from "./use-add-scene";
 
 export const isAnyInputFocused = () => {

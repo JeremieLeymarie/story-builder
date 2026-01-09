@@ -11,7 +11,7 @@ import { useBuilderContext } from "../hooks/use-builder-context";
 import { getUserOS } from "@/lib/get-os";
 import { ActionsBar } from "./actions-bar";
 import { FIT_VIEW_DURATION } from "../constants";
-import { useBuilderEditorStore } from "../hooks/use-scene-editor-store";
+import { useBuilderEditorStore } from "../hooks/use-builder-editor-store";
 import { EditorBar } from "./builder-editor-bar/editor-bar";
 import { BuilderToolbar } from "./builder-toolbar";
 

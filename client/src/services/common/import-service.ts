@@ -4,8 +4,9 @@ import { WithoutKey } from "@/types";
 import z from "zod";
 import { produce } from "immer";
 import {
-  StoryFromImport,
-  storyFromImportSchema,
+  ImportData,
+  importDataSchema,
+  ThemeFromImport,
   WikiFromImport,
 } from "./schema";
 import {
@@ -13,6 +14,10 @@ import {
   WikiRepositoryPort,
 } from "@/domains/wiki/wiki-repository";
 import { nanoid } from "nanoid";
+import {
+  getDexieThemeRepository,
+  ThemeRepositoryPort,
+} from "@/domains/builder/theme-repository";
 
 export const ANONYMOUS_AUTHOR = {
   key: "ANONYMOUS_AUTHOR_KEY",
@@ -43,15 +48,19 @@ const makeErr = (error: ImportServiceError): ImportStoryResult => ({
 const makeOk = <T>(data: T): ImportStoryResult<T> => ({ data, isOk: true });
 
 export type ImportServicePort = {
-  parseJSON: (jsonData: string) => ImportStoryResult<StoryFromImport>;
+  parseJSON: (jsonData: string) => ImportStoryResult<ImportData>;
   createStory: (props: {
-    story: StoryFromImport;
+    story: ImportData;
     type: Story["type"];
   }) => Promise<{ data: Story }>;
   createScenes: (props: {
-    story: StoryFromImport;
+    story: ImportData;
     newStoryKey: string;
   }) => Promise<Record<string, string>>;
+  createTheme: (props: {
+    theme: ThemeFromImport;
+    newStoryKey: string;
+  }) => Promise<void>;
   createWiki: (props: {
     wikiData: WikiFromImport;
     type: Wiki["type"];
@@ -64,7 +73,7 @@ export const _makeBulkSceneUpdatePayload = ({
   storyFromImport,
   oldScenesToNewScenes,
 }: {
-  storyFromImport: StoryFromImport;
+  storyFromImport: ImportData;
   oldScenesToNewScenes: Record<string, string>;
 }) => {
   const scenesByKey = storyFromImport.scenes.reduce(
@@ -72,7 +81,7 @@ export const _makeBulkSceneUpdatePayload = ({
       ...acc,
       [scene.key]: scene,
     }),
-    {} as Record<string, StoryFromImport["scenes"][number]>,
+    {} as Record<string, ImportData["scenes"][number]>,
   );
 
   return storyFromImport.scenes
@@ -123,9 +132,11 @@ export const _makeBulkSceneUpdatePayload = ({
 export const _getImportService = ({
   localRepository,
   wikiRepository,
+  themeRepository,
 }: {
   localRepository: LocalRepositoryPort;
   wikiRepository: WikiRepositoryPort;
+  themeRepository: ThemeRepositoryPort;
 }): ImportServicePort => {
   const _createWikiCategories = async (
     categories: WikiFromImport["categories"],
@@ -257,7 +268,7 @@ export const _getImportService = ({
       } catch (_) {
         return makeErr("Invalid JSON format");
       }
-      const zodParsed = storyFromImportSchema.safeParse(parsed);
+      const zodParsed = importDataSchema.safeParse(parsed);
       if (!zodParsed.success)
         return makeErr(`Invalid format: ${z.prettifyError(zodParsed.error)}`);
 
@@ -327,6 +338,10 @@ export const _getImportService = ({
       return oldScenesToNewScenes;
     },
 
+    createTheme: async ({ newStoryKey, theme }) => {
+      await themeRepository.create({ storyKey: newStoryKey, theme });
+    },
+
     createWiki: async ({ wikiData, type, oldScenesToNew, newStoryKey }) => {
       const wikiKey = await wikiRepository.create({
         createdAt: new Date(),
@@ -363,4 +378,5 @@ export const getImportService = () =>
   _getImportService({
     localRepository: getLocalRepository(),
     wikiRepository: getDexieWikiRepository(),
+    themeRepository: getDexieThemeRepository(),
   });

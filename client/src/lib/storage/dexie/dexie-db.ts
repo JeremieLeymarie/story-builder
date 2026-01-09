@@ -40,7 +40,7 @@ const tables: Record<keyof Tables, string> = {
     "&key, storyKey, userKey, currentSceneKey, character, inventory, history, lastPlayedAt",
   wikis: "&key, userKey",
   wikiArticles: "&key, wikiKey, categoryKey, title",
-  wikiCategories: "&key, name",
+  wikiCategories: "&key, wikiKey, name",
   wikiArticleLinks: "[key+entityKey], key, entityKey, entityType, articleKey",
 };
 export const TABLE_NAMES = Object.keys(tables);

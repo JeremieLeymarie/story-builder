@@ -7,16 +7,17 @@ import {
   useReactFlow,
 } from "@xyflow/react";
 import { nodeToSceneAdapter } from "../adapters";
-import { getBuilderService } from "@/get-builder-service";
 import { BuilderNode } from "../types";
 import { useBuilderError } from "./use-builder-error";
 import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
+import { useBuilderContext } from "./use-builder-context";
 
 export const useBuilderEdges = () => {
   const { getNodes, setEdges } = useReactFlow<BuilderNode>();
   const { handleError } = useBuilderError();
   const { addScene } = useAddScene();
   const { screenToFlowPosition } = useReactFlow();
+  const { builderService } = useBuilderContext();
 
   const getSceneToUpdate = (edge: Edge | Connection) => {
     const sourceScene = getNodes().find((scene) => scene.id === edge.source);
@@ -39,7 +40,7 @@ export const useBuilderEdges = () => {
       return;
     }
 
-    getBuilderService()
+    builderService
       .addSceneConnection({
         sourceSceneKey: sceneData.sceneToUpdate.key,
         destinationSceneKey: connection.target,
@@ -110,7 +111,7 @@ export const useBuilderEdges = () => {
         return;
       }
 
-      getBuilderService()
+      builderService
         .removeSceneConnection({
           sourceScene: sceneData.sceneToUpdate,
           actionIndex: sceneData.actionIndex,

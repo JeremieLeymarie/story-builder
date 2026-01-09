@@ -3,16 +3,14 @@ import { useBuilderEdges } from "./use-builder-edges";
 import { BuilderNode } from "../types";
 import { useBuilderShortCuts } from "./use-builder-shortcuts";
 import { useBuilderContext } from "./use-builder-context";
-import { getBuilderService } from "@/get-builder-service";
 import { useBuilderError } from "./use-builder-error";
 import { toast } from "sonner";
 import { Edge, OnBeforeDelete } from "@xyflow/react";
 
 export const useBuilder = () => {
-  const { story } = useBuilderContext();
+  const { story, builderService } = useBuilderContext();
 
   const { handleError } = useBuilderError();
-  const builderService = getBuilderService();
   const { onConnect, onConnectEnd, onEdgesDelete } = useBuilderEdges();
 
   useBuilderShortCuts({ firstSceneKey: story.firstSceneKey });

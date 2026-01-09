@@ -1,4 +1,4 @@
-import { JSX, Suspense } from "react";
+import { CSSProperties, JSX, Suspense } from "react";
 import type {
   DOMConversionMap,
   DOMConversionOutput,
@@ -18,11 +18,10 @@ const ImageComponent = React.lazy(
 
 export type ImagePayload = {
   altText: string;
-  height?: number;
+  height?: CSSProperties["height"];
+  width?: CSSProperties["width"];
   key?: NodeKey;
-  maxWidth?: number;
   src: string;
-  width?: number;
 };
 
 const $convertImageElement = (domNode: Node): null | DOMConversionOutput => {
@@ -38,10 +37,9 @@ const $convertImageElement = (domNode: Node): null | DOMConversionOutput => {
 export type SerializedImageNode = Spread<
   {
     altText: string;
-    height?: number;
-    maxWidth: number;
+    width?: CSSProperties["width"];
+    height?: CSSProperties["height"];
     src: string;
-    width?: number;
   },
   SerializedLexicalNode
 >;
@@ -49,9 +47,8 @@ export type SerializedImageNode = Spread<
 export class ImageNode extends DecoratorNode<JSX.Element> {
   __src: string;
   __altText: string;
-  __width: "inherit" | number;
-  __height: "inherit" | number;
-  __maxWidth: number;
+  __width: CSSProperties["width"];
+  __height: CSSProperties["height"];
 
   static getType(): string {
     return "image";
@@ -61,7 +58,6 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     return new ImageNode(
       node.__src,
       node.__altText,
-      node.__maxWidth,
       node.__width,
       node.__height,
       node.__key,
@@ -69,23 +65,32 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
   }
 
   static importJSON(serializedNode: SerializedImageNode): ImageNode {
-    const { altText, height, width, maxWidth, src } = serializedNode;
+    const { altText, height, width, src } = serializedNode;
     const node = $createImageNode({
       altText,
       height,
-      maxWidth,
       src,
       width,
     });
     return node;
   }
 
+  exportJSON(): SerializedImageNode {
+    return {
+      altText: this.getAltText(),
+      width: this.__width,
+      height: this.__height,
+      src: this.getSrc(),
+      type: "image",
+      version: 1,
+    };
+  }
   exportDOM(): DOMExportOutput {
     const element = document.createElement("img");
     element.setAttribute("src", this.__src);
     element.setAttribute("alt", this.__altText);
-    element.setAttribute("width", this.__width.toString());
-    element.setAttribute("height", this.__height.toString());
+    element.setAttribute("width", this.__width?.toString() ?? "inherit");
+    element.setAttribute("height", this.__height?.toString() ?? "inherit");
     return { element };
   }
 
@@ -101,34 +106,20 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
   constructor(
     src: string,
     altText: string,
-    maxWidth: number,
-    width?: "inherit" | number,
-    height?: "inherit" | number,
+    width?: CSSProperties["width"],
+    height?: CSSProperties["height"],
     key?: NodeKey,
   ) {
     super(key);
     this.__src = src;
     this.__altText = altText;
-    this.__maxWidth = maxWidth;
     this.__width = width || "inherit";
     this.__height = height || "inherit";
   }
 
-  exportJSON(): SerializedImageNode {
-    return {
-      altText: this.getAltText(),
-      height: this.__height === "inherit" ? 0 : this.__height,
-      maxWidth: this.__maxWidth,
-      src: this.getSrc(),
-      type: "image",
-      version: 1,
-      width: this.__width === "inherit" ? 0 : this.__width,
-    };
-  }
-
   setWidthAndHeight(
-    width: "inherit" | number,
-    height: "inherit" | number,
+    width: CSSProperties["width"],
+    height: CSSProperties["height"],
   ): void {
     const writable = this.getWritable();
     writable.__width = width;
@@ -167,7 +158,6 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
           altText={this.__altText}
           width={this.__width}
           height={this.__height}
-          maxWidth={this.__maxWidth}
           nodeKey={this.getKey()}
           resizable={true}
         />
@@ -179,14 +169,11 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
 export const $createImageNode = ({
   altText,
   height,
-  maxWidth = 500,
   src,
   width,
   key,
 }: ImagePayload): ImageNode => {
-  return $applyNodeReplacement(
-    new ImageNode(src, altText, maxWidth, width, height, key),
-  );
+  return $applyNodeReplacement(new ImageNode(src, altText, width, height, key));
 };
 
 export const $isImageNode = (

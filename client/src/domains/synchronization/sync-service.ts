@@ -4,11 +4,11 @@ import {
   LocalRepositoryPort,
   RemoteRepositoryPort,
 } from "@/repositories";
-import { checkCanPerformSync, isOnline } from "./utils";
 import { getGameService } from "../game/game-service";
 import { getUserService } from "../user/user-service";
 import { getBuilderService } from "@/get-builder-service";
 import { getLibraryService } from "../game/library-service";
+import { checkCanPerformSync, isOnline } from "./utils";
 
 const _getSyncService = ({
   remoteRepository,

@@ -6,7 +6,7 @@ import { Scene, StoryProgress, StoryThemeConfig } from "@/lib/storage/domain";
 import { Divider } from "@/design-system/components/divider";
 import { Link } from "@tanstack/react-router";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
-import { EditorContext } from "@/design-system/components/editor/hooks/use-editor-context";
+import { EditorContextProvider } from "@/design-system/components/editor/hooks/use-editor-context";
 import { WikiNode } from "@/builder/lexical-wiki-node";
 import { SceneTitle } from "./scene-title";
 
@@ -56,7 +56,7 @@ export const GameScene = (props: GameSceneProps) => {
               title={title}
             />
             <div className="leading-7 wrap-break-word not-first:mt-6">
-              <EditorContext value={{ entityType: "scene", entityKey: key }}>
+              <EditorContextProvider entityType="scene" entityKey={key}>
                 <RichText
                   editable={false}
                   initialState={content}
@@ -64,7 +64,7 @@ export const GameScene = (props: GameSceneProps) => {
                   textDisplayMode="full"
                   textColor={theme.scene.text.color}
                 />
-              </EditorContext>
+              </EditorContextProvider>
             </div>
             <div className="mt-4 flex w-full flex-wrap gap-3">
               {actions.map((action) => (

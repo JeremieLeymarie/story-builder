@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
 import { Scene } from "@/lib/storage/domain";
 import z from "zod";
 import { lexicalContentSchema } from "@/lib/lexical-content";
@@ -38,11 +37,6 @@ export const useEditSceneContentForm = ({
       });
     },
   });
-
-  useEffect(() => {
-    // Update the form when the default values change, which are 'cached' otherwise
-    if (defaultValues) form.reset(defaultValues);
-  }, [defaultValues, form]);
 
   return form;
 };

@@ -18,7 +18,7 @@ import { ScrollArea } from "@/design-system/primitives/scroll-area";
 import { WikiDataCategory } from "@/domains/wiki/types";
 
 export const CategoryPicker = ({
-  onChange,
+  onChange: _onChange,
   value,
   categories,
 }: {
@@ -29,6 +29,11 @@ export const CategoryPicker = ({
   const [open, setOpen] = useState(false);
   const selectedCategory = categories.find((cat) => cat.key === value);
 
+  const onChange = (value?: string | null) => {
+    _onChange(value);
+    setOpen(false);
+  };
+
   return (
     <>
       <Popover open={open} onOpenChange={setOpen} modal={true}>
@@ -37,7 +42,7 @@ export const CategoryPicker = ({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-[250px] justify-between"
+            className="w-62.5 justify-between"
           >
             {value ? selectedCategory?.name : "No category"}
 
@@ -48,7 +53,7 @@ export const CategoryPicker = ({
           <Command>
             <CommandInput placeholder="Search categories..." />
             <CommandList>
-              <ScrollArea className="h-[150px]">
+              <ScrollArea className="h-37.5">
                 <CommandEmpty>No category found.</CommandEmpty>
                 <CommandGroup>
                   <CommandItem

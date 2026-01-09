@@ -1,10 +1,10 @@
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { getBuilderService } from "@/get-builder-service";
 import { getImportService } from "@/services/common/import-service";
 import { Story } from "@/lib/storage/domain";
 import { WithoutKey } from "@/types";
-import { StoryFromImport } from "@/services/common/schema";
+import { ImportData } from "@/services/common/schema";
+import { getBuilderService } from "@/get-builder-service";
 
 export type CreateStoryPayload = Omit<
   WithoutKey<Story>,
@@ -30,7 +30,7 @@ export const useBuilderStories = () => {
     });
   };
 
-  const handleImportFromJSON = async (storyFromImport: StoryFromImport) => {
+  const handleImportFromJSON = async (storyFromImport: ImportData) => {
     try {
       const storyKey = await builderService.importStory(storyFromImport);
       if (!storyKey) throw new Error("Data should be defined");
