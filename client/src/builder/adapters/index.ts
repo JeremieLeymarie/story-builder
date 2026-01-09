@@ -27,10 +27,11 @@ export const sceneToEdgesAdapter = (scene: Scene): Edge[] => {
         source: scene.key.toString(),
         target: target.sceneKey,
         targetHandle: null,
-        id: `${scene.key}-${i}`,
+        id: `${scene.key}-${target.sceneKey}-${i}`,
       }));
     })
     .filter((action) => !!action.target) as Edge[];
+
   return edges;
 };
 
