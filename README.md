@@ -53,7 +53,7 @@ bun run dev
 
 ### Server
 
-Dependencies and python versions are managed via the `uv`
+Dependencies and python versions are managed via `uv`
 In the `server` folder
 
 #### Run the API
