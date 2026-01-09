@@ -28,6 +28,7 @@ import { mergeRegister } from "@lexical/utils";
 import { useUpdateArticleLinks } from "./hooks/use-update-article-links";
 import { $createWikiNode, WikiNode } from "@/builder/lexical-wiki-node";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const INSERT_WIKI_COMMAND: LexicalCommand<string> = createCommand();
 
 export const WikiPlugin = ({ wikiKey }: { wikiKey: string | null }) => {
