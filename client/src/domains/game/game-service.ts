@@ -30,14 +30,15 @@ export const _getGameService = ({
       if (!progress)
         throw new Error(`No progress found for story ${storyProgressKey}`);
 
-      // TODO: test history update && finished
+      const persistedProgress = (await localRepository.getStoryProgress(progress.key)) ?? progress;
+      const newHistory = persistedProgress.history.includes(currentSceneKey)
+        ? persistedProgress.history
+        : [...persistedProgress.history, currentSceneKey];
+
       const updatedProgress = await localRepository.updateStoryProgress({
-        ...progress,
+        ...persistedProgress,
         currentSceneKey,
-        history:
-          progress.history.at(-1) === currentSceneKey
-            ? progress.history
-            : [...progress.history, currentSceneKey],
+        history: newHistory,
         lastPlayedAt: new Date(),
         ...(!sceneActions.length && { finished: true }),
         userKey: user?.key,

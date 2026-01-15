@@ -37,6 +37,9 @@ describe("game-service", () => {
         ],
       });
 
+      expect(localRepository.getStoryProgress).toHaveBeenCalledWith(
+        BASIC_STORY_PROGRESS.key,
+      );
       expect(localRepository.getUser).toHaveBeenCalled();
       expect(localRepository.updateStoryProgress).toHaveBeenCalledWith({
         ...BASIC_STORY_PROGRESS,
@@ -57,6 +60,7 @@ describe("game-service", () => {
         ],
       });
 
+      expect(localRepository.getStoryProgress).toHaveBeenCalled();
       expect(localRepository.getUser).toHaveBeenCalled();
       expect(localRepository.updateStoryProgress).toHaveBeenCalledWith({
         ...BASIC_STORY_PROGRESS,
@@ -75,6 +79,7 @@ describe("game-service", () => {
         ],
       });
 
+      expect(localRepository.getStoryProgress).toHaveBeenCalled();
       expect(localRepository.updateStoryProgress).toHaveBeenCalledWith({
         ...BASIC_STORY_PROGRESS,
         lastPlayedAt: new Date(),
@@ -87,6 +92,7 @@ describe("game-service", () => {
         sceneActions: [],
       });
 
+      expect(localRepository.getStoryProgress).toHaveBeenCalled();
       expect(localRepository.updateStoryProgress).toHaveBeenCalledWith({
         ...BASIC_STORY_PROGRESS,
         currentSceneKey: "bim",
