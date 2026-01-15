@@ -40,7 +40,7 @@ const tables: Record<keyof Tables, string> = {
   storyThemes: "&key, &storyKey",
   characterConfigurations: "&key, &storyKey",
   storyProgresses:
-    "&key, storyKey, userKey, currentSceneKey, character, inventory, history, lastPlayedAt",
+    "&key, storyKey, userKey, currentSceneKey, character, inventory, history, lastPlayedAt, createdAt",
   wikis: "&key, userKey",
   wikiArticles: "&key, wikiKey, categoryKey, title",
   wikiCategories: "&key, wikiKey, name",
@@ -129,6 +129,26 @@ export const createDb = (
 
       // Add story to library
       await getLibraryService().importStory(DEMO_IMPORTED_STORY);
+    });
+
+  db.version(9)
+    .stores(tables)
+    .upgrade(async () => {
+      const bulkPayload: { key: string; changes: Partial<StoryProgress> }[] =
+        [];
+
+      await db.storyProgresses.each((progress) => {
+        if (!progress.createdAt) {
+          bulkPayload.push({
+            key: progress.key,
+            changes: { createdAt: progress.lastPlayedAt ?? new Date() },
+          });
+        }
+      });
+
+      if (bulkPayload.length) {
+        await db.storyProgresses.bulkUpdate(bulkPayload);
+      }
     });
 
   // Register nanoid middleware

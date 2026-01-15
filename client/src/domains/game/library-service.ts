@@ -82,6 +82,7 @@ export const _getLibraryService = ({
       history: [],
       currentSceneKey: story.firstSceneKey,
       lastPlayedAt: new Date(),
+      createdAt: new Date(),
       userKey: user?.key ?? undefined,
       ...(characterConfig
         ? { character: _createInitialCharacter(characterConfig) }
