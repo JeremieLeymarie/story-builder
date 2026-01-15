@@ -7,27 +7,27 @@ import {
   FormMessage,
   Input,
 } from "@/design-system/primitives";
-import { SceneUpdatePayload } from "./schema";
 import { SetFirstSceneSwitch } from "./set-first-scene-switch";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
 import { useBuilderContext } from "@/builder/hooks/use-builder-context";
 import { EditorContextProvider } from "@/design-system/components/editor/hooks/use-editor-context";
 import { WikiPlugin } from "../../wiki-lexical-plugin/wiki-lexical-plugin";
 import { WikiNode } from "@/builder/lexical-wiki-node";
-import { useEditSceneContentForm } from "@/builder/hooks/use-edit-scene-content-form";
 import { useBuilderActions } from "@/builder/hooks/use-builder-actions";
+import { SceneContentFormType } from "@/builder/hooks/use-edit-scene-content-form";
+import { LexicalContent } from "@/lib/lexical-content";
 
 export const SceneContentForm = ({
-  scenePayload,
+  form,
+  sceneKey,
+  content,
 }: {
-  scenePayload: SceneUpdatePayload;
+  form: SceneContentFormType;
+  sceneKey: string;
+  content: LexicalContent;
 }) => {
-  const { updateScene, setFirstScene } = useBuilderActions();
+  const { setFirstScene } = useBuilderActions();
   const { story } = useBuilderContext();
-  const form = useEditSceneContentForm({
-    defaultValues: { title: scenePayload.title, content: scenePayload.content },
-    onSave: (payload) => updateScene({ key: scenePayload.key, ...payload }),
-  });
 
   return (
     <Form {...form}>
@@ -38,8 +38,8 @@ export const SceneContentForm = ({
         }}
       >
         <SetFirstSceneSwitch
-          setFirstScene={() => setFirstScene(scenePayload.key)}
-          sceneKey={scenePayload.key}
+          setFirstScene={() => setFirstScene(sceneKey)}
+          sceneKey={sceneKey}
         />
         <FormField
           control={form.control}
@@ -61,14 +61,11 @@ export const SceneContentForm = ({
             <FormItem>
               <FormLabel>Content</FormLabel>
               <FormControl>
-                <EditorContextProvider
-                  entityType="scene"
-                  entityKey={scenePayload.key}
-                >
+                <EditorContextProvider entityType="scene" entityKey={sceneKey}>
                   <RichText
-                    key={scenePayload.key}
+                    key={sceneKey}
                     onSerializedChange={field.onChange}
-                    initialState={scenePayload.content}
+                    initialState={content}
                     editable
                     className="h-75 max-w-112.5"
                     toolbarPlugins={[

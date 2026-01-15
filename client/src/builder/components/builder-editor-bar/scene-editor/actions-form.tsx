@@ -2,21 +2,13 @@ import { Button, Form, FormDescription } from "@/design-system/primitives";
 import { PlusIcon } from "lucide-react";
 import { ActionItem } from "./action-item";
 import { useEditActionsForm } from "@/builder/hooks/use-edit-actions-form";
-import { Action } from "@/lib/storage/domain";
-import { useBuilderActions } from "@/builder/hooks/use-builder-actions";
 
 export const ActionsForm = ({
-  sceneKey,
-  actions,
+  actionFormProps,
 }: {
-  sceneKey: string;
-  actions: Action[];
+  actionFormProps: ReturnType<typeof useEditActionsForm>;
 }) => {
-  const { updateScene } = useBuilderActions();
-  const { form, append, fields, remove } = useEditActionsForm({
-    actions,
-    onSave: (payload) => updateScene({ key: sceneKey, ...payload }),
-  });
+  const { append, fields, form, remove } = actionFormProps;
 
   return (
     <Form {...form}>
