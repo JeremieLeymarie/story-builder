@@ -198,6 +198,7 @@ const _storyProgressFactory = {
   key: nanoid,
   currentSceneKey: nanoid,
   history: () => Array.from(Array(5), nanoid),
+  createdAt: faker.date.anytime,
   lastPlayedAt: faker.date.anytime,
   storyKey: nanoid,
   userKey: nanoid,

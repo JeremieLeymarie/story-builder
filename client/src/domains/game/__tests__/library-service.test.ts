@@ -132,6 +132,7 @@ describe("library-service", () => {
       userKey: "pipou",
       history: ["most-recent-vroum"],
       currentSceneKey: "most-recent-vroum",
+      createdAt: new Date(),
       lastPlayedAt: dayjs(new Date()).add(10, "days").toDate(),
     };
 
@@ -141,6 +142,7 @@ describe("library-service", () => {
       userKey: "pipou",
       history: ["older-vroum"],
       currentSceneKey: "older-vroum",
+      createdAt: new Date(),
       lastPlayedAt: new Date(),
     };
 
@@ -150,6 +152,7 @@ describe("library-service", () => {
       userKey: "pipou",
       history: ["finished-vroum"],
       currentSceneKey: "finished-vroum",
+      createdAt: new Date(),
       lastPlayedAt: new Date(),
       finished: true,
     };
