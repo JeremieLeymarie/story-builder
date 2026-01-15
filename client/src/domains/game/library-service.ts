@@ -79,7 +79,7 @@ export const _getLibraryService = ({
 
     const progress = await localRepository.createStoryProgress({
       storyKey: story.key,
-      history: [story.firstSceneKey],
+      history: [],
       currentSceneKey: story.firstSceneKey,
       lastPlayedAt: new Date(),
       userKey: user?.key ?? undefined,

@@ -286,7 +286,7 @@ describe("library-service", () => {
 
       expect(localRepository.getUser).toHaveBeenCalled();
       expect(localRepository.createStoryProgress).toHaveBeenCalledWith({
-        history: [BASIC_STORY.firstSceneKey],
+        history: [],
         currentSceneKey: BASIC_STORY.firstSceneKey,
         lastPlayedAt: new Date(),
         userKey: BASIC_USER.key,
