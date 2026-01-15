@@ -17,26 +17,27 @@ export type SceneSchema = z.infer<typeof sceneSchema>;
 export type SceneUpdatePayload = Omit<Scene, "builderParams" | "actions">;
 
 export const useEditSceneContentForm = ({
-  defaultValues,
+  values,
   onSave,
 }: {
-  defaultValues: Partial<SceneSchema>;
+  values: SceneSchema;
   onSave: (payload: SceneSchema) => void;
 }) => {
   const form = useForm<SceneSchema>({
     resolver: zodResolver(sceneSchema),
-    defaultValues,
+    values,
   });
 
   useAutoSubmitForm({
     form,
-    onSubmit: (values) => {
-      return onSave({
+    onSubmit: (values) =>
+      onSave({
         content: values.content,
         title: values.title,
-      });
-    },
+      }),
   });
 
   return form;
 };
+
+export type SceneContentFormType = ReturnType<typeof useEditSceneContentForm>;

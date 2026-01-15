@@ -80,7 +80,7 @@ export const useEditActionsForm = ({
 }) => {
   const form = useForm<EditActionsSchema>({
     resolver: zodResolver(schema),
-    defaultValues: {
+    values: {
       actions: actions.map(adaptDomainAction),
     },
   });
