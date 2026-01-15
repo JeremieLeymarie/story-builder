@@ -288,6 +288,7 @@ describe("library-service", () => {
       expect(localRepository.createStoryProgress).toHaveBeenCalledWith({
         history: [],
         currentSceneKey: BASIC_STORY.firstSceneKey,
+        createdAt: new Date(),
         lastPlayedAt: new Date(),
         userKey: BASIC_USER.key,
         storyKey: BASIC_STORY.key,

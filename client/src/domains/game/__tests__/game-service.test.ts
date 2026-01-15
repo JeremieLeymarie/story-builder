@@ -46,6 +46,7 @@ describe("game-service", () => {
         currentSceneKey: "tutu",
         history: [...BASIC_STORY_PROGRESS.history, "tutu"],
         lastPlayedAt: new Date(),
+        createdAt: BASIC_STORY_PROGRESS.createdAt,
         userKey: BASIC_USER.key,
       });
     });
@@ -67,6 +68,7 @@ describe("game-service", () => {
         currentSceneKey: "tutu",
         history: [...BASIC_STORY_PROGRESS.history, "tutu"],
         lastPlayedAt: new Date(),
+        createdAt: BASIC_STORY_PROGRESS.createdAt,
         userKey: undefined,
       });
     });
@@ -83,6 +85,7 @@ describe("game-service", () => {
       expect(localRepository.updateStoryProgress).toHaveBeenCalledWith({
         ...BASIC_STORY_PROGRESS,
         lastPlayedAt: new Date(),
+        createdAt: BASIC_STORY_PROGRESS.createdAt,
       });
     });
 
@@ -98,6 +101,7 @@ describe("game-service", () => {
         currentSceneKey: "bim",
         history: [...BASIC_STORY_PROGRESS.history, "bim"],
         lastPlayedAt: new Date(),
+        createdAt: BASIC_STORY_PROGRESS.createdAt,
         userKey: BASIC_USER.key,
         finished: true,
       });
