@@ -116,6 +116,7 @@ const fromAPIStoryProgressAdapter = (
 ): StoryProgress => {
   return {
     ...storyProgress,
+    createdAt: new Date(storyProgress.lastPlayedAt),
     lastPlayedAt: new Date(storyProgress.lastPlayedAt),
     finished: !!storyProgress.finished,
   };
