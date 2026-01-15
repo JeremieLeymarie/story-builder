@@ -30,7 +30,8 @@ export const _getGameService = ({
       if (!progress)
         throw new Error(`No progress found for story ${storyProgressKey}`);
 
-      const persistedProgress = (await localRepository.getStoryProgress(progress.key)) ?? progress;
+      const persistedProgress =
+        (await localRepository.getStoryProgress(progress.key)) ?? progress;
       const newHistory = persistedProgress.history.includes(currentSceneKey)
         ? persistedProgress.history
         : [...persistedProgress.history, currentSceneKey];
