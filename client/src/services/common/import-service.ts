@@ -98,7 +98,7 @@ export const _makeBulkSceneUpdatePayload = ({
             const newSceneKey = oldScenesToNewScenes[target.sceneKey];
             if (!newSceneKey) {
               throw new Error(
-                "sceneKey not found in old scene to new scenes mapping",
+                `sceneKey not found in old scene to new scenes mapping, for scene [${scene.title}] and action [${action.text}]`,
               );
             }
             return {
@@ -111,7 +111,7 @@ export const _makeBulkSceneUpdatePayload = ({
               oldScenesToNewScenes[draft.condition.sceneKey];
             if (!newTargetSceneKey)
               throw new Error(
-                "sceneKey not found in old scene to new scenes mapping",
+                `sceneKey not found in old scene to new scenes mapping, for scene [${scene.title}] and action [${action.text}]`,
               ); // Should we throw here or should gracefully fallback on a simple action?
             draft.condition.sceneKey = newTargetSceneKey;
           }
