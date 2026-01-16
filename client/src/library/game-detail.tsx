@@ -56,7 +56,7 @@ export const LibraryGameDetail = ({
     <div className="bg-background min-h-screen">
       <div className="mx-auto max-w-6xl px-6 py-8">
         <div className="mb-12 flex gap-8">
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <img
               src={story.image}
               alt={story.title}

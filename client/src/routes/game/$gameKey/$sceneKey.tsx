@@ -1,6 +1,5 @@
 import { ErrorMessage, BackdropLoader } from "@/design-system/components";
 import { GameScene } from "@/game/components/game-scene";
-import { useUpdateStoryProgress } from "@/game/hooks/use-update-story-progress";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
@@ -18,11 +17,17 @@ export const Component = () => {
   });
 
   const { data: storyProgress } = useQuery({
-    queryFn: () => gameService.getStoryProgress(storyProgressKey),
-    queryKey: ["story-progress", storyProgressKey],
-  });
+    queryFn: async () => {
+      const progress = await gameService.saveProgress(storyProgressKey, {
+        currentSceneKey: sceneKey,
+        sceneActions: scene!.actions,
+      });
 
-  useUpdateStoryProgress({ scene, storyProgress });
+      return progress;
+    },
+    queryKey: ["story-progress", storyProgressKey, sceneKey],
+    enabled: !!scene,
+  });
 
   if (
     isLoading ||
