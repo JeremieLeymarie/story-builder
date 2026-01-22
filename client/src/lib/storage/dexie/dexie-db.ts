@@ -97,6 +97,7 @@ export const createDb = (
 
       await db.scenes.bulkUpdate(bulkPayload);
     });
+
   if (seed)
     db.on("populate", async () => {
       // Add story to builder
