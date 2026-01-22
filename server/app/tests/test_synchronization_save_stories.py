@@ -163,6 +163,7 @@ def test_save_builder_state(api_test_infra_authenticated) -> None:
                 {
                     "actions": [
                         {
+                            "key": "action-builder-key",
                             "targets": [{"sceneKey": "scene-1", "probability": 100}],
                             "text": "Action Text",
                             "type": "simple",
@@ -177,6 +178,7 @@ def test_save_builder_state(api_test_infra_authenticated) -> None:
                 {
                     "actions": [
                         {
+                            "key": "action-imported-key",
                             "targets": [{"sceneKey": "scene-1", "probability": 100}],
                             "text": "Action Text",
                             "type": "simple",
@@ -191,6 +193,7 @@ def test_save_builder_state(api_test_infra_authenticated) -> None:
                 {
                     "actions": [
                         {
+                            "key": "action-wrong-key",
                             "targets": [{"sceneKey": "scene-1", "probability": 100}],
                             "text": "Action Text",
                             "type": "simple",
@@ -230,6 +233,7 @@ def test_save_builder_state(api_test_infra_authenticated) -> None:
                 MongoScene(
                     actions=[
                         MongoSimpleAction(
+                            key="action-builder-key",
                             type="simple",
                             targets=[
                                 MongoActionTarget(sceneKey="scene-1", probability=100)
@@ -265,6 +269,7 @@ def test_save_builder_state(api_test_infra_authenticated) -> None:
                 MongoScene(
                     actions=[
                         MongoSimpleAction(
+                            key="action-imported-key",
                             type="simple",
                             targets=[
                                 MongoActionTarget(sceneKey="scene-1", probability=100)

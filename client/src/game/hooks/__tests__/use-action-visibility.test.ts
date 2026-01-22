@@ -10,7 +10,7 @@ describe("use-action-visibility", () => {
   test("simple actions are always visible", () => {
     const { result } = renderHook(() =>
       useActionVisibility({
-        action: { type: "simple", targets: [], text: "tutu" },
+        action: { key: "key", type: "simple", targets: [], text: "tutu" },
         progress: factory.storyProgress({ history: [] }),
       }),
     );
@@ -21,7 +21,7 @@ describe("use-action-visibility", () => {
   test("simple actions are always visible in test mode", () => {
     const { result } = renderHook(() =>
       useActionVisibility({
-        action: { type: "simple", targets: [], text: "tutu" },
+        action: { key: "key", type: "simple", targets: [], text: "tutu" },
         progress: null,
       }),
     );
@@ -33,6 +33,7 @@ describe("use-action-visibility", () => {
     const { result } = renderHook(() =>
       useActionVisibility({
         action: {
+          key: "key",
           type: "conditional",
           targets: [],
           text: "tutu",
@@ -50,6 +51,7 @@ describe("use-action-visibility", () => {
       const { result: resultEmptyHistory } = renderHook(() =>
         useActionVisibility({
           action: {
+            key: "key",
             type: "conditional",
             targets: [],
             text: "tutu",
@@ -64,6 +66,7 @@ describe("use-action-visibility", () => {
       const { result: resultFullHistory } = renderHook(() =>
         useActionVisibility({
           action: {
+            key: "key",
             type: "conditional",
             targets: [],
             text: "tutu",
@@ -80,6 +83,7 @@ describe("use-action-visibility", () => {
       const { result } = renderHook(() =>
         useActionVisibility({
           action: {
+            key: "key",
             type: "conditional",
             targets: [],
             text: "tutu",
@@ -100,6 +104,7 @@ describe("use-action-visibility", () => {
       const { result } = renderHook(() =>
         useActionVisibility({
           action: {
+            key: "key",
             type: "conditional",
             targets: [],
             text: "tutu",
@@ -118,6 +123,7 @@ describe("use-action-visibility", () => {
       const { result: resultEmptyHistory } = renderHook(() =>
         useActionVisibility({
           action: {
+            key: "key",
             type: "conditional",
             targets: [],
             text: "tutu",
@@ -132,6 +138,7 @@ describe("use-action-visibility", () => {
       const { result: resultFullHistory } = renderHook(() =>
         useActionVisibility({
           action: {
+            key: "key",
             type: "conditional",
             targets: [],
             text: "tutu",

@@ -70,11 +70,13 @@ const fromAPIStoriesAdapter = (
 const fromAPIActionAdapter = (action: APISceneAction): Action => {
   return match<APISceneAction, Action>(action)
     .with({ type: "simple" }, (a) => ({
+      key: action.key,
       type: "simple",
       text: a.text,
       targets: a.targets,
     }))
     .with({ type: "conditional" }, (a) => ({
+      key: action.key,
       type: "conditional",
       text: a.text,
       targets: a.targets,

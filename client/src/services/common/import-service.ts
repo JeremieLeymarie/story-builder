@@ -94,6 +94,7 @@ export const _makeBulkSceneUpdatePayload = ({
 
       const newActions = actions?.map((action) =>
         produce(action, (draft) => {
+          draft.key = nanoid();
           draft.targets = draft.targets.map((target) => {
             const newSceneKey = oldScenesToNewScenes[target.sceneKey];
             if (!newSceneKey) {

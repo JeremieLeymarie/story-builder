@@ -41,6 +41,7 @@ def make_mongo_builder_params(
 def make_mongo_scene_action(domain: SynchronizationSceneAction) -> MongoSceneAction:
     if isinstance(domain, SyncSimpleAction):
         return MongoSimpleAction(
+            key=domain.key,
             type="simple",
             text=domain.text,
             targets=[
@@ -52,6 +53,7 @@ def make_mongo_scene_action(domain: SynchronizationSceneAction) -> MongoSceneAct
         )
     if isinstance(domain, SyncConditionalAction):
         return MongoConditionalAction(
+            key=domain.key,
             type="conditional",
             text=domain.text,
             targets=[
@@ -180,6 +182,7 @@ def make_synchronization_author(
 def make_synchronization_action(action: MongoSceneAction) -> SynchronizationSceneAction:
     if action["type"] == "simple":
         return SyncSimpleAction(
+            key=action["key"],
             type="simple",
             text=action["text"],
             targets=[
@@ -191,6 +194,7 @@ def make_synchronization_action(action: MongoSceneAction) -> SynchronizationScen
         )
     if action["type"] == "conditional":
         return SyncConditionalAction(
+            key=action["key"],
             type="conditional",
             text=action["text"],
             targets=[

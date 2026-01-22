@@ -1,5 +1,6 @@
 import { BuilderNode } from "@/builder/types";
 import {
+  Action,
   BuilderPosition,
   BuilderStory,
   Scene,
@@ -72,4 +73,5 @@ export type BuilderServicePort = {
     newPositions: { [sceneKey: string]: BuilderPosition };
     storyKey: string;
   }) => Promise<Scene[]>;
+  makeEmptyActionPayload: () => Action;
 };

@@ -27,7 +27,7 @@ export const SceneEditor = ({ scene }: { scene: SceneUpdatePayload }) => {
   // Both forms have to be declared here instead of in each form component because tabs are unmounted
   // when inactive, which causes data freshness issues when switching tabs
   // This is the simplest workaround
-  const { updateScene } = useBuilderActions();
+  const { updateScene, makeEmptyActionPayload } = useBuilderActions();
   const contentForm = useEditSceneContentForm({
     values: { title: scene.title, content: scene.content },
     onSave: (payload) => updateScene({ key: scene.key, ...payload }),
@@ -52,7 +52,10 @@ export const SceneEditor = ({ scene }: { scene: SceneUpdatePayload }) => {
         />
       </TabsContent>
       <TabsContent value="actions">
-        <ActionsForm actionFormProps={actionFormProps} />
+        <ActionsForm
+          actionFormProps={actionFormProps}
+          makeEmptyActionPayload={makeEmptyActionPayload}
+        />
       </TabsContent>
     </Tabs>
   );

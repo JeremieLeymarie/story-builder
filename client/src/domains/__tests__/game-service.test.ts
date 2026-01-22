@@ -32,7 +32,9 @@ describe("game-service", () => {
     it("should save the story progress in the local database", async () => {
       await gameService.saveProgress(BASIC_STORY_PROGRESS.key, {
         currentSceneKey: "tutu",
-        sceneActions: [{ type: "simple", targets: [], text: "bzz bzz" }],
+        sceneActions: [
+          { key: "action-key", type: "simple", targets: [], text: "bzz bzz" },
+        ],
       });
 
       expect(localRepository.getUser).toHaveBeenCalled();
@@ -50,7 +52,9 @@ describe("game-service", () => {
 
       await gameService.saveProgress(BASIC_STORY_PROGRESS.key, {
         currentSceneKey: "tutu",
-        sceneActions: [{ type: "simple", targets: [], text: "bzz bzz" }],
+        sceneActions: [
+          { key: "action-key", type: "simple", targets: [], text: "bzz bzz" },
+        ],
       });
 
       expect(localRepository.getUser).toHaveBeenCalled();
@@ -66,7 +70,9 @@ describe("game-service", () => {
     it("should not add to history the same key twice in a row", async () => {
       await gameService.saveProgress(BASIC_STORY_PROGRESS.key, {
         currentSceneKey: BASIC_STORY_PROGRESS.history.at(-1)!,
-        sceneActions: [{ type: "simple", targets: [], text: "bzz bzz" }],
+        sceneActions: [
+          { key: "action-key", type: "simple", targets: [], text: "bzz bzz" },
+        ],
       });
 
       expect(localRepository.updateStoryProgress).toHaveBeenCalledWith({

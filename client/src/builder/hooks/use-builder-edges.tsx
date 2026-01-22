@@ -72,7 +72,8 @@ export const useBuilderEdges = () => {
           ? DEFAULT_SCENE
           : {
               ...DEFAULT_SCENE,
-              actions: [{ type: "simple", text: "", targets: [] }],
+
+              actions: [builderService.makeEmptyActionPayload()],
             },
         position: { x: position.x - offset.x, y: position.y - offset.y },
       });

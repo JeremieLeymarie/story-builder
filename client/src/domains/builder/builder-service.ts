@@ -141,11 +141,13 @@ export const _getBuilderService = ({
           title: "Your first scene",
           actions: [
             {
+              key: nanoid(),
               type: "simple",
               targets: [],
               text: "An action that leads to a scene",
             },
             {
+              key: nanoid(),
               type: "simple",
               targets: [],
               text: "An action that leads to another scene",
@@ -374,6 +376,9 @@ export const _getBuilderService = ({
 
       await sceneRepository.bulkAdd(payload);
       return payload;
+    },
+    makeEmptyActionPayload: () => {
+      return { key: nanoid(), type: "simple", targets: [], text: "" };
     },
   };
 };
