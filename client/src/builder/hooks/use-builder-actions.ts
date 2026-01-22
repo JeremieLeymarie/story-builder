@@ -40,5 +40,6 @@ export const useBuilderActions = () => {
   return {
     updateScene,
     setFirstScene,
+    makeEmptyActionPayload: builderService.makeEmptyActionPayload,
   };
 };

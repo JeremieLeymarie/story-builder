@@ -25,6 +25,7 @@ class ActionTarget(BaseAPIModel):
 
 
 class _ActionBase(BaseAPIModel):
+    key: str
     text: str
     targets: list[ActionTarget]
 
@@ -69,6 +70,7 @@ class Scene(BaseAPIModel):
     ) -> Action:
         if isinstance(domain_action, SyncSimpleAction):
             return SimpleAction(
+                key=domain_action.key,
                 text=domain_action.text,
                 targets=[
                     ActionTarget(
@@ -80,6 +82,7 @@ class Scene(BaseAPIModel):
             )
         if isinstance(domain_action, SyncConditionalAction):
             return ConditionalAction(
+                key=domain_action.key,
                 text=domain_action.text,
                 targets=[
                     ActionTarget(
@@ -114,6 +117,7 @@ class Scene(BaseAPIModel):
     def _action_to_domain(self, action: Action) -> SynchronizationSceneAction:
         if isinstance(action, SimpleAction):
             return SyncSimpleAction(
+                key=action.key,
                 text=action.text,
                 targets=[
                     SyncActionTarget(
@@ -125,6 +129,7 @@ class Scene(BaseAPIModel):
             )
         if isinstance(action, ConditionalAction):
             return SyncConditionalAction(
+                key=action.key,
                 text=action.text,
                 targets=[
                     SyncActionTarget(

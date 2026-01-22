@@ -1,6 +1,7 @@
 import z from "zod";
 
 export const baseActionSchema = z.object({
+  key: z.nanoid(),
   text: z.string({ message: "Text is required" }),
   targets: z.array(z.object({ sceneKey: z.nanoid(), probability: z.number() })),
 });

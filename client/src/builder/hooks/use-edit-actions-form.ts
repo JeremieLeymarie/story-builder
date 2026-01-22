@@ -6,6 +6,7 @@ import z from "zod";
 import { useAutoSubmitForm } from "@/hooks/use-auto-submit-form";
 
 const actionBase = z.object({
+  key: z.nanoid(),
   text: z.string({ message: "Text is required" }),
   targets: z.array(z.object({ sceneKey: z.nanoid(), probability: z.number() })),
 });
@@ -30,47 +31,6 @@ const schema = z.object({
 
 export type EditActionsSchema = z.infer<typeof schema>;
 
-const adaptDomainAction = (action: Action) => {
-  return match<Action, ActionSchema>(action)
-    .with({ type: "conditional" }, (a) => ({
-      showCondition:
-        a.condition.type === "user-did-visit"
-          ? "when-user-did-visit"
-          : "when-user-did-not-visit",
-      text: a.text,
-      targets: a.targets,
-      targetSceneKey: a.condition.sceneKey,
-    }))
-    .with({ type: "simple" }, (a) => ({
-      showCondition: "always",
-      text: a.text,
-      targets: a.targets,
-    }))
-    .exhaustive();
-};
-
-const adaptFormAction = (formAction: ActionSchema) => {
-  return match<ActionSchema, Action>(formAction)
-    .with({ showCondition: "always" }, (a) => ({
-      type: "simple",
-      text: a.text,
-      targets: a.targets,
-    }))
-    .with({ showCondition: "when-user-did-visit" }, (a) => ({
-      type: "conditional",
-      text: a.text,
-      targets: a.targets,
-      condition: { type: "user-did-visit", sceneKey: a.targetSceneKey },
-    }))
-    .with({ showCondition: "when-user-did-not-visit" }, (a) => ({
-      type: "conditional",
-      text: a.text,
-      targets: a.targets,
-      condition: { type: "user-did-not-visit", sceneKey: a.targetSceneKey },
-    }))
-    .exhaustive();
-};
-
 export const useEditActionsForm = ({
   actions,
   onSave,
@@ -78,6 +38,52 @@ export const useEditActionsForm = ({
   actions: Scene["actions"];
   onSave: (payload: { actions: Scene["actions"] }) => void;
 }) => {
+  const adaptDomainAction = (action: Action) => {
+    return match<Action, ActionSchema>(action)
+      .with({ type: "conditional" }, (a) => ({
+        key: a.key,
+        showCondition:
+          a.condition.type === "user-did-visit"
+            ? "when-user-did-visit"
+            : "when-user-did-not-visit",
+        text: a.text,
+        targets: a.targets,
+        targetSceneKey: a.condition.sceneKey,
+      }))
+      .with({ type: "simple" }, (a) => ({
+        key: a.key,
+        showCondition: "always",
+        text: a.text,
+        targets: a.targets,
+      }))
+      .exhaustive();
+  };
+
+  const adaptFormAction = (formAction: ActionSchema) => {
+    return match<ActionSchema, Action>(formAction)
+      .with({ showCondition: "always" }, (a) => ({
+        key: a.key,
+        type: "simple",
+        text: a.text,
+        targets: a.targets,
+      }))
+      .with({ showCondition: "when-user-did-visit" }, (a) => ({
+        key: a.key,
+        type: "conditional",
+        text: a.text,
+        targets: a.targets,
+        condition: { type: "user-did-visit", sceneKey: a.targetSceneKey },
+      }))
+      .with({ showCondition: "when-user-did-not-visit" }, (a) => ({
+        key: a.key,
+        type: "conditional",
+        text: a.text,
+        targets: a.targets,
+        condition: { type: "user-did-not-visit", sceneKey: a.targetSceneKey },
+      }))
+      .exhaustive();
+  };
+
   const form = useForm<EditActionsSchema>({
     resolver: zodResolver(schema),
     values: {
@@ -98,7 +104,15 @@ export const useEditActionsForm = ({
       }),
   });
 
-  return { form, fields, append, remove, update };
+  return {
+    form,
+    fields,
+    append,
+    remove,
+    update,
+    adaptDomainAction,
+    adaptFormAction,
+  };
 };
 
 export type EditActionsForm = UseFormReturn<EditActionsSchema>;

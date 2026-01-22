@@ -43,6 +43,7 @@ def test_load(api_test_infra_authenticated) -> None:
                     MongoScene(
                         actions=[
                             MongoSimpleAction(
+                                key="action-key",
                                 type="simple",
                                 targets=[
                                     MongoActionTarget(
@@ -159,6 +160,7 @@ def test_load(api_test_infra_authenticated) -> None:
                     {
                         "actions": [
                             {
+                                "key": "action-key",
                                 "targets": [
                                     {"sceneKey": "scene-1", "probability": 100.0}
                                 ],

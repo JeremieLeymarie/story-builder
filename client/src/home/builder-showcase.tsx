@@ -26,8 +26,18 @@ const NODES: SceneNodeType[] = [
         "You arrive at a crossroads. On the left, a sinuous dirt path leads to a tree mass. The road on the right is a well-maintained paved trail that runs towards a little village in the hills.",
       ),
       actions: [
-        { type: "simple", targets: [], text: "Go to the forest" },
-        { type: "simple", targets: [], text: "Go to the village" },
+        {
+          key: "action-a",
+          type: "simple",
+          targets: [],
+          text: "Go to the forest",
+        },
+        {
+          key: "action-b",
+          type: "simple",
+          targets: [],
+          text: "Go to the village",
+        },
       ],
       isFirstScene: false,
       key: "first-fake-scene-key",

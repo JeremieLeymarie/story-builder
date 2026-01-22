@@ -1,6 +1,7 @@
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { Scene, Story } from "../domain";
 import { ImportData } from "@/services/common/schema";
+import { nanoid } from "nanoid";
 
 export const DEMO_STORY: Story = {
   title: "[DEMO] The Enchanted Mountain",
@@ -28,21 +29,25 @@ export const DEMO_SCENES: Scene[] = [
     title: "At the foot of the mountain",
     actions: [
       {
+        key: nanoid(),
         text: "You head north towards the mountain ",
         targets: [{ sceneKey: "hTv4yXZ-8hRFIzQ3lY0Hx", probability: 100 }],
         type: "simple",
       },
       {
+        key: nanoid(),
         text: "You head east towards Glitterlake",
         targets: [{ sceneKey: "cTbuqI9NR2QhSMfZnPkht", probability: 100 }],
         type: "simple",
       },
       {
+        key: nanoid(),
         text: "You head South and go back on you tracks in the Molin Forest",
         targets: [],
         type: "simple",
       },
       {
+        key: nanoid(),
         text: "You head west towards the village of Loriath",
         targets: [],
         type: "simple",
@@ -58,11 +63,13 @@ export const DEMO_SCENES: Scene[] = [
     ),
     actions: [
       {
+        key: nanoid(),
         text: "You take in this marvelous sight and continue walking towards the direction of the song",
         targets: [{ sceneKey: "QzcLyUR6XigrC1cXi-wit", probability: 100 }],
         type: "simple",
       },
       {
+        key: nanoid(),
         text: "You go back",
         targets: [{ sceneKey: "HD0HctAmKp075yXwujHOW", probability: 100 }],
         type: "simple",
@@ -84,11 +91,13 @@ export const DEMO_SCENES: Scene[] = [
     ),
     actions: [
       {
+        key: nanoid(),
         text: "You head towards the provenance of this song ",
         targets: [{ sceneKey: "6QHCEM8VprXJRh43-oriO", probability: 100 }],
         type: "simple",
       },
       {
+        key: nanoid(),
         text: "You choose to ignore the song an set camp  and try your in the morning",
         targets: [{ sceneKey: "cTbuqI9NR2QhSMfZnPkht", probability: 100 }],
         type: "simple",
@@ -110,11 +119,13 @@ export const DEMO_SCENES: Scene[] = [
     ),
     actions: [
       {
+        key: nanoid(),
         text: "You walk towards the silouhette ",
         targets: [{ sceneKey: "gB_MDqzZpR4TLm7DeqNvJ", probability: 100 }],
         type: "simple",
       },
       {
+        key: nanoid(),
         text: "You go back",
         targets: [{ sceneKey: "QzcLyUR6XigrC1cXi-wit", probability: 100 }],
         type: "simple",
@@ -136,11 +147,13 @@ export const DEMO_SCENES: Scene[] = [
     ),
     actions: [
       {
+        key: nanoid(),
         text: "You go in and row towards the center of the Lake",
         targets: [{ sceneKey: "OAG0l62bXL3H2FFd8nkP0", probability: 100 }],
         type: "simple",
       },
       {
+        key: nanoid(),
         text: "Go back on your tracks",
         targets: [{ sceneKey: "6QHCEM8VprXJRh43-oriO", probability: 100 }],
         type: "simple",
@@ -175,16 +188,19 @@ export const DEMO_SCENES: Scene[] = [
     ),
     actions: [
       {
+        key: nanoid(),
         text: "You stop a few minutes to take on this beautiful sight",
         targets: [{ sceneKey: "cTbuqI9NR2QhSMfZnPkht", probability: 100 }],
         type: "simple",
       },
       {
+        key: nanoid(),
         text: "You continue walking while admiring the ancient trees ",
         targets: [{ sceneKey: "HD0HctAmKp075yXwujHOW", probability: 100 }],
         type: "simple",
       },
       {
+        key: nanoid(),
         text: "You go back on your tracks",
         targets: [{ sceneKey: "27of_GQ4ZnaMU5BeQ5qPx", probability: 100 }],
         type: "simple",
@@ -206,11 +222,13 @@ export const DEMO_SCENES: Scene[] = [
     ),
     actions: [
       {
+        key: nanoid(),
         text: "You walk towards the creature waiting foe an eventual interaction",
         targets: [{ sceneKey: "lXYahsi23G1QL766LaVK4", probability: 100 }],
         type: "simple",
       },
       {
+        key: nanoid(),
         text: "You go back on your tracks",
         targets: [{ sceneKey: "OAG0l62bXL3H2FFd8nkP0", probability: 100 }],
         type: "simple",
@@ -232,21 +250,25 @@ export const DEMO_SCENES: Scene[] = [
     ),
     actions: [
       {
+        key: nanoid(),
         text: "I light a candle and try to find my way through the fog.",
         targets: [],
         type: "simple",
       },
       {
+        key: nanoid(),
         text: "I look a the stars far far above and try to find my way using the oldest map in the world",
         targets: [],
         type: "simple",
       },
       {
+        key: nanoid(),
         text: "You open the ancient scroll which contains an ancient map that allowed to make your way to the mountain",
         targets: [],
         type: "simple",
       },
       {
+        key: nanoid(),
         text: "You go back on you tracks and try to visit other places before heading to the mountain",
         targets: [],
         type: "simple",
@@ -268,11 +290,13 @@ export const DEMO_SCENES: Scene[] = [
     ),
     actions: [
       {
+        key: nanoid(),
         text: "You try speaking to her",
         targets: [{ sceneKey: "mysJlUr2Q9wfrmH2YF7jq", probability: 100 }],
         type: "simple",
       },
       {
+        key: nanoid(),
         text: "You go back",
         targets: [{ sceneKey: "gB_MDqzZpR4TLm7DeqNvJ", probability: 100 }],
         type: "simple",
@@ -294,11 +318,13 @@ export const DEMO_SCENES: Scene[] = [
     ),
     actions: [
       {
+        key: nanoid(),
         text: "She stops singing and gazes at you with an inquisitive look",
         targets: [{ sceneKey: "WTLrmPxeGXZRfnCk6DDk5", probability: 100 }],
         type: "simple",
       },
       {
+        key: nanoid(),
         text: "You go back ",
         targets: [{ sceneKey: "lXYahsi23G1QL766LaVK4", probability: 100 }],
         type: "simple",

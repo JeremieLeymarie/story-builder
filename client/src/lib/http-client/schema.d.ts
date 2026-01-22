@@ -134,6 +134,8 @@ export interface components {
         };
         /** ConditionalAction */
         ConditionalAction: {
+            /** Key */
+            key: string;
             /** Text */
             text: string;
             /** Targets */
@@ -277,6 +279,8 @@ export interface components {
         };
         /** SimpleAction */
         SimpleAction: {
+            /** Key */
+            key: string;
             /** Text */
             text: string;
             /** Targets */

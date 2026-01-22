@@ -45,6 +45,7 @@ FAKE_STORY_A = SynchronizationStory(
         SynchronizationScene(
             actions=[
                 SyncSimpleAction(
+                    key="action-key",
                     type="simple",
                     targets=[SyncActionTarget(scene_key="scene-1", probability=100)],
                     text="Action  Text",
@@ -127,6 +128,7 @@ def _assert_fake_stories_match(stories: list[MongoStory]) -> None:
                 MongoScene(
                     actions=[
                         MongoSimpleAction(
+                            key="action-key",
                             type="simple",
                             targets=[
                                 MongoActionTarget(sceneKey="scene-1", probability=100)
@@ -224,6 +226,7 @@ def test_save_stories_with_existing_stories() -> None:
                     MongoScene(
                         actions=[
                             MongoSimpleAction(
+                                key="action-key",
                                 type="simple",
                                 targets=[
                                     MongoActionTarget(
@@ -430,6 +433,7 @@ def test_get_stories() -> None:
                     MongoScene(
                         actions=[
                             MongoSimpleAction(
+                                key="action-key",
                                 type="simple",
                                 targets=[
                                     MongoActionTarget(
@@ -486,6 +490,7 @@ def test_get_stories() -> None:
                 SynchronizationScene(
                     actions=[
                         SyncSimpleAction(
+                            key="action-key",
                             type="simple",
                             targets=[
                                 SyncActionTarget(scene_key="scene-1", probability=100)

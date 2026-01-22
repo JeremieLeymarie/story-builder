@@ -25,6 +25,7 @@ import {
   getStubGameRepository,
   MockGameRepository,
 } from "../game/stubs/game-repository-stub";
+import { Scene } from "@/lib/storage/domain";
 
 const factory = getTestFactory();
 
@@ -149,37 +150,68 @@ describe("library-service", () => {
     const CURRENT_SCENE = {
       key: "most-recent-vroum",
       actions: [
-        { type: "simple" as const, targets: [], text: "action A" },
-        { type: "simple" as const, targets: [], text: "action B" },
+        {
+          key: "current-action-key-a",
+          type: "simple" as const,
+          targets: [],
+          text: "action A",
+        },
+        {
+          key: "current-action-key-b",
+          type: "simple" as const,
+          targets: [],
+          text: "action B",
+        },
       ],
       builderParams: { position: { x: 0, y: 0 } },
       content: makeSimpleLexicalContent("pas content"),
       storyKey: "zut",
       title: "flûte",
-    };
+    } satisfies Scene;
 
     const OTHER_SCENE = {
       key: "older-vroum",
       actions: [
-        { type: "simple" as const, targets: [], text: "action A" },
-        { type: "simple" as const, targets: [], text: "action B" },
+        {
+          key: "other-action-key-a",
+          type: "simple" as const,
+          targets: [],
+          text: "action A",
+        },
+        {
+          key: "other-action-key-b",
+          type: "simple" as const,
+          targets: [],
+          text: "action B",
+        },
       ],
       builderParams: { position: { x: 0, y: 0 } },
       content: makeSimpleLexicalContent("pas content"),
       storyKey: "zut",
       title: "flûte",
-    };
+    } satisfies Scene;
+
     const FINISHED_SCENE = {
       key: "finished-vroum",
       actions: [
-        { type: "simple" as const, targets: [], text: "action A" },
-        { type: "simple" as const, targets: [], text: "action B" },
+        {
+          key: "finished-action-key-a",
+          type: "simple" as const,
+          targets: [],
+          text: "action A",
+        },
+        {
+          key: "finished-action-key-b",
+          type: "simple" as const,
+          targets: [],
+          text: "action B",
+        },
       ],
       builderParams: { position: { x: 0, y: 0 } },
       content: makeSimpleLexicalContent("pas content"),
       storyKey: "zut",
       title: "flûte",
-    };
+    } satisfies Scene;
 
     const STORY = {
       key: "ding",

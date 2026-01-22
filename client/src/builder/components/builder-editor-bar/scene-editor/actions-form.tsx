@@ -2,13 +2,16 @@ import { Button, Form, FormDescription } from "@/design-system/primitives";
 import { PlusIcon } from "lucide-react";
 import { ActionItem } from "./action-item";
 import { useEditActionsForm } from "@/builder/hooks/use-edit-actions-form";
+import { Action } from "@/lib/storage/domain";
 
 export const ActionsForm = ({
   actionFormProps,
+  makeEmptyActionPayload,
 }: {
   actionFormProps: ReturnType<typeof useEditActionsForm>;
+  makeEmptyActionPayload: () => Action;
 }) => {
-  const { append, fields, form, remove } = actionFormProps;
+  const { append, fields, form, remove, adaptDomainAction } = actionFormProps;
 
   return (
     <Form {...form}>
@@ -22,7 +25,7 @@ export const ActionsForm = ({
                 type="button"
                 size="icon"
                 onClick={() =>
-                  append({ showCondition: "always", targets: [], text: "" })
+                  append(adaptDomainAction(makeEmptyActionPayload()))
                 }
               >
                 <PlusIcon />
