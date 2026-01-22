@@ -86,6 +86,7 @@ export type StoryTheme = {
 };
 
 type ActionBase = {
+  key: string;
   text: string;
   targets: { sceneKey: string; probability: number }[];
 };
