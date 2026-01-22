@@ -70,6 +70,7 @@ export const createDb = (
       await db.scenes.bulkUpdate(bulkPayload);
     });
 
+  // Migration: add probability to scene actions
   db.version(8)
     .stores(tables)
     .upgrade(async () => {
@@ -91,6 +92,26 @@ export const createDb = (
                 },
               ]
             : [],
+        })) satisfies Action[];
+        bulkPayload.push({ key: scene.key, changes: { actions } });
+      });
+
+      await db.scenes.bulkUpdate(bulkPayload);
+    });
+
+  // Migration: add unique key to scene actions
+  db.version(9)
+    .stores(tables)
+    .upgrade(async () => {
+      const bulkPayload: {
+        key: string;
+        changes: Partial<Scene>;
+      }[] = [];
+
+      await db.scenes.each((scene) => {
+        const actions = scene.actions.map((action) => ({
+          ...action,
+          key: nanoid(),
         })) satisfies Action[];
         bulkPayload.push({ key: scene.key, changes: { actions } });
       });
