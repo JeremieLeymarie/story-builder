@@ -25,6 +25,7 @@ type BuilderContext = {
   initialNodes: BuilderNode[];
   initialEdges: Edge[];
   builderService: BuilderServicePort;
+  debug: boolean;
 };
 
 export const BuilderContext = createContext<BuilderContext | null>(null);
@@ -34,10 +35,12 @@ export const BuilderContextProvider = ({
   scenes,
   story: story_,
   refresh,
+  debug = false,
 }: PropsWithChildren<{
   scenes: Scene[];
   story: Story;
   refresh: RefreshFunction;
+  debug?: boolean;
 }>) => {
   const reactFlowRef = useRef<HTMLDivElement>(null);
   const [story, setStory] = useState(story_);
@@ -59,6 +62,7 @@ export const BuilderContextProvider = ({
         setStory,
         refresh,
         builderService,
+        debug,
       }}
     >
       {children}
