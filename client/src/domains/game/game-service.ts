@@ -1,4 +1,4 @@
-import { Action, StoryProgress } from "@/lib/storage/domain";
+import { Action } from "@/lib/storage/domain";
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 
 export const _getGameService = ({
@@ -15,16 +15,20 @@ export const _getGameService = ({
 
   return {
     saveProgress: async (
-      progress: StoryProgress,
+      storyProgressKey: string,
       {
         currentSceneKey,
         sceneActions,
-      }: { currentSceneKey: string; sceneActions: Action[] },
+      }: {
+        currentSceneKey: string;
+        sceneActions: Action[];
+      },
     ) => {
       const user = await localRepository.getUser();
-      const scene = await localRepository.getScene(currentSceneKey);
+      const progress = await localRepository.getStoryProgress(storyProgressKey);
 
-      if (!scene) return null;
+      if (!progress)
+        throw new Error(`No progress found for story ${storyProgressKey}`);
 
       // TODO: test history update && finished
       const updatedProgress = await localRepository.updateStoryProgress({

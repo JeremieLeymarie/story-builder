@@ -30,13 +30,12 @@ describe("game-service", () => {
 
   describe("saveProgress", () => {
     it("should save the story progress in the local database", async () => {
-      await gameService.saveProgress(BASIC_STORY_PROGRESS, {
+      await gameService.saveProgress(BASIC_STORY_PROGRESS.key, {
         currentSceneKey: "tutu",
         sceneActions: [{ type: "simple", targets: [], text: "bzz bzz" }],
       });
 
       expect(localRepository.getUser).toHaveBeenCalled();
-      expect(localRepository.getScene).toHaveBeenCalledWith("tutu");
       expect(localRepository.updateStoryProgress).toHaveBeenCalledWith({
         ...BASIC_STORY_PROGRESS,
         currentSceneKey: "tutu",
@@ -49,13 +48,12 @@ describe("game-service", () => {
     it("should also work when the user is not logged in", async () => {
       localRepository.getUser.mockResolvedValueOnce(null);
 
-      await gameService.saveProgress(BASIC_STORY_PROGRESS, {
+      await gameService.saveProgress(BASIC_STORY_PROGRESS.key, {
         currentSceneKey: "tutu",
         sceneActions: [{ type: "simple", targets: [], text: "bzz bzz" }],
       });
 
       expect(localRepository.getUser).toHaveBeenCalled();
-      expect(localRepository.getScene).toHaveBeenCalledWith("tutu");
       expect(localRepository.updateStoryProgress).toHaveBeenCalledWith({
         ...BASIC_STORY_PROGRESS,
         currentSceneKey: "tutu",
@@ -66,7 +64,7 @@ describe("game-service", () => {
     });
 
     it("should not add to history the same key twice in a row", async () => {
-      await gameService.saveProgress(BASIC_STORY_PROGRESS, {
+      await gameService.saveProgress(BASIC_STORY_PROGRESS.key, {
         currentSceneKey: BASIC_STORY_PROGRESS.history.at(-1)!,
         sceneActions: [{ type: "simple", targets: [], text: "bzz bzz" }],
       });
@@ -78,7 +76,7 @@ describe("game-service", () => {
     });
 
     it("should mark as finished if the story ends on this scene", async () => {
-      await gameService.saveProgress(BASIC_STORY_PROGRESS, {
+      await gameService.saveProgress(BASIC_STORY_PROGRESS.key, {
         currentSceneKey: "bim",
         sceneActions: [],
       });
