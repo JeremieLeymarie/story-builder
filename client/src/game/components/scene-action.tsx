@@ -10,6 +10,7 @@ import {
 } from "@/design-system/primitives/tooltip";
 import { PropsWithChildren } from "react";
 import { match } from "ts-pattern";
+import { getGameService } from "@/domains/game/game-service";
 
 const ActionTooltip = ({
   children,
@@ -72,11 +73,13 @@ export const SceneAction = ({
   actionTheme: StoryThemeConfig["action"];
 }) => {
   const isVisible = useActionVisibility({ action, progress });
+  const gameService = getGameService();
 
   // Only show actions that lead somewhere
   if (action.targets.length === 0) {
     return null;
   }
+  const nextScene = gameService.getNextKey(action.targets);
   const isTestMode = !progress;
 
   if (isTestMode) {
@@ -85,7 +88,7 @@ export const SceneAction = ({
         {/* TODO: implement probability logic to handle multiple targets cf (https://github.com/JeremieLeymarie/story-builder/issues/367) */}
         <Link
           to="/game/test/$gameKey/$sceneKey"
-          params={{ gameKey: storyKey, sceneKey: action.targets[0]!.sceneKey }}
+          params={{ gameKey: storyKey, sceneKey: nextScene }}
         >
           <ActionButton
             text={action.text}
