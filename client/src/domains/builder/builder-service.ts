@@ -74,14 +74,14 @@ export const _getBuilderService = ({
 
     addSceneConnection: async ({
       sourceSceneKey,
+      actionKey,
       destinationSceneKey,
-      actionIndex,
     }) => {
       const sourceScene = await localRepository.getScene(sourceSceneKey);
       if (!sourceScene) throw new EntityNotExistError("scene", sourceSceneKey);
 
-      const actions = sourceScene.actions.map((action, i) => {
-        if (i === actionIndex) {
+      const actions = sourceScene.actions.map((action) => {
+        if (action.key === actionKey) {
           return {
             ...action,
             targets: [
@@ -98,11 +98,11 @@ export const _getBuilderService = ({
 
     removeSceneConnection: async ({
       sourceScene,
-      actionIndex,
+      actionKey,
       targetSceneKey,
     }) => {
-      const actions = sourceScene.actions.map((action, i) => {
-        if (i === actionIndex) {
+      const actions = sourceScene.actions.map((action) => {
+        if (action.key === actionKey) {
           return {
             ...action,
             targets: action.targets.filter(

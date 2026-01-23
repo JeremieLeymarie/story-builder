@@ -19,18 +19,41 @@ export const sceneToNodeAdapter = ({
   return node;
 };
 
+type EdgeIdentifier = {
+  sceneKey: string;
+  actionKey: string;
+  targetSceneKey: string;
+};
+
+const EDGE_ID_SEPARATOR = "#";
+
+const hashEdgeId = ({
+  sceneKey,
+  actionKey,
+  targetSceneKey,
+}: EdgeIdentifier) => {
+  return `${sceneKey}${EDGE_ID_SEPARATOR}${actionKey}${EDGE_ID_SEPARATOR}${targetSceneKey}`;
+};
+
 export const sceneToEdgesAdapter = (scene: Scene): Edge[] => {
   const edges = scene.actions
-    .flatMap((action, i) => {
-      return action.targets.map((target) => ({
-        sourceHandle: `${scene.key}-${i}`,
-        source: scene.key.toString(),
-        target: target.sceneKey,
-        targetHandle: null,
-        id: `${scene.key}-${target.sceneKey}-${i}`,
-      }));
+    .flatMap((action) => {
+      return action.targets.map(
+        (target) =>
+          ({
+            sourceHandle: `${action.key}-${target.sceneKey}`,
+            source: scene.key,
+            target: target.sceneKey,
+            targetHandle: null,
+            id: hashEdgeId({
+              sceneKey: scene.key,
+              actionKey: action.key,
+              targetSceneKey: target.sceneKey,
+            }),
+          }) satisfies Edge,
+      );
     })
-    .filter((action) => !!action.target) as Edge[];
+    .filter((action) => !!action.target);
 
   return edges;
 };

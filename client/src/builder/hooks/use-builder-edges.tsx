@@ -20,16 +20,15 @@ export const useBuilderEdges = () => {
 
   const getSceneToUpdate = (edge: Edge | Connection) => {
     const sourceScene = getNodes().find((scene) => scene.id === edge.source);
+    const actionKey = edge.sourceHandle;
 
-    const actionIndex = parseInt(edge.sourceHandle?.split("-").at(-1) ?? "NaN");
-
-    if (!sourceScene || Number.isNaN(actionIndex)) {
+    if (!sourceScene || !actionKey) {
       return null;
     }
 
     const sceneToUpdate = nodeToSceneAdapter(sourceScene);
 
-    return { sceneToUpdate, actionIndex };
+    return { sceneToUpdate, actionKey };
   };
 
   const onConnect = (connection: Connection) => {
@@ -43,7 +42,7 @@ export const useBuilderEdges = () => {
       .addSceneConnection({
         sourceSceneKey: sceneData.sceneToUpdate.key,
         destinationSceneKey: connection.target,
-        actionIndex: sceneData.actionIndex,
+        actionKey: sceneData.actionKey,
       })
       .catch(handleError);
 
@@ -82,6 +81,7 @@ export const useBuilderEdges = () => {
       const fromNode = connectionState.fromNode.id;
       const toNode = scene.key;
 
+      // TODO: here
       const toHandle = `${toNode}-0`;
       setTimeout(() => {
         onConnect({
@@ -102,11 +102,10 @@ export const useBuilderEdges = () => {
         return;
       }
 
-      console.log({ edge });
       builderService
         .removeSceneConnection({
           sourceScene: sceneData.sceneToUpdate,
-          actionIndex: sceneData.actionIndex,
+          actionKey: sceneData.actionKey,
           targetSceneKey: edge.target,
         })
         .catch(handleError);

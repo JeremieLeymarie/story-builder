@@ -63,20 +63,20 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
       </CardHeader>
       {data.actions.length > 0 && (
         <CardContent className="flex flex-col gap-2">
-          {data.actions.map(({ text }, i) => (
+          {data.actions.map(({ text, key }) => (
             <div
+              key={key}
               className={cn(
                 "border-primary relative border p-2",
                 !text && "text-muted-foreground italic",
               )}
-              key={text || "..."}
             >
               {text || "..."}
               <Handle
                 type="source"
-                id={`${data.key}-${i}`}
+                id={data.key}
                 position={Position.Right}
-                className="!h-[15px] !w-[15px]"
+                className="h-[15px]! w-[15px]!"
               />
             </div>
           ))}
@@ -85,7 +85,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
       <Handle
         type="target"
         position={Position.Left}
-        className="!h-[15px] !w-[15px]"
+        className="h-[15px]! w-[15px]!"
       />
     </Card>
   );

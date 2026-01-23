@@ -28,8 +28,7 @@ const _getLayoutService = (): LayoutServicePort => {
         children: nodes.map((n) => {
           // 'Ports' are elk's wording for 'handles'
           const targetPorts = n.data.actions.map((action) => ({
-            // TODO: add keys to actions (https://github.com/JeremieLeymarie/story-builder/issues/307)
-            id: `${action.targets.map(({ sceneKey }) => sceneKey).join("-")}`,
+            id: action.key,
             properties: {
               side: "EAST", // handles are on the right
             },

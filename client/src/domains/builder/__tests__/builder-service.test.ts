@@ -88,7 +88,7 @@ describe("builder-service", () => {
       await builderService.addSceneConnection({
         sourceSceneKey: BASIC_SCENE.key,
         destinationSceneKey: "dest",
-        actionIndex: 0,
+        actionKey: "action-a",
       });
 
       expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
@@ -113,26 +113,11 @@ describe("builder-service", () => {
       );
     });
 
-    it("should do nothing when given out of bounds index", async () => {
+    it("should do nothing when given invalid action key", async () => {
       await builderService.addSceneConnection({
         sourceSceneKey: BASIC_SCENE.key,
         destinationSceneKey: "dest",
-        actionIndex: 42,
-      });
-
-      expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
-        BASIC_SCENE.key,
-        {
-          actions: BASIC_SCENE.actions,
-        },
-      );
-    });
-
-    it("should do nothing when given negative index", async () => {
-      await builderService.addSceneConnection({
-        sourceSceneKey: BASIC_SCENE.key,
-        destinationSceneKey: "dest",
-        actionIndex: -1,
+        actionKey: "key-that-does-not-exist",
       });
 
       expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
@@ -143,7 +128,6 @@ describe("builder-service", () => {
       );
     });
   });
-
   describe("removeSceneConnection", () => {
     it("should remove connection between scenes", async () => {
       await builderService.removeSceneConnection({
@@ -164,7 +148,7 @@ describe("builder-service", () => {
             },
           ],
         },
-        actionIndex: 0,
+        actionKey: "action-key-a",
         targetSceneKey: "zut",
       });
 
@@ -189,7 +173,7 @@ describe("builder-service", () => {
       );
     });
 
-    it("should do nothing when given out of bounds index", async () => {
+    it("should do nothing when given invalid action key", async () => {
       await builderService.removeSceneConnection({
         sourceScene: {
           ...BASIC_SCENE,
@@ -208,7 +192,7 @@ describe("builder-service", () => {
             },
           ],
         },
-        actionIndex: 42,
+        actionKey: "key-that-does-not-exist",
         targetSceneKey: "n'importe quoi",
       });
 
@@ -233,7 +217,7 @@ describe("builder-service", () => {
       );
     });
 
-    it("should do nothing when given negative index", async () => {
+    it("should do nothing when given invalid action key", async () => {
       await builderService.removeSceneConnection({
         sourceScene: {
           ...BASIC_SCENE,
@@ -252,7 +236,7 @@ describe("builder-service", () => {
             },
           ],
         },
-        actionIndex: -42,
+        actionKey: "key-that-does-not-exist",
         targetSceneKey: "n'importe quoi",
       });
 
