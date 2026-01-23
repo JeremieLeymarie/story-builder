@@ -1,6 +1,0 @@
-projectKey=story-builder
-serverUrl=http://localhost:9000
-serverVersion=26.1.0.118079
-dashboardUrl=http://localhost:9000/dashboard?id=story-builder
-ceTaskId=c47dcb36-ff68-4461-b87d-a151c9a61068
-ceTaskUrl=http://localhost:9000/api/ce/task?id=c47dcb36-ff68-4461-b87d-a151c9a61068
