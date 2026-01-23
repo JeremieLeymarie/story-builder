@@ -45,8 +45,8 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
           )}
           {isEditable && (
             <Button
-              className="invisible aspect-square group-hover:visible"
-              size="icon"
+              className="hover:bg-accent/30 invisible group-hover:visible"
+              size="xs"
               variant="ghost"
               onClick={() =>
                 openEditor({
@@ -55,7 +55,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
                 })
               }
             >
-              <EditIcon size="20px" />
+              <EditIcon />
             </Button>
           )}
         </div>
