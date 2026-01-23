@@ -106,7 +106,7 @@ export const SceneAction = ({
       <Link
         key={action.text}
         to="/game/$gameKey/$sceneKey"
-        params={{ gameKey: storyKey, sceneKey: action.targets[0]!.sceneKey }}
+        params={{ gameKey: storyKey, sceneKey: nextScene }}
         search={{ storyProgressKey: progress.key }}
         disabled={!isVisible}
       >
