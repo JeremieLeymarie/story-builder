@@ -55,42 +55,51 @@ export const useBuilderEdges = () => {
     connectionState: FinalConnectionState,
   ) => {
     // create a node on edge drop
-    if (!connectionState.isValid && connectionState.fromNode) {
-      const event = "changedTouches" in ev ? ev.changedTouches[0] : ev;
-      if (!event) return;
-      // truthy when the handle is a source handle
-      const fromHandle = connectionState.fromHandle?.id ?? null;
-      const position = screenToFlowPosition({
-        x: event.clientX,
-        y: event.clientY,
-      });
-      // Magic values that places the node over the correct handle:
-      const offset = fromHandle ? { x: 0, y: 0 } : { x: 375 - 16, y: 27.5 };
-      const scene = await addScene({
-        payload: fromHandle
-          ? DEFAULT_SCENE
-          : {
-              ...DEFAULT_SCENE,
+    if (!connectionState.fromNode)
+      throw new Error(
+        "Could not create connection because there is no source node",
+      );
+    // A connection is valid when it ends on a target. In that case we don't want to add a new scene
+    if (connectionState.isValid) return;
 
-              actions: [builderService.makeEmptyActionPayload()],
-            },
-        position: { x: position.x - offset.x, y: position.y - offset.y },
+    const event = "changedTouches" in ev ? ev.changedTouches[0] : ev;
+    if (!event) return;
+
+    const isFromRightSide = !!connectionState.fromHandle?.id;
+    const position = screenToFlowPosition({
+      x: event.clientX,
+      y: event.clientY,
+    });
+
+    if (isFromRightSide) {
+      const scene = await addScene({
+        payload: DEFAULT_SCENE,
+        position,
       });
       if (!scene) return;
-
-      const fromNode = connectionState.fromNode.id;
-      const toNode = scene.key;
-
-      // TODO: here
-      const toHandle = `${toNode}-0`;
-      setTimeout(() => {
-        onConnect({
-          source: fromHandle ? fromNode : toNode,
-          target: fromHandle ? toNode : fromNode,
-          sourceHandle: fromHandle ?? toHandle,
-          targetHandle: null,
-        });
-      }, 0);
+      onConnect({
+        source: connectionState.fromNode.id,
+        target: scene.key,
+        sourceHandle: connectionState.fromHandle!.id!,
+        targetHandle: null,
+      });
+    } else {
+      const scene = await addScene({
+        payload: {
+          ...DEFAULT_SCENE,
+          actions: [builderService.makeEmptyActionPayload()],
+        },
+        // Magic values that places the node over the correct handle:
+        position: { x: position.x - 375 - 16, y: position.y - 27.5 },
+      });
+      if (!scene) return;
+      // Create the connection from the newly created scene
+      onConnect({
+        source: scene.key,
+        target: connectionState.fromNode.id,
+        sourceHandle: scene.actions[0]!.key,
+        targetHandle: null,
+      });
     }
   };
 

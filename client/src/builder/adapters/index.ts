@@ -41,7 +41,7 @@ export const sceneToEdgesAdapter = (scene: Scene): Edge[] => {
       return action.targets.map(
         (target) =>
           ({
-            sourceHandle: `${action.key}-${target.sceneKey}`,
+            sourceHandle: action.key,
             source: scene.key,
             target: target.sceneKey,
             targetHandle: null,

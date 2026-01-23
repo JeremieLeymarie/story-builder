@@ -11,6 +11,7 @@ import { cn } from "@/lib/style";
 import { Button } from "@/design-system/primitives";
 import { useBuilderEditorStore } from "@/builder/hooks/use-builder-editor-store";
 import { useCopyPaste } from "@/builder/hooks/use-copy-paste";
+import { useBuilderContext } from "@/builder/hooks/use-builder-context";
 
 export type SceneNodeProps = NodeProps<SceneNodeType>;
 
@@ -18,11 +19,12 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
   const openEditor = useBuilderEditorStore((state) => state.open);
   const { isFirstScene, builderParams, isEditable = true, ...scene } = data;
   const { onAuxClick } = useCopyPaste();
+  const { debug } = useBuilderContext();
 
   return (
     <Card
       className={cn(
-        "group w-[375px]",
+        "group relative w-[375px]",
         isFirstScene && "bg-primary/60",
         selected && "border border-black",
       )}
@@ -42,6 +44,11 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
             <CardTitle className="text-muted-foreground italic">
               Empty Scene
             </CardTitle>
+          )}
+          {debug && (
+            <div className="absolute -top-8 -left-0.5">
+              <span className="font-semibold">Scene key:</span> {data.key}
+            </div>
           )}
           {isEditable && (
             <Button
@@ -72,9 +79,14 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
               )}
             >
               {text || "..."}
+              {debug && (
+                <div>
+                  <span className="font-semibold">Action key:</span> {key}
+                </div>
+              )}
               <Handle
                 type="source"
-                id={data.key}
+                id={key}
                 position={Position.Right}
                 className="h-[15px]! w-[15px]!"
               />
