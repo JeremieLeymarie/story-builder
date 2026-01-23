@@ -17,12 +17,12 @@ export type BuilderServicePort = {
   ) => Promise<void>;
   addSceneConnection: (props: {
     sourceSceneKey: string;
+    actionKey: string;
     destinationSceneKey: string;
-    actionIndex: number;
   }) => Promise<void>;
   removeSceneConnection: (props: {
     sourceScene: Scene;
-    actionIndex: number;
+    actionKey: string;
     targetSceneKey: string;
   }) => Promise<void>;
   createStoryWithFirstScene: (
