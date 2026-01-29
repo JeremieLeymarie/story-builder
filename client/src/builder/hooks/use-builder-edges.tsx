@@ -44,8 +44,14 @@ export const useBuilderEdges = () => {
 
       // Update React Flow
       setEdges((prev) => {
+        // Set `hasSiblings: true` for other edges coming from the same action
+        const updatedEdges = prev.map((e) =>
+          isEdgeFromAction(e, sourceActionKey)
+            ? { ...e, data: { ...e.data!, hasSiblings: true } }
+            : e,
+        );
         // Add new edge
-        const edges = addEdge<BuilderEdge>(
+        return addEdge<BuilderEdge>(
           {
             ...connection,
             type: "edge",
@@ -56,14 +62,7 @@ export const useBuilderEdges = () => {
               hasSiblings: action.targets.length > 1,
             },
           },
-          prev,
-        );
-
-        // Set `hasSiblings: true` for other edges coming from the same action
-        return edges.map((e) =>
-          isEdgeFromAction(e, sourceActionKey)
-            ? { ...e, data: { ...e.data!, hasSiblings: true } }
-            : e,
+          updatedEdges,
         );
       });
     } catch (e) {
