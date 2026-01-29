@@ -1,7 +1,6 @@
 import { Action, BuilderPosition, Scene, Story } from "@/lib/storage/domain";
 import { LocalRepositoryPort } from "@/repositories/local-repository-port";
-import { BuilderNode } from "@/builder/types";
-import { Edge } from "@xyflow/react";
+import { BuilderNode, BuilderEdge } from "@/builder/types";
 import { ImportServicePort } from "@/services/common/import-service";
 import { WithoutKey } from "@/types";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
@@ -94,13 +93,17 @@ export const _getBuilderService = ({
       });
 
       await localRepository.updatePartialScene(sourceScene.key, { actions });
+      return { ...sourceScene, actions };
     },
 
     removeSceneConnection: async ({
-      sourceScene,
+      sourceSceneKey,
       actionKey,
       targetSceneKey,
     }) => {
+      const sourceScene = await localRepository.getScene(sourceSceneKey);
+      if (!sourceScene) throw new EntityNotExistError("scene", sourceSceneKey);
+
       const actions = sourceScene.actions.map((action) => {
         if (action.key === actionKey) {
           return {
@@ -113,9 +116,9 @@ export const _getBuilderService = ({
         return action;
       });
 
-      await localRepository.updatePartialScene(sourceScene.key, {
-        actions,
-      });
+      await localRepository.updatePartialScene(sourceScene.key, { actions });
+
+      return { ...sourceScene, actions };
     },
 
     createStoryWithFirstScene: async (
@@ -174,7 +177,7 @@ export const _getBuilderService = ({
       storyKey,
     }: {
       nodes: BuilderNode[];
-      edges: Edge[];
+      edges: BuilderEdge[];
       storyKey: string;
     }) => {
       const reorganizedNodes = await layoutService.computeAutoLayout({
@@ -252,6 +255,8 @@ export const _getBuilderService = ({
     },
 
     deleteScenes: async ({ storyKey, sceneKeys }) => {
+      // We should delete related article link keys
+      // We should check that scene is not used in action
       const story = await storyRepository.get(storyKey);
       if (!story) throw new EntityNotExistError("story", storyKey);
 

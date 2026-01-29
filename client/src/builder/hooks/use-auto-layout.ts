@@ -1,5 +1,5 @@
 import { useReactFlow } from "@xyflow/react";
-import { BuilderNode } from "../types";
+import { BuilderEdge, BuilderNode } from "../types";
 import { useRef } from "react";
 import { Scene } from "@/lib/storage/domain";
 import { useBuilderContext } from "./use-builder-context";
@@ -7,8 +7,10 @@ import { useBuilderError } from "./use-builder-error";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
 
 export const useAutoLayout = () => {
-  const { setNodes, setEdges, getNodes, getEdges, fitView } =
-    useReactFlow<BuilderNode>();
+  const { setNodes, setEdges, getNodes, getEdges, fitView } = useReactFlow<
+    BuilderNode,
+    BuilderEdge
+  >();
   const stateBeforeChanges = useRef<Scene[]>(null);
   const { story, builderService } = useBuilderContext();
   const { handleError } = useBuilderError();

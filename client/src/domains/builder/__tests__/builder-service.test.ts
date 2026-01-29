@@ -3,8 +3,7 @@ import {
   getLocalRepositoryStub,
   MockLocalRepository,
 } from "@/repositories/stubs/local-repository-stub";
-import { BuilderNode } from "@/builder/types";
-import { Edge } from "@xyflow/react";
+import { BuilderNode, BuilderEdge } from "@/builder/types";
 import {
   getImportServiceStub,
   MockImportService,
@@ -130,28 +129,30 @@ describe("builder-service", () => {
   });
   describe("removeSceneConnection", () => {
     it("should remove connection between scenes", async () => {
+      localRepository.getScene.mockResolvedValue({
+        ...BASIC_SCENE,
+        actions: [
+          {
+            key: "action-key-a",
+            type: "simple",
+            text: "action A",
+            targets: [{ sceneKey: "zut", probability: 100 }],
+          },
+          {
+            key: "action-key-b",
+            type: "simple",
+            text: "action B",
+            targets: [{ sceneKey: "flûte", probability: 100 }],
+          },
+        ],
+      });
       await builderService.removeSceneConnection({
-        sourceScene: {
-          ...BASIC_SCENE,
-          actions: [
-            {
-              key: "action-key-a",
-              type: "simple",
-              text: "action A",
-              targets: [{ sceneKey: "zut", probability: 100 }],
-            },
-            {
-              key: "action-key-b",
-              type: "simple",
-              text: "action B",
-              targets: [{ sceneKey: "flûte", probability: 100 }],
-            },
-          ],
-        },
+        sourceSceneKey: "tutu",
         actionKey: "action-key-a",
         targetSceneKey: "zut",
       });
 
+      expect(localRepository.getScene).toHaveBeenCalledWith("tutu");
       expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
         BASIC_SCENE.key,
         {
@@ -174,28 +175,31 @@ describe("builder-service", () => {
     });
 
     it("should do nothing when given invalid action key", async () => {
+      localRepository.getScene.mockResolvedValue({
+        ...BASIC_SCENE,
+        actions: [
+          {
+            key: "action-key-a",
+            type: "simple",
+            text: "action A",
+            targets: [{ sceneKey: "zut", probability: 100 }],
+          },
+          {
+            key: "action-key-b",
+            type: "simple",
+            text: "action B",
+            targets: [{ sceneKey: "flûte", probability: 100 }],
+          },
+        ],
+      });
+
       await builderService.removeSceneConnection({
-        sourceScene: {
-          ...BASIC_SCENE,
-          actions: [
-            {
-              key: "action-key-a",
-              type: "simple",
-              text: "action A",
-              targets: [{ sceneKey: "zut", probability: 100 }],
-            },
-            {
-              key: "action-key-b",
-              type: "simple",
-              text: "action B",
-              targets: [{ sceneKey: "flûte", probability: 100 }],
-            },
-          ],
-        },
+        sourceSceneKey: "tutu",
         actionKey: "key-that-does-not-exist",
         targetSceneKey: "n'importe quoi",
       });
 
+      expect(localRepository.getScene).toHaveBeenCalledWith("tutu");
       expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
         BASIC_SCENE.key,
         {
@@ -218,28 +222,31 @@ describe("builder-service", () => {
     });
 
     it("should do nothing when given invalid action key", async () => {
+      localRepository.getScene.mockResolvedValue({
+        ...BASIC_SCENE,
+        actions: [
+          {
+            key: "action-key-a",
+            type: "simple",
+            text: "action A",
+            targets: [{ sceneKey: "zut", probability: 100 }],
+          },
+          {
+            key: "action-key-b",
+            type: "simple",
+            text: "action B",
+            targets: [{ sceneKey: "flûte", probability: 100 }],
+          },
+        ],
+      });
+
       await builderService.removeSceneConnection({
-        sourceScene: {
-          ...BASIC_SCENE,
-          actions: [
-            {
-              key: "action-key-a",
-              type: "simple",
-              text: "action A",
-              targets: [{ sceneKey: "zut", probability: 100 }],
-            },
-            {
-              key: "action-key-b",
-              type: "simple",
-              text: "action B",
-              targets: [{ sceneKey: "flûte", probability: 100 }],
-            },
-          ],
-        },
+        sourceSceneKey: "tutu",
         actionKey: "key-that-does-not-exist",
         targetSceneKey: "n'importe quoi",
       });
 
+      expect(localRepository.getScene).toHaveBeenCalledWith("tutu");
       expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
         BASIC_SCENE.key,
         {
@@ -597,7 +604,7 @@ describe("builder-service", () => {
         },
       ];
 
-      const EDGES: Edge[] = [
+      const EDGES: BuilderEdge[] = [
         {
           id: "edge-1",
           source: "scene-1",

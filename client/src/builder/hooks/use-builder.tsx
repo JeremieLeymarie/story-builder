@@ -1,11 +1,11 @@
 import { MouseEvent } from "react";
 import { useBuilderEdges } from "./use-builder-edges";
-import { BuilderNode } from "../types";
+import { BuilderNode, BuilderEdge } from "../types";
 import { useBuilderShortCuts } from "./use-builder-shortcuts";
 import { useBuilderContext } from "./use-builder-context";
 import { useBuilderError } from "./use-builder-error";
 import { toast } from "sonner";
-import { Edge, OnBeforeDelete } from "@xyflow/react";
+import { OnBeforeDelete } from "@xyflow/react";
 
 export const useBuilder = () => {
   const { story, builderService } = useBuilderContext();
@@ -21,7 +21,7 @@ export const useBuilder = () => {
       .catch(handleError);
   };
 
-  const onBeforeNodesDelete: OnBeforeDelete<BuilderNode, Edge> = async ({
+  const onBeforeNodesDelete: OnBeforeDelete<BuilderNode, BuilderEdge> = async ({
     nodes,
   }) => {
     if (nodes.find((n) => n.data.isFirstScene)) {

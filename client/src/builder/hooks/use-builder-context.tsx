@@ -10,12 +10,10 @@ import {
   useRef,
   useState,
 } from "react";
-import { BuilderNode } from "../types";
-import { Edge } from "@xyflow/react";
+import { BuilderNode, BuilderEdge } from "../types";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
 import { RefreshFunction } from "../components/types";
 import { BuilderServicePort } from "@/domains/builder/ports/builder-service-port";
-import { getBuilderService } from "@/get-builder-service";
 
 type BuilderContext = {
   refresh: RefreshFunction;
@@ -23,7 +21,7 @@ type BuilderContext = {
   story: Story;
   setStory: Dispatch<SetStateAction<Story>>;
   initialNodes: BuilderNode[];
-  initialEdges: Edge[];
+  initialEdges: BuilderEdge[];
   builderService: BuilderServicePort;
   debug: boolean;
 };
@@ -36,11 +34,13 @@ export const BuilderContextProvider = ({
   story: story_,
   refresh,
   debug = false,
+  builderService,
 }: PropsWithChildren<{
   scenes: Scene[];
   story: Story;
   refresh: RefreshFunction;
   debug?: boolean;
+  builderService: BuilderServicePort;
 }>) => {
   const reactFlowRef = useRef<HTMLDivElement>(null);
   const [story, setStory] = useState(story_);
@@ -49,8 +49,6 @@ export const BuilderContextProvider = ({
     scenes,
     story: story_,
   });
-
-  const builderService = getBuilderService();
 
   return (
     <BuilderContext.Provider
