@@ -1,4 +1,4 @@
-import { BuilderNode } from "@/builder/types";
+import { BuilderNode, BuilderEdge } from "@/builder/types";
 import {
   Action,
   BuilderPosition,
@@ -8,7 +8,6 @@ import {
 } from "@/lib/storage/domain";
 import { ImportData } from "@/services/common/schema";
 import { WithoutKey } from "@/types";
-import { Edge } from "@xyflow/react";
 
 export type BuilderServicePort = {
   updateSceneBuilderPosition: (
@@ -19,12 +18,12 @@ export type BuilderServicePort = {
     sourceSceneKey: string;
     actionKey: string;
     destinationSceneKey: string;
-  }) => Promise<void>;
+  }) => Promise<Scene>;
   removeSceneConnection: (props: {
-    sourceScene: Scene;
+    sourceSceneKey: string;
     actionKey: string;
     targetSceneKey: string;
-  }) => Promise<void>;
+  }) => Promise<Scene>;
   createStoryWithFirstScene: (
     storyData: Omit<
       WithoutKey<Story>,
@@ -37,7 +36,7 @@ export type BuilderServicePort = {
   ) => Promise<Scene | null>;
   getAutoLayout: (props: {
     nodes: BuilderNode[];
-    edges: Edge[];
+    edges: BuilderEdge[];
     storyKey: string;
   }) => Promise<{ before: Scene[]; after: Scene[] }>;
   bulkUpdateScenes: ({ scenes }: { scenes: Scene[] }) => Promise<void>;

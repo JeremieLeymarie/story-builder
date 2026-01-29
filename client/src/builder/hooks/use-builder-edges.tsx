@@ -1,53 +1,74 @@
 import {
   Connection,
-  Edge,
   FinalConnectionState,
-  addEdge,
   useReactFlow,
+  addEdge,
 } from "@xyflow/react";
-import { nodeToSceneAdapter } from "../adapters";
-import { BuilderNode } from "../types";
+import { BuilderEdge, BuilderNode } from "../types";
 import { useBuilderError } from "./use-builder-error";
 import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
 import { useBuilderContext } from "./use-builder-context";
+import { Scene } from "@/lib/storage/domain";
 
+const edgeHasSiblings = (action: Scene["actions"][number]) =>
+  action.targets.length > 1;
+
+const isEdgeFromAction = (edge: BuilderEdge, actionKey: string) =>
+  edge.sourceHandle === actionKey;
+
+// TODO: test this
 export const useBuilderEdges = () => {
-  const { getNodes, setEdges } = useReactFlow<BuilderNode>();
+  const { setEdges } = useReactFlow<BuilderNode, BuilderEdge>();
   const { handleError } = useBuilderError();
   const { addScene } = useAddScene();
   const { screenToFlowPosition } = useReactFlow();
   const { builderService } = useBuilderContext();
 
-  const getSceneToUpdate = (edge: Edge | Connection) => {
-    const sourceScene = getNodes().find((scene) => scene.id === edge.source);
-    const actionKey = edge.sourceHandle;
+  const onConnect = async (connection: Connection) => {
+    const sourceSceneKey = connection.source;
+    const sourceActionKey = connection.sourceHandle;
+    const targetSceneKey = connection.target;
 
-    if (!sourceScene || !actionKey) {
-      return null;
+    if (!sourceActionKey)
+      throw new Error("Unable to get action: connection has no source handle");
+
+    try {
+      // Persist connection
+      const scene = await builderService.addSceneConnection({
+        sourceSceneKey,
+        destinationSceneKey: targetSceneKey,
+        actionKey: sourceActionKey,
+      });
+      const action = scene.actions.find((a) => a.key === sourceActionKey);
+      if (!action) throw new Error("New action should be created");
+
+      // Update React Flow
+      setEdges((prev) => {
+        // Add new edge
+        const edges = addEdge<BuilderEdge>(
+          {
+            ...connection,
+            type: "edge",
+            data: {
+              probability:
+                action.targets.find((t) => t.sceneKey === sourceActionKey)
+                  ?.probability ?? 100, // TODO: handle error?
+              hasSiblings: action.targets.length > 1,
+            },
+          },
+          prev,
+        );
+
+        // Set `hasSiblings: true` for other edges coming from the same action
+        return edges.map((e) =>
+          isEdgeFromAction(e, sourceActionKey)
+            ? { ...e, data: { ...e.data!, hasSiblings: true } }
+            : e,
+        );
+      });
+    } catch (e) {
+      handleError(e);
     }
-
-    const sceneToUpdate = nodeToSceneAdapter(sourceScene);
-
-    return { sceneToUpdate, actionKey };
-  };
-
-  const onConnect = (connection: Connection) => {
-    const sceneData = getSceneToUpdate(connection);
-    if (!sceneData) {
-      console.error("Connection error: scene data is null");
-      return;
-    }
-
-    builderService
-      .addSceneConnection({
-        sourceSceneKey: sceneData.sceneToUpdate.key,
-        destinationSceneKey: connection.target,
-        actionKey: sceneData.actionKey,
-      })
-      .catch(handleError);
-
-    // Optimistic update
-    setEdges((prev) => addEdge(connection, prev));
   };
 
   const onConnectEnd = async (
@@ -103,19 +124,41 @@ export const useBuilderEdges = () => {
     }
   };
 
-  const onEdgesDelete = (edges: Edge[]) => {
+  const onEdgesDelete = (edges: BuilderEdge[]) => {
     edges.forEach((edge) => {
-      const sceneData = getSceneToUpdate(edge);
-      if (!sceneData) {
-        console.error("Connection error: scene data is null");
-        return;
-      }
+      const sourceSceneKey = edge.source;
+      const sourceActionKey = edge.sourceHandle;
+      const targetSceneKey = edge.target;
+
+      if (!sourceActionKey)
+        throw new Error("Unable to get action: edge has no source handle");
 
       builderService
         .removeSceneConnection({
-          sourceScene: sceneData.sceneToUpdate,
-          actionKey: sceneData.actionKey,
-          targetSceneKey: edge.target,
+          sourceSceneKey,
+          actionKey: sourceActionKey,
+          targetSceneKey: targetSceneKey,
+        })
+        .then((scene) => {
+          const sourceAction = scene.actions.find(
+            (a) => a.key === sourceActionKey,
+          );
+          if (!sourceAction)
+            throw new Error(`Action not found for edge ${edge.id}`);
+
+          setEdges((prev) =>
+            prev.map((e) =>
+              isEdgeFromAction(e, sourceActionKey)
+                ? {
+                    ...e,
+                    data: {
+                      ...e.data!,
+                      hasSiblings: edgeHasSiblings(sourceAction),
+                    },
+                  }
+                : e,
+            ),
+          );
         })
         .catch(handleError);
     });

@@ -1,5 +1,5 @@
 import { SceneNode } from "@/builder/components/nodes/scene/scene";
-import { SceneNodeType } from "@/builder/types";
+import { BuilderEdge, BuilderNode } from "@/builder/types";
 import { Title } from "@/design-system/components";
 import { Button } from "@/design-system/primitives";
 import { Link } from "@tanstack/react-router";
@@ -8,17 +8,17 @@ import {
   ReactFlow,
   Background,
   BackgroundVariant,
-  Edge,
   useEdgesState,
   useNodesState,
 } from "@xyflow/react";
 import { BuilderContextProvider } from "@/builder/hooks/use-builder-context";
 import { Story } from "@/lib/storage/domain";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
+import { getStubBuilderService } from "@/domains/builder/stubs/stub-builder-service";
 
 const nodeTypes = { scene: SceneNode };
 
-const NODES: SceneNodeType[] = [
+const NODES: BuilderNode[] = [
   {
     data: {
       title: "A mysterious crossroads",
@@ -85,7 +85,7 @@ const NODES: SceneNodeType[] = [
   },
 ];
 
-const EDGES: Edge[] = [
+const EDGES: BuilderEdge[] = [
   {
     id: "edge-1",
     source: "scene-1",
@@ -142,6 +142,7 @@ export const BuilderShowcase = () => {
           refresh={async () => {}}
           story={MOCK_STORY}
           scenes={[]}
+          builderService={getStubBuilderService()}
         >
           <ReactFlow
             nodeTypes={nodeTypes}
