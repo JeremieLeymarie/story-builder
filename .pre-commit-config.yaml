@@ -70,3 +70,19 @@ repos:
         pass_filenames: false
         files: ^client/
         stages: [pre-push]
+
+      - id: knip
+        name: Dead code detection (client)
+        entry: bash -c 'cd client && bun run knip'
+        language: system
+        pass_filenames: false
+        files: ^client/
+        stages: [pre-push]
+
+      - id: vulture
+        name: Dead code detection (server)
+        entry: bash -c 'cd server && uv run vulture app'
+        language: system
+        pass_filenames: false
+        files: ^server/
+        stages: [pre-push]
