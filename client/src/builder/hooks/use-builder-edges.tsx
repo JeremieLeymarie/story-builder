@@ -57,7 +57,7 @@ export const useBuilderEdges = () => {
             type: "edge",
             data: {
               probability:
-                action.targets.find((t) => t.sceneKey === sourceActionKey)
+                action.targets.find((t) => t.sceneKey === targetSceneKey)
                   ?.probability ?? 100, // TODO: handle error?
               hasSiblings: action.targets.length > 1,
             },
