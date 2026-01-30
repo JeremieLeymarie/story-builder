@@ -83,6 +83,11 @@ export const _getBuilderService = ({
 
       const actions = sourceScene.actions.map((action) => {
         if (action.key === actionKey) {
+          const targetAlreadyExists = action.targets.find(
+            (t) => t.sceneKey === destinationSceneKey,
+          );
+          if (targetAlreadyExists) return action;
+
           return {
             ...action,
             targets: [
