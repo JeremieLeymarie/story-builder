@@ -16,7 +16,7 @@ def test_unauthorized(api_test_infra_no_auth) -> None:
 
 
 def test_wrong_user_key(api_test_infra_authenticated) -> None:
-    client, repo, auth_user = api_test_infra_authenticated
+    client, _repo, _auth_user = api_test_infra_authenticated
 
     response = client.put(
         URL,
@@ -49,7 +49,7 @@ def test_wrong_user_key(api_test_infra_authenticated) -> None:
 
 
 def test_save_progresses(api_test_infra_authenticated) -> None:
-    client, repo, auth_user = api_test_infra_authenticated
+    client, repo, _auth_user = api_test_infra_authenticated
 
     response = client.put(
         URL,

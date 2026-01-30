@@ -25,7 +25,7 @@ def test_unauthorized(api_test_infra_no_auth) -> None:
 
 
 def test_load(api_test_infra_authenticated) -> None:
-    client, repo, auth_user = api_test_infra_authenticated
+    client, repo, _ = api_test_infra_authenticated
     repo.stories.insert_many(
         [
             MongoStory(
