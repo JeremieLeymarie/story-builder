@@ -132,6 +132,48 @@ describe("builder-service", () => {
       );
     });
 
+    test("should do nothing when target already exists", async () => {
+      sceneRepository.get.mockResolvedValue(
+        factory.scene({
+          key: "vroum",
+          actions: [
+            {
+              key: "action-key",
+              type: "simple",
+              text: "action",
+              targets: [
+                { sceneKey: "dest-key", probability: 20 },
+                { sceneKey: "other-dest-key", probability: 80 },
+              ],
+            },
+          ],
+        }),
+      );
+
+      await builderService.addSceneConnection({
+        sourceSceneKey: "vroum",
+        destinationSceneKey: "dest-key",
+        actionKey: "action-key",
+      });
+
+      expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
+        BASIC_SCENE.key,
+        {
+          actions: [
+            {
+              key: "action-key",
+              type: "simple",
+              text: "action",
+              targets: [
+                { sceneKey: "dest-key", probability: 20 },
+                { sceneKey: "other-dest-key", probability: 80 },
+              ],
+            },
+          ],
+        },
+      );
+    });
+
     test("should set probability to 0 when adding edge", async () => {
       sceneRepository.get.mockResolvedValue(
         factory.scene({
