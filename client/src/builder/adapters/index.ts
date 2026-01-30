@@ -27,7 +27,7 @@ type EdgeIdentifier = {
 
 const EDGE_ID_SEPARATOR = "#";
 
-export const hashEdgeId = ({
+const hashEdgeId = ({
   sceneKey,
   actionKey,
   targetSceneKey,

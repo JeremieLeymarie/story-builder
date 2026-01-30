@@ -2,7 +2,7 @@ import { MockPort } from "@/types";
 import { BuilderServicePort } from "../ports/builder-service-port";
 import { vi } from "vitest";
 
-export type MockBuilderService = MockPort<BuilderServicePort>;
+type MockBuilderService = MockPort<BuilderServicePort>;
 
 export const getStubBuilderService = (): MockBuilderService => ({
   addScene: vi.fn(),
