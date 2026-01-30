@@ -21,6 +21,7 @@ export const getStubBuilderService = (): MockBuilderService => ({
   loadBuilderState: vi.fn(),
   makeEmptyActionPayload: vi.fn(),
   removeSceneConnection: vi.fn(),
+  updateTargetProbability: vi.fn(),
   updateScene: vi.fn(),
   updateSceneBuilderPosition: vi.fn(),
   updateStory: vi.fn(),

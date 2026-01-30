@@ -11,10 +11,12 @@ import { EntityNotExistError } from "../errors";
 import { nanoid } from "nanoid";
 import { BuilderSceneRepositoryPort } from "./ports/builder-scene-repository-port";
 import {
+  ActionTargetNotFound,
   CannotDeleteFirstSceneError,
   DuplicationMissingPositionError,
 } from "./errors";
 import { ImportData } from "@/services/common/schema";
+import { produce } from "immer";
 
 export const _getBuilderService = ({
   localRepository,
@@ -76,7 +78,7 @@ export const _getBuilderService = ({
       actionKey,
       destinationSceneKey,
     }) => {
-      const sourceScene = await localRepository.getScene(sourceSceneKey);
+      const sourceScene = await sceneRepository.get(sourceSceneKey);
       if (!sourceScene) throw new EntityNotExistError("scene", sourceSceneKey);
 
       const actions = sourceScene.actions.map((action) => {
@@ -101,7 +103,7 @@ export const _getBuilderService = ({
       actionKey,
       targetSceneKey,
     }) => {
-      const sourceScene = await localRepository.getScene(sourceSceneKey);
+      const sourceScene = await sceneRepository.get(sourceSceneKey);
       if (!sourceScene) throw new EntityNotExistError("scene", sourceSceneKey);
 
       const actions = sourceScene.actions.map((action) => {
@@ -116,6 +118,45 @@ export const _getBuilderService = ({
         return action;
       });
 
+      await localRepository.updatePartialScene(sourceScene.key, { actions });
+
+      return { ...sourceScene, actions };
+    },
+
+    updateTargetProbability: async ({
+      actionKey,
+      probability,
+      sourceSceneKey,
+      targetSceneKey,
+    }) => {
+      const sourceScene = await sceneRepository.get(sourceSceneKey);
+      if (!sourceScene) throw new EntityNotExistError("scene", sourceSceneKey);
+
+      let found = false;
+      const actions = sourceScene.actions.map((action) => {
+        if (action.key === actionKey) {
+          return {
+            ...action,
+            targets: action.targets.map((t) =>
+              produce(t, (draft) => {
+                if (draft.sceneKey === targetSceneKey) {
+                  found = true;
+                  draft.probability = probability;
+                }
+              }),
+            ),
+          } satisfies Action;
+        }
+        return action;
+      });
+
+      if (!found) {
+        throw new ActionTargetNotFound({
+          sourceSceneKey,
+          actionKey,
+          targetSceneKey,
+        });
+      }
       await localRepository.updatePartialScene(sourceScene.key, { actions });
 
       return { ...sourceScene, actions };
@@ -168,7 +209,7 @@ export const _getBuilderService = ({
 
     updateScene: async ({ key, ...scene }) => {
       await localRepository.updatePartialScene(key, scene);
-      return await localRepository.getScene(key);
+      return await sceneRepository.get(key);
     },
 
     getAutoLayout: async ({
@@ -211,8 +252,7 @@ export const _getBuilderService = ({
     },
 
     changeFirstScene: async (storyKey: string, newFirstSceneKey: string) => {
-      const isSceneKeyValid =
-        !!(await localRepository.getScene(newFirstSceneKey));
+      const isSceneKeyValid = !!(await sceneRepository.get(newFirstSceneKey));
 
       if (isSceneKeyValid) {
         await localRepository.updateFirstScene(storyKey, newFirstSceneKey);
