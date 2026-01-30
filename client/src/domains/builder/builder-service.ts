@@ -108,11 +108,16 @@ export const _getBuilderService = ({
 
       const actions = sourceScene.actions.map((action) => {
         if (action.key === actionKey) {
+          const targets = action.targets.filter(
+            (t) => t.sceneKey !== targetSceneKey,
+          );
+          // If only one target remains, set its probability to 100%
+          if (targets.length === 1) {
+            targets[0]!.probability = 100;
+          }
           return {
             ...action,
-            targets: action.targets.filter(
-              (t) => t.sceneKey !== targetSceneKey,
-            ),
+            targets: targets,
           };
         }
         return action;

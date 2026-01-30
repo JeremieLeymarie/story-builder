@@ -239,7 +239,7 @@ describe("builder-service", () => {
       );
     });
 
-    test("should do nothing when given invalid action key", async () => {
+    test("should set probability back to 100% when only one target remains", async () => {
       sceneRepository.get.mockResolvedValue({
         ...BASIC_SCENE,
         actions: [
@@ -247,7 +247,10 @@ describe("builder-service", () => {
             key: "action-key-a",
             type: "simple",
             text: "action A",
-            targets: [{ sceneKey: "zut", probability: 100 }],
+            targets: [
+              { sceneKey: "zut", probability: 80 },
+              { sceneKey: "zit", probability: 30 },
+            ],
           },
           {
             key: "action-key-b",
@@ -259,12 +262,12 @@ describe("builder-service", () => {
       });
 
       await builderService.removeSceneConnection({
-        sourceSceneKey: "tutu",
-        actionKey: "key-that-does-not-exist",
-        targetSceneKey: "n'importe quoi",
+        sourceSceneKey: BASIC_SCENE.key,
+        actionKey: "action-key-a",
+        targetSceneKey: "zut",
       });
 
-      expect(sceneRepository.get).toHaveBeenCalledWith("tutu");
+      expect(sceneRepository.get).toHaveBeenCalledWith(BASIC_SCENE.key);
       expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
         BASIC_SCENE.key,
         {
@@ -273,7 +276,7 @@ describe("builder-service", () => {
               key: "action-key-a",
               type: "simple",
               text: "action A",
-              targets: [{ sceneKey: "zut", probability: 100 }],
+              targets: [{ sceneKey: "zit", probability: 100 }],
             },
             {
               key: "action-key-b",
