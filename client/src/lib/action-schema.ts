@@ -5,14 +5,17 @@ const baseActionSchema = z.object({
   text: z.string({ message: "Text is required" }),
   targets: z
     .array(z.object({ sceneKey: z.nanoid(), probability: z.number() }))
-    .refine((values) => {
-      const totalProbabilities = values.reduce(
-        (acc, v) => acc + v.probability,
-        0,
-      );
+    .refine(
+      (values) => {
+        const totalProbabilities = values.reduce(
+          (acc, v) => acc + v.probability,
+          0,
+        );
 
-      return totalProbabilities > 0;
-    }),
+        return totalProbabilities > 0;
+      },
+      { error: "All targets of an action must add up to at least 1%" },
+    ),
 });
 
 export const actionSchema = z.discriminatedUnion("type", [
