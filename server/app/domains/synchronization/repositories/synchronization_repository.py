@@ -24,8 +24,6 @@ class MongoSynchronizationRepository(
     BaseMongoRepository,
     SynchronizationRepositoryPort,
 ):
-    STORY_PROGRESS_COLLECTION = "storyProgresses"
-
     def save_stories(
         self, stories: list[SynchronizationStory], *, user_key: str
     ) -> Result:

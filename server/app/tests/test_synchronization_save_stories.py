@@ -113,7 +113,7 @@ def test_no_rights_is_not_author(api_test_infra_authenticated) -> None:
 
 
 def test_empty_body(api_test_infra_authenticated) -> None:
-    client, repo, auth_user = api_test_infra_authenticated
+    client, _repo, _auth_user = api_test_infra_authenticated
 
     response = client.put(
         URL,

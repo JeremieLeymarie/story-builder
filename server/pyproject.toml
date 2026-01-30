@@ -23,3 +23,7 @@ dev = [
     "httpx>=0.27.2",
     "vulture>=2.14",
 ]
+[tool.vulture]
+ignore_decorators = ["@app.*", "@pytest.*"]
+ignore_names = ["model_config"]
+min_confidence = 80

@@ -290,11 +290,6 @@ class StoryProgress(BaseAPIModel):
         )
 
 
-class FullStoryBuilderRequest(BaseAPIModel):
-    story: Story
-    scenes: list[Scene]
-
-
 class FullStoriesRequest(BaseAPIModel):
     stories: list[Story]
     scenes: list[Scene]
