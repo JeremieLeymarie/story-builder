@@ -24,6 +24,12 @@ export type BuilderServicePort = {
     actionKey: string;
     targetSceneKey: string;
   }) => Promise<Scene>;
+  updateTargetProbability: (props: {
+    sourceSceneKey: string;
+    actionKey: string;
+    targetSceneKey: string;
+    probability: number;
+  }) => Promise<Scene>;
   createStoryWithFirstScene: (
     storyData: Omit<
       WithoutKey<Story>,
