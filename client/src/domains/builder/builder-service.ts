@@ -87,7 +87,7 @@ export const _getBuilderService = ({
             ...action,
             targets: [
               ...action.targets,
-              { sceneKey: destinationSceneKey, probability: 100 },
+              { sceneKey: destinationSceneKey, probability: 0 },
             ],
           } satisfies Action;
         }
