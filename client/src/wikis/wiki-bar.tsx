@@ -12,6 +12,7 @@ import { CategoryActionsDropdown } from "./category-actions-dropdown";
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import { getWikiService } from "@/domains/wiki/wiki-service";
+import { toast } from "sonner";
 
 const ArticleTitle = ({
   title,
@@ -57,8 +58,16 @@ const ArticleTitle = ({
         confirmLabel="Delete"
         onConfirm={async (e) => {
           e.stopPropagation();
-          await wikiService.removeArticle(articleKey);
-          refresh();
+          try {
+            await wikiService.removeArticle(articleKey);
+            toast.success("Article deleted successfully.");
+            navigate({ to: "/wikis/$wikiKey", params: { wikiKey } });
+          } catch (error) {
+            toast.error("Could not delete the article.");
+            console.error(error);
+          } finally {
+            refresh();
+          }
         }}
         onCancel={(e) => {
           e.stopPropagation();
