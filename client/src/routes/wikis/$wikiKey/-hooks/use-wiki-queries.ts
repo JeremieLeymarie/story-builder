@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const WIKI_PERMISSIONS_QUERY_KEY = ["wiki-permissions"] as const;
 
-export const useWikiPermissions = ({ wikiKey }: { wikiKey: string }) => {
+const useWikiPermissions = ({ wikiKey }: { wikiKey: string }) => {
   const { data, isLoading, refetch } = useQuery({
     queryFn: async () => getWikiPermissionContext(wikiKey),
     queryKey: [...WIKI_PERMISSIONS_QUERY_KEY, wikiKey],
@@ -15,7 +15,7 @@ export const useWikiPermissions = ({ wikiKey }: { wikiKey: string }) => {
 
 const WIKI_DATA_QUERY_KEY = ["wiki-data"] as const;
 
-export const useWikiData = ({ wikiKey }: { wikiKey: string }) => {
+const useWikiData = ({ wikiKey }: { wikiKey: string }) => {
   const svc = getWikiService();
 
   const { data, isLoading, refetch } = useQuery({

@@ -3,7 +3,7 @@ import { GameScene } from "@/game/components/game-scene";
 import { useGetGameSceneData } from "@/game/hooks/use-get-game-scene-data";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Component = () => {
+const Component = () => {
   const { sceneKey, gameKey } = Route.useParams();
   const { scene, theme, isLoading } = useGetGameSceneData({
     storyKey: gameKey,

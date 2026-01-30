@@ -26,9 +26,7 @@ export const ANONYMOUS_AUTHOR = {
 
 export const TEMPORARY_NULL_KEY = "TEMPORARY_NULL_KEY";
 
-export type ImportServiceError =
-  | "Invalid JSON format"
-  | `Invalid format: ${string}`;
+type ImportServiceError = "Invalid JSON format" | `Invalid format: ${string}`;
 
 // TODO: we should do something like this at a higher level, and make it available everywhere
 type ImportStoryResult<TData = never> =

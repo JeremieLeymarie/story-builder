@@ -26,7 +26,7 @@ type BuilderContext = {
   debug: boolean;
 };
 
-export const BuilderContext = createContext<BuilderContext | null>(null);
+const BuilderContext = createContext<BuilderContext | null>(null);
 
 export const BuilderContextProvider = ({
   children,

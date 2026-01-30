@@ -43,7 +43,6 @@ const tables: Record<keyof Tables, string> = {
   wikiCategories: "&key, wikiKey, name",
   wikiArticleLinks: "[key+entityKey], key, entityKey, entityType, articleKey",
 };
-export const TABLE_NAMES = Object.keys(tables);
 
 export const createDb = (
   db: DexieDatabase,

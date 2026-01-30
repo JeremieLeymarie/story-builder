@@ -4,7 +4,7 @@ import { getTestFactory } from "@/lib/testing/factory";
 import { AuthContextPort } from "../auth-context";
 import { User } from "@/lib/storage/domain";
 
-export type MockAuthContext = MockPort<AuthContextPort>;
+type MockAuthContext = MockPort<AuthContextPort>;
 
 const factory = getTestFactory();
 

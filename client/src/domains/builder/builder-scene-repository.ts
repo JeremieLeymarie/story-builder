@@ -2,7 +2,7 @@ import { DexieDatabase, db } from "@/lib/storage/dexie/dexie-db";
 import { Scene } from "@/lib/storage/domain";
 import { WithoutKey } from "@/types";
 
-export type BuilderSceneRepositoryPort = {
+type BuilderSceneRepositoryPort = {
   get: (sceneKey: string) => Promise<Scene | null>;
   bulkAdd: (payload: WithoutKey<Scene>[]) => Promise<string[]>;
 };

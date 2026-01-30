@@ -1,5 +1,16 @@
 {
   "$schema": "https://unpkg.com/knip@latest/schema.json",
   "entry": ["src/main.tsx"],
-  "project": ["src/**/*.{ts,tsx}"]
+  "project": ["src/**/*.{ts,tsx}"],
+  "ignore": ["src/design-system/primitives/*.tsx"],
+  "ignoreDependencies": [
+    "@hey-api/client-fetch",
+    "@sonar/scan",
+    "@typescript-eslint/eslint-plugin",
+    "eslint-config-prettier",
+    "sharp",
+    "sharp-ico",
+    "tw-animate-css",
+    "workbox-core"
+  ]
 }

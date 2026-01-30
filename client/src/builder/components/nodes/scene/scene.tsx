@@ -13,7 +13,7 @@ import { useBuilderEditorStore } from "@/builder/hooks/use-builder-editor-store"
 import { useCopyPaste } from "@/builder/hooks/use-copy-paste";
 import { useBuilderContext } from "@/builder/hooks/use-builder-context";
 
-export type SceneNodeProps = NodeProps<BuilderNode>;
+type SceneNodeProps = NodeProps<BuilderNode>;
 
 export const SceneNode = ({ data, selected }: SceneNodeProps) => {
   const openEditor = useBuilderEditorStore((state) => state.open);

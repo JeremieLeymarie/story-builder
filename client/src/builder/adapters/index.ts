@@ -35,7 +35,7 @@ export const hashEdgeId = ({
   return `${sceneKey}${EDGE_ID_SEPARATOR}${actionKey}${EDGE_ID_SEPARATOR}${targetSceneKey}`;
 };
 
-export const sceneToEdgesAdapter = (scene: Scene): BuilderEdge[] => {
+const sceneToEdgesAdapter = (scene: Scene): BuilderEdge[] => {
   const edges = scene.actions
     .flatMap((action) => {
       return action.targets.map(

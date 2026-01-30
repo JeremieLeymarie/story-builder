@@ -31,7 +31,7 @@ export const CreateStoryFormDialog = (
 };
 
 // This version of the component is controlled and its state can be managed from the outside
-export const ControlledCreateStoryFormDialog = ({
+const ControlledCreateStoryFormDialog = ({
   onSubmit,
   trigger,
   setOpen,
