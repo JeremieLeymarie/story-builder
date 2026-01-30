@@ -1,6 +1,6 @@
 import { Story } from "@/lib/storage/domain";
 
-export class BuilderError extends Error {}
+class BuilderError extends Error {}
 
 export class InvalidStoryTypeError extends BuilderError {
   constructor(type: Story["type"]) {
