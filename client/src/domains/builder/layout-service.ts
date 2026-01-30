@@ -1,5 +1,4 @@
-import { BuilderNode } from "@/builder/types";
-import { Edge } from "@xyflow/react";
+import { BuilderNode, BuilderEdge } from "@/builder/types";
 import ELK from "elkjs/lib/elk.bundled.js";
 import { LayoutServicePort } from "./ports/layout-service-port";
 
@@ -11,7 +10,7 @@ const _getLayoutService = (): LayoutServicePort => {
       edges,
     }: {
       nodes: BuilderNode[];
-      edges: Edge[];
+      edges: BuilderEdge[];
     }) => {
       // https://www.eclipse.org/elk/reference/algorithms/org-eclipse-elk-layered.html
       const layoutOptions = {
