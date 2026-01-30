@@ -8,7 +8,7 @@ import {
 import { MaybeWithoutKey, WithoutKey } from "@/types";
 import { ArticleUpdatePayload, WikiSection } from "./types";
 
-export const NO_CATEGORY = "NO_CATEGORY";
+const NO_CATEGORY = "NO_CATEGORY";
 
 export type WikiRepositoryPort = {
   getUserWikis: (userKey: string | undefined) => Promise<Wiki[]>;

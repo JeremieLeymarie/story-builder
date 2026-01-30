@@ -3,7 +3,7 @@ import { UserRepositoryPort } from "../user-repository";
 import { vi } from "vitest";
 import { getTestFactory } from "@/lib/testing/factory";
 
-export type MockUserRepository = MockPort<UserRepositoryPort>;
+type MockUserRepository = MockPort<UserRepositoryPort>;
 
 const factory = getTestFactory();
 

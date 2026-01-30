@@ -14,7 +14,7 @@ type EditorContext = {
   contentEditableRef: RefObject<HTMLDivElement | null>;
 };
 
-export const EditorContext = createContext<EditorContext | null>(null);
+const EditorContext = createContext<EditorContext | null>(null);
 
 export const EditorContextProvider = ({
   children,

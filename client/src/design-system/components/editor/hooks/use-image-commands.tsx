@@ -34,8 +34,9 @@ import {
 
 import { $isImageNode } from "@/design-system/components/editor/nodes/image-node";
 
-export const RIGHT_CLICK_IMAGE_COMMAND: LexicalCommand<MouseEvent> =
-  createCommand("RIGHT_CLICK_IMAGE_COMMAND");
+const RIGHT_CLICK_IMAGE_COMMAND: LexicalCommand<MouseEvent> = createCommand(
+  "RIGHT_CLICK_IMAGE_COMMAND",
+);
 
 export const useImageCommands = ({
   nodeKey,

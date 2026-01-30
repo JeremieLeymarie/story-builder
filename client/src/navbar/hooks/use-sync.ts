@@ -2,7 +2,7 @@ import { getSyncService } from "@/domains/synchronization/sync-service";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export type SynchronizationState = {
+type SynchronizationState = {
   loading: boolean;
   success?: boolean;
   error?: string;

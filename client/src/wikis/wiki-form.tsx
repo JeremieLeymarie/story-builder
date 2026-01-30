@@ -23,7 +23,7 @@ import { useForm } from "react-hook-form";
 import { Wiki } from "@/lib/storage/domain";
 import z from "zod";
 
-export type OnSubmitWikiFormProps = Omit<
+type OnSubmitWikiFormProps = Omit<
   WithoutKey<Wiki>,
   "author" | "type" | "createdAt"
 > & { firstSceneKey?: string };
@@ -52,7 +52,7 @@ export const WikiFormDialog = (
   return <ControlledWikiFormDialog {...props} open={open} setOpen={setOpen} />;
 };
 
-export const ControlledWikiFormDialog = ({
+const ControlledWikiFormDialog = ({
   onSubmit,
   trigger,
   defaultValues,

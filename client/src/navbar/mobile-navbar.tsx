@@ -57,7 +57,7 @@ const NavButton = ({
   );
 };
 
-export const NavbarActions = ({
+const NavbarActions = ({
   user,
   saveLocalData,
   loadRemoteData,

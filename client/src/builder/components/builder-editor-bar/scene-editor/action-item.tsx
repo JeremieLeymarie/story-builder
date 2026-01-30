@@ -40,7 +40,7 @@ import {
   EditActionsSchema,
 } from "@/builder/hooks/use-edit-actions-form";
 
-export const SceneSelector = ({
+const SceneSelector = ({
   onChange,
   value,
 }: {

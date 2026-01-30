@@ -7,7 +7,7 @@ import { zodSearchValidator } from "@tanstack/router-zod-adapter";
 import { getGameService } from "@/domains/game/game-service";
 import { useGetGameSceneData } from "@/game/hooks/use-get-game-scene-data";
 
-export const Component = () => {
+const Component = () => {
   const { sceneKey, gameKey } = Route.useParams();
   const { storyProgressKey } = Route.useSearch();
   const gameService = getGameService();

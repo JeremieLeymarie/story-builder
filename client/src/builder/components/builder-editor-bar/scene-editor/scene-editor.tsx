@@ -4,7 +4,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/design-system/primitives/tabs";
-import { SceneUpdatePayload } from "./schema";
 import { SceneContentForm } from "./scene-content-form";
 import { ActionsForm } from "./actions-form";
 import {
@@ -14,6 +13,7 @@ import {
 import { useEditSceneContentForm } from "@/builder/hooks/use-edit-scene-content-form";
 import { useBuilderActions } from "@/builder/hooks/use-builder-actions";
 import { useEditActionsForm } from "@/builder/hooks/use-edit-actions-form";
+import { SceneUpdatePayload } from "@/builder/hooks/use-builder-editor-store";
 
 export const SceneEditorHeader = () => {
   return (
