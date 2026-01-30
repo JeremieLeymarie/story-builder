@@ -742,7 +742,7 @@ describe("builder-service", () => {
           data: {
             title: "The Road to the Village",
             content: makeSimpleLexicalContent(
-              "You walk alongside an - for most of test - even path that leads you under the protecting shadows of the hills. You maintain a quick pace. After a moment, you begin feeling like something is watching you.",
+              "You walk alongside an - for most of it - even path that leads you under the protecting shadows of the hills. You maintain a quick pace. After a moment, you begin feeling like something is watching you.",
             ),
             actions: [],
             isFirstScene: false,
@@ -864,7 +864,7 @@ describe("builder-service", () => {
           data: {
             title: "The Road to the Village",
             content: makeSimpleLexicalContent(
-              "You walk alongside an - for most of test - even path that leads you under the protecting shadows of the hills. You maintain a quick pace. After a moment, you begin feeling like something is watching you.",
+              "You walk alongside an - for most of it - even path that leads you under the protecting shadows of the hills. You maintain a quick pace. After a moment, you begin feeling like something is watching you.",
             ),
             actions: [],
             isFirstScene: false,
