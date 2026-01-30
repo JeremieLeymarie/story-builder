@@ -101,7 +101,7 @@ describe("builder-service", () => {
               key: "action-a",
               type: "simple",
               text: "action A",
-              targets: [{ sceneKey: "dest", probability: 100 }],
+              targets: [{ sceneKey: "dest", probability: 0 }],
             },
             {
               key: "action-b",
@@ -132,8 +132,8 @@ describe("builder-service", () => {
       );
     });
 
-    it("should set probability to 0 when adding edge", async () => {
-      localRepository.getScene.mockResolvedValue(
+    test("should set probability to 0 when adding edge", async () => {
+      sceneRepository.get.mockResolvedValue(
         factory.scene({
           key: "scene-a",
           actions: [
@@ -742,7 +742,7 @@ describe("builder-service", () => {
           data: {
             title: "The Road to the Village",
             content: makeSimpleLexicalContent(
-              "You walk alongside an - for most of it - even path that leads you under the protecting shadows of the hills. You maintain a quick pace. After a moment, you begin feeling like something is watching you.",
+              "You walk alongside an - for most of test - even path that leads you under the protecting shadows of the hills. You maintain a quick pace. After a moment, you begin feeling like something is watching you.",
             ),
             actions: [],
             isFirstScene: false,
@@ -864,7 +864,7 @@ describe("builder-service", () => {
           data: {
             title: "The Road to the Village",
             content: makeSimpleLexicalContent(
-              "You walk alongside an - for most of it - even path that leads you under the protecting shadows of the hills. You maintain a quick pace. After a moment, you begin feeling like something is watching you.",
+              "You walk alongside an - for most of test - even path that leads you under the protecting shadows of the hills. You maintain a quick pace. After a moment, you begin feeling like something is watching you.",
             ),
             actions: [],
             isFirstScene: false,
