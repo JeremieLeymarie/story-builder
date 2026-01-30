@@ -131,6 +131,65 @@ describe("builder-service", () => {
         },
       );
     });
+
+    it("should set probability to 0 when adding edge", async () => {
+      localRepository.getScene.mockResolvedValue(
+        factory.scene({
+          key: "scene-a",
+          actions: [
+            {
+              key: "action-a",
+              type: "conditional",
+              targets: [{ sceneKey: "dest-a", probability: 100 }],
+              text: "action-a",
+              condition: {
+                sceneKey: "plouf",
+                type: "user-did-visit",
+              },
+            },
+            {
+              key: "action-b",
+              type: "simple",
+              targets: [{ sceneKey: "dest-a", probability: 100 }],
+              text: "action-b",
+            },
+          ],
+        }),
+      );
+
+      await builderService.addSceneConnection({
+        sourceSceneKey: "scene-a",
+        destinationSceneKey: "dest-b",
+        actionKey: "action-a",
+      });
+
+      expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
+        "scene-a",
+        {
+          actions: [
+            {
+              key: "action-a",
+              type: "conditional",
+              targets: [
+                { sceneKey: "dest-a", probability: 100 },
+                { sceneKey: "dest-b", probability: 0 },
+              ],
+              text: "action-a",
+              condition: {
+                sceneKey: "plouf",
+                type: "user-did-visit",
+              },
+            },
+            {
+              key: "action-b",
+              type: "simple",
+              targets: [{ sceneKey: "dest-a", probability: 100 }],
+              text: "action-b",
+            },
+          ],
+        },
+      );
+    });
   });
 
   describe("removeSceneConnection", () => {
