@@ -37,7 +37,6 @@ jobs:
 
       - name: Dead Code Detection
         run: bun run knip
-        continue-on-error: true
 
   server:
     runs-on: ubuntu-latest
@@ -68,4 +67,3 @@ jobs:
 
       - name: Dead Code Detection
         run: uv run vulture app
-        continue-on-error: true
