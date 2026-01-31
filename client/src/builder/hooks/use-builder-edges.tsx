@@ -1,17 +1,10 @@
-import {
-  Connection,
-  FinalConnectionState,
-  useReactFlow,
-  addEdge,
-} from "@xyflow/react";
+import { Connection, FinalConnectionState, useReactFlow } from "@xyflow/react";
 import { BuilderEdge, BuilderNode } from "../types";
 import { useErrorToast } from "./use-error-toast";
 import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
 import { useBuilderContext } from "./use-builder-context";
 import { Scene } from "@/lib/storage/domain";
-
-const edgeHasSiblings = (action: Scene["actions"][number]) =>
-  action.targets.length > 1;
+import { actionToEdgesAdapter } from "../adapters";
 
 const isEdgeFromAction = (edge: BuilderEdge, actionKey: string) =>
   edge.sourceHandle === actionKey;
@@ -23,6 +16,20 @@ export const useBuilderEdges = () => {
   const { addScene } = useAddScene();
   const { screenToFlowPosition } = useReactFlow();
   const { builderService } = useBuilderContext();
+
+  const _updateEdges = (updatedScene: Scene, sourceActionKey: string) => {
+    const sourceAction = updatedScene.actions.find(
+      (a) => a.key === sourceActionKey,
+    );
+    if (!sourceAction) throw new Error(`Action not found`);
+
+    const edges = actionToEdgesAdapter(sourceAction, updatedScene.key);
+    // 1. Filter out existing edges from action
+    // 2. Re-add all updated edges
+    setEdges((prev) =>
+      prev.filter((e) => !isEdgeFromAction(e, sourceActionKey)).concat(edges),
+    );
+  };
 
   const onConnect = async (connection: Connection) => {
     const sourceSceneKey = connection.source;
@@ -39,32 +46,7 @@ export const useBuilderEdges = () => {
         destinationSceneKey: targetSceneKey,
         actionKey: sourceActionKey,
       });
-      const action = scene.actions.find((a) => a.key === sourceActionKey);
-      if (!action) throw new Error("New action should be created");
-
-      // Update React Flow
-      setEdges((prev) => {
-        // Set `hasSiblings: true` for other edges coming from the same action
-        const updatedEdges = prev.map((e) =>
-          isEdgeFromAction(e, sourceActionKey)
-            ? { ...e, data: { ...e.data!, hasSiblings: true } }
-            : e,
-        );
-        // Add new edge
-        return addEdge<BuilderEdge>(
-          {
-            ...connection,
-            type: "edge",
-            data: {
-              probability:
-                action.targets.find((t) => t.sceneKey === targetSceneKey)
-                  ?.probability ?? 100, // TODO: handle error?
-              hasSiblings: action.targets.length > 1,
-            },
-          },
-          updatedEdges,
-        );
-      });
+      _updateEdges(scene, sourceActionKey);
     } catch (e) {
       handleError(e);
     }
@@ -138,27 +120,7 @@ export const useBuilderEdges = () => {
           actionKey: sourceActionKey,
           targetSceneKey: targetSceneKey,
         })
-        .then((scene) => {
-          const sourceAction = scene.actions.find(
-            (a) => a.key === sourceActionKey,
-          );
-          if (!sourceAction)
-            throw new Error(`Action not found for edge ${edge.id}`);
-
-          setEdges((prev) =>
-            prev.map((e) =>
-              isEdgeFromAction(e, sourceActionKey)
-                ? {
-                    ...e,
-                    data: {
-                      ...e.data!,
-                      hasSiblings: edgeHasSiblings(sourceAction),
-                    },
-                  }
-                : e,
-            ),
-          );
-        })
+        .then((scene) => _updateEdges(scene, sourceActionKey))
         .catch(handleError);
     });
   };

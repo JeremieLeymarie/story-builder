@@ -1,4 +1,4 @@
-import { Scene, Story } from "@/lib/storage/domain";
+import { Action, Scene, Story } from "@/lib/storage/domain";
 import { BuilderEdge, SceneProps } from "../types";
 import { Node } from "@xyflow/react";
 
@@ -35,29 +35,30 @@ const hashEdgeId = ({
   return `${sceneKey}${EDGE_ID_SEPARATOR}${actionKey}${EDGE_ID_SEPARATOR}${targetSceneKey}`;
 };
 
+export const actionToEdgesAdapter = (action: Action, sceneKey: string) =>
+  action.targets.map(
+    (target) =>
+      ({
+        type: "edge",
+        sourceHandle: action.key,
+        source: sceneKey,
+        target: target.sceneKey,
+        targetHandle: null,
+        id: hashEdgeId({
+          sceneKey: sceneKey,
+          actionKey: action.key,
+          targetSceneKey: target.sceneKey,
+        }),
+        data: {
+          probability: target.probability,
+          hasSiblings: action.targets.length > 1,
+        },
+      }) satisfies BuilderEdge,
+  );
+
 const sceneToEdgesAdapter = (scene: Scene): BuilderEdge[] => {
   const edges = scene.actions
-    .flatMap((action) => {
-      return action.targets.map(
-        (target) =>
-          ({
-            type: "edge",
-            sourceHandle: action.key,
-            source: scene.key,
-            target: target.sceneKey,
-            targetHandle: null,
-            id: hashEdgeId({
-              sceneKey: scene.key,
-              actionKey: action.key,
-              targetSceneKey: target.sceneKey,
-            }),
-            data: {
-              probability: target.probability,
-              hasSiblings: action.targets.length > 1,
-            },
-          }) satisfies BuilderEdge,
-      );
-    })
+    .flatMap((action) => actionToEdgesAdapter(action, scene.key))
     .filter((action) => !!action.target);
 
   return edges;
