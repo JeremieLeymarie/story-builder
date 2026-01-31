@@ -17,7 +17,7 @@ import z from "zod";
 import { cn } from "@/lib/style";
 import { toast } from "sonner";
 import { useBuilderContext } from "@/builder/hooks/use-builder-context";
-import { useBuilderError } from "@/builder/hooks/use-builder-error";
+import { useErrorToast } from "@/builder/hooks/use-error-toast";
 
 const percentMask = {
   mask: /([0-9]{0,3})/,
@@ -57,7 +57,7 @@ const CustomEdge = ({
   const inputRef = useMaskito({ options: percentMask });
   const [value, setValue] = useState(data?.probability ?? 0);
   const { builderService } = useBuilderContext();
-  const { handleError } = useBuilderError();
+  const { handleError } = useErrorToast();
 
   if (!sourceHandleId) throw new Error(`Edge with no source handle: ${id}`);
 

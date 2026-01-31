@@ -9,7 +9,7 @@ import {
   lexicalContentSchema,
   makeSimpleLexicalContent,
 } from "@/lib/lexical-content";
-import { useBuilderError } from "./use-builder-error";
+import { useErrorToast } from "./use-error-toast";
 import { MouseEvent as ReactMouseEvent } from "react";
 import { useBuilderContext } from "./use-builder-context";
 import { actionSchema } from "@/lib/action-schema";
@@ -32,7 +32,7 @@ export const useCopyPaste = () => {
   const { duplicateScenes } = useDuplicateScenes();
   const { getNodes, setNodes } = useReactFlow<BuilderNode>();
   const { addScene } = useAddScene();
-  const { handleError } = useBuilderError();
+  const { handleError } = useErrorToast();
   const { story, builderService } = useBuilderContext();
 
   const onCopyOrCut = (ev: ClipboardEvent) => {

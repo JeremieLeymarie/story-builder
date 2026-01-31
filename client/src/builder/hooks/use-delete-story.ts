@@ -1,12 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
 import { useBuilderContext } from "./use-builder-context";
 import { useNavigate } from "@tanstack/react-router";
-import { useBuilderError } from "./use-builder-error";
+import { useErrorToast } from "./use-error-toast";
 
 export const useDeleteStory = () => {
   const { story, builderService } = useBuilderContext();
   const navigate = useNavigate();
-  const { handleError } = useBuilderError();
+  const { handleError } = useErrorToast();
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: async () => {
