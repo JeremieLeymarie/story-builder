@@ -84,37 +84,6 @@ describe("builder-service", () => {
   });
 
   describe("addSceneConnection", () => {
-    test("should add connection between scenes", async () => {
-      sceneRepository.get.mockResolvedValue(BASIC_SCENE);
-
-      await builderService.addSceneConnection({
-        sourceSceneKey: BASIC_SCENE.key,
-        destinationSceneKey: "dest",
-        actionKey: "action-a",
-      });
-
-      expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
-        BASIC_SCENE.key,
-        {
-          actions: [
-            {
-              key: "action-a",
-              type: "simple",
-              text: "action A",
-              targets: [{ sceneKey: "dest", probability: 0 }],
-            },
-            {
-              key: "action-b",
-
-              type: "simple",
-              text: "action B",
-              targets: [],
-            },
-          ],
-        },
-      );
-    });
-
     test("should do nothing when given invalid action key", async () => {
       sceneRepository.get.mockResolvedValue(BASIC_SCENE);
 
@@ -174,7 +143,38 @@ describe("builder-service", () => {
       );
     });
 
-    test("should set probability to 0 when adding edge", async () => {
+    test("should add connection between scenes", async () => {
+      sceneRepository.get.mockResolvedValue(BASIC_SCENE);
+
+      await builderService.addSceneConnection({
+        sourceSceneKey: BASIC_SCENE.key,
+        destinationSceneKey: "dest",
+        actionKey: "action-a",
+      });
+
+      expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
+        BASIC_SCENE.key,
+        {
+          actions: [
+            {
+              key: "action-a",
+              type: "simple",
+              text: "action A",
+              targets: [{ sceneKey: "dest", probability: 100 }],
+            },
+            {
+              key: "action-b",
+
+              type: "simple",
+              text: "action B",
+              targets: [],
+            },
+          ],
+        },
+      );
+    });
+
+    test("should set probability to 0 when adding another edge", async () => {
       sceneRepository.get.mockResolvedValue(
         factory.scene({
           key: "scene-a",
