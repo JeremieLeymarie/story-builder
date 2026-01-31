@@ -2,7 +2,7 @@ import { useBuilderContext } from "./use-builder-context";
 import { XYPosition } from "@xyflow/react";
 import { sceneToNodeAdapter } from "../adapters";
 import { Scene } from "@/lib/storage/domain";
-import { useBuilderError } from "./use-builder-error";
+import { useErrorToast } from "./use-error-toast";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { useScenePositioning } from "./use-scene-positioning";
 import { useAddFocusedNodes } from "./use-add-focused-nodes";
@@ -16,7 +16,7 @@ export const DEFAULT_SCENE: AddScenePayload = {
 };
 
 export const useAddScene = () => {
-  const { handleError } = useBuilderError();
+  const { handleError } = useErrorToast();
   const { story, builderService } = useBuilderContext();
   const addNodes = useAddFocusedNodes();
   const { getNewScenePosition, getOffset } = useScenePositioning();

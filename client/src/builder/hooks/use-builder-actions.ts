@@ -1,14 +1,14 @@
 import { useReactFlow } from "@xyflow/react";
 import { BuilderNode } from "../types";
 import { useBuilderContext } from "./use-builder-context";
-import { useBuilderError } from "./use-builder-error";
+import { useErrorToast } from "./use-error-toast";
 import { Scene } from "@/lib/storage/domain";
 import { sceneToNodeAdapter } from "../adapters";
 
 export const useBuilderActions = () => {
   const { story, setStory, builderService } = useBuilderContext();
   const { setNodes } = useReactFlow<BuilderNode>();
-  const { handleError } = useBuilderError();
+  const { handleError } = useErrorToast();
 
   const updateScene = async (scene: Partial<Scene> & Pick<Scene, "key">) => {
     try {

@@ -2,7 +2,7 @@ import { Button } from "@/design-system/primitives";
 import { toast } from "sonner";
 import { useBuilderContext } from "./use-builder-context";
 
-export const useBuilderError = () => {
+export const useErrorToast = () => {
   const { refresh } = useBuilderContext();
 
   return {

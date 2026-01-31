@@ -1,5 +1,5 @@
 import { useBuilderContext } from "./use-builder-context";
-import { useBuilderError } from "./use-builder-error";
+import { useErrorToast } from "./use-error-toast";
 import { BuilderPosition, Scene } from "@/lib/storage/domain";
 import { useScenePositioning } from "./use-scene-positioning";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
@@ -9,7 +9,7 @@ import { StorylessScene } from "../types";
 import { Vec2 } from "@/lib/vec2";
 
 export const useDuplicateScenes = () => {
-  const { handleError } = useBuilderError();
+  const { handleError } = useErrorToast();
   const { story, builderService } = useBuilderContext();
   const { getNewScenePosition: getInitialPosition, getOffset } =
     useScenePositioning();

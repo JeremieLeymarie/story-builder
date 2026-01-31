@@ -5,7 +5,7 @@ import {
   addEdge,
 } from "@xyflow/react";
 import { BuilderEdge, BuilderNode } from "../types";
-import { useBuilderError } from "./use-builder-error";
+import { useErrorToast } from "./use-error-toast";
 import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
 import { useBuilderContext } from "./use-builder-context";
 import { Scene } from "@/lib/storage/domain";
@@ -19,7 +19,7 @@ const isEdgeFromAction = (edge: BuilderEdge, actionKey: string) =>
 // TODO: test this
 export const useBuilderEdges = () => {
   const { setEdges } = useReactFlow<BuilderNode, BuilderEdge>();
-  const { handleError } = useBuilderError();
+  const { handleError } = useErrorToast();
   const { addScene } = useAddScene();
   const { screenToFlowPosition } = useReactFlow();
   const { builderService } = useBuilderContext();
