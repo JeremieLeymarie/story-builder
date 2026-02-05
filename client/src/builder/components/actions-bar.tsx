@@ -9,6 +9,7 @@ import { useAutoLayout } from "../hooks/use-auto-layout";
 import { toast } from "sonner";
 import { useState } from "react";
 import { FIT_VIEW_DURATION } from "../constants";
+import { Toolbar } from "@/design-system/components/toolbar";
 
 const AutoLayout = () => {
   const { organizeNodes, revertChanges } = useAutoLayout();
@@ -54,7 +55,7 @@ export const ActionsBar = () => {
   const { zoomIn, zoomOut, fitView } = useReactFlow();
 
   return (
-    <div className="relative z-50 flex h-max w-max gap-1 rounded border bg-white/75 p-1 shadow">
+    <Toolbar className="relative flex h-max w-max gap-1 p-1">
       <Tooltip>
         <TooltipTrigger
           className="hover:bg-muted cursor-pointer rounded p-1"
@@ -83,6 +84,6 @@ export const ActionsBar = () => {
         <TooltipContent>Resize view to fit elements</TooltipContent>
       </Tooltip>
       <AutoLayout />
-    </div>
+    </Toolbar>
   );
 };
