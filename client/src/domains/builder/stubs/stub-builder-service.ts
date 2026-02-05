@@ -7,7 +7,7 @@ type MockBuilderService = MockPort<BuilderServicePort>;
 export const getStubBuilderService = (): MockBuilderService => ({
   addScene: vi.fn(),
   addSceneConnection: vi.fn(),
-  removeSceneConnection: vi.fn(),
+  removeSceneConnections: vi.fn(),
   updateTargetProbability: vi.fn(),
   checkActionTargetsValidity: vi.fn(),
   bulkUpdateScenes: vi.fn(),

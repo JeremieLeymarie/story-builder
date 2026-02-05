@@ -4,18 +4,25 @@ import { useErrorToast } from "./use-error-toast";
 import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
 import { useBuilderContext } from "./use-builder-context";
 import { Scene } from "@/lib/storage/domain";
-import { actionToEdgesAdapter } from "../adapters";
+import {
+  actionToEdgesAdapter,
+  sceneToEdgesAdapter,
+  sceneToNodeAdapter,
+} from "../adapters";
 
 const isEdgeFromAction = (edge: BuilderEdge, actionKey: string) =>
   edge.sourceHandle === actionKey;
 
 // TODO: test this
 export const useBuilderEdges = () => {
-  const { setEdges } = useReactFlow<BuilderNode, BuilderEdge>();
+  const { setEdges, updateNodeData, updateEdgeData } = useReactFlow<
+    BuilderNode,
+    BuilderEdge
+  >();
   const { handleError } = useErrorToast();
   const { addScene } = useAddScene();
   const { screenToFlowPosition } = useReactFlow();
-  const { builderService } = useBuilderContext();
+  const { builderService, story } = useBuilderContext();
 
   const _updateEdges = (updatedScene: Scene, sourceActionKey: string) => {
     const sourceAction = updatedScene.actions.find(
@@ -105,24 +112,36 @@ export const useBuilderEdges = () => {
     }
   };
 
-  const onEdgesDelete = (edges: BuilderEdge[]) => {
-    edges.forEach((edge) => {
-      const sourceSceneKey = edge.source;
-      const sourceActionKey = edge.sourceHandle;
-      const targetSceneKey = edge.target;
+  const onEdgesDelete = async (edges: BuilderEdge[]) => {
+    try {
+      const updatedScenesByKey = await builderService.removeSceneConnections(
+        edges.map((edge) => {
+          const sourceSceneKey = edge.source;
+          const sourceActionKey = edge.sourceHandle;
+          const targetSceneKey = edge.target;
 
-      if (!sourceActionKey)
-        throw new Error("Unable to get action: edge has no source handle");
+          if (!sourceActionKey)
+            throw new Error("Unable to get action: edge has no source handle");
 
-      builderService
-        .removeSceneConnection({
-          sourceSceneKey,
-          actionKey: sourceActionKey,
-          targetSceneKey: targetSceneKey,
-        })
-        .then((scene) => _updateEdges(scene, sourceActionKey))
-        .catch(handleError);
-    });
+          return {
+            sourceSceneKey,
+            actionKey: sourceActionKey,
+            targetSceneKey: targetSceneKey,
+          };
+        }),
+      );
+      // TODO: if probabilities don't add up to 100% here we should set an error
+      Object.values(updatedScenesByKey).forEach((updatedScene) => {
+        const node = sceneToNodeAdapter({ scene: updatedScene, story });
+        const edges = sceneToEdgesAdapter(updatedScene);
+
+        // This is a little naive, maybe batching these updates in setEdges + setNodes calls would be better for performance
+        updateNodeData(node.id, node.data);
+        edges.forEach((edge) => updateEdgeData(edge.id, edge.data));
+      });
+    } catch (err) {
+      handleError(err);
+    }
   };
 
   return { onConnect, onConnectEnd, onEdgesDelete };
