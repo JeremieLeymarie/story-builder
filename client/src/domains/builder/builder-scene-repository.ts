@@ -1,11 +1,5 @@
 import { DexieDatabase, db } from "@/lib/storage/dexie/dexie-db";
-import { Scene } from "@/lib/storage/domain";
-import { WithoutKey } from "@/types";
-
-type BuilderSceneRepositoryPort = {
-  get: (sceneKey: string) => Promise<Scene | null>;
-  bulkAdd: (payload: WithoutKey<Scene>[]) => Promise<string[]>;
-};
+import { BuilderSceneRepositoryPort } from "./ports/builder-scene-repository-port";
 
 export const _getDexieBuilderSceneRepository = (
   db: DexieDatabase,
@@ -18,6 +12,14 @@ export const _getDexieBuilderSceneRepository = (
     },
     get: async (sceneKey) => {
       return (await db.scenes.get(sceneKey)) ?? null;
+    },
+    getScenesByKey: async (sceneKeys) => {
+      const scenesByKey = (await db.scenes.bulkGet(sceneKeys)).reduce(
+        (acc, scene) => (scene ? { ...acc, [scene.key]: scene } : acc),
+        {},
+      );
+
+      return scenesByKey;
     },
   };
 };

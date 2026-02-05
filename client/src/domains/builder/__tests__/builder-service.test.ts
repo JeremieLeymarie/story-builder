@@ -143,17 +143,25 @@ describe("builder-service", () => {
       );
     });
 
-    test("should add connection between scenes", async () => {
-      sceneRepository.get.mockResolvedValue(BASIC_SCENE);
+    test("should add connection at 100% when it's the first one", async () => {
+      sceneRepository.get.mockResolvedValue(
+        factory.scene({
+          key: "scene-key",
+          actions: [
+            { key: "action-a", type: "simple", text: "action A", targets: [] },
+            { key: "action-b", type: "simple", text: "action B", targets: [] },
+          ],
+        }),
+      );
 
       await builderService.addSceneConnection({
-        sourceSceneKey: BASIC_SCENE.key,
+        sourceSceneKey: "scene-key",
         destinationSceneKey: "dest",
         actionKey: "action-a",
       });
 
       expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
-        BASIC_SCENE.key,
+        "scene-key",
         {
           actions: [
             {
@@ -234,132 +242,11 @@ describe("builder-service", () => {
     });
   });
 
-  describe("removeSceneConnection", () => {
-    test("should remove connection between scenes", async () => {
-      sceneRepository.get.mockResolvedValue({
-        ...BASIC_SCENE,
-        actions: [
-          {
-            key: "action-key-a",
-            type: "simple",
-            text: "action A",
-            targets: [{ sceneKey: "zut", probability: 100 }],
-          },
-          {
-            key: "action-key-b",
-            type: "simple",
-            text: "action B",
-            targets: [{ sceneKey: "flûte", probability: 100 }],
-          },
-        ],
-      });
-      await builderService.removeSceneConnection({
-        sourceSceneKey: "tutu",
-        actionKey: "action-key-a",
-        targetSceneKey: "zut",
-      });
-
-      expect(sceneRepository.get).toHaveBeenCalledWith("tutu");
-      expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
-        BASIC_SCENE.key,
-        {
-          actions: [
-            {
-              key: "action-key-a",
-              type: "simple",
-              text: "action A",
-              targets: [],
-            },
-            {
-              key: "action-key-b",
-              type: "simple",
-              text: "action B",
-              targets: [{ sceneKey: "flûte", probability: 100 }],
-            },
-          ],
-        },
-      );
-    });
-
-    test("should set probability back to 100% when only one target remains", async () => {
-      sceneRepository.get.mockResolvedValue({
-        ...BASIC_SCENE,
-        actions: [
-          {
-            key: "action-key-a",
-            type: "simple",
-            text: "action A",
-            targets: [
-              { sceneKey: "zut", probability: 80 },
-              { sceneKey: "zit", probability: 30 },
-            ],
-          },
-          {
-            key: "action-key-b",
-            type: "simple",
-            text: "action B",
-            targets: [{ sceneKey: "flûte", probability: 100 }],
-          },
-        ],
-      });
-
-      await builderService.removeSceneConnection({
-        sourceSceneKey: BASIC_SCENE.key,
-        actionKey: "action-key-a",
-        targetSceneKey: "zut",
-      });
-
-      expect(sceneRepository.get).toHaveBeenCalledWith(BASIC_SCENE.key);
-      expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
-        BASIC_SCENE.key,
-        {
-          actions: [
-            {
-              key: "action-key-a",
-              type: "simple",
-              text: "action A",
-              targets: [{ sceneKey: "zit", probability: 100 }],
-            },
-            {
-              key: "action-key-b",
-              type: "simple",
-              text: "action B",
-              targets: [{ sceneKey: "flûte", probability: 100 }],
-            },
-          ],
-        },
-      );
-    });
-
-    test("should do nothing when given invalid action key", async () => {
-      sceneRepository.get.mockResolvedValue({
-        ...BASIC_SCENE,
-        actions: [
-          {
-            key: "action-key-a",
-            type: "simple",
-            text: "action A",
-            targets: [{ sceneKey: "zut", probability: 100 }],
-          },
-          {
-            key: "action-key-b",
-            type: "simple",
-            text: "action B",
-            targets: [{ sceneKey: "flûte", probability: 100 }],
-          },
-        ],
-      });
-
-      await builderService.removeSceneConnection({
-        sourceSceneKey: "tutu",
-        actionKey: "key-that-does-not-exist",
-        targetSceneKey: "n'importe quoi",
-      });
-
-      expect(sceneRepository.get).toHaveBeenCalledWith("tutu");
-      expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
-        BASIC_SCENE.key,
-        {
+  describe("removeSceneConnections", () => {
+    test("should remove one connection", async () => {
+      sceneRepository.getScenesByKey.mockResolvedValue({
+        tutu: factory.scene({
+          key: "tutu",
           actions: [
             {
               key: "action-key-a",
@@ -374,12 +261,152 @@ describe("builder-service", () => {
               targets: [{ sceneKey: "flûte", probability: 100 }],
             },
           ],
+        }),
+      });
+      await builderService.removeSceneConnections([
+        {
+          sourceSceneKey: "tutu",
+          actionKey: "action-key-a",
+          targetSceneKey: "zut",
         },
-      );
+      ]);
+
+      expect(sceneRepository.getScenesByKey).toHaveBeenCalledWith(["tutu"]);
+      expect(localRepository.updatePartialScene).toHaveBeenCalledWith("tutu", {
+        actions: [
+          {
+            key: "action-key-a",
+            type: "simple",
+            text: "action A",
+            targets: [],
+          },
+          {
+            key: "action-key-b",
+            type: "simple",
+            text: "action B",
+            targets: [{ sceneKey: "flûte", probability: 100 }],
+          },
+        ],
+      });
+    });
+
+    test("should remove multiple connections - complex case", async () => {
+      const firstScene = factory.scene({
+        key: "first-scene-key",
+        actions: [
+          {
+            key: "action-key-a",
+            type: "simple",
+            text: "action A",
+            targets: [
+              { sceneKey: "zut", probability: 40 },
+              { sceneKey: "crotte", probability: 55 },
+              { sceneKey: "fichtre", probability: 5 },
+            ],
+          },
+          {
+            key: "action-key-b",
+            type: "simple",
+            text: "action B",
+            targets: [{ sceneKey: "flûte", probability: 100 }],
+          },
+        ],
+      });
+      const secondScene = factory.scene({
+        key: "second-scene-key",
+        actions: [
+          {
+            key: "scene-2-action-key-a",
+            type: "simple",
+            text: "action A",
+            targets: [{ sceneKey: "diantre", probability: 100 }],
+          },
+          {
+            key: "scene-2-action-key-b",
+            type: "simple",
+            text: "action B",
+            targets: [
+              { sceneKey: "sapristi", probability: 30 },
+              { sceneKey: "purée", probability: 60 },
+              { sceneKey: "cornegidouille", probability: 10 },
+            ],
+          },
+        ],
+      });
+
+      sceneRepository.getScenesByKey.mockResolvedValue({
+        "first-scene-key": firstScene,
+        "second-scene-key": secondScene,
+      });
+
+      const updatedScenes = await builderService.removeSceneConnections([
+        {
+          // first scene - first action - first target
+          sourceSceneKey: "first-scene-key",
+          actionKey: "action-key-a",
+          targetSceneKey: "zut",
+        },
+        {
+          // first scene - first action - third target
+          sourceSceneKey: "first-scene-key",
+          actionKey: "action-key-a",
+          targetSceneKey: "fichtre",
+        },
+        {
+          // first scene - second action - first (and only) target
+          sourceSceneKey: "first-scene-key",
+          actionKey: "action-key-b",
+          targetSceneKey: "flûte",
+        },
+        {
+          // second scene - second action - second target
+          sourceSceneKey: "second-scene-key",
+          actionKey: "scene-2-action-key-b",
+          targetSceneKey: "purée",
+        },
+      ]);
+
+      expect(sceneRepository.getScenesByKey).toHaveBeenCalledWith([
+        "first-scene-key",
+        "second-scene-key",
+      ]);
+      expect(localRepository.updatePartialScene).toHaveBeenCalledTimes(2);
+      expect(updatedScenes[firstScene.key]?.actions).toStrictEqual([
+        {
+          key: "action-key-a",
+          type: "simple",
+          text: "action A",
+          targets: [{ sceneKey: "crotte", probability: 100 }], // Probability is set back to 100% since it's the last one
+        },
+        {
+          key: "action-key-b",
+          type: "simple",
+          text: "action B",
+          targets: [],
+        },
+      ]);
+      expect(updatedScenes[secondScene.key]?.actions).toStrictEqual([
+        {
+          key: "scene-2-action-key-a",
+          type: "simple",
+          text: "action A",
+          targets: [{ sceneKey: "diantre", probability: 100 }],
+        },
+        {
+          key: "scene-2-action-key-b",
+          type: "simple",
+          text: "action B",
+          targets: [
+            // middle one deleted and probabilities of the others remain unchanged
+            { sceneKey: "sapristi", probability: 30 },
+            { sceneKey: "cornegidouille", probability: 10 },
+          ],
+        },
+      ]);
     });
   });
 
-  describe("update target probability", () => {
+  describe("updateTargetProbability", () => {
     test("should fail if target does not exist ", async () => {
       sceneRepository.get.mockResolvedValue(
         factory.scene({

@@ -19,11 +19,18 @@ export type BuilderServicePort = {
     actionKey: string;
     destinationSceneKey: string;
   }) => Promise<Scene>;
-  removeSceneConnection: (props: {
-    sourceSceneKey: string;
-    actionKey: string;
-    targetSceneKey: string;
-  }) => Promise<Scene>;
+  /**
+   * * Delete connections to specified targets (can be multiple) on a specified action
+   * @param connections An array containing information about the connections to delete : source scene key, action key and target scene key
+   * @returns A record with the updated scenes by key
+   */
+  removeSceneConnections: (
+    connections: {
+      sourceSceneKey: string;
+      actionKey: string;
+      targetSceneKey: string;
+    }[],
+  ) => Promise<Record<string, Scene>>;
   updateTargetProbability: (props: {
     sourceSceneKey: string;
     actionKey: string;

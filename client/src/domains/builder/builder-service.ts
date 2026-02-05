@@ -107,34 +107,75 @@ export const _getBuilderService = ({
       return { ...sourceScene, actions };
     },
 
-    removeSceneConnection: async ({
-      sourceSceneKey,
-      actionKey,
-      targetSceneKey,
-    }) => {
-      const sourceScene = await sceneRepository.get(sourceSceneKey);
-      if (!sourceScene) throw new EntityNotExistError("scene", sourceSceneKey);
+    removeSceneConnections: async (connections) => {
+      const sourceSceneKeys = [
+        ...new Set(connections.map((c) => c.sourceSceneKey)),
+      ];
+      // 1. Retrieve fresh data for all scenes
+      const sourceScenesByKey =
+        await sceneRepository.getScenesByKey(sourceSceneKeys);
 
-      const actions = sourceScene.actions.map((action) => {
-        if (action.key === actionKey) {
-          const targets = action.targets.filter(
-            (t) => t.sceneKey !== targetSceneKey,
-          );
-          // If only one target remains, set its probability to 100%
-          if (targets.length === 1) {
-            targets[0]!.probability = 100;
+      const missingScenes = sourceSceneKeys.filter(
+        (key) => !Object.keys(sourceScenesByKey).includes(key),
+      );
+      if (!sourceSceneKeys)
+        throw new AggregateError(
+          missingScenes.map((k) => new EntityNotExistError("scene", k)),
+        );
+
+      // 2. Aggregate targets by action by scene to be able to easily produce update statements
+      // This is important because if don't handle updates in bulk by scene the first updates would be overridden by subsequent ones
+      // (because actions are a part of a scene and Dexie doesn't allow to update only part of a nested object)
+      const targetsToRemoveBySceneByAction = connections.reduce<
+        Record<string, Record<string, string[]>>
+      >((acc, c) => {
+        const targetsToRemoveByAction = acc[c.sourceSceneKey] ?? {};
+        const targetsToRemove = targetsToRemoveByAction[c.actionKey] ?? [];
+        return {
+          ...acc,
+          [c.sourceSceneKey]: {
+            ...targetsToRemoveByAction,
+            [c.actionKey]: [...targetsToRemove, c.targetSceneKey],
+          },
+        };
+      }, {});
+
+      const updatedScenesByKey: Record<string, Scene> = {};
+
+      // 3. Compute update statements (via repository)
+      const updateOperations = Object.entries(
+        targetsToRemoveBySceneByAction,
+      ).map(([sourceSceneKey, targetsToRemoveByAction]) => {
+        const sourceScene = sourceScenesByKey[sourceSceneKey]!;
+
+        const actions = sourceScene.actions.map((action) => {
+          if (action.key in targetsToRemoveByAction) {
+            const targetsToRemove = targetsToRemoveByAction[action.key]!;
+            // Filter out all targets to remove
+            const targets = action.targets.filter(
+              (t) => !targetsToRemove.includes(t.sceneKey),
+            );
+
+            // If only one target remains, set its probability to 100%
+            if (targets.length === 1) {
+              targets[0]!.probability = 100;
+            }
+            return {
+              ...action,
+              targets: targets,
+            };
           }
-          return {
-            ...action,
-            targets: targets,
-          };
-        }
-        return action;
+          return action;
+        });
+
+        updatedScenesByKey[sourceScene.key] = { ...sourceScene, actions };
+        return localRepository.updatePartialScene(sourceScene.key, { actions });
       });
 
-      await localRepository.updatePartialScene(sourceScene.key, { actions });
+      // Update all scenes concurrently
+      await Promise.all(updateOperations);
 
-      return { ...sourceScene, actions };
+      return updatedScenesByKey;
     },
 
     updateTargetProbability: async ({

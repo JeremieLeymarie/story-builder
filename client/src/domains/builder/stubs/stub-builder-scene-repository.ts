@@ -11,5 +11,6 @@ export type MockBuilderSceneRepository = MockPort<BuilderSceneRepositoryPort>;
 export const getStubBuilderSceneRepository =
   (): MockBuilderSceneRepository => ({
     get: vi.fn(() => Promise.resolve(factory.scene())),
+    getScenesByKey: vi.fn(),
     bulkAdd: vi.fn(() => Promise.resolve([nanoid()])),
   });

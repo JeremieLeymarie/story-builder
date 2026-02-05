@@ -56,7 +56,7 @@ export const actionToEdgesAdapter = (action: Action, sceneKey: string) =>
       }) satisfies BuilderEdge,
   );
 
-const sceneToEdgesAdapter = (scene: Scene): BuilderEdge[] => {
+export const sceneToEdgesAdapter = (scene: Scene): BuilderEdge[] => {
   const edges = scene.actions
     .flatMap((action) => actionToEdgesAdapter(action, scene.key))
     .filter((action) => !!action.target);
