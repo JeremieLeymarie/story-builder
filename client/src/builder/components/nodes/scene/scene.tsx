@@ -12,8 +12,23 @@ import { Button } from "@/design-system/primitives";
 import { useBuilderEditorStore } from "@/builder/hooks/use-builder-editor-store";
 import { useCopyPaste } from "@/builder/hooks/use-copy-paste";
 import { useBuilderContext } from "@/builder/hooks/use-builder-context";
+import { Action } from "@/lib/storage/domain";
 
 type SceneNodeProps = NodeProps<BuilderNode>;
+
+const DebugAction = ({ action }: { action: Action }) => {
+  const { debug } = useBuilderContext();
+
+  if (!debug) return null;
+  return (
+    <div>
+      <p>
+        <span className="font-semibold">Action key:</span> {action.key}
+      </p>
+      <p className="text-muted-foreground">{action.targets.length} targets</p>
+    </div>
+  );
+};
 
 export const SceneNode = ({ data, selected }: SceneNodeProps) => {
   const openEditor = useBuilderEditorStore((state) => state.open);
@@ -24,7 +39,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
   return (
     <Card
       className={cn(
-        "group relative w-[375px]",
+        "group relative w-93.75",
         isFirstScene && "bg-primary/60",
         selected && "border border-black",
       )}
@@ -70,25 +85,21 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
       </CardHeader>
       {data.actions.length > 0 && (
         <CardContent className="flex flex-col gap-2">
-          {data.actions.map(({ text, key }) => (
+          {data.actions.map((action) => (
             <div
-              key={key}
+              key={action.key}
               className={cn(
                 "border-primary relative border p-2",
-                !text && "text-muted-foreground italic",
+                !action.text && "text-muted-foreground italic",
               )}
             >
-              {text || "..."}
-              {debug && (
-                <div>
-                  <span className="font-semibold">Action key:</span> {key}
-                </div>
-              )}
+              {action.text || "..."}
+              <DebugAction action={action} />
               <Handle
                 type="source"
-                id={key}
+                id={action.key}
                 position={Position.Right}
-                className="h-[15px]! w-[15px]!"
+                className="h-3.75! w-3.75!"
               />
             </div>
           ))}
@@ -97,7 +108,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
       <Handle
         type="target"
         position={Position.Left}
-        className="h-[15px]! w-[15px]!"
+        className="h-3.75! w-3.75!"
       />
     </Card>
   );

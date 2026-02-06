@@ -17,6 +17,7 @@ import {
 } from "./errors";
 import { ImportData } from "@/services/common/schema";
 import { produce } from "immer";
+import { N } from "@/lib/number";
 
 export const _getBuilderService = ({
   localRepository,
@@ -173,6 +174,18 @@ export const _getBuilderService = ({
       await localRepository.updatePartialScene(sourceScene.key, { actions });
 
       return { ...sourceScene, actions };
+    },
+
+    checkActionTargetsValidity: (action) => {
+      // An action with no targets is always valid
+      if (action.targets.length === 0) return true;
+
+      const totalPercentages = action.targets.reduce(
+        (acc, target) => acc + target.probability,
+        0,
+      );
+
+      return N.areFloatsEqual(totalPercentages, 100);
     },
 
     createStoryWithFirstScene: async (
