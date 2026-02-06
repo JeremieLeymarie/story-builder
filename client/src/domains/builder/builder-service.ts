@@ -107,9 +107,9 @@ export const _getBuilderService = ({
       return { ...sourceScene, actions };
     },
 
-    removeSceneConnections: async (connections) => {
+    removeSceneConnections: async (connectionsToRemove) => {
       const sourceSceneKeys = [
-        ...new Set(connections.map((c) => c.sourceSceneKey)),
+        ...new Set(connectionsToRemove.map((c) => c.sourceSceneKey)),
       ];
       // 1. Retrieve fresh data for all scenes
       const sourceScenesByKey =
@@ -126,7 +126,7 @@ export const _getBuilderService = ({
       // 2. Aggregate targets by action by scene to be able to easily produce update statements
       // This is important because if don't handle updates in bulk by scene the first updates would be overridden by subsequent ones
       // (because actions are a part of a scene and Dexie doesn't allow to update only part of a nested object)
-      const targetsToRemoveBySceneByAction = connections.reduce<
+      const targetsToRemoveBySceneByAction = connectionsToRemove.reduce<
         Record<string, Record<string, string[]>>
       >((acc, c) => {
         const targetsToRemoveByAction = acc[c.sourceSceneKey] ?? {};
