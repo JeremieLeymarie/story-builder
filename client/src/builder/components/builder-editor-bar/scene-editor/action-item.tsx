@@ -39,6 +39,7 @@ import {
   EditActionsForm,
   EditActionsSchema,
 } from "@/builder/hooks/use-edit-actions-form";
+import { useRandomEventStore } from "@/builder/hooks/use-random-event-store";
 
 const SceneSelector = ({
   onChange,
@@ -121,7 +122,6 @@ export const ActionItem = ({
   const [open, setOpen] = useState(false);
   const { story } = useBuilderContext();
   const [showCondition, setShowCondition] = useState(actionField.showCondition);
-
   const onShowConditionChange = (
     value: string,
     formState: UseFormStateReturn<EditActionsSchema>,
@@ -154,7 +154,18 @@ export const ActionItem = ({
           variant="outline"
           size="icon"
           type="button"
-          onClick={() => setOpen((prev) => !prev)}
+          onClick={() => {
+            setOpen((prev) => !prev);
+            if (open) {
+              useRandomEventStore.setState({
+                action: null,
+              });
+            } else {
+              useRandomEventStore.setState({
+                action: actionField,
+              });
+            }
+          }}
         >
           <SettingsIcon />
         </Button>
