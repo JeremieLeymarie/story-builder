@@ -35,31 +35,41 @@ const hashEdgeId = ({
   return `${sceneKey}${EDGE_ID_SEPARATOR}${actionKey}${EDGE_ID_SEPARATOR}${targetSceneKey}`;
 };
 
-export const actionToEdgesAdapter = (action: Action, sceneKey: string) =>
-  action.targets.map(
-    (target) =>
-      ({
-        type: "edge",
-        sourceHandle: action.key,
-        source: sceneKey,
-        target: target.sceneKey,
-        targetHandle: null,
-        id: hashEdgeId({
-          sceneKey: sceneKey,
-          actionKey: action.key,
-          targetSceneKey: target.sceneKey,
-        }),
-        data: {
-          probability: target.probability,
-          hasSiblings: action.targets.length > 1,
-        },
-      }) satisfies BuilderEdge,
+export const targetToEdgeAdapter = ({
+  target,
+  action,
+  sceneKey,
+}: {
+  target: Action["targets"][number];
+  action: Action;
+  sceneKey: string;
+}) =>
+  ({
+    type: "edge",
+    sourceHandle: action.key,
+    source: sceneKey,
+    target: target.sceneKey,
+    targetHandle: null,
+    id: hashEdgeId({
+      sceneKey: sceneKey,
+      actionKey: action.key,
+      targetSceneKey: target.sceneKey,
+    }),
+    data: {
+      probability: target.probability,
+      hasSiblings: action.targets.length > 1,
+    },
+  }) satisfies BuilderEdge;
+
+const actionToEdgesAdapter = (action: Action, sceneKey: string) =>
+  action.targets.map((target) =>
+    targetToEdgeAdapter({ target, action, sceneKey }),
   );
 
 export const sceneToEdgesAdapter = (scene: Scene): BuilderEdge[] => {
   const edges = scene.actions
     .flatMap((action) => actionToEdgesAdapter(action, scene.key))
-    .filter((action) => !!action.target);
+    .filter((edge) => !!edge.target);
 
   return edges;
 };

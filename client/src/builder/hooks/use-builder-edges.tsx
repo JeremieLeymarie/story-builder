@@ -5,17 +5,14 @@ import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
 import { useBuilderContext } from "./use-builder-context";
 import { Scene } from "@/lib/storage/domain";
 import {
-  actionToEdgesAdapter,
   sceneToEdgesAdapter,
   sceneToNodeAdapter,
+  targetToEdgeAdapter,
 } from "../adapters";
-
-const isEdgeFromAction = (edge: BuilderEdge, actionKey: string) =>
-  edge.sourceHandle === actionKey;
 
 // TODO: test this
 export const useBuilderEdges = () => {
-  const { setEdges, updateNodeData, updateEdgeData } = useReactFlow<
+  const { updateNodeData, updateEdgeData, addEdges } = useReactFlow<
     BuilderNode,
     BuilderEdge
   >();
@@ -24,18 +21,13 @@ export const useBuilderEdges = () => {
   const { screenToFlowPosition } = useReactFlow();
   const { builderService, story } = useBuilderContext();
 
-  const _updateEdges = (updatedScene: Scene, sourceActionKey: string) => {
-    const sourceAction = updatedScene.actions.find(
-      (a) => a.key === sourceActionKey,
-    );
-    if (!sourceAction) throw new Error(`Action not found`);
-
-    const edges = actionToEdgesAdapter(sourceAction, updatedScene.key);
-    // 1. Filter out existing edges from action
-    // 2. Re-add all updated edges
-    setEdges((prev) =>
-      prev.filter((e) => !isEdgeFromAction(e, sourceActionKey)).concat(edges),
-    );
+  const _updateNodeAndEdges = (updatedScene: Scene) => {
+    const node = sceneToNodeAdapter({ scene: updatedScene, story });
+    const edges = sceneToEdgesAdapter(updatedScene);
+    console.log({ edges });
+    // This is a little naive, maybe batching these updates in setEdges + setNodes calls would be better for performance
+    updateNodeData(node.id, node.data);
+    edges.forEach((edge) => updateEdgeData(edge.id, edge.data));
   };
 
   const onConnect = async (connection: Connection) => {
@@ -53,7 +45,17 @@ export const useBuilderEdges = () => {
         destinationSceneKey: targetSceneKey,
         actionKey: sourceActionKey,
       });
-      _updateEdges(scene, sourceActionKey);
+      const action = scene.actions.find((a) => a.key === sourceActionKey)!;
+      const target = action.targets.find((t) => t.sceneKey === targetSceneKey)!;
+      const edge = targetToEdgeAdapter({
+        target,
+        action,
+        sceneKey: sourceSceneKey,
+      });
+
+      // Update React Flow
+      addEdges([edge]);
+      _updateNodeAndEdges(scene);
     } catch (e) {
       handleError(e);
     }
@@ -131,14 +133,9 @@ export const useBuilderEdges = () => {
         }),
       );
       // TODO: if probabilities don't add up to 100% here we should set an error
-      Object.values(updatedScenesByKey).forEach((updatedScene) => {
-        const node = sceneToNodeAdapter({ scene: updatedScene, story });
-        const edges = sceneToEdgesAdapter(updatedScene);
 
-        // This is a little naive, maybe batching these updates in setEdges + setNodes calls would be better for performance
-        updateNodeData(node.id, node.data);
-        edges.forEach((edge) => updateEdgeData(edge.id, edge.data));
-      });
+      // Update React Flow
+      Object.values(updatedScenesByKey).forEach(_updateNodeAndEdges);
     } catch (err) {
       handleError(err);
     }
