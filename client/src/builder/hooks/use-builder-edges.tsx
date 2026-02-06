@@ -24,7 +24,7 @@ export const useBuilderEdges = () => {
   const _updateNodeAndEdges = (updatedScene: Scene) => {
     const node = sceneToNodeAdapter({ scene: updatedScene, story });
     const edges = sceneToEdgesAdapter(updatedScene);
-    console.log({ edges });
+
     // This is a little naive, maybe batching these updates in setEdges + setNodes calls would be better for performance
     updateNodeData(node.id, node.data);
     edges.forEach((edge) => updateEdgeData(edge.id, edge.data));
