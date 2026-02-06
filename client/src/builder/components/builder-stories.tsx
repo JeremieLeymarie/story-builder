@@ -29,7 +29,7 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
         All the stories you've created are here.
       </p>
       <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap">
-        <Card className="h-[225px] w-[275px] border-dashed">
+        <Card className="h-56.25 w-68.75 border-dashed">
           <CardHeader>
             <CardTitle>New story</CardTitle>
           </CardHeader>

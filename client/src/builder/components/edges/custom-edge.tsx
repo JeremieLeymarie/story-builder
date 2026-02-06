@@ -1,3 +1,4 @@
+import { useBuilderContext } from "@/builder/hooks/use-builder-context";
 import { useEdgeProbability } from "@/builder/hooks/use-edge-probability";
 import { BuilderEdge } from "@/builder/types";
 import { Input } from "@/design-system/primitives";
@@ -9,7 +10,7 @@ import {
   type EdgeProps,
 } from "@xyflow/react";
 
-const CustomEdge = ({
+const InnerEdge = ({
   id,
   sourceX,
   sourceY,
@@ -32,6 +33,7 @@ const CustomEdge = ({
     targetY,
     targetPosition,
   });
+  const { debug } = useBuilderContext();
   const { inputRef, isFocused, setIsFocused, onChange, value, hasError } =
     useEdgeProbability({
       source,
@@ -62,7 +64,7 @@ const CustomEdge = ({
                 setIsFocused(true);
               }}
               className={cn(
-                "flex h-10 w-16 origin-center cursor-pointer items-center justify-center rounded border bg-white text-base",
+                "relative flex h-10 w-16 origin-center cursor-pointer items-center justify-center rounded border bg-white text-base",
                 hasError && "border-destructive text-destructive",
               )}
             >
@@ -79,11 +81,24 @@ const CustomEdge = ({
               ) : (
                 <span>{value}%</span>
               )}
+              {debug && (
+                <span className="text-muted-foreground absolute top-10 text-xs">
+                  {id}
+                </span>
+              )}
             </div>
           </div>
         </EdgeLabelRenderer>
       )}
     </>
+  );
+};
+
+const CustomEdge = (props: EdgeProps<BuilderEdge>) => {
+  // We need to have an extra layer to pass a key, forcing to re-mount the component when the probability change
+  // This avoids re-setting the state in a useEffect (https://react.dev/learn/you-might-not-need-an-effect)
+  return (
+    <InnerEdge key={`${props.id}-${props.data?.probability}`} {...props} />
   );
 };
 
