@@ -15,7 +15,7 @@ import { useBuilderEditorStore } from "../hooks/use-builder-editor-store";
 import { EditorBar } from "./builder-editor-bar/editor-bar";
 import { BuilderToolbar } from "./builder-toolbar";
 import CustomEdge from "./edges/custom-edge";
-import { BuilderErrors } from "./builder-errors";
+import { BuilderErrorsToolbar } from "./builder-errors-toolbar";
 
 const nodeTypes = { scene: SceneNode } as const;
 const edgeTypes = { edge: CustomEdge } as const;
@@ -66,7 +66,7 @@ export const Builder = () => (
     <div className="absolute top-5 left-5 flex max-w-67.5 flex-col gap-4">
       <BuilderToolbar />
       <ActionsBar />
-      <BuilderErrors />
+      <BuilderErrorsToolbar />
     </div>
     <div className="absolute top-5 right-5 flex flex-col gap-4">
       <EditorBar />
