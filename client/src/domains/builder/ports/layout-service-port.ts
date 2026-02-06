@@ -1,9 +1,8 @@
-import { BuilderNode } from "@/builder/types";
-import { Edge } from "@xyflow/react";
+import { BuilderNode, BuilderEdge } from "@/builder/types";
 
 export type LayoutServicePort = {
   computeAutoLayout: (props: {
     nodes: BuilderNode[];
-    edges: Edge[];
+    edges: BuilderEdge[];
   }) => Promise<BuilderNode[]>;
 };

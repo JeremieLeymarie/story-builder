@@ -10,7 +10,6 @@ import { Toaster } from "@/design-system/primitives/sonner";
 import { getUserService } from "@/domains/user/user-service";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 import { MobileNavbar } from "@/navbar/mobile-navbar";
-import { MigrationProvider } from "@/providers/migration-provider";
 import { useSync } from "@/navbar/hooks/use-sync";
 import { BackdropLoader } from "@/design-system/components";
 
@@ -35,31 +34,29 @@ const Component = () => {
     <TooltipProvider>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-          <MigrationProvider>
-            <div className="relative flex h-screen w-screen flex-col overflow-x-hidden">
-              {isMobile ? (
-                <MobileNavbar
-                  user={user}
-                  loadRemoteData={load}
-                  saveLocalData={save}
-                />
+          <div className="relative flex h-screen w-screen flex-col overflow-x-hidden">
+            {isMobile ? (
+              <MobileNavbar
+                user={user}
+                loadRemoteData={load}
+                saveLocalData={save}
+              />
+            ) : (
+              <DesktopNavbar
+                user={user}
+                loadRemoteData={load}
+                saveLocalData={save}
+              />
+            )}
+            <div className="relative w-full flex-1">
+              {state.loading ? (
+                <BackdropLoader text="Loading application data..." />
               ) : (
-                <DesktopNavbar
-                  user={user}
-                  loadRemoteData={load}
-                  saveLocalData={save}
-                />
+                <Outlet />
               )}
-              <div className="relative w-full flex-1">
-                {state.loading ? (
-                  <BackdropLoader text="Loading application data..." />
-                ) : (
-                  <Outlet />
-                )}
-              </div>
             </div>
-            <Toaster closeButton />
-          </MigrationProvider>
+          </div>
+          <Toaster closeButton />
         </ThemeProvider>
       </QueryClientProvider>
     </TooltipProvider>

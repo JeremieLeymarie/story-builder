@@ -1,8 +1,21 @@
 import z from "zod";
 
-export const baseActionSchema = z.object({
+const baseActionSchema = z.object({
+  key: z.nanoid(),
   text: z.string({ message: "Text is required" }),
-  targets: z.array(z.object({ sceneKey: z.nanoid(), probability: z.number() })),
+  targets: z
+    .array(z.object({ sceneKey: z.nanoid(), probability: z.number() }))
+    .refine(
+      (values) => {
+        const totalProbabilities = values.reduce(
+          (acc, v) => acc + v.probability,
+          0,
+        );
+
+        return totalProbabilities > 0;
+      },
+      { error: "All targets of an action must add up to at least 1%" },
+    ),
 });
 
 export const actionSchema = z.discriminatedUnion("type", [

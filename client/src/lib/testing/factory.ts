@@ -142,6 +142,7 @@ const _sceneFactory = {
     Array(3)
       .fill(null)
       .map(() => ({
+        key: nanoid(),
         text: faker.word.sample(),
         targets: [
           {

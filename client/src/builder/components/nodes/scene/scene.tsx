@@ -6,23 +6,40 @@ import {
 } from "@/design-system/primitives/card";
 import { Handle, NodeProps, Position } from "@xyflow/react";
 import { EditIcon } from "lucide-react";
-import { SceneNodeType } from "../../../types";
+import { BuilderNode } from "../../../types";
 import { cn } from "@/lib/style";
 import { Button } from "@/design-system/primitives";
 import { useBuilderEditorStore } from "@/builder/hooks/use-builder-editor-store";
 import { useCopyPaste } from "@/builder/hooks/use-copy-paste";
+import { useBuilderContext } from "@/builder/hooks/use-builder-context";
+import { Action } from "@/lib/storage/domain";
 
-export type SceneNodeProps = NodeProps<SceneNodeType>;
+type SceneNodeProps = NodeProps<BuilderNode>;
+
+const DebugAction = ({ action }: { action: Action }) => {
+  const { debug } = useBuilderContext();
+
+  if (!debug) return null;
+  return (
+    <div>
+      <p>
+        <span className="font-semibold">Action key:</span> {action.key}
+      </p>
+      <p className="text-muted-foreground">{action.targets.length} targets</p>
+    </div>
+  );
+};
 
 export const SceneNode = ({ data, selected }: SceneNodeProps) => {
   const openEditor = useBuilderEditorStore((state) => state.open);
   const { isFirstScene, builderParams, isEditable = true, ...scene } = data;
   const { onAuxClick } = useCopyPaste();
+  const { debug } = useBuilderContext();
 
   return (
     <Card
       className={cn(
-        "group w-[375px]",
+        "group relative w-93.75",
         isFirstScene && "bg-primary/60",
         selected && "border border-black",
       )}
@@ -43,10 +60,15 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
               Empty Scene
             </CardTitle>
           )}
+          {debug && (
+            <div className="absolute -top-8 -left-0.5">
+              <span className="font-semibold">Scene key:</span> {data.key}
+            </div>
+          )}
           {isEditable && (
             <Button
-              className="invisible aspect-square group-hover:visible"
-              size="icon"
+              className="hover:bg-accent/30 invisible group-hover:visible"
+              size="xs"
               variant="ghost"
               onClick={() =>
                 openEditor({
@@ -55,7 +77,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
                 })
               }
             >
-              <EditIcon size="20px" />
+              <EditIcon />
             </Button>
           )}
         </div>
@@ -63,20 +85,21 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
       </CardHeader>
       {data.actions.length > 0 && (
         <CardContent className="flex flex-col gap-2">
-          {data.actions.map(({ text }, i) => (
+          {data.actions.map((action) => (
             <div
+              key={action.key}
               className={cn(
                 "border-primary relative border p-2",
-                !text && "text-muted-foreground italic",
+                !action.text && "text-muted-foreground italic",
               )}
-              key={text || "..."}
             >
-              {text || "..."}
+              {action.text || "..."}
+              <DebugAction action={action} />
               <Handle
                 type="source"
-                id={`${data.key}-${i}`}
+                id={action.key}
                 position={Position.Right}
-                className="!h-[15px] !w-[15px]"
+                className="h-3.75! w-3.75!"
               />
             </div>
           ))}
@@ -85,7 +108,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
       <Handle
         type="target"
         position={Position.Left}
-        className="!h-[15px] !w-[15px]"
+        className="h-3.75! w-3.75!"
       />
     </Card>
   );

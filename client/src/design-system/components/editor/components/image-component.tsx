@@ -43,7 +43,7 @@ const BrokenImage = () => {
   );
 };
 
-export const ImageComponent = ({
+const ImageComponent = ({
   src,
   altText,
   nodeKey,

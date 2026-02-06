@@ -1,10 +1,9 @@
-import { beforeAll, beforeEach, describe, expect, it, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import {
   getLocalRepositoryStub,
   MockLocalRepository,
 } from "@/repositories/stubs/local-repository-stub";
-import { BuilderNode } from "@/builder/types";
-import { Edge } from "@xyflow/react";
+import { BuilderNode, BuilderEdge } from "@/builder/types";
 import {
   getImportServiceStub,
   MockImportService,
@@ -31,6 +30,7 @@ import {
 import { getTestFactory } from "@/lib/testing/factory";
 import { EntityNotExistError } from "@/domains/errors";
 import {
+  ActionTargetNotFound,
   CannotDeleteFirstSceneError,
   DuplicationMissingPositionError,
 } from "../errors";
@@ -38,7 +38,7 @@ import {
   getStubBuilderSceneRepository,
   MockBuilderSceneRepository,
 } from "../stubs/stub-builder-scene-repository";
-import { Scene } from "@/lib/storage/domain";
+import { Action, Scene } from "@/lib/storage/domain";
 
 const factory = getTestFactory();
 
@@ -71,7 +71,7 @@ describe("builder-service", () => {
   });
 
   describe("updateSceneBuilderPosition", () => {
-    it("should update node position", async () => {
+    test("should update node position", async () => {
       await builderService.updateSceneBuilderPosition("tutu", {
         x: 42,
         y: 42,
@@ -84,11 +84,45 @@ describe("builder-service", () => {
   });
 
   describe("addSceneConnection", () => {
-    it("should add connection between scenes", async () => {
+    test("should do nothing when given invalid action key", async () => {
+      sceneRepository.get.mockResolvedValue(BASIC_SCENE);
+
       await builderService.addSceneConnection({
         sourceSceneKey: BASIC_SCENE.key,
         destinationSceneKey: "dest",
-        actionIndex: 0,
+        actionKey: "key-that-does-not-exist",
+      });
+
+      expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
+        BASIC_SCENE.key,
+        {
+          actions: BASIC_SCENE.actions,
+        },
+      );
+    });
+
+    test("should do nothing when target already exists", async () => {
+      sceneRepository.get.mockResolvedValue(
+        factory.scene({
+          key: "vroum",
+          actions: [
+            {
+              key: "action-key",
+              type: "simple",
+              text: "action",
+              targets: [
+                { sceneKey: "dest-key", probability: 20 },
+                { sceneKey: "other-dest-key", probability: 80 },
+              ],
+            },
+          ],
+        }),
+      );
+
+      await builderService.addSceneConnection({
+        sourceSceneKey: "vroum",
+        destinationSceneKey: "dest-key",
+        actionKey: "action-key",
       });
 
       expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
@@ -96,171 +130,490 @@ describe("builder-service", () => {
         {
           actions: [
             {
+              key: "action-key",
+              type: "simple",
+              text: "action",
+              targets: [
+                { sceneKey: "dest-key", probability: 20 },
+                { sceneKey: "other-dest-key", probability: 80 },
+              ],
+            },
+          ],
+        },
+      );
+    });
+
+    test("should add connection at 100% when it's the first one", async () => {
+      sceneRepository.get.mockResolvedValue(
+        factory.scene({
+          key: "scene-key",
+          actions: [
+            { key: "action-a", type: "simple", text: "action A", targets: [] },
+            { key: "action-b", type: "simple", text: "action B", targets: [] },
+          ],
+        }),
+      );
+
+      await builderService.addSceneConnection({
+        sourceSceneKey: "scene-key",
+        destinationSceneKey: "dest",
+        actionKey: "action-a",
+      });
+
+      expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
+        "scene-key",
+        {
+          actions: [
+            {
+              key: "action-a",
               type: "simple",
               text: "action A",
               targets: [{ sceneKey: "dest", probability: 100 }],
             },
-            { type: "simple", text: "action B", targets: [] },
+            {
+              key: "action-b",
+
+              type: "simple",
+              text: "action B",
+              targets: [],
+            },
           ],
         },
       );
     });
 
-    it("should do nothing when given out of bounds index", async () => {
-      await builderService.addSceneConnection({
-        sourceSceneKey: BASIC_SCENE.key,
-        destinationSceneKey: "dest",
-        actionIndex: 42,
-      });
-
-      expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
-        BASIC_SCENE.key,
-        {
-          actions: BASIC_SCENE.actions,
-        },
+    test("should set probability to 0 when adding another edge", async () => {
+      sceneRepository.get.mockResolvedValue(
+        factory.scene({
+          key: "scene-a",
+          actions: [
+            {
+              key: "action-a",
+              type: "conditional",
+              targets: [{ sceneKey: "dest-a", probability: 100 }],
+              text: "action-a",
+              condition: {
+                sceneKey: "plouf",
+                type: "user-did-visit",
+              },
+            },
+            {
+              key: "action-b",
+              type: "simple",
+              targets: [{ sceneKey: "dest-a", probability: 100 }],
+              text: "action-b",
+            },
+          ],
+        }),
       );
-    });
 
-    it("should do nothing when given negative index", async () => {
       await builderService.addSceneConnection({
-        sourceSceneKey: BASIC_SCENE.key,
-        destinationSceneKey: "dest",
-        actionIndex: -1,
+        sourceSceneKey: "scene-a",
+        destinationSceneKey: "dest-b",
+        actionKey: "action-a",
       });
 
       expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
-        BASIC_SCENE.key,
+        "scene-a",
         {
-          actions: BASIC_SCENE.actions,
+          actions: [
+            {
+              key: "action-a",
+              type: "conditional",
+              targets: [
+                { sceneKey: "dest-a", probability: 100 },
+                { sceneKey: "dest-b", probability: 0 },
+              ],
+              text: "action-a",
+              condition: {
+                sceneKey: "plouf",
+                type: "user-did-visit",
+              },
+            },
+            {
+              key: "action-b",
+              type: "simple",
+              targets: [{ sceneKey: "dest-a", probability: 100 }],
+              text: "action-b",
+            },
+          ],
         },
       );
     });
   });
 
-  describe("removeSceneConnection", () => {
-    it("should remove connection between scenes", async () => {
-      await builderService.removeSceneConnection({
-        sourceScene: {
-          ...BASIC_SCENE,
+  describe("removeSceneConnections", () => {
+    test("should remove one connection", async () => {
+      sceneRepository.getScenesByKey.mockResolvedValue({
+        tutu: factory.scene({
+          key: "tutu",
           actions: [
             {
+              key: "action-key-a",
               type: "simple",
               text: "action A",
               targets: [{ sceneKey: "zut", probability: 100 }],
             },
             {
+              key: "action-key-b",
               type: "simple",
               text: "action B",
               targets: [{ sceneKey: "flûte", probability: 100 }],
             },
           ],
+        }),
+      });
+      await builderService.removeSceneConnections([
+        {
+          sourceSceneKey: "tutu",
+          actionKey: "action-key-a",
+          targetSceneKey: "zut",
         },
-        actionIndex: 0,
-        targetSceneKey: "zut",
+      ]);
+
+      expect(sceneRepository.getScenesByKey).toHaveBeenCalledWith(["tutu"]);
+      expect(localRepository.updatePartialScene).toHaveBeenCalledWith("tutu", {
+        actions: [
+          {
+            key: "action-key-a",
+            type: "simple",
+            text: "action A",
+            targets: [],
+          },
+          {
+            key: "action-key-b",
+            type: "simple",
+            text: "action B",
+            targets: [{ sceneKey: "flûte", probability: 100 }],
+          },
+        ],
+      });
+    });
+
+    test("should remove multiple connections - complex case", async () => {
+      const firstScene = factory.scene({
+        key: "first-scene-key",
+        actions: [
+          {
+            key: "action-key-a",
+            type: "simple",
+            text: "action A",
+            targets: [
+              { sceneKey: "zut", probability: 40 },
+              { sceneKey: "crotte", probability: 55 },
+              { sceneKey: "fichtre", probability: 5 },
+            ],
+          },
+          {
+            key: "action-key-b",
+            type: "simple",
+            text: "action B",
+            targets: [{ sceneKey: "flûte", probability: 100 }],
+          },
+        ],
+      });
+      const secondScene = factory.scene({
+        key: "second-scene-key",
+        actions: [
+          {
+            key: "scene-2-action-key-a",
+            type: "simple",
+            text: "action A",
+            targets: [{ sceneKey: "diantre", probability: 100 }],
+          },
+          {
+            key: "scene-2-action-key-b",
+            type: "simple",
+            text: "action B",
+            targets: [
+              { sceneKey: "sapristi", probability: 30 },
+              { sceneKey: "purée", probability: 60 },
+              { sceneKey: "cornegidouille", probability: 10 },
+            ],
+          },
+        ],
+      });
+
+      sceneRepository.getScenesByKey.mockResolvedValue({
+        "first-scene-key": firstScene,
+        "second-scene-key": secondScene,
+      });
+
+      const updatedScenes = await builderService.removeSceneConnections([
+        {
+          // first scene - first action - first target
+          sourceSceneKey: "first-scene-key",
+          actionKey: "action-key-a",
+          targetSceneKey: "zut",
+        },
+        {
+          // first scene - first action - third target
+          sourceSceneKey: "first-scene-key",
+          actionKey: "action-key-a",
+          targetSceneKey: "fichtre",
+        },
+        {
+          // first scene - second action - first (and only) target
+          sourceSceneKey: "first-scene-key",
+          actionKey: "action-key-b",
+          targetSceneKey: "flûte",
+        },
+        {
+          // second scene - second action - second target
+          sourceSceneKey: "second-scene-key",
+          actionKey: "scene-2-action-key-b",
+          targetSceneKey: "purée",
+        },
+      ]);
+
+      expect(sceneRepository.getScenesByKey).toHaveBeenCalledWith([
+        "first-scene-key",
+        "second-scene-key",
+      ]);
+      expect(localRepository.updatePartialScene).toHaveBeenCalledTimes(2);
+      expect(updatedScenes[firstScene.key]?.actions).toStrictEqual([
+        {
+          key: "action-key-a",
+          type: "simple",
+          text: "action A",
+          targets: [{ sceneKey: "crotte", probability: 100 }], // Probability is set back to 100% since it's the last one
+        },
+        {
+          key: "action-key-b",
+          type: "simple",
+          text: "action B",
+          targets: [],
+        },
+      ]);
+      expect(updatedScenes[secondScene.key]?.actions).toStrictEqual([
+        {
+          key: "scene-2-action-key-a",
+          type: "simple",
+          text: "action A",
+          targets: [{ sceneKey: "diantre", probability: 100 }],
+        },
+        {
+          key: "scene-2-action-key-b",
+          type: "simple",
+          text: "action B",
+          targets: [
+            // middle one deleted and probabilities of the others remain unchanged
+            { sceneKey: "sapristi", probability: 30 },
+            { sceneKey: "cornegidouille", probability: 10 },
+          ],
+        },
+      ]);
+    });
+  });
+
+  describe("updateTargetProbability", () => {
+    test("should fail if target does not exist ", async () => {
+      sceneRepository.get.mockResolvedValue(
+        factory.scene({
+          key: "source-scene-key",
+          actions: [
+            {
+              key: "source-action-key",
+              type: "simple",
+              targets: [{ sceneKey: "other-target-key", probability: 100 }],
+              text: "source action",
+            },
+          ],
+        }),
+      );
+
+      await expect(
+        builderService.updateTargetProbability({
+          sourceSceneKey: "source-scene-key",
+          actionKey: "source-action-key",
+          targetSceneKey: "target-scene-key",
+          probability: 42,
+        }),
+      ).rejects.toThrowError(ActionTargetNotFound);
+    });
+
+    test("should update probability of target", async () => {
+      sceneRepository.get.mockResolvedValue(
+        factory.scene({
+          key: "source-scene-key",
+          actions: [
+            {
+              key: "source-action-key",
+              type: "simple",
+              targets: [
+                { sceneKey: "target-scene-key", probability: 20 },
+                { sceneKey: "other-target-key", probability: 100 },
+              ],
+              text: "source action",
+            },
+            {
+              key: "other-action-key",
+              type: "simple",
+              targets: [
+                { sceneKey: "target-scene-key", probability: 80 },
+                { sceneKey: "other-target-key", probability: 20 },
+              ],
+              text: "other action",
+            },
+          ],
+        }),
+      );
+
+      await builderService.updateTargetProbability({
+        sourceSceneKey: "source-scene-key",
+        actionKey: "source-action-key",
+        targetSceneKey: "target-scene-key",
+        probability: 42,
       });
 
       expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
-        BASIC_SCENE.key,
+        "source-scene-key",
         {
           actions: [
             {
+              key: "source-action-key",
               type: "simple",
-              text: "action A",
-              targets: [],
+              targets: [
+                { sceneKey: "target-scene-key", probability: 42 }, // Nothing changed but this line
+                { sceneKey: "other-target-key", probability: 100 },
+              ],
+              text: "source action",
             },
             {
+              key: "other-action-key",
               type: "simple",
-              text: "action B",
-              targets: [{ sceneKey: "flûte", probability: 100 }],
+              targets: [
+                { sceneKey: "target-scene-key", probability: 80 },
+                { sceneKey: "other-target-key", probability: 20 },
+              ],
+              text: "other action",
             },
           ],
         },
       );
     });
+  });
 
-    it("should do nothing when given out of bounds index", async () => {
-      await builderService.removeSceneConnection({
-        sourceScene: {
-          ...BASIC_SCENE,
-          actions: [
-            {
-              type: "simple",
-              text: "action A",
-              targets: [{ sceneKey: "zut", probability: 100 }],
-            },
-            {
-              type: "simple",
-              text: "action B",
-              targets: [{ sceneKey: "flûte", probability: 100 }],
-            },
-          ],
-        },
-        actionIndex: 42,
-        targetSceneKey: "n'importe quoi",
-      });
+  describe("check action targets validity", () => {
+    const baseAction = {
+      key: "zioup",
+      type: "simple",
+      text: "action",
+      targets: [],
+    } satisfies Action;
 
-      expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
-        BASIC_SCENE.key,
-        {
-          actions: [
-            {
-              type: "simple",
-              text: "action A",
-              targets: [{ sceneKey: "zut", probability: 100 }],
-            },
-            {
-              type: "simple",
-              text: "action B",
-              targets: [{ sceneKey: "flûte", probability: 100 }],
-            },
-          ],
-        },
-      );
+    test("no targets", () => {
+      expect(
+        builderService.checkActionTargetsValidity(baseAction),
+      ).toBeTruthy();
     });
 
-    it("should do nothing when given negative index", async () => {
-      await builderService.removeSceneConnection({
-        sourceScene: {
-          ...BASIC_SCENE,
-          actions: [
-            {
-              type: "simple",
-              text: "action A",
-              targets: [{ sceneKey: "zut", probability: 100 }],
-            },
-            {
-              type: "simple",
-              text: "action B",
-              targets: [{ sceneKey: "flûte", probability: 100 }],
-            },
-          ],
-        },
-        actionIndex: -42,
-        targetSceneKey: "n'importe quoi",
-      });
+    test("one valid target", () => {
+      expect(
+        builderService.checkActionTargetsValidity({
+          ...baseAction,
+          targets: [{ sceneKey: "dest", probability: 100 }],
+        }),
+      ).toBeTruthy();
+    });
 
-      expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
-        BASIC_SCENE.key,
-        {
-          actions: [
-            {
-              type: "simple",
-              text: "action A",
-              targets: [{ sceneKey: "zut", probability: 100 }],
-            },
-            {
-              type: "simple",
-              text: "action B",
-              targets: [{ sceneKey: "flûte", probability: 100 }],
-            },
+    test("simple valid targets", () => {
+      expect(
+        builderService.checkActionTargetsValidity({
+          ...baseAction,
+          targets: [
+            { sceneKey: "dest-a", probability: 70 },
+            { sceneKey: "dest-b", probability: 30 },
           ],
-        },
-      );
+        }),
+      ).toBeTruthy();
+    });
+
+    test("float valid targets", () => {
+      expect(
+        builderService.checkActionTargetsValidity({
+          ...baseAction,
+          targets: [
+            { sceneKey: "dest-a", probability: 70.4 },
+            { sceneKey: "dest-b", probability: 29.6 },
+          ],
+        }),
+      ).toBeTruthy();
+    });
+
+    test("float valid targets with margin of error", () => {
+      expect(
+        builderService.checkActionTargetsValidity({
+          ...baseAction,
+          targets: [
+            { sceneKey: "dest-a", probability: 70.001 },
+            { sceneKey: "dest-b", probability: 30.003 },
+            // Total is 100.007, which is sufficiently close to 100
+          ],
+        }),
+      ).toBeTruthy();
+    });
+
+    test("one invalid target", () => {
+      expect(
+        builderService.checkActionTargetsValidity({
+          ...baseAction,
+          targets: [{ sceneKey: "dest", probability: 99 }],
+        }),
+      ).toBeFalsy();
+    });
+
+    test("invalid targets - higher than 100%", () => {
+      expect(
+        builderService.checkActionTargetsValidity({
+          ...baseAction,
+          targets: [
+            { sceneKey: "dest-a", probability: 71 },
+            { sceneKey: "dest-b", probability: 30 },
+          ],
+        }),
+      ).toBeFalsy();
+    });
+
+    test("invalid targets - lower than 100%", () => {
+      expect(
+        builderService.checkActionTargetsValidity({
+          ...baseAction,
+          targets: [
+            { sceneKey: "dest-a", probability: 69 },
+            { sceneKey: "dest-b", probability: 30 },
+          ],
+        }),
+      ).toBeFalsy();
+    });
+
+    test("invalid targets - lower than 0%", () => {
+      expect(
+        builderService.checkActionTargetsValidity({
+          ...baseAction,
+          targets: [
+            { sceneKey: "dest-a", probability: 0 },
+            { sceneKey: "dest-b", probability: -42 },
+          ],
+        }),
+      ).toBeFalsy();
+    });
+
+    test("invalid targets - floats", () => {
+      expect(
+        builderService.checkActionTargetsValidity({
+          ...baseAction,
+          targets: [
+            { sceneKey: "dest-a", probability: 70.0 },
+            { sceneKey: "dest-b", probability: 30.1 },
+          ],
+        }),
+      ).toBeFalsy();
     });
   });
 
   describe("createStoryWithFirstScene", () => {
-    it("should create story and first scene", async () => {
+    test("should create story and first scene", async () => {
       localRepository.getUser.mockResolvedValueOnce(null);
 
       await builderService.createStoryWithFirstScene({
@@ -288,11 +641,13 @@ describe("builder-service", () => {
           title: "Your first scene",
           actions: [
             {
+              key: expect.any(String),
               type: "simple",
               text: "An action that leads to a scene",
               targets: [],
             },
             {
+              key: expect.any(String),
               type: "simple",
               text: "An action that leads to another scene",
               targets: [],
@@ -302,7 +657,7 @@ describe("builder-service", () => {
       });
     });
 
-    it("should add author if user is logged in", async () => {
+    test("should add author if user is logged in", async () => {
       await builderService.createStoryWithFirstScene({
         title: "Tidadoum dam tidididoum",
         description: "Waouh, impressionant...",
@@ -329,11 +684,13 @@ describe("builder-service", () => {
           title: "Your first scene",
           actions: [
             {
+              key: expect.any(String),
               type: "simple",
               text: "An action that leads to a scene",
               targets: [],
             },
             {
+              key: expect.any(String),
               type: "simple",
               text: "An action that leads to another scene",
               targets: [],
@@ -345,7 +702,7 @@ describe("builder-service", () => {
   });
 
   describe("addScene", () => {
-    it("should add scene to local database", async () => {
+    test("should add scene to local database", async () => {
       await builderService.addScene(BASIC_SCENE);
 
       expect(localRepository.createScene).toHaveBeenCalledWith(BASIC_SCENE);
@@ -353,7 +710,7 @@ describe("builder-service", () => {
   });
 
   describe("updateScene", () => {
-    it("should only update specified parts of the scene", async () => {
+    test("should only update specified parts of the scene", async () => {
       await builderService.updateScene({
         content: makeSimpleLexicalContent("tututu"),
         key: "blabla",
@@ -369,10 +726,10 @@ describe("builder-service", () => {
   });
 
   describe("changeFirstScene", () => {
-    it("should update the first scene of a story", async () => {
+    test("should update the first scene of a story", async () => {
       const success = await builderService.changeFirstScene("CANARD", "KADOC");
 
-      expect(localRepository.getScene).toHaveBeenCalledWith("KADOC");
+      expect(sceneRepository.get).toHaveBeenCalledWith("KADOC");
       expect(localRepository.updateFirstScene).toHaveBeenCalledWith(
         "CANARD",
         "KADOC",
@@ -381,12 +738,12 @@ describe("builder-service", () => {
       expect(success).toBeTruthy();
     });
 
-    it("should not update the story if the scene key is invalid", async () => {
-      localRepository.getScene.mockResolvedValueOnce(null);
+    test("should not update the story if the scene key is invalid", async () => {
+      sceneRepository.get.mockResolvedValueOnce(null);
 
       const success = await builderService.changeFirstScene("CANARD", "KADOC");
 
-      expect(localRepository.getScene).toHaveBeenCalledWith("KADOC");
+      expect(sceneRepository.get).toHaveBeenCalledWith("KADOC");
       expect(localRepository.updateFirstScene).not.toHaveBeenCalled();
 
       expect(success).toBeFalsy();
@@ -394,7 +751,7 @@ describe("builder-service", () => {
   });
 
   describe("getBuilderStoryData", () => {
-    it("should return story data", async () => {
+    test("should return story data", async () => {
       const builderData = await builderService.getBuilderStoryData("bouteille");
 
       expect(localRepository.getStory).toHaveBeenCalledWith("bouteille");
@@ -409,7 +766,7 @@ describe("builder-service", () => {
   });
 
   describe("getUserBuilderStories", () => {
-    it("should retrieve stories created by logged in user", async () => {
+    test("should retrieve stories created by logged in user", async () => {
       const stories = await builderService.getUserBuilderStories();
 
       expect(localRepository.getUser).toHaveBeenCalled();
@@ -435,7 +792,7 @@ describe("builder-service", () => {
   });
 
   describe("getFullBuilderState", () => {
-    it("should get all stories and scenes", async () => {
+    test("should get all stories and scenes", async () => {
       const result = await builderService.getAllBuilderData();
 
       expect(localRepository.getScenesByStoryKey).toHaveBeenCalled();
@@ -447,7 +804,7 @@ describe("builder-service", () => {
   });
 
   describe("loadBuilderState", () => {
-    it("should update local database with input data", async () => {
+    test("should update local database with input data", async () => {
       await builderService.loadBuilderState([BASIC_STORY], [BASIC_SCENE]);
 
       expect(localRepository.unitOfWork).toHaveBeenCalled();
@@ -461,7 +818,7 @@ describe("builder-service", () => {
   });
 
   describe("deleteScenes", () => {
-    it("should not delete when story key is invalid", async () => {
+    test("should not delete when story key is invalid", async () => {
       storyRepository.get = vi.fn(() => Promise.resolve(null));
 
       await expect(
@@ -473,7 +830,7 @@ describe("builder-service", () => {
       expect(localRepository.deleteScenes).not.toHaveBeenCalled();
     });
 
-    it("should not delete first scene", async () => {
+    test("should not delete first scene", async () => {
       storyRepository.get = vi.fn(() =>
         Promise.resolve(factory.story.builder({ firstSceneKey: "ti" })),
       );
@@ -487,7 +844,7 @@ describe("builder-service", () => {
       expect(localRepository.deleteScenes).not.toHaveBeenCalled();
     });
 
-    it("should delete scenes", async () => {
+    test("should delete scenes", async () => {
       await builderService.deleteScenes({
         storyKey: "vroum",
         sceneKeys: ["ti", "ta", "tu"],
@@ -503,7 +860,7 @@ describe("builder-service", () => {
   });
 
   describe("deleteStory", () => {
-    it("should delete story", async () => {
+    test("should delete story", async () => {
       localRepository.getScenesByStoryKey.mockResolvedValueOnce([
         { ...BASIC_SCENE, key: "pshit" },
         { ...BASIC_SCENE, key: "zioum" },
@@ -522,7 +879,7 @@ describe("builder-service", () => {
   });
 
   describe("computeAutoLayout", () => {
-    it("should compute new positions", async () => {
+    test("should compute new positions", async () => {
       const NODES: BuilderNode[] = [
         {
           data: {
@@ -531,8 +888,18 @@ describe("builder-service", () => {
               "You arrive at a crossroads. On the left, a sinuous dirt path leads to a tree mass. The road on the right is a well-maintained paved trail that runs towards a little village in the hills.",
             ),
             actions: [
-              { type: "simple", targets: [], text: "Go to the forest" },
-              { type: "simple", targets: [], text: "Go to the village" },
+              {
+                key: "key-1",
+                type: "simple",
+                targets: [],
+                text: "Go to the forest",
+              },
+              {
+                key: "key-2",
+                type: "simple",
+                targets: [],
+                text: "Go to the village",
+              },
             ],
             isFirstScene: false,
             key: "first-fake-scene-key",
@@ -580,7 +947,7 @@ describe("builder-service", () => {
         },
       ];
 
-      const EDGES: Edge[] = [
+      const EDGES: BuilderEdge[] = [
         {
           id: "edge-1",
           source: "scene-1",
@@ -643,8 +1010,18 @@ describe("builder-service", () => {
               "You arrive at a crossroads. On the left, a sinuous dirt path leads to a tree mass. The road on the right is a well-maintained paved trail that runs towards a little village in the hills.",
             ),
             actions: [
-              { type: "simple", targets: [], text: "Go to the forest" },
-              { type: "simple", targets: [], text: "Go to the village" },
+              {
+                key: "key-1",
+                type: "simple",
+                targets: [],
+                text: "Go to the forest",
+              },
+              {
+                key: "key-2",
+                type: "simple",
+                targets: [],
+                text: "Go to the village",
+              },
             ],
             isFirstScene: false,
             key: "first-fake-scene-key",
@@ -754,7 +1131,7 @@ describe("builder-service", () => {
   });
 
   describe("bulkUpdateScenes", () => {
-    it("should update or create scenes with", async () => {
+    test("should update or create scenes with", async () => {
       await builderService.bulkUpdateScenes({ scenes: [BASIC_SCENE] });
 
       expect(localRepository.updateOrCreateScenes).toHaveBeenCalledOnce();
@@ -764,7 +1141,7 @@ describe("builder-service", () => {
     });
 
     describe("importFromJSON", () => {
-      it("should import story from JSON", async () => {
+      test("should import story from JSON", async () => {
         const result = await builderService.importStory({
           story: MOCK_IMPORTED_STORY,
           scenes: [MOCK_IMPORTED_SCENE],
@@ -776,7 +1153,7 @@ describe("builder-service", () => {
   });
 
   describe("updateStory", () => {
-    it("should update scene using repository", async () => {
+    test("should update scene using repository", async () => {
       const mockStory = factory.story.builder();
       storyRepository.update = vi.fn(() => Promise.resolve(mockStory));
 
@@ -835,6 +1212,7 @@ describe("builder-service", () => {
       const scene = factory.scene({
         actions: [
           {
+            key: "action-key",
             type: "simple",
             text: "action",
             targets: [{ sceneKey: "something", probability: 100 }],
@@ -846,7 +1224,7 @@ describe("builder-service", () => {
         expect(scenePayload.title).toStrictEqual(scene.title);
         expect(scenePayload.content).toStrictEqual(scene.content);
         expect(scenePayload.actions).toStrictEqual([
-          { type: "simple", text: "action", targets: [] },
+          { key: "action-key", type: "simple", text: "action", targets: [] },
         ]);
         expect(scenePayload.storyKey).toStrictEqual("VROUM");
         expect(scenePayload.builderParams).toStrictEqual({
@@ -867,6 +1245,7 @@ describe("builder-service", () => {
         key: "scene-1",
         actions: [
           {
+            key: "action-key-1",
             type: "simple",
             text: "action1",
             targets: [{ sceneKey: "something", probability: 100 }],
@@ -876,6 +1255,7 @@ describe("builder-service", () => {
       const scene2 = factory.scene({
         actions: [
           {
+            key: "action-key-2",
             type: "simple",
             text: "action2",
             targets: [{ sceneKey: "scene-1", probability: 100 }],
@@ -890,7 +1270,7 @@ describe("builder-service", () => {
         expect(scene1Payload.title).toStrictEqual(scene1.title);
         expect(scene1Payload.content).toStrictEqual(scene1.content);
         expect(scene1Payload.actions).toStrictEqual([
-          { type: "simple", text: "action1", targets: [] },
+          { key: "action-key-1", type: "simple", text: "action1", targets: [] },
         ]);
         expect(scene1Payload.storyKey).toStrictEqual("VROUM");
         expect(scene1Payload.builderParams).toStrictEqual({
@@ -902,6 +1282,7 @@ describe("builder-service", () => {
         expect(scene2Payload.content).toStrictEqual(scene2.content);
         expect(scene2Payload.actions).toStrictEqual([
           {
+            key: "action-key-2",
             type: "simple",
             text: "action2",
             targets: [

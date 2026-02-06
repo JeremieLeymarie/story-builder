@@ -2,7 +2,6 @@ import {
   DecoratorNode,
   EditorConfig,
   LexicalEditor,
-  LexicalNode,
   SerializedLexicalNode,
   Spread,
 } from "lexical";
@@ -132,10 +131,4 @@ export const $createWikiNode = ({
   textContent: string;
 }): WikiNode => {
   return new WikiNode({ articleLinkKey, textContent, articleKey });
-};
-
-export const $isWikiNode = (
-  node: WikiNode | LexicalNode | null | undefined,
-): node is WikiNode => {
-  return node instanceof WikiNode;
 };

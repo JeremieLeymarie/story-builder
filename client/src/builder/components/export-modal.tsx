@@ -44,7 +44,7 @@ export const ExportModal = ({
   );
 };
 
-export const ExportModalContent = () => {
+const ExportModalContent = () => {
   const { setOpen } = useExportModalStore();
   const { data, isLoading } = useGetExportData();
 

@@ -1,54 +1,64 @@
-import {
-  Connection,
-  Edge,
-  FinalConnectionState,
-  addEdge,
-  useReactFlow,
-} from "@xyflow/react";
-import { nodeToSceneAdapter } from "../adapters";
-import { BuilderNode } from "../types";
-import { useBuilderError } from "./use-builder-error";
+import { Connection, FinalConnectionState, useReactFlow } from "@xyflow/react";
+import { BuilderEdge, BuilderNode } from "../types";
+import { useErrorToast } from "./use-error-toast";
 import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
 import { useBuilderContext } from "./use-builder-context";
+import { Scene } from "@/lib/storage/domain";
+import {
+  sceneToEdgesAdapter,
+  sceneToNodeAdapter,
+  targetToEdgeAdapter,
+} from "../adapters";
 
+// TODO: test this
 export const useBuilderEdges = () => {
-  const { getNodes, setEdges } = useReactFlow<BuilderNode>();
-  const { handleError } = useBuilderError();
+  const { updateNodeData, updateEdgeData, addEdges } = useReactFlow<
+    BuilderNode,
+    BuilderEdge
+  >();
+  const { handleError } = useErrorToast();
   const { addScene } = useAddScene();
   const { screenToFlowPosition } = useReactFlow();
-  const { builderService } = useBuilderContext();
+  const { builderService, story } = useBuilderContext();
 
-  const getSceneToUpdate = (edge: Edge | Connection) => {
-    const sourceScene = getNodes().find((scene) => scene.id === edge.source);
+  const _updateNodeAndEdges = (updatedScene: Scene) => {
+    const node = sceneToNodeAdapter({ scene: updatedScene, story });
+    const edges = sceneToEdgesAdapter(updatedScene);
 
-    const actionIndex = parseInt(edge.sourceHandle?.split("-").at(-1) ?? "NaN");
-
-    if (!sourceScene || Number.isNaN(actionIndex)) {
-      return null;
-    }
-
-    const sceneToUpdate = nodeToSceneAdapter(sourceScene);
-
-    return { sceneToUpdate, actionIndex };
+    // This is a little naive, maybe batching these updates in setEdges + setNodes calls would be better for performance
+    updateNodeData(node.id, node.data);
+    edges.forEach((edge) => updateEdgeData(edge.id, edge.data));
   };
 
-  const onConnect = (connection: Connection) => {
-    const sceneData = getSceneToUpdate(connection);
-    if (!sceneData) {
-      console.error("Connection error: scene data is null");
-      return;
+  const onConnect = async (connection: Connection) => {
+    const sourceSceneKey = connection.source;
+    const sourceActionKey = connection.sourceHandle;
+    const targetSceneKey = connection.target;
+
+    if (!sourceActionKey)
+      throw new Error("Unable to get action: connection has no source handle");
+
+    try {
+      // Persist connection
+      const scene = await builderService.addSceneConnection({
+        sourceSceneKey,
+        destinationSceneKey: targetSceneKey,
+        actionKey: sourceActionKey,
+      });
+      const action = scene.actions.find((a) => a.key === sourceActionKey)!;
+      const target = action.targets.find((t) => t.sceneKey === targetSceneKey)!;
+      const edge = targetToEdgeAdapter({
+        target,
+        action,
+        sceneKey: sourceSceneKey,
+      });
+
+      // Update React Flow
+      addEdges([edge]);
+      _updateNodeAndEdges(scene);
+    } catch (e) {
+      handleError(e);
     }
-
-    builderService
-      .addSceneConnection({
-        sourceSceneKey: sceneData.sceneToUpdate.key,
-        destinationSceneKey: connection.target,
-        actionIndex: sceneData.actionIndex,
-      })
-      .catch(handleError);
-
-    // Optimistic update
-    setEdges((prev) => addEdge(connection, prev));
   };
 
   const onConnectEnd = async (
@@ -56,60 +66,79 @@ export const useBuilderEdges = () => {
     connectionState: FinalConnectionState,
   ) => {
     // create a node on edge drop
-    if (!connectionState.isValid && connectionState.fromNode) {
-      const event = "changedTouches" in ev ? ev.changedTouches[0] : ev;
-      if (!event) return;
-      // truthy when the handle is a source handle
-      const fromHandle = connectionState.fromHandle?.id ?? null;
-      const position = screenToFlowPosition({
-        x: event.clientX,
-        y: event.clientY,
-      });
-      // Magic values that places the node over the correct handle:
-      const offset = fromHandle ? { x: 0, y: 0 } : { x: 375 - 16, y: 27.5 };
+    if (!connectionState.fromNode)
+      throw new Error(
+        "Could not create connection because there is no source node",
+      );
+    // A connection is valid when it ends on a target. In that case we don't want to add a new scene
+    if (connectionState.isValid) return;
+
+    const event = "changedTouches" in ev ? ev.changedTouches[0] : ev;
+    if (!event) return;
+
+    const isFromRightSide = !!connectionState.fromHandle?.id;
+    const position = screenToFlowPosition({
+      x: event.clientX,
+      y: event.clientY,
+    });
+
+    if (isFromRightSide) {
       const scene = await addScene({
-        payload: fromHandle
-          ? DEFAULT_SCENE
-          : {
-              ...DEFAULT_SCENE,
-              actions: [{ type: "simple", text: "", targets: [] }],
-            },
-        position: { x: position.x - offset.x, y: position.y - offset.y },
+        payload: DEFAULT_SCENE,
+        position,
       });
       if (!scene) return;
-
-      const fromNode = connectionState.fromNode.id;
-      const toNode = scene.key;
-
-      const toHandle = `${toNode}-0`;
-      setTimeout(() => {
-        onConnect({
-          source: fromHandle ? fromNode : toNode,
-          target: fromHandle ? toNode : fromNode,
-          sourceHandle: fromHandle ?? toHandle,
-          targetHandle: null,
-        });
-      }, 0);
+      onConnect({
+        source: connectionState.fromNode.id,
+        target: scene.key,
+        sourceHandle: connectionState.fromHandle!.id!,
+        targetHandle: null,
+      });
+    } else {
+      const scene = await addScene({
+        payload: {
+          ...DEFAULT_SCENE,
+          actions: [builderService.makeEmptyActionPayload()],
+        },
+        // Magic values that places the node over the correct handle:
+        position: { x: position.x - 375 - 16, y: position.y - 27.5 },
+      });
+      if (!scene) return;
+      // Create the connection from the newly created scene
+      onConnect({
+        source: scene.key,
+        target: connectionState.fromNode.id,
+        sourceHandle: scene.actions[0]!.key,
+        targetHandle: null,
+      });
     }
   };
 
-  const onEdgesDelete = (edges: Edge[]) => {
-    edges.forEach((edge) => {
-      const sceneData = getSceneToUpdate(edge);
-      if (!sceneData) {
-        console.error("Connection error: scene data is null");
-        return;
-      }
+  const onEdgesDelete = async (edges: BuilderEdge[]) => {
+    try {
+      const updatedScenesByKey = await builderService.removeSceneConnections(
+        edges.map((edge) => {
+          const sourceSceneKey = edge.source;
+          const sourceActionKey = edge.sourceHandle;
+          const targetSceneKey = edge.target;
 
-      console.log({ edge });
-      builderService
-        .removeSceneConnection({
-          sourceScene: sceneData.sceneToUpdate,
-          actionIndex: sceneData.actionIndex,
-          targetSceneKey: edge.target,
-        })
-        .catch(handleError);
-    });
+          if (!sourceActionKey)
+            throw new Error("Unable to get action: edge has no source handle");
+
+          return {
+            sourceSceneKey,
+            actionKey: sourceActionKey,
+            targetSceneKey: targetSceneKey,
+          };
+        }),
+      );
+      // TODO: if probabilities don't add up to 100% here we should set an error
+
+      // Update React Flow
+      Object.values(updatedScenesByKey).forEach(_updateNodeAndEdges);
+    } catch (err) {
+      handleError(err);
+    }
   };
 
   return { onConnect, onConnectEnd, onEdgesDelete };

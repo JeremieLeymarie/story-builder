@@ -1,29 +1,26 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Scene } from "@/lib/storage/domain";
 import z from "zod";
 import { lexicalContentSchema } from "@/lib/lexical-content";
 import { useAutoSubmitForm } from "@/hooks/use-auto-submit-form";
 
-export const sceneSchema = z.object({
+const sceneSchema = z.object({
   title: z
     .string()
     .max(250, { message: "Title has to be less than 250 characters" }),
   content: lexicalContentSchema,
 });
 
-export type SceneSchema = z.infer<typeof sceneSchema>;
-
-export type SceneUpdatePayload = Omit<Scene, "builderParams" | "actions">;
+type SceneContentSchema = z.infer<typeof sceneSchema>;
 
 export const useEditSceneContentForm = ({
   values,
   onSave,
 }: {
-  values: SceneSchema;
-  onSave: (payload: SceneSchema) => void;
+  values: SceneContentSchema;
+  onSave: (payload: SceneContentSchema) => void;
 }) => {
-  const form = useForm<SceneSchema>({
+  const form = useForm<SceneContentSchema>({
     resolver: zodResolver(sceneSchema),
     values,
   });

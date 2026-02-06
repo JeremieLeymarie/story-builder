@@ -1,5 +1,4 @@
-import { BuilderNode } from "@/builder/types";
-import { Edge } from "@xyflow/react";
+import { BuilderNode, BuilderEdge } from "@/builder/types";
 import ELK from "elkjs/lib/elk.bundled.js";
 import { LayoutServicePort } from "./ports/layout-service-port";
 
@@ -11,7 +10,7 @@ const _getLayoutService = (): LayoutServicePort => {
       edges,
     }: {
       nodes: BuilderNode[];
-      edges: Edge[];
+      edges: BuilderEdge[];
     }) => {
       // https://www.eclipse.org/elk/reference/algorithms/org-eclipse-elk-layered.html
       const layoutOptions = {
@@ -28,8 +27,7 @@ const _getLayoutService = (): LayoutServicePort => {
         children: nodes.map((n) => {
           // 'Ports' are elk's wording for 'handles'
           const targetPorts = n.data.actions.map((action) => ({
-            // TODO: add keys to actions (https://github.com/JeremieLeymarie/story-builder/issues/307)
-            id: `${action.targets.map(({ sceneKey }) => sceneKey).join("-")}`,
+            id: action.key,
             properties: {
               side: "EAST", // handles are on the right
             },

@@ -1,7 +1,6 @@
 import { Action, BuilderPosition, Scene, Story } from "@/lib/storage/domain";
 import { LocalRepositoryPort } from "@/repositories/local-repository-port";
-import { BuilderNode } from "@/builder/types";
-import { Edge } from "@xyflow/react";
+import { BuilderNode, BuilderEdge } from "@/builder/types";
 import { ImportServicePort } from "@/services/common/import-service";
 import { WithoutKey } from "@/types";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
@@ -12,10 +11,13 @@ import { EntityNotExistError } from "../errors";
 import { nanoid } from "nanoid";
 import { BuilderSceneRepositoryPort } from "./ports/builder-scene-repository-port";
 import {
+  ActionTargetNotFound,
   CannotDeleteFirstSceneError,
   DuplicationMissingPositionError,
 } from "./errors";
 import { ImportData } from "@/services/common/schema";
+import { produce } from "immer";
+import { N } from "@/lib/number";
 
 export const _getBuilderService = ({
   localRepository,
@@ -74,19 +76,27 @@ export const _getBuilderService = ({
 
     addSceneConnection: async ({
       sourceSceneKey,
+      actionKey,
       destinationSceneKey,
-      actionIndex,
     }) => {
-      const sourceScene = await localRepository.getScene(sourceSceneKey);
+      const sourceScene = await sceneRepository.get(sourceSceneKey);
       if (!sourceScene) throw new EntityNotExistError("scene", sourceSceneKey);
 
-      const actions = sourceScene.actions.map((action, i) => {
-        if (i === actionIndex) {
+      const actions = sourceScene.actions.map((action) => {
+        if (action.key === actionKey) {
+          const targetAlreadyExists = action.targets.find(
+            (t) => t.sceneKey === destinationSceneKey,
+          );
+          if (targetAlreadyExists) return action;
+
           return {
             ...action,
             targets: [
               ...action.targets,
-              { sceneKey: destinationSceneKey, probability: 100 },
+              {
+                sceneKey: destinationSceneKey,
+                probability: action.targets.length > 0 ? 0 : 100,
+              },
             ],
           } satisfies Action;
         }
@@ -94,28 +104,129 @@ export const _getBuilderService = ({
       });
 
       await localRepository.updatePartialScene(sourceScene.key, { actions });
+      return { ...sourceScene, actions };
     },
 
-    removeSceneConnection: async ({
-      sourceScene,
-      actionIndex,
+    removeSceneConnections: async (connectionsToRemove) => {
+      const sourceSceneKeys = [
+        ...new Set(connectionsToRemove.map((c) => c.sourceSceneKey)),
+      ];
+      // 1. Retrieve fresh data for all scenes
+      const sourceScenesByKey =
+        await sceneRepository.getScenesByKey(sourceSceneKeys);
+
+      const missingScenes = sourceSceneKeys.filter(
+        (key) => !Object.keys(sourceScenesByKey).includes(key),
+      );
+      if (!sourceSceneKeys)
+        throw new AggregateError(
+          missingScenes.map((k) => new EntityNotExistError("scene", k)),
+        );
+
+      // 2. Aggregate targets by action by scene to be able to easily produce update statements
+      // This is important because if don't handle updates in bulk by scene the first updates would be overridden by subsequent ones
+      // (because actions are a part of a scene and Dexie doesn't allow to update only part of a nested object)
+      const targetsToRemoveBySceneByAction = connectionsToRemove.reduce<
+        Record<string, Record<string, string[]>>
+      >((acc, c) => {
+        const targetsToRemoveByAction = acc[c.sourceSceneKey] ?? {};
+        const targetsToRemove = targetsToRemoveByAction[c.actionKey] ?? [];
+        return {
+          ...acc,
+          [c.sourceSceneKey]: {
+            ...targetsToRemoveByAction,
+            [c.actionKey]: [...targetsToRemove, c.targetSceneKey],
+          },
+        };
+      }, {});
+
+      const updatedScenesByKey: Record<string, Scene> = {};
+
+      // 3. Compute update statements (via repository)
+      const updateOperations = Object.entries(
+        targetsToRemoveBySceneByAction,
+      ).map(([sourceSceneKey, targetsToRemoveByAction]) => {
+        const sourceScene = sourceScenesByKey[sourceSceneKey]!;
+
+        const actions = sourceScene.actions.map((action) => {
+          if (action.key in targetsToRemoveByAction) {
+            const targetsToRemove = targetsToRemoveByAction[action.key]!;
+            // Filter out all targets to remove
+            const targets = action.targets.filter(
+              (t) => !targetsToRemove.includes(t.sceneKey),
+            );
+
+            // If only one target remains, set its probability to 100%
+            if (targets.length === 1) {
+              targets[0]!.probability = 100;
+            }
+            return {
+              ...action,
+              targets: targets,
+            };
+          }
+          return action;
+        });
+
+        updatedScenesByKey[sourceScene.key] = { ...sourceScene, actions };
+        return localRepository.updatePartialScene(sourceScene.key, { actions });
+      });
+
+      // Update all scenes concurrently
+      await Promise.all(updateOperations);
+
+      return updatedScenesByKey;
+    },
+
+    updateTargetProbability: async ({
+      actionKey,
+      probability,
+      sourceSceneKey,
       targetSceneKey,
     }) => {
-      const actions = sourceScene.actions.map((action, i) => {
-        if (i === actionIndex) {
+      const sourceScene = await sceneRepository.get(sourceSceneKey);
+      if (!sourceScene) throw new EntityNotExistError("scene", sourceSceneKey);
+
+      let found = false;
+      const actions = sourceScene.actions.map((action) => {
+        if (action.key === actionKey) {
           return {
             ...action,
-            targets: action.targets.filter(
-              (t) => t.sceneKey !== targetSceneKey,
+            targets: action.targets.map((t) =>
+              produce(t, (draft) => {
+                if (draft.sceneKey === targetSceneKey) {
+                  found = true;
+                  draft.probability = probability;
+                }
+              }),
             ),
-          };
+          } satisfies Action;
         }
         return action;
       });
 
-      await localRepository.updatePartialScene(sourceScene.key, {
-        actions,
-      });
+      if (!found) {
+        throw new ActionTargetNotFound({
+          sourceSceneKey,
+          actionKey,
+          targetSceneKey,
+        });
+      }
+      await localRepository.updatePartialScene(sourceScene.key, { actions });
+
+      return { ...sourceScene, actions };
+    },
+
+    checkActionTargetsValidity: (action) => {
+      // An action with no targets is always valid
+      if (action.targets.length === 0) return true;
+
+      const totalPercentages = action.targets.reduce(
+        (acc, target) => acc + target.probability,
+        0,
+      );
+
+      return N.areFloatsEqual(totalPercentages, 100);
     },
 
     createStoryWithFirstScene: async (
@@ -141,11 +252,13 @@ export const _getBuilderService = ({
           title: "Your first scene",
           actions: [
             {
+              key: nanoid(),
               type: "simple",
               targets: [],
               text: "An action that leads to a scene",
             },
             {
+              key: nanoid(),
               type: "simple",
               targets: [],
               text: "An action that leads to another scene",
@@ -163,7 +276,7 @@ export const _getBuilderService = ({
 
     updateScene: async ({ key, ...scene }) => {
       await localRepository.updatePartialScene(key, scene);
-      return await localRepository.getScene(key);
+      return await sceneRepository.get(key);
     },
 
     getAutoLayout: async ({
@@ -172,7 +285,7 @@ export const _getBuilderService = ({
       storyKey,
     }: {
       nodes: BuilderNode[];
-      edges: Edge[];
+      edges: BuilderEdge[];
       storyKey: string;
     }) => {
       const reorganizedNodes = await layoutService.computeAutoLayout({
@@ -206,8 +319,7 @@ export const _getBuilderService = ({
     },
 
     changeFirstScene: async (storyKey: string, newFirstSceneKey: string) => {
-      const isSceneKeyValid =
-        !!(await localRepository.getScene(newFirstSceneKey));
+      const isSceneKeyValid = !!(await sceneRepository.get(newFirstSceneKey));
 
       if (isSceneKeyValid) {
         await localRepository.updateFirstScene(storyKey, newFirstSceneKey);
@@ -250,6 +362,8 @@ export const _getBuilderService = ({
     },
 
     deleteScenes: async ({ storyKey, sceneKeys }) => {
+      // We should delete related article link keys
+      // We should check that scene is not used in action
       const story = await storyRepository.get(storyKey);
       if (!story) throw new EntityNotExistError("story", storyKey);
 
@@ -374,6 +488,9 @@ export const _getBuilderService = ({
 
       await sceneRepository.bulkAdd(payload);
       return payload;
+    },
+    makeEmptyActionPayload: () => {
+      return { key: nanoid(), type: "simple", targets: [], text: "" };
     },
   };
 };

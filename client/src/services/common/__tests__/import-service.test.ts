@@ -69,6 +69,7 @@ describe("import-service", () => {
     content: BASIC_SCENE_CONTENT,
     actions: [
       {
+        key: nanoid(),
         type: "simple",
         text: "An action that leads to a scene",
         targets: [
@@ -252,6 +253,7 @@ describe("import-service", () => {
             content: BASIC_SCENE_CONTENT,
             actions: [
               {
+                key: "action-key-a",
                 text: "An action that leads to a scene",
                 targets: [
                   {
@@ -262,6 +264,7 @@ describe("import-service", () => {
                 type: "simple",
               },
               {
+                key: "action-key-b",
                 text: "An action that leads to another scene",
                 targets: [],
                 type: "simple",
@@ -303,11 +306,13 @@ describe("import-service", () => {
           key: "new-source-scene",
           actions: [
             {
+              key: expect.any(String),
               type: "simple",
               text: "An action that leads to a scene",
               targets: [{ sceneKey: "new-dest-scene", probability: 100 }],
             },
             {
+              key: expect.any(String),
               type: "simple",
               text: "An action that leads to another scene",
               targets: [],

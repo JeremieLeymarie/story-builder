@@ -37,11 +37,13 @@ export const BASIC_SCENE: Scene = {
   key: "vroum",
   actions: [
     {
+      key: "action-a",
       text: "action A",
       targets: [],
       type: "simple",
     },
     {
+      key: "action-b",
       text: "action B",
       targets: [],
       type: "simple",

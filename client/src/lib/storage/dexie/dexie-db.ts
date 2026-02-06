@@ -43,7 +43,6 @@ const tables: Record<keyof Tables, string> = {
   wikiCategories: "&key, wikiKey, name",
   wikiArticleLinks: "[key+entityKey], key, entityKey, entityType, articleKey",
 };
-export const TABLE_NAMES = Object.keys(tables);
 
 export const createDb = (
   db: DexieDatabase,
@@ -70,6 +69,7 @@ export const createDb = (
       await db.scenes.bulkUpdate(bulkPayload);
     });
 
+  // Migration: add probability to scene actions
   db.version(8)
     .stores(tables)
     .upgrade(async () => {
@@ -97,6 +97,27 @@ export const createDb = (
 
       await db.scenes.bulkUpdate(bulkPayload);
     });
+
+  // Migration: add unique key to scene actions
+  db.version(9)
+    .stores(tables)
+    .upgrade(async () => {
+      const bulkPayload: {
+        key: string;
+        changes: Partial<Scene>;
+      }[] = [];
+
+      await db.scenes.each((scene) => {
+        const actions = scene.actions.map((action) => ({
+          ...action,
+          key: nanoid(),
+        })) satisfies Action[];
+        bulkPayload.push({ key: scene.key, changes: { actions } });
+      });
+
+      await db.scenes.bulkUpdate(bulkPayload);
+    });
+
   if (seed)
     db.on("populate", async () => {
       // Add story to builder

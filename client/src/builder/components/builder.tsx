@@ -14,8 +14,11 @@ import { FIT_VIEW_DURATION } from "../constants";
 import { useBuilderEditorStore } from "../hooks/use-builder-editor-store";
 import { EditorBar } from "./builder-editor-bar/editor-bar";
 import { BuilderToolbar } from "./builder-toolbar";
+import CustomEdge from "./edges/custom-edge";
+import { BuilderErrors } from "./builder-errors";
 
 const nodeTypes = { scene: SceneNode } as const;
+const edgeTypes = { edge: CustomEdge } as const;
 
 const BuilderFlow = () => {
   const { reactFlowRef, initialNodes, initialEdges } = useBuilderContext();
@@ -31,9 +34,10 @@ const BuilderFlow = () => {
   return (
     <ReactFlow
       nodeTypes={nodeTypes}
+      edgeTypes={edgeTypes}
       defaultNodes={initialNodes}
       defaultEdges={initialEdges}
-      defaultEdgeOptions={{ zIndex: 10000 }}
+      defaultEdgeOptions={{ zIndex: 1 }}
       onConnect={onConnect}
       onConnectEnd={onConnectEnd}
       onEdgesDelete={onEdgesDelete}
@@ -57,17 +61,16 @@ const BuilderFlow = () => {
   );
 };
 
-export const Builder = () => {
-  return (
-    <div className="relative flex h-full w-full border">
-      <div className="absolute top-5 left-5 flex flex-col gap-4">
-        <BuilderToolbar />
-        <ActionsBar />
-      </div>
-      <div className="absolute top-5 right-5 flex flex-col gap-4">
-        <EditorBar />
-      </div>
-      <BuilderFlow />
+export const Builder = () => (
+  <div className="relative flex h-full w-full border">
+    <div className="absolute top-5 left-5 flex max-w-67.5 flex-col gap-4">
+      <BuilderToolbar />
+      <ActionsBar />
+      <BuilderErrors />
     </div>
-  );
-};
+    <div className="absolute top-5 right-5 flex flex-col gap-4">
+      <EditorBar />
+    </div>
+    <BuilderFlow />
+  </div>
+);

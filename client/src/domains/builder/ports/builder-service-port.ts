@@ -1,5 +1,6 @@
-import { BuilderNode } from "@/builder/types";
+import { BuilderNode, BuilderEdge } from "@/builder/types";
 import {
+  Action,
   BuilderPosition,
   BuilderStory,
   Scene,
@@ -7,7 +8,6 @@ import {
 } from "@/lib/storage/domain";
 import { ImportData } from "@/services/common/schema";
 import { WithoutKey } from "@/types";
-import { Edge } from "@xyflow/react";
 
 export type BuilderServicePort = {
   updateSceneBuilderPosition: (
@@ -16,14 +16,28 @@ export type BuilderServicePort = {
   ) => Promise<void>;
   addSceneConnection: (props: {
     sourceSceneKey: string;
+    actionKey: string;
     destinationSceneKey: string;
-    actionIndex: number;
-  }) => Promise<void>;
-  removeSceneConnection: (props: {
-    sourceScene: Scene;
-    actionIndex: number;
+  }) => Promise<Scene>;
+  /**
+   * * Delete connections to specified targets (can be multiple) on a specified action
+   * @param connections An array containing information about the connections to delete : source scene key, action key and target scene key
+   * @returns A record with the updated scenes by key
+   */
+  removeSceneConnections: (
+    connections: {
+      sourceSceneKey: string;
+      actionKey: string;
+      targetSceneKey: string;
+    }[],
+  ) => Promise<Record<string, Scene>>;
+  updateTargetProbability: (props: {
+    sourceSceneKey: string;
+    actionKey: string;
     targetSceneKey: string;
-  }) => Promise<void>;
+    probability: number;
+  }) => Promise<Scene>;
+  checkActionTargetsValidity: (action: Action) => boolean;
   createStoryWithFirstScene: (
     storyData: Omit<
       WithoutKey<Story>,
@@ -36,7 +50,7 @@ export type BuilderServicePort = {
   ) => Promise<Scene | null>;
   getAutoLayout: (props: {
     nodes: BuilderNode[];
-    edges: Edge[];
+    edges: BuilderEdge[];
     storyKey: string;
   }) => Promise<{ before: Scene[]; after: Scene[] }>;
   bulkUpdateScenes: ({ scenes }: { scenes: Scene[] }) => Promise<void>;
@@ -72,4 +86,5 @@ export type BuilderServicePort = {
     newPositions: { [sceneKey: string]: BuilderPosition };
     storyKey: string;
   }) => Promise<Scene[]>;
+  makeEmptyActionPayload: () => Action;
 };

@@ -26,7 +26,6 @@ export type User = {
 };
 
 export const STORY_TYPE = ["builder", "published", "imported"] as const;
-export type StoryType = (typeof STORY_TYPE)[number];
 
 type Author = {
   key: string;
@@ -86,6 +85,7 @@ export type StoryTheme = {
 };
 
 type ActionBase = {
+  key: string;
   text: string;
   targets: { sceneKey: string; probability: number }[];
 };

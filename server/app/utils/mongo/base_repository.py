@@ -26,6 +26,7 @@ class MongoActionTarget(TypedDict):
 
 
 class _ActionBase(TypedDict):
+    key: str
     text: str
     targets: list[MongoActionTarget]
 

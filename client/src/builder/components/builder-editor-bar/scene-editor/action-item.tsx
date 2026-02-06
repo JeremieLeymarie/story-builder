@@ -41,7 +41,7 @@ import {
 } from "@/builder/hooks/use-edit-actions-form";
 import { useRandomEventStore } from "@/builder/hooks/use-random-event-store";
 
-export const SceneSelector = ({
+const SceneSelector = ({
   onChange,
   value,
 }: {

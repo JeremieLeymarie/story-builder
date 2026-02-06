@@ -1,4 +1,4 @@
-export type OS = "Mac" | "Linux" | "Windows" | null;
+type OS = "Mac" | "Linux" | "Windows" | null;
 
 export const getUserOS = (): OS => {
   const platform = // @ts-expect-error navigator.userAgentData is an experimental feature, typescript doesn't know about it yet (cf https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData/platform)

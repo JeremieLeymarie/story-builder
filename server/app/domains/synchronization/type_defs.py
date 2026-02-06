@@ -12,6 +12,7 @@ class SyncActionTarget(BaseAPIModel):
 
 
 class _ActionBase(BaseModel):
+    key: str
     text: str
     targets: list[SyncActionTarget]
 

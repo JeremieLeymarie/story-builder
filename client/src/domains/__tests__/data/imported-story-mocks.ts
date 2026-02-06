@@ -1,4 +1,5 @@
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
+import { Scene } from "@/lib/storage/domain";
 
 export const MOCK_IMPORTED_STORY = {
   key: "bloup",
@@ -25,11 +26,13 @@ export const MOCK_IMPORTED_SCENE = {
   ),
   actions: [
     {
+      key: "action-key-a",
       type: "simple" as const,
       text: "An action that leads to a scene",
       targets: [{ sceneKey: "dest-scene", probability: 100 }],
     },
     {
+      key: "action-key-b",
       type: "simple" as const,
       targets: [],
       text: "An action that leads to another scene",
@@ -41,4 +44,4 @@ export const MOCK_IMPORTED_SCENE = {
       y: 0,
     },
   },
-};
+} satisfies Scene;
