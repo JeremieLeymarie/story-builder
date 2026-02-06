@@ -41,6 +41,6 @@ export const Route = createFileRoute("/builder/$storyKey")({
     queryClient.invalidateQueries({
       queryKey: makeGetBuilderQueryOptions({ storyKey }).queryKey,
     });
-    useBuilderEditorStore.setState({ editor: null });
+    useBuilderEditorStore.getState().close();
   },
 });
