@@ -1,34 +1,13 @@
+import { useEdgeProbability } from "@/builder/hooks/use-edge-probability";
 import { BuilderEdge } from "@/builder/types";
 import { Input } from "@/design-system/primitives";
+import { cn } from "@/lib/style";
 import {
   getBezierPath,
   EdgeLabelRenderer,
   BaseEdge,
   type EdgeProps,
 } from "@xyflow/react";
-import { FormEvent, useState } from "react";
-import { useMaskito } from "@maskito/react";
-import { MaskitoOptions } from "@maskito/core";
-import {
-  maskitoCaretGuard,
-  maskitoPostfixPostprocessorGenerator,
-} from "@maskito/kit";
-import z from "zod";
-import { cn } from "@/lib/style";
-import { toast } from "sonner";
-import { useBuilderContext } from "@/builder/hooks/use-builder-context";
-import { useErrorToast } from "@/builder/hooks/use-error-toast";
-
-const percentMask = {
-  mask: /([0-9]{0,3})/,
-  postprocessors: [maskitoPostfixPostprocessorGenerator("%")],
-  plugins: [
-    // First item = min index for caret, last item = max index
-    maskitoCaretGuard((value) => [0, value.length - 1]),
-  ],
-} satisfies MaskitoOptions;
-
-const schema = z.int().min(0).max(100);
 
 const CustomEdge = ({
   id,
@@ -53,36 +32,24 @@ const CustomEdge = ({
     targetY,
     targetPosition,
   });
-  const [isFocused, setIsFocused] = useState(false);
-  const inputRef = useMaskito({ options: percentMask });
-  const [value, setValue] = useState(data?.probability ?? 0);
-  const { builderService } = useBuilderContext();
-  const { handleError } = useErrorToast();
-
-  if (!sourceHandleId) throw new Error(`Edge with no source handle: ${id}`);
-
-  const onBlur = (e: FormEvent) => {
-    const val = parseInt((e.target as HTMLInputElement).value);
-    const parsed = schema.safeParse(val);
-    if (parsed.error) {
-      toast.error("Invalid value: only values between 0 and 100 are allowed");
-    } else {
-      builderService
-        .updateTargetProbability({
-          sourceSceneKey: source,
-          actionKey: sourceHandleId,
-          targetSceneKey: target,
-          probability: val,
-        })
-        .catch(handleError);
-      setValue(val);
-    }
-    setIsFocused(false);
-  };
+  const { inputRef, isFocused, setIsFocused, onChange, value, hasError } =
+    useEdgeProbability({
+      source,
+      sourceHandleId,
+      id,
+      target,
+      data,
+    });
 
   return (
     <>
-      <BaseEdge id={id} path={edgePath} style={style} markerEnd={markerEnd} />
+      <BaseEdge
+        id={id}
+        path={edgePath}
+        style={style}
+        markerEnd={markerEnd}
+        className={cn(hasError && "stroke-destructive!")}
+      />
       {data?.hasSiblings && (
         <EdgeLabelRenderer>
           <div className="nodrag nopan absolute z-10">
@@ -96,6 +63,7 @@ const CustomEdge = ({
               }}
               className={cn(
                 "flex h-10 w-16 origin-center cursor-pointer items-center justify-center rounded border bg-white text-base",
+                hasError && "border-destructive text-destructive",
               )}
             >
               {isFocused ? (
@@ -105,7 +73,7 @@ const CustomEdge = ({
                   className={cn(
                     "h-full border-none px-2 text-center md:text-base",
                   )}
-                  onBlur={onBlur}
+                  onBlur={onChange}
                   ref={inputRef}
                 />
               ) : (

@@ -4,23 +4,47 @@ import { shallow } from "zustand/shallow";
 // ⚠️ The id should be unique among errors of the same type
 type _ErrorBase<Type extends string> = { type: Type; id: string };
 
-type _BuilderError<
+type _GenericBuilderError<
   Type extends string,
   Payload extends object | null = null,
 > = {} & Payload extends null
   ? _ErrorBase<Type>
   : _ErrorBase<Type> & { payload: Payload };
 
-type InvalidActionTargetPercentages =
-  _BuilderError<"invalid-action-target-percentages">;
+export type InvalidActionTargetPercentagesError = _GenericBuilderError<
+  "invalid-action-target-percentages",
+  {
+    sceneName?: string;
+    sourceSceneKey: string;
+    targetSceneKeys: string[];
+    actionText: string;
+    probabilityTotal: number;
+  }
+>;
 
-type BuilderError = InvalidActionTargetPercentages;
+type BuilderErrorWithoutMetadata = InvalidActionTargetPercentagesError;
+
+export type BuilderError = BuilderErrorWithoutMetadata & {
+  metadata: { occurredAt: Date };
+};
 
 type BuilderErrorStore = {
   errors: Record<BuilderError["type"], BuilderError[]>;
-  errorCount: number;
-  addOrReplaceError: (error: BuilderError) => void;
-  removeError: (error: BuilderError) => void;
+  getErrorCount: () => number;
+  /**
+   * Tries to add an error and replace the existing one for the same type-id combo if found
+   * @param error the error to add or replace
+   */
+  addOrReplaceError: (error: BuilderErrorWithoutMetadata) => void;
+  /**
+   * Tries to remove an error and does nothing if it doesn't exist
+   * @param error the error to try to remove
+   */
+  maybeRemoveError: (error: BuilderErrorWithoutMetadata) => void;
+  hasError: (
+    type: BuilderErrorWithoutMetadata["type"],
+    id: BuilderErrorWithoutMetadata["id"],
+  ) => boolean;
 };
 
 export const useBuilderErrorStore = createWithEqualityFn<BuilderErrorStore>(
@@ -28,7 +52,7 @@ export const useBuilderErrorStore = createWithEqualityFn<BuilderErrorStore>(
     errors: {
       "invalid-action-target-percentages": [],
     },
-    errorCount: Object.values(get().errors).flat().length,
+    getErrorCount: () => Object.values(get().errors).flat().length,
 
     addOrReplaceError: (newError) => {
       const { errors } = get();
@@ -36,6 +60,10 @@ export const useBuilderErrorStore = createWithEqualityFn<BuilderErrorStore>(
         errors[newError.type]?.findIndex(
           (errorInStore) => errorInStore.id === newError.id,
         ) !== -1;
+      const errorWithMetadata = {
+        ...newError,
+        metadata: { occurredAt: new Date() },
+      } satisfies BuilderError;
 
       // Replace error in store if exists
       if (errorExists) {
@@ -43,7 +71,9 @@ export const useBuilderErrorStore = createWithEqualityFn<BuilderErrorStore>(
           errors: {
             ...errors,
             [newError.type]: errors[newError.type]!.map((errorInStore) =>
-              errorInStore.id === newError.id ? newError : errorInStore,
+              errorInStore.id === newError.id
+                ? errorWithMetadata
+                : errorInStore,
             ),
           },
         });
@@ -52,22 +82,29 @@ export const useBuilderErrorStore = createWithEqualityFn<BuilderErrorStore>(
         set({
           errors: {
             ...errors,
-            [newError.type]: [...(errors[newError.type] ?? []), newError],
+            [newError.type]: [
+              ...(errors[newError.type] ?? []),
+              errorWithMetadata,
+            ],
           },
         });
       }
     },
 
-    removeError: (errorToRemove) => {
+    maybeRemoveError: (errorToRemove) => {
       const { errors } = get();
       set({
         errors: {
           ...errors,
           [errorToRemove.type]: errors[errorToRemove.type].filter(
-            (errorInStore) => errorInStore.id === errorToRemove.id,
+            (errorInStore) => errorInStore.id !== errorToRemove.id,
           ),
         },
       });
+    },
+
+    hasError: (type, id) => {
+      return get().errors[type].some((err) => err.id === id);
     },
   }),
   shallow,

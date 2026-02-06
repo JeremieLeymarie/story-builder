@@ -63,7 +63,7 @@ const BuilderFlow = () => {
 
 export const Builder = () => (
   <div className="relative flex h-full w-full border">
-    <div className="absolute top-5 left-5 flex flex-col gap-4">
+    <div className="absolute top-5 left-5 flex max-w-67.5 flex-col gap-4">
       <BuilderToolbar />
       <ActionsBar />
       <BuilderErrors />

@@ -38,7 +38,7 @@ import {
   getStubBuilderSceneRepository,
   MockBuilderSceneRepository,
 } from "../stubs/stub-builder-scene-repository";
-import { Scene } from "@/lib/storage/domain";
+import { Action, Scene } from "@/lib/storage/domain";
 
 const factory = getTestFactory();
 
@@ -464,6 +464,124 @@ describe("builder-service", () => {
           ],
         },
       );
+    });
+  });
+
+  describe("check action targets validity", () => {
+    const baseAction = {
+      key: "zioup",
+      type: "simple",
+      text: "action",
+      targets: [],
+    } satisfies Action;
+
+    test("no targets", () => {
+      expect(
+        builderService.checkActionTargetsValidity(baseAction),
+      ).toBeTruthy();
+    });
+
+    test("one valid target", () => {
+      expect(
+        builderService.checkActionTargetsValidity({
+          ...baseAction,
+          targets: [{ sceneKey: "dest", probability: 100 }],
+        }),
+      ).toBeTruthy();
+    });
+
+    test("simple valid targets", () => {
+      expect(
+        builderService.checkActionTargetsValidity({
+          ...baseAction,
+          targets: [
+            { sceneKey: "dest-a", probability: 70 },
+            { sceneKey: "dest-b", probability: 30 },
+          ],
+        }),
+      ).toBeTruthy();
+    });
+
+    test("float valid targets", () => {
+      expect(
+        builderService.checkActionTargetsValidity({
+          ...baseAction,
+          targets: [
+            { sceneKey: "dest-a", probability: 70.4 },
+            { sceneKey: "dest-b", probability: 29.6 },
+          ],
+        }),
+      ).toBeTruthy();
+    });
+
+    test("float valid targets with margin of error", () => {
+      expect(
+        builderService.checkActionTargetsValidity({
+          ...baseAction,
+          targets: [
+            { sceneKey: "dest-a", probability: 70.001 },
+            { sceneKey: "dest-b", probability: 30.003 },
+            // Total is 100.007, which is sufficiently close to 100
+          ],
+        }),
+      ).toBeTruthy();
+    });
+
+    test("one invalid target", () => {
+      expect(
+        builderService.checkActionTargetsValidity({
+          ...baseAction,
+          targets: [{ sceneKey: "dest", probability: 99 }],
+        }),
+      ).toBeFalsy();
+    });
+
+    test("invalid targets - higher than 100%", () => {
+      expect(
+        builderService.checkActionTargetsValidity({
+          ...baseAction,
+          targets: [
+            { sceneKey: "dest-a", probability: 71 },
+            { sceneKey: "dest-b", probability: 30 },
+          ],
+        }),
+      ).toBeFalsy();
+    });
+
+    test("invalid targets - lower than 100%", () => {
+      expect(
+        builderService.checkActionTargetsValidity({
+          ...baseAction,
+          targets: [
+            { sceneKey: "dest-a", probability: 69 },
+            { sceneKey: "dest-b", probability: 30 },
+          ],
+        }),
+      ).toBeFalsy();
+    });
+
+    test("invalid targets - lower than 0%", () => {
+      expect(
+        builderService.checkActionTargetsValidity({
+          ...baseAction,
+          targets: [
+            { sceneKey: "dest-a", probability: 0 },
+            { sceneKey: "dest-b", probability: -42 },
+          ],
+        }),
+      ).toBeFalsy();
+    });
+
+    test("invalid targets - floats", () => {
+      expect(
+        builderService.checkActionTargetsValidity({
+          ...baseAction,
+          targets: [
+            { sceneKey: "dest-a", probability: 70.0 },
+            { sceneKey: "dest-b", probability: 30.1 },
+          ],
+        }),
+      ).toBeFalsy();
     });
   });
 
