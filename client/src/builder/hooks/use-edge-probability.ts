@@ -11,10 +11,8 @@ import { FocusEvent, useState } from "react";
 import { useMaskito } from "@maskito/react";
 import { EdgeProps } from "@xyflow/react";
 import { BuilderEdge } from "../types";
-import {
-  InvalidActionTargetPercentagesError,
-  useBuilderErrorStore,
-} from "./use-builder-error-store";
+import { useBuilderErrorStore } from "./use-builder-error-store";
+import { makeInvalidTargetPercentageError } from "../builder-errors";
 
 const percentMask = {
   mask: /([0-9]{0,3})/,
@@ -72,20 +70,8 @@ export const useEdgeProbability = ({
 
           const areTargetsValid =
             builderService.checkActionTargetsValidity(action);
-          const error = {
-            type: "invalid-action-target-percentages",
-            id: action.key,
-            payload: {
-              sourceSceneKey: scene.key,
-              sceneName: scene.title,
-              actionText: action.text,
-              probabilityTotal: action.targets.reduce(
-                (acc, target) => acc + target.probability,
-                0,
-              ),
-              targetSceneKeys: action.targets.map(({ sceneKey }) => sceneKey),
-            },
-          } satisfies InvalidActionTargetPercentagesError;
+
+          const error = makeInvalidTargetPercentageError({ scene, action });
           if (!areTargetsValid) addOrReplaceError(error);
           else maybeRemoveError(error);
         })
