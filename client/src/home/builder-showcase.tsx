@@ -15,6 +15,7 @@ import { BuilderContextProvider } from "@/builder/hooks/use-builder-context";
 import { Story } from "@/lib/storage/domain";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { getStubBuilderService } from "@/domains/builder/stubs/stub-builder-service";
+import { hashEdgeId } from "@/builder/adapters";
 
 const nodeTypes = { scene: SceneNode };
 
@@ -29,13 +30,13 @@ const NODES: BuilderNode[] = [
         {
           key: "action-a",
           type: "simple",
-          targets: [],
+          targets: [{ sceneKey: "forest-fake-scene-key", probability: 100 }],
           text: "Go to the forest",
         },
         {
           key: "action-b",
           type: "simple",
-          targets: [],
+          targets: [{ sceneKey: "village-fake-scene-key", probability: 100 }],
           text: "Go to the village",
         },
       ],
@@ -45,7 +46,7 @@ const NODES: BuilderNode[] = [
       isEditable: false,
       builderParams: { position: { x: 50, y: 150 } },
     },
-    id: "scene-1",
+    id: "first-fake-scene-key",
     position: { x: 50, y: 150 },
     type: "scene",
   },
@@ -62,7 +63,7 @@ const NODES: BuilderNode[] = [
       isEditable: false,
       builderParams: { position: { x: 550, y: 50 } },
     },
-    id: "scene-2",
+    id: "forest-fake-scene-key",
     position: { x: 550, y: 50 },
     type: "scene",
   },
@@ -79,7 +80,7 @@ const NODES: BuilderNode[] = [
       isEditable: false,
       builderParams: { position: { x: 550, y: 350 } },
     },
-    id: "scene-3",
+    id: "village-fake-scene-key",
     position: { x: 550, y: 350 },
     type: "scene",
   },
@@ -87,16 +88,24 @@ const NODES: BuilderNode[] = [
 
 const EDGES: BuilderEdge[] = [
   {
-    id: "edge-1",
-    source: "scene-1",
-    target: "scene-2",
-    sourceHandle: "first-fake-scene-key-0",
+    id: hashEdgeId({
+      actionKey: "action-a",
+      sceneKey: "first-fake-scene-key",
+      targetSceneKey: "forest-fake-scene-key",
+    }),
+    source: "first-fake-scene-key",
+    target: "forest-fake-scene-key",
+    sourceHandle: "action-a",
   },
   {
-    id: "edge-2",
-    source: "scene-1",
-    target: "scene-3",
-    sourceHandle: "first-fake-scene-key-1",
+    id: hashEdgeId({
+      actionKey: "action-b",
+      sceneKey: "first-fake-scene-key",
+      targetSceneKey: "village-fake-scene-key",
+    }),
+    source: "first-fake-scene-key",
+    target: "village-fake-scene-key",
+    sourceHandle: "action-b",
   },
 ];
 
@@ -116,7 +125,7 @@ export const BuilderShowcase = () => {
   const [edges, , onEdgesChange] = useEdgesState(EDGES);
 
   return (
-    <div className="bg-primary flex h-[400px] w-full max-lg:h-fit max-lg:flex-col">
+    <div className="bg-primary flex h-100 w-full max-lg:h-fit max-lg:flex-col">
       <div className="flex h-full w-5/12 items-center max-lg:w-full max-lg:py-8">
         <div className="flex w-full flex-col px-12">
           <Title variant="primary">Create your own stories!</Title>
@@ -137,7 +146,7 @@ export const BuilderShowcase = () => {
           </div>
         </div>
       </div>
-      <div className="h-full w-7/12 bg-white max-lg:h-[400px] max-lg:w-full">
+      <div className="h-full w-7/12 bg-white max-lg:h-100 max-lg:w-full">
         <BuilderContextProvider
           refresh={async () => {}}
           story={MOCK_STORY}

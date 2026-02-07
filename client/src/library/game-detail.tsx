@@ -3,10 +3,15 @@ import { Story } from "@/lib/storage/domain";
 import { ExtendedProgress } from "./types";
 import { useRouter } from "@tanstack/react-router";
 import { getLibraryService } from "@/domains/game/library-service";
-import { Play, Trash2 } from "lucide-react";
+import { InfoIcon, Play, Trash2 } from "lucide-react";
 import { StoryGenreBadge } from "@/design-system/components";
 import { Button } from "@/design-system/primitives/button";
 import { Progress } from "@/design-system/primitives/progress";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/design-system/primitives/tooltip";
 
 type Props = {
   story: Story;
@@ -55,16 +60,12 @@ export const LibraryGameDetail = ({
   return (
     <div className="bg-background min-h-screen">
       <div className="mx-auto max-w-6xl px-6 py-8">
-        <div className="mb-12 flex gap-8">
+        <div className="mb-12 flex flex-col gap-8 md:flex-row">
           <div className="shrink-0">
             <img
               src={story.image}
               alt={story.title}
-              style={{
-                width: "calc(var(--spacing) * 104)",
-                height: "calc(var(--spacing) * 78)",
-              }}
-              className="rounded-lg object-cover shadow-lg"
+              className="h-78 w-104 rounded-lg object-cover shadow-lg"
             />
           </div>
           <div className="flex-1 space-y-4">
@@ -93,9 +94,19 @@ export const LibraryGameDetail = ({
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground font-medium">
-                  Story Progress
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground font-medium">
+                    Story progress
+                  </span>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <InfoIcon size={16} className="text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Proportion of pages visited out of all pages in the story
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
                 <span className="text-foreground text-2xl font-bold">
                   {progressPercentage}%
                 </span>
