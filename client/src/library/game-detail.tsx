@@ -12,6 +12,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
+import { StoryProgressVisualization } from "./story-progress-visualization";
 
 type Props = {
   story: Story;
@@ -56,6 +57,10 @@ export const LibraryGameDetail = ({
           100,
         )
       : 0;
+
+  return (
+    <StoryProgressVisualization story={story} progress={currentProgress} />
+  );
 
   return (
     <div className="bg-background min-h-screen">

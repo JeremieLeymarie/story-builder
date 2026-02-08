@@ -29,7 +29,7 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
         All the stories you've created are here.
       </p>
       <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap">
-        <Card className="h-56.25 w-68.75 border-dashed">
+        <Card className="h-56.25 w-68.75 border-2 border-dashed ring-0">
           <CardHeader>
             <CardTitle>New story</CardTitle>
           </CardHeader>
@@ -70,9 +70,7 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
               story={story}
               button={
                 <Link to="/builder/$storyKey" params={{ storyKey: story.key }}>
-                  <Button
-                    className={`absolute right-4 bottom-4 opacity-0 transition duration-300 ease-in-out group-hover:opacity-100`}
-                  >
+                  <Button className="absolute right-4 bottom-4 opacity-0 transition duration-300 ease-in-out group-hover:opacity-100">
                     Edit &nbsp;
                     <MoveRightIcon size="15px" className="animate-bounce" />
                   </Button>
