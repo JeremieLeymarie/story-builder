@@ -7,6 +7,12 @@ import { useState } from "react";
 import { useDeleteProgress } from "./hooks/use-delete-progress";
 import { Button } from "@/design-system/primitives/button";
 import { ConfirmDialog } from "@/design-system/components";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardTitle,
+} from "@/design-system/primitives";
 
 export const SavesDetail = ({
   startNewGame,
@@ -34,11 +40,11 @@ export const SavesDetail = ({
     <div className="space-y-6">
       <div className="space-y-4">
         <div className="mb-8 flex items-center justify-between">
-          <h2 className="text-primary text-2xl font-bold">Your Saves:</h2>
+          <h2 className="text-primary text-2xl font-semibold">Your saves:</h2>
           <Button
             onClick={startNewGame}
-            size="lg"
-            className="bg-primary h-12 w-12 rounded-full"
+            size="icon"
+            className="rounded-full"
             title="New save"
           >
             <PlusIcon size={24} />
@@ -47,46 +53,56 @@ export const SavesDetail = ({
 
         <div className="space-y-4">
           {slicedProgresses.map((progress, index) => (
-            <div
+            <Card
               key={progress.key}
               className={cn(
-                "group border-primary bg-background relative rounded-2xl border-2 p-4 shadow-md transition-all hover:shadow-lg",
-                index === 0 && "border-primary bg-primary/5",
+                "group ring-primary bg-background relative p-4 shadow-md ring-2 transition-all hover:shadow-lg",
+                index === 0 && "bg-primary/5",
                 progress.finished && "opacity-75",
               )}
             >
               <div className="flex items-center justify-between">
-                <GameLink progress={progress} gameKey={progress.storyKey}>
+                <GameLink
+                  progress={progress}
+                  gameKey={progress.storyKey}
+                  disabled={progress.finished}
+                >
                   <div className="flex-1 cursor-pointer">
                     <div className="flex items-center gap-2">
-                      <h3 className="text-foreground text-lg font-semibold">
+                      <CardTitle>
                         Save #{index + 1} -{" "}
                         {progress.lastScene?.title || "Unknown scene"}
-                      </h3>
+                      </CardTitle>
                       {progress.finished && (
                         <span className="rounded-full bg-green-500 px-2 py-1 text-xs text-white">
                           COMPLETED
                         </span>
                       )}
                     </div>
-                    <p className="text-muted-foreground text-sm">
+                    <CardDescription>
                       {timeFrom(progress.lastPlayedAt)}
-                    </p>
-                    <p className="text-muted-foreground/80 text-xs">
-                      {formatDate(progress.lastPlayedAt)}
-                    </p>
+                    </CardDescription>
+                    <CardContent className="pl-0">
+                      <p className="text-muted-foreground/80 text-xs">
+                        {formatDate(progress.lastPlayedAt)}
+                      </p>
+                    </CardContent>
                   </div>
                 </GameLink>
 
                 <div className="flex items-center gap-3">
                   {/* Play button */}
-                  <GameLink progress={progress} gameKey={progress.storyKey}>
+                  <GameLink
+                    progress={progress}
+                    gameKey={progress.storyKey}
+                    disabled={progress.finished}
+                  >
                     <Button
                       size="icon"
                       disabled={progress.finished}
-                      className="bg-primary hover:bg-primary/90 h-10 w-10 rounded-full shadow-md disabled:opacity-50"
+                      className="rounded-full"
                     >
-                      <Play size={18} className="ml-0.5" />
+                      <Play size={18} />
                     </Button>
                   </GameLink>
 
@@ -110,7 +126,7 @@ export const SavesDetail = ({
                   />
                 </div>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
 
