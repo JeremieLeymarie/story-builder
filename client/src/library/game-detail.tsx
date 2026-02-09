@@ -59,10 +59,6 @@ export const LibraryGameDetail = ({
       : 0;
 
   return (
-    <StoryProgressVisualization story={story} progress={currentProgress} />
-  );
-
-  return (
     <div className="bg-background min-h-screen">
       <div className="mx-auto max-w-6xl px-6 py-8">
         <div className="mb-12 flex flex-col gap-8 md:flex-row">
