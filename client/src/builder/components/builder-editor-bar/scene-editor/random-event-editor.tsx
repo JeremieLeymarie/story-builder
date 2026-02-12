@@ -10,30 +10,37 @@ import { useQuery } from "@tanstack/react-query";
 export const RandomEventEditorHeader = () => {
   return (
     <ToolbarHeader>
-      <ToolbarTitle>Random Evenement</ToolbarTitle>
+      <ToolbarTitle>Random Events</ToolbarTitle>
     </ToolbarHeader>
   );
 };
 
 export const RandomEventEditor = () => {
-  const currentActions = useRandomEventStore((state) => state.action);
-  const context = useBuilderContext();
-  const sceneKey: string[] = [];
-  currentActions?.targets.forEach((element) => {
-    sceneKey.push(element.sceneKey);
+  const currentAction = useRandomEventStore((state) => state.action);
+  if (!currentAction || currentAction.targets.length < 2)
+    throw new Error(
+      "RandomEventEditor shouldn't be rendered when useRandomEventStore is empty, or when the selected action has less than 2 targets",
+    );
+
+  const { builderService } = useBuilderContext();
+  const sceneKeys = currentAction.targets.map((target) => target.sceneKey);
+  const { data: sceneByKey, isPending } = useQuery({
+    queryKey: ["get-scenes", sceneKeys],
+    queryFn: async () => {
+      return await builderService.getScenesByKey(sceneKeys);
+    },
   });
-  sceneKey.reverse();
-  const { data, isPending } = useQuery({
-    queryKey: ["scenes"],
-    queryFn: () => context.builderService.getScenesByKey(sceneKey),
-  });
-  if (!isPending && data)
+
+  if (!isPending && sceneByKey)
     return (
       <ul>
-        {currentActions?.targets?.map((t, i) => (
-          <li key={i} className="flex items-center justify-between gap-2 py-1">
+        {currentAction?.targets?.map((t) => (
+          <li
+            key={t.sceneKey}
+            className="flex items-center justify-between gap-2 py-1"
+          >
             <span className="max-w-[200px] truncate">
-              {data[t.sceneKey]?.title}
+              {sceneByKey[t.sceneKey]?.title}
             </span>
             <div className="flex shrink-0 items-center gap-1">
               <Input
