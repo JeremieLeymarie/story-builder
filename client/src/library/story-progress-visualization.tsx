@@ -130,7 +130,7 @@ const VisualizationContext = createContext<VisualizationContextType | null>(
   null,
 );
 
-export const VisualizationContextProvider = ({
+const VisualizationContextProvider = ({
   children,
   progress,
 }: {
