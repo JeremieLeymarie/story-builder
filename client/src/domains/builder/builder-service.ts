@@ -106,7 +106,9 @@ export const _getBuilderService = ({
       await localRepository.updatePartialScene(sourceScene.key, { actions });
       return { ...sourceScene, actions };
     },
-
+    getScenesByKey: async (sourceSceneKeys: string[]) => {
+      return await sceneRepository.getScenesByKey(sourceSceneKeys);
+    },
     removeSceneConnections: async (connectionsToRemove) => {
       const sourceSceneKeys = [
         ...new Set(connectionsToRemove.map((c) => c.sourceSceneKey)),

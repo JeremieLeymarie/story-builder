@@ -12,6 +12,7 @@ export const getStubBuilderService = (): MockBuilderService => ({
   checkActionTargetsValidity: vi.fn(),
   bulkUpdateScenes: vi.fn(),
   changeFirstScene: vi.fn(),
+  getScenesByKey: vi.fn(),
   createStoryWithFirstScene: vi.fn(),
   deleteScenes: vi.fn(),
   deleteStory: vi.fn(),
