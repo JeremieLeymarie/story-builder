@@ -12,7 +12,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
-import { StoryProgressVisualization } from "./story-progress-visualization";
 
 type Props = {
   story: Story;

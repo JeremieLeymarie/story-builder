@@ -13,6 +13,9 @@ import {
   CardDescription,
   CardTitle,
 } from "@/design-system/primitives";
+// @ts-expect-error until the component is used
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { StoryProgressVisualization } from "./story-progress-visualization";
 
 export const SavesDetail = ({
   startNewGame,
