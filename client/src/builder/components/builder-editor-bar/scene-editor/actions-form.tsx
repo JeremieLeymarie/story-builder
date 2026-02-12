@@ -11,7 +11,8 @@ export const ActionsForm = ({
   actionFormProps: ReturnType<typeof useEditActionsForm>;
   makeEmptyActionPayload: () => Action;
 }) => {
-  const { append, fields, form, remove, adaptDomainAction } = actionFormProps;
+  const { append, fields, form, remove, adaptDomainAction, adaptFormAction } =
+    actionFormProps;
 
   return (
     <Form {...form}>
@@ -45,6 +46,7 @@ export const ActionsForm = ({
                 form={form}
                 index={index}
                 removeAction={remove}
+                adaptFormAction={adaptFormAction}
               />
             ))}
           </div>

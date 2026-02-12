@@ -1,12 +1,11 @@
 import { createWithEqualityFn } from "zustand/traditional";
 import { shallow } from "zustand/shallow";
-import { EditActionsSchema } from "./use-edit-actions-form";
-import { FieldArrayWithId } from "node_modules/react-hook-form/dist/types/fieldArray";
+import { Action } from "@/lib/storage/domain";
 
 type RandomEventStore = {
-  open: (action: FieldArrayWithId<EditActionsSchema, "actions", "id">) => void;
+  open: (action: Action) => void;
   close: () => void;
-  action: FieldArrayWithId<EditActionsSchema, "actions", "id"> | null;
+  action: Action | null;
 };
 
 export const useRandomEventStore = createWithEqualityFn<RandomEventStore>(
