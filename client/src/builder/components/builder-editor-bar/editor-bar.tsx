@@ -7,7 +7,7 @@ import { SceneEditor, SceneEditorHeader } from "./scene-editor/scene-editor";
 import {
   RandomEventEditor,
   RandomEventEditorHeader,
-} from "./scene-editor/Random-event-editor";
+} from "./scene-editor/random-event-editor";
 import { useRandomEventStore } from "@/builder/hooks/use-random-event-store";
 
 export const EditorBar = () => {
