@@ -12,20 +12,23 @@ import { useRandomEventStore } from "@/builder/hooks/use-random-event-store";
 
 export const EditorBar = () => {
   const currentEditor = useBuilderEditorStore((state) => state.editor);
-  const currentAction = useRandomEventStore((state) => state.action);
+  const isRandomActionEditorOpen = useRandomEventStore(
+    (state) =>
+      currentEditor?.type === "scene-editor" &&
+      state.action &&
+      state.action.targets.length >= 2,
+  );
 
   if (!currentEditor) return null;
 
   return (
     <div className="flex">
-      {currentEditor.type === "scene-editor" &&
-        currentAction &&
-        currentAction?.targets.length >= 2 && (
-          <Toolbar>
-            <RandomEventEditorHeader />
-            <RandomEventEditor />
-          </Toolbar>
-        )}
+      {isRandomActionEditorOpen && (
+        <Toolbar>
+          <RandomEventEditorHeader />
+          <RandomEventEditor />
+        </Toolbar>
+      )}
       <Toolbar
         className={cn("w-[500px]", currentEditor.type === null && "hidden")}
       >

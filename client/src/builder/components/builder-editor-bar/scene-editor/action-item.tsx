@@ -40,6 +40,7 @@ import {
   EditActionsSchema,
 } from "@/builder/hooks/use-edit-actions-form";
 import { useRandomEventStore } from "@/builder/hooks/use-random-event-store";
+import { Action } from "@/lib/storage/domain";
 
 const SceneSelector = ({
   onChange,
@@ -113,15 +114,20 @@ export const ActionItem = ({
   form,
   index,
   removeAction,
+  adaptFormAction,
 }: {
   actionField: FieldArrayWithId<EditActionsSchema, "actions", "id">;
   form: EditActionsForm;
   index: number;
   removeAction: (index: number) => void;
+  adaptFormAction: (formAction: ActionSchema) => Action;
 }) => {
   const [open, setOpen] = useState(false);
   const { story } = useBuilderContext();
   const [showCondition, setShowCondition] = useState(actionField.showCondition);
+  const [openRandomEventEditor, closeRandomEventEditor] = useRandomEventStore(
+    (state) => [state.open, state.close],
+  );
   const onShowConditionChange = (
     value: string,
     formState: UseFormStateReturn<EditActionsSchema>,
@@ -157,13 +163,9 @@ export const ActionItem = ({
           onClick={() => {
             setOpen((prev) => !prev);
             if (open) {
-              useRandomEventStore.setState({
-                action: null,
-              });
+              closeRandomEventEditor();
             } else {
-              useRandomEventStore.setState({
-                action: actionField,
-              });
+              openRandomEventEditor(adaptFormAction(actionField));
             }
           }}
         >
