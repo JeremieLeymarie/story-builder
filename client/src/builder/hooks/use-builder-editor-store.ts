@@ -1,21 +1,15 @@
 import { createWithEqualityFn } from "zustand/traditional";
 import { shallow } from "zustand/shallow";
-import { Scene } from "@/lib/storage/domain";
 
 type EditorBase<Type, Payload> = {
   type: Type;
   payload: Payload;
 };
 
-export type SceneUpdatePayload = Pick<
-  Scene,
-  "key" | "title" | "content" | "actions"
->;
-
 type SceneEditorStore = EditorBase<
   "scene-editor",
   {
-    scene: SceneUpdatePayload;
+    sceneKey: string;
     isFirstScene: boolean;
   }
 >;
