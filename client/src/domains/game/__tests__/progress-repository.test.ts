@@ -16,13 +16,11 @@ describe("progress-repository", () => {
 
   beforeEach(async () => {
     testDB = await getTestDatabase();
-    console.log(testDB);
     repo = _getDexieProgressRepository(testDB);
   });
 
   describe("get progress", () => {
     test("returns null if it does not exist", async () => {
-      console.log("coucou");
       const progress = factory.storyProgress();
       await testDB.storyProgresses.add(progress);
 
