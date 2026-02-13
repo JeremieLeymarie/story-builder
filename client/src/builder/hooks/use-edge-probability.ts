@@ -13,6 +13,8 @@ import { EdgeProps } from "@xyflow/react";
 import { BuilderEdge } from "../types";
 import { useBuilderErrorStore } from "./use-builder-error-store";
 import { makeInvalidTargetPercentageError } from "../builder-errors";
+import { makeGetSceneQueryOptions } from "./use-get-scene";
+import { useQueryClient } from "@tanstack/react-query";
 
 const percentMask = {
   mask: /([0-9]{0,3})/,
@@ -49,6 +51,7 @@ export const useEdgeProbability = ({
       state.hasError("invalid-action-target-percentages", sourceHandleId),
     ],
   );
+  const queryClient = useQueryClient();
 
   const onChange = (e: FocusEvent) => {
     const val = parseInt((e.target as HTMLInputElement).value);
@@ -74,6 +77,10 @@ export const useEdgeProbability = ({
           const error = makeInvalidTargetPercentageError({ scene, action });
           if (!areTargetsValid) addOrReplaceError(error);
           else maybeRemoveError(error);
+
+          // Invalidate scene queries used in builder editor
+          const queryKey = makeGetSceneQueryOptions(source).queryKey;
+          queryClient.invalidateQueries({ queryKey });
         })
         .catch(handleError);
       setValue(val);

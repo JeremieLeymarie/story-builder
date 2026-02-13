@@ -2,56 +2,114 @@ import { Button, Form, FormDescription } from "@/design-system/primitives";
 import { PlusIcon } from "lucide-react";
 import { ActionItem } from "./action-item";
 import { useEditActionsForm } from "@/builder/hooks/use-edit-actions-form";
-import { Action } from "@/lib/storage/domain";
+import { Toolbar } from "@/design-system/components/toolbar";
+import {
+  RandomEventEditor,
+  RandomEventEditorHeader,
+} from "./random-event-editor";
+import { useBuilderActions } from "@/builder/hooks/use-builder-actions";
+import { useGetScene } from "@/builder/hooks/use-get-scene";
+import { SimpleLoader } from "@/design-system/components/simple-loader";
+import { Scene } from "@/lib/storage/domain";
+import { useState } from "react";
 
-export const ActionsForm = ({
-  actionFormProps,
-  makeEmptyActionPayload,
-}: {
-  actionFormProps: ReturnType<typeof useEditActionsForm>;
-  makeEmptyActionPayload: () => Action;
-}) => {
-  const { append, fields, form, remove, adaptDomainAction, adaptFormAction } =
-    actionFormProps;
+const useRandomEventsToolbar = ({ scene }: { scene: Scene }) => {
+  const [randomEventsActionKey, setRandomEventsActionKey] = useState<
+    string | null
+  >(null);
+
+  const closeRandomEventsToolbar = () => {
+    setRandomEventsActionKey(null);
+  };
+
+  // TODO: What happens when you delete an action that is open
+  const randomEventsAction = scene.actions.find(
+    (action) => action.key === randomEventsActionKey,
+  );
+
+  return {
+    randomEventsAction,
+    openRandomEventsToolbar: setRandomEventsActionKey,
+    closeRandomEventsToolbar,
+  };
+};
+
+const ActionsFormContent = ({ scene }: { scene: Scene }) => {
+  const { updateScene, makeEmptyActionPayload } = useBuilderActions();
+  const { append, fields, form, remove, adaptDomainAction } =
+    useEditActionsForm({
+      actions: scene.actions,
+      onSave: (payload) => updateScene({ key: scene.key, ...payload }),
+    });
+
+  const removeAction = (index?: number | number[]) => {
+    closeRandomEventsToolbar();
+    remove(index);
+  };
+
+  const {
+    openRandomEventsToolbar,
+    closeRandomEventsToolbar,
+    randomEventsAction,
+  } = useRandomEventsToolbar({ scene });
 
   return (
-    <Form {...form}>
-      <form onSubmit={(ev) => ev.preventDefault()}>
-        <div className="w-full space-y-4">
-          <div>
-            <div className="mb-2 flex items-center gap-2">
-              <p className="text-md font-bold">Actions</p>
-              <Button
-                variant="ghost"
-                type="button"
-                size="icon"
-                onClick={() =>
-                  append(adaptDomainAction(makeEmptyActionPayload()))
-                }
-              >
-                <PlusIcon />
-              </Button>
+    <>
+      {randomEventsAction && randomEventsAction.targets.length > 1 && (
+        <Toolbar className="absolute top-0 right-128 w-60">
+          <RandomEventEditorHeader />
+          <RandomEventEditor action={randomEventsAction} />
+        </Toolbar>
+      )}
+      <Form {...form}>
+        <form onSubmit={(ev) => ev.preventDefault()}>
+          <div className="w-full space-y-4">
+            <div>
+              <div className="mb-2 flex items-center gap-2">
+                <p className="text-md font-bold">Actions</p>
+                <Button
+                  variant="ghost"
+                  type="button"
+                  size="icon"
+                  onClick={() =>
+                    append(adaptDomainAction(makeEmptyActionPayload()))
+                  }
+                >
+                  <PlusIcon />
+                </Button>
+              </div>
+              <hr />
             </div>
-            <hr />
-          </div>
 
-          <FormDescription className="my-2">
-            Buttons that allow the player to move in your story
-          </FormDescription>
-          <div>
-            {fields.map((field, index) => (
-              <ActionItem
-                key={field.id}
-                actionField={field}
-                form={form}
-                index={index}
-                removeAction={remove}
-                adaptFormAction={adaptFormAction}
-              />
-            ))}
+            <FormDescription className="my-2">
+              Buttons that allow the player to move in your story
+            </FormDescription>
+            <div>
+              {fields.map((field, index) => (
+                <ActionItem
+                  key={field.id}
+                  actionField={field}
+                  form={form}
+                  index={index}
+                  removeAction={removeAction}
+                  openRandomEventsSettings={() =>
+                    openRandomEventsToolbar(field.key)
+                  }
+                  closeRandomEventsSettings={closeRandomEventsToolbar}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      </form>
-    </Form>
+        </form>
+      </Form>
+    </>
   );
+};
+
+export const ActionsFormContainer = ({ sceneKey }: { sceneKey: string }) => {
+  const { scene, isLoading } = useGetScene(sceneKey);
+
+  if (isLoading || scene === undefined) return <SimpleLoader />;
+
+  return <ActionsFormContent scene={scene} />;
 };

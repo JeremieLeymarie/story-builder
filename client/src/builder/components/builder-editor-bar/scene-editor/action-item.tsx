@@ -39,8 +39,6 @@ import {
   EditActionsForm,
   EditActionsSchema,
 } from "@/builder/hooks/use-edit-actions-form";
-import { useRandomEventStore } from "@/builder/hooks/use-random-event-store";
-import { Action } from "@/lib/storage/domain";
 
 const SceneSelector = ({
   onChange,
@@ -114,20 +112,20 @@ export const ActionItem = ({
   form,
   index,
   removeAction,
-  adaptFormAction,
+  openRandomEventsSettings,
+  closeRandomEventsSettings,
 }: {
   actionField: FieldArrayWithId<EditActionsSchema, "actions", "id">;
   form: EditActionsForm;
   index: number;
   removeAction: (index: number) => void;
-  adaptFormAction: (formAction: ActionSchema) => Action;
+  openRandomEventsSettings: () => void;
+  closeRandomEventsSettings: () => void;
 }) => {
-  const [open, setOpen] = useState(false);
+  const [openSettings, setOpenSettings] = useState(false);
   const { story } = useBuilderContext();
   const [showCondition, setShowCondition] = useState(actionField.showCondition);
-  const [openRandomEventEditor, closeRandomEventEditor] = useRandomEventStore(
-    (state) => [state.open, state.close],
-  );
+
   const onShowConditionChange = (
     value: string,
     formState: UseFormStateReturn<EditActionsSchema>,
@@ -161,12 +159,9 @@ export const ActionItem = ({
           size="icon"
           type="button"
           onClick={() => {
-            setOpen((prev) => !prev);
-            if (open) {
-              closeRandomEventEditor();
-            } else {
-              openRandomEventEditor(adaptFormAction(actionField));
-            }
+            setOpenSettings((prev) => !prev);
+            if (openSettings) closeRandomEventsSettings();
+            else openRandomEventsSettings();
           }}
         >
           <SettingsIcon />
@@ -180,7 +175,7 @@ export const ActionItem = ({
           <Trash2Icon />
         </Button>
       </div>
-      {open && (
+      {openSettings && (
         <div className="flex items-center gap-2 text-sm">
           Show
           <FormField
