@@ -1,5 +1,5 @@
 // See: https://stackoverflow.com/a/11832950/17456270
-const round = (num: number, decimalPlaces = 2) => {
+export const round = (num: number, decimalPlaces = 2) => {
   const divider = 10 ** decimalPlaces;
   return Math.round((num + Number.EPSILON) * divider) / divider;
 };

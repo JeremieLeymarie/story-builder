@@ -40,7 +40,7 @@ export const AuthModalForm = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
+      <DialogContent className="min-w-120">
         <DialogHeader>
           <DialogTitle>
             {form === "sign-in" ? "Log in!" : "Sign up!"}

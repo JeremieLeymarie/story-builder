@@ -163,10 +163,6 @@ export const _getLibraryService = ({
         storyKey,
       );
 
-      // Get total number of scenes for this story
-      const allScenes = await localRepository.getScenesByStoryKey(storyKey);
-      const totalScenes = allScenes.length;
-
       // Get more data about the last scene of every story progress (scene title, etc...)
       const lastSceneKeys = progresses.map((p) => p.currentSceneKey);
 
@@ -184,7 +180,6 @@ export const _getLibraryService = ({
         story,
         currentProgress: currentProgress ?? null,
         otherProgresses,
-        totalScenes,
       };
     },
 
