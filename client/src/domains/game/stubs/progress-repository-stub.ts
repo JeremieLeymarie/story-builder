@@ -7,7 +7,7 @@ export type MockProgressRepository = MockPort<ProgressRepositoryPort>;
 
 const factory = getTestFactory();
 
-export const getStubGameRepository = (): MockProgressRepository => {
+export const getStubProgressRepository = (): MockProgressRepository => {
   return {
     get: vi.fn(() => Promise.resolve(factory.storyProgress())),
   };
