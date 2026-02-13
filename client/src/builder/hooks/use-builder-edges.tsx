@@ -9,17 +9,17 @@ import {
   sceneToNodeAdapter,
   targetToEdgeAdapter,
 } from "../adapters";
+import { useQueryClient } from "@tanstack/react-query";
+import { makeGetSceneQueryOptions } from "./use-get-scene";
 
 // TODO: test this
 export const useBuilderEdges = () => {
-  const { updateNodeData, updateEdgeData, addEdges } = useReactFlow<
-    BuilderNode,
-    BuilderEdge
-  >();
+  const { updateNodeData, updateEdgeData, addEdges, screenToFlowPosition } =
+    useReactFlow<BuilderNode, BuilderEdge>();
   const { handleError } = useErrorToast();
   const { addScene } = useAddScene();
-  const { screenToFlowPosition } = useReactFlow();
   const { builderService, story } = useBuilderContext();
+  const queryClient = useQueryClient();
 
   const _updateNodeAndEdges = (updatedScene: Scene) => {
     const node = sceneToNodeAdapter({ scene: updatedScene, story });
@@ -56,6 +56,10 @@ export const useBuilderEdges = () => {
       // Update React Flow
       addEdges([edge]);
       _updateNodeAndEdges(scene);
+
+      // Invalidate scene queries used in builder editor
+      const queryKey = makeGetSceneQueryOptions(sourceSceneKey).queryKey;
+      queryClient.invalidateQueries({ queryKey });
     } catch (e) {
       handleError(e);
     }
@@ -132,10 +136,17 @@ export const useBuilderEdges = () => {
           };
         }),
       );
-      // TODO: if probabilities don't add up to 100% here we should set an error
+      // TODO: if probabilities don't add up to 100% here we should set an error (for example if there are 3 connections and one is deleted)
 
       // Update React Flow
       Object.values(updatedScenesByKey).forEach(_updateNodeAndEdges);
+
+      // Invalidate scene queries used in builder editor
+      edges.forEach((edge) => {
+        const sourceSceneKey = edge.source;
+        const queryKey = makeGetSceneQueryOptions(sourceSceneKey).queryKey;
+        queryClient.invalidateQueries({ queryKey });
+      });
     } catch (err) {
       handleError(err);
     }
