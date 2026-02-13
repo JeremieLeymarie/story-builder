@@ -27,7 +27,6 @@ type AnalyticsServicePort = {
   };
 };
 
-// TODO: test this
 export const _getAnalyticsService = async ({
   progressKey,
   gameKey,
@@ -61,7 +60,10 @@ export const _getAnalyticsService = async ({
         return acc;
       }, initialData);
 
-      const rate = round((data[visitedIdx].count / scenes.length) * 100, 2);
+      const rate =
+        scenes.length > 0
+          ? round((data[visitedIdx].count / scenes.length) * 100, 2)
+          : 0;
 
       return {
         data,

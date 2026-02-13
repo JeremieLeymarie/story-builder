@@ -3,13 +3,13 @@ import {
   getLocalRepositoryStub,
   MockLocalRepository,
 } from "@/repositories/stubs";
-import { _getGameService } from "../game/game-service";
+import { _getGameService } from "../game-service";
 import {
   BASIC_SCENE,
   BASIC_STORY,
   BASIC_STORY_PROGRESS,
   BASIC_USER,
-} from "../../repositories/stubs/data";
+} from "../../../repositories/stubs/data";
 
 describe("game-service", () => {
   let gameService: ReturnType<typeof _getGameService>;
