@@ -47,7 +47,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
       onDoubleClick={() => {
         openEditor({
           type: "scene-editor",
-          payload: { scene, isFirstScene },
+          payload: { sceneKey: scene.key, isFirstScene },
         });
       }}
     >
@@ -73,7 +73,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
               onClick={() =>
                 openEditor({
                   type: "scene-editor",
-                  payload: { scene, isFirstScene },
+                  payload: { sceneKey: scene.key, isFirstScene },
                 })
               }
             >

@@ -1,22 +1,15 @@
 import { createWithEqualityFn } from "zustand/traditional";
 import { shallow } from "zustand/shallow";
-import { useRandomEventStore } from "./use-random-event-store";
-import { Scene } from "@/lib/storage/domain";
 
 type EditorBase<Type, Payload> = {
   type: Type;
   payload: Payload;
 };
 
-export type SceneUpdatePayload = Pick<
-  Scene,
-  "key" | "title" | "content" | "actions"
->;
-
 type SceneEditorStore = EditorBase<
   "scene-editor",
   {
-    scene: SceneUpdatePayload;
+    sceneKey: string;
     isFirstScene: boolean;
   }
 >;
@@ -39,7 +32,6 @@ export const useBuilderEditorStore = createWithEqualityFn<BuilderStore>(
     },
     close() {
       set({ editor: null });
-      useRandomEventStore.getState().close();
     },
   }),
   shallow,

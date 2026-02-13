@@ -20,7 +20,7 @@ export const EditorBar = () => {
           .exhaustive()}
         {match(currentEditor)
           .with({ type: "scene-editor" }, ({ payload }) => (
-            <SceneEditor scene={payload.scene} />
+            <SceneEditor sceneKey={payload.sceneKey} />
           ))
           .with({ type: "story-editor" }, () => <StoryEditor />)
           .exhaustive()}

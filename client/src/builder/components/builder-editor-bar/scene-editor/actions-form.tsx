@@ -22,7 +22,6 @@ const useRandomEventsToolbar = ({ scene }: { scene: Scene }) => {
     setRandomEventsActionKey(null);
   };
 
-  // TODO: What happens when you delete an action that is open
   const randomEventsAction = scene.actions.find(
     (action) => action.key === randomEventsActionKey,
   );

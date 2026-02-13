@@ -28,6 +28,8 @@ const SceneContentForm = ({ scene }: { scene: Scene }) => {
     onSave: (payload) => updateScene({ key: scene.key, ...payload }),
   });
 
+  console.log(scene.key);
+
   return (
     <Form {...form}>
       <form
@@ -62,9 +64,9 @@ const SceneContentForm = ({ scene }: { scene: Scene }) => {
               <FormControl>
                 <EditorContextProvider entityType="scene" entityKey={scene.key}>
                   <RichText
-                    key={scene.key}
+                    key={JSON.stringify(scene.content)}
                     onSerializedChange={field.onChange}
-                    initialState={scene.content} // TODO: check that editor is not broken when switching between scenes
+                    initialState={scene.content}
                     editable
                     className="h-75 max-w-112.5"
                     toolbarPlugins={[
