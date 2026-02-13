@@ -1,26 +1,16 @@
 import { createWithEqualityFn } from "zustand/traditional";
 import { shallow } from "zustand/shallow";
+import { InvalidActionTargetPercentagesError } from "../builder-errors";
 
 // ⚠️ The id should be unique among errors of the same type
 type _ErrorBase<Type extends string> = { type: Type; id: string };
 
-type _GenericBuilderError<
+export type _GenericBuilderError<
   Type extends string,
   Payload extends object | null = null,
 > = {} & Payload extends null
   ? _ErrorBase<Type>
   : _ErrorBase<Type> & { payload: Payload };
-
-export type InvalidActionTargetPercentagesError = _GenericBuilderError<
-  "invalid-action-target-percentages",
-  {
-    sceneName?: string;
-    sourceSceneKey: string;
-    targetSceneKeys: string[];
-    actionText: string;
-    probabilityTotal: number;
-  }
->;
 
 type BuilderErrorWithoutMetadata = InvalidActionTargetPercentagesError;
 

@@ -6,7 +6,13 @@ export const GameLink = ({
   progress,
   gameKey,
   children,
-}: PropsWithChildren<{ progress: StoryProgress; gameKey: string }>) => {
+  disabled = false,
+}: PropsWithChildren<{
+  progress: StoryProgress;
+  gameKey: string;
+  disabled?: boolean;
+}>) => {
+  if (disabled) return children;
   return (
     <Link
       to="/game/$gameKey/$sceneKey"

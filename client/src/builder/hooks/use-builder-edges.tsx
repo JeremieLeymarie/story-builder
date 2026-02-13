@@ -1,5 +1,5 @@
 import { Connection, FinalConnectionState, useReactFlow } from "@xyflow/react";
-import { BuilderEdge, BuilderNode } from "../types";
+import { BuilderEdge, BuilderNode, NODE_WIDTH } from "../types";
 import { useErrorToast } from "./use-error-toast";
 import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
 import { useBuilderContext } from "./use-builder-context";
@@ -105,7 +105,7 @@ export const useBuilderEdges = () => {
           actions: [builderService.makeEmptyActionPayload()],
         },
         // Magic values that places the node over the correct handle:
-        position: { x: position.x - 375 - 16, y: position.y - 27.5 },
+        position: { x: position.x - NODE_WIDTH - 16, y: position.y - 27.5 },
       });
       if (!scene) return;
       // Create the connection from the newly created scene

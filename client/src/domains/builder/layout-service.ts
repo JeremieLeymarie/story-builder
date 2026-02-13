@@ -1,4 +1,4 @@
-import { BuilderNode, BuilderEdge } from "@/builder/types";
+import { BuilderNode, BuilderEdge, NODE_WIDTH } from "@/builder/types";
 import ELK from "elkjs/lib/elk.bundled.js";
 import { LayoutServicePort } from "./ports/layout-service-port";
 
@@ -35,7 +35,7 @@ const _getLayoutService = (): LayoutServicePort => {
 
           return {
             id: n.id,
-            width: n.measured?.width ?? 375,
+            width: n.measured?.width ?? NODE_WIDTH,
             height: n.measured?.height ?? 200,
             // This is needed to reduce 'edges crossing' cf (https://reactflow.dev/examples/layout/elkjs-multiple-handles)
             properties: {

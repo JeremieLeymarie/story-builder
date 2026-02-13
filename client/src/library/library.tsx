@@ -57,7 +57,7 @@ export const Library = ({ stories }: Library) => {
       <div className="flex flex-col items-center space-y-8 sm:items-start">
         <Title variant="secondary">Your games</Title>
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap">
-          <Card className="h-[225px] w-[275px] border-dashed">
+          <Card className="h-56.25 w-68.75 border-2 border-dashed ring-0">
             <CardHeader>
               <CardTitle>Import your game</CardTitle>
               <CardDescription>Import a story from a JSON file</CardDescription>

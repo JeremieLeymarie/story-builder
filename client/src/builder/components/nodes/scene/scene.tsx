@@ -6,7 +6,7 @@ import {
 } from "@/design-system/primitives/card";
 import { Handle, NodeProps, Position } from "@xyflow/react";
 import { EditIcon } from "lucide-react";
-import { BuilderNode } from "../../../types";
+import { BuilderNode, NODE_WIDTH } from "../../../types";
 import { cn } from "@/lib/style";
 import { Button } from "@/design-system/primitives";
 import { useBuilderEditorStore } from "@/builder/hooks/use-builder-editor-store";
@@ -39,9 +39,9 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
   return (
     <Card
       className={cn(
-        "group relative w-93.75",
+        `group w-[${NODE_WIDTH}px] relative`,
         isFirstScene && "bg-primary/60",
-        selected && "border border-black",
+        selected && "ring-black",
       )}
       onAuxClick={(ev) => onAuxClick(ev, data)}
       onDoubleClick={() => {
@@ -89,7 +89,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
             <div
               key={action.key}
               className={cn(
-                "border-primary relative border p-2",
+                "ring-primary relative rounded-sm p-2 text-xs ring-1",
                 !action.text && "text-muted-foreground italic",
               )}
             >

@@ -8,12 +8,12 @@ import {
 import {
   useBuilderErrorStore,
   BuilderError,
-  InvalidActionTargetPercentagesError,
 } from "../hooks/use-builder-error-store";
 import { match } from "ts-pattern";
 import { useReactFlow } from "@xyflow/react";
 import { FIT_VIEW_DURATION } from "../constants";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
+import { InvalidActionTargetPercentagesError } from "../builder-errors";
 
 const ErrorCount = () => {
   const errorCount = useBuilderErrorStore((state) => state.getErrorCount());
@@ -66,7 +66,7 @@ const BuilderErrorDisplay = ({ error }: { error: BuilderError }) => {
   );
 };
 
-export const BuilderErrors = () => {
+export const BuilderErrorsToolbar = () => {
   const [errorCount, errors] = useBuilderErrorStore((state) => [
     state.getErrorCount(),
     state.errors,
@@ -82,7 +82,7 @@ export const BuilderErrors = () => {
     );
 
   return (
-    <Toolbar className="w-full min-w-48 px-0 pt-1 pb-0">
+    <Toolbar className="w-full min-w-48 px-0 py-1">
       <Accordion type="multiple">
         <AccordionItem value="errors">
           <AccordionTrigger className="px-2 py-1 hover:no-underline">
