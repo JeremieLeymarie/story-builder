@@ -15,6 +15,8 @@ import {
   InvalidActionTargetPercentagesError,
   useBuilderErrorStore,
 } from "./use-builder-error-store";
+import { useQueryClient } from "@tanstack/react-query";
+import { makeGetSceneQueryOptions } from "./use-get-scene";
 
 const percentMask = {
   mask: /([0-9]{0,3})/,
@@ -51,6 +53,7 @@ export const useEdgeProbability = ({
       state.hasError("invalid-action-target-percentages", sourceHandleId),
     ],
   );
+  const queryClient = useQueryClient();
 
   const onChange = (e: FocusEvent) => {
     const val = parseInt((e.target as HTMLInputElement).value);
@@ -72,6 +75,7 @@ export const useEdgeProbability = ({
 
           const areTargetsValid =
             builderService.checkActionTargetsValidity(action);
+
           const error = {
             type: "invalid-action-target-percentages",
             id: action.key,
@@ -88,6 +92,10 @@ export const useEdgeProbability = ({
           } satisfies InvalidActionTargetPercentagesError;
           if (!areTargetsValid) addOrReplaceError(error);
           else maybeRemoveError(error);
+
+          // Invalidate scene queries used in builder editor
+          const queryKey = makeGetSceneQueryOptions(source).queryKey;
+          queryClient.invalidateQueries({ queryKey });
         })
         .catch(handleError);
       setValue(val);

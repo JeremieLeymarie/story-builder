@@ -14,20 +14,19 @@ import { EditorContextProvider } from "@/design-system/components/editor/hooks/u
 import { WikiPlugin } from "../../wiki-lexical-plugin/wiki-lexical-plugin";
 import { WikiNode } from "@/builder/lexical-wiki-node";
 import { useBuilderActions } from "@/builder/hooks/use-builder-actions";
-import { SceneContentFormType } from "@/builder/hooks/use-edit-scene-content-form";
-import { LexicalContent } from "@/lib/lexical-content";
+import { SimpleLoader } from "@/design-system/components/simple-loader";
+import { useGetScene } from "@/builder/hooks/use-get-scene";
+import { Scene } from "@/lib/storage/domain";
+import { useEditSceneContentForm } from "@/builder/hooks/use-edit-scene-content-form";
 
-export const SceneContentForm = ({
-  form,
-  sceneKey,
-  content,
-}: {
-  form: SceneContentFormType;
-  sceneKey: string;
-  content: LexicalContent;
-}) => {
+const SceneContentForm = ({ scene }: { scene: Scene }) => {
   const { setFirstScene } = useBuilderActions();
   const { story } = useBuilderContext();
+  const { updateScene } = useBuilderActions();
+  const form = useEditSceneContentForm({
+    values: { title: scene.title, content: scene.content },
+    onSave: (payload) => updateScene({ key: scene.key, ...payload }),
+  });
 
   return (
     <Form {...form}>
@@ -38,8 +37,8 @@ export const SceneContentForm = ({
         }}
       >
         <SetFirstSceneSwitch
-          setFirstScene={() => setFirstScene(sceneKey)}
-          sceneKey={sceneKey}
+          setFirstScene={() => setFirstScene(scene.key)}
+          sceneKey={scene.key}
         />
         <FormField
           control={form.control}
@@ -61,11 +60,11 @@ export const SceneContentForm = ({
             <FormItem>
               <FormLabel>Content</FormLabel>
               <FormControl>
-                <EditorContextProvider entityType="scene" entityKey={sceneKey}>
+                <EditorContextProvider entityType="scene" entityKey={scene.key}>
                   <RichText
-                    key={sceneKey}
+                    key={scene.key}
                     onSerializedChange={field.onChange}
-                    initialState={content}
+                    initialState={scene.content} // TODO: check that editor is not broken when switching between scenes
                     editable
                     className="h-75 max-w-112.5"
                     toolbarPlugins={[
@@ -83,4 +82,16 @@ export const SceneContentForm = ({
       </form>
     </Form>
   );
+};
+
+export const SceneContentFormContainer = ({
+  sceneKey,
+}: {
+  sceneKey: string;
+}) => {
+  const { scene, isLoading } = useGetScene(sceneKey);
+
+  if (isLoading || scene === undefined) return <SimpleLoader />;
+
+  return <SceneContentForm scene={scene} />;
 };

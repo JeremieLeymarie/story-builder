@@ -1,21 +1,25 @@
 import { createWithEqualityFn } from "zustand/traditional";
 import { shallow } from "zustand/shallow";
-import { Action } from "@/lib/storage/domain";
+
+type RandomEventPayload = {
+  sceneKey: string;
+  actionKey: string;
+};
 
 type RandomEventStore = {
-  open: (action: Action) => void;
+  open: (action: RandomEventPayload) => void;
   close: () => void;
-  action: Action | null;
+  payload: RandomEventPayload | null;
 };
 
 export const useRandomEventStore = createWithEqualityFn<RandomEventStore>(
   (set) => ({
-    action: null,
-    open(action) {
-      set({ action });
+    payload: null,
+    open(payload) {
+      set({ payload });
     },
     close() {
-      set({ action: null });
+      set({ payload: null });
     },
   }),
   shallow,
