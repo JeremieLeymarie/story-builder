@@ -51,7 +51,6 @@ describe("analytics-service", () => {
       data.forEach((datum) => {
         expect(Object.keys(config)).toContain(datum.type);
       });
-      console.log({ data });
       expect(data[0]).toMatchObject({
         type: "visited",
         count: expectedVisited,
