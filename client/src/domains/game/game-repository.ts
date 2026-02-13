@@ -1,8 +1,10 @@
 import { db, DexieDatabase } from "@/lib/storage/dexie/dexie-db";
 import { EntityNotExistError } from "../errors";
+import { Scene } from "@/lib/storage/domain";
 
 export type GameRepositoryPort = {
   deleteWiki: (gameKey: string) => Promise<void>;
+  getScenes: (gameKey: string) => Promise<Scene[]>;
 };
 
 export const _getDexieGameRepository = (
@@ -25,6 +27,12 @@ export const _getDexieGameRepository = (
       await db.wikiArticles.bulkDelete(articleKeys);
       await db.wikiCategories.where("wikiKey").equals(game.wikiKey).delete();
       await db.wikiArticleLinks.where("articleKey").anyOf(articleKeys).delete();
+    },
+
+    getScenes: async (gameKey) => {
+      return await db.scenes
+        .filter((scene) => scene.storyKey === gameKey)
+        .toArray();
     },
   };
 };

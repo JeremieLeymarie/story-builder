@@ -6,14 +6,13 @@ import { useLiveQuery } from "dexie-react-hooks";
 
 const Page = () => {
   const { storyKey } = Route.useParams();
-  const { story, currentProgress, otherProgresses, totalScenes } =
+  const { story, currentProgress, otherProgresses } =
     useLiveQuery(() => getLibraryService().getGameDetail(storyKey)) ?? {};
 
   if (
     story === undefined ||
     currentProgress === undefined ||
-    otherProgresses === undefined ||
-    totalScenes === undefined
+    otherProgresses === undefined
   ) {
     return <BackdropLoader />;
   }
@@ -28,7 +27,6 @@ const Page = () => {
         story={story}
         currentProgress={currentProgress}
         otherProgresses={otherProgresses}
-        totalScenes={totalScenes}
       />
     </div>
   );

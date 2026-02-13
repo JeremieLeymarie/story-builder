@@ -20,7 +20,7 @@ export const InsertImage = () => (
         </div>
       </Button>
     </DialogTrigger>
-    <DialogContent>
+    <DialogContent className="min-w-120">
       <DialogHeader>
         <DialogTitle>Insert image</DialogTitle>
       </DialogHeader>
