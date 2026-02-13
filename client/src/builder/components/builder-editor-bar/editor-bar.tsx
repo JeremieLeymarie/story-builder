@@ -7,23 +7,10 @@ import { SceneEditor, SceneEditorHeader } from "./scene-editor/scene-editor";
 
 export const EditorBar = () => {
   const currentEditor = useBuilderEditorStore((state) => state.editor);
-  // const isRandomActionEditorOpen = useRandomEventStore(
-  //   (state) =>
-  //     currentEditor?.type === "scene-editor" &&
-  //     state.action &&
-  //     state.action.targets.length >= 2,
-  // );
-
   if (!currentEditor) return null;
 
   return (
     <div className="flex">
-      {/* {isRandomActionEditorOpen && (
-        <Toolbar>
-          <RandomEventEditorHeader />
-          <RandomEventEditor />
-        </Toolbar>
-      )} */}
       <Toolbar
         className={cn("w-[500px]", currentEditor.type === null && "hidden")}
       >
