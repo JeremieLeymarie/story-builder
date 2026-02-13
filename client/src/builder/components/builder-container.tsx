@@ -26,7 +26,6 @@ export const BuilderContainer = ({
       story={story}
       scenes={scenes}
       builderService={builderService}
-      debug
     >
       <ReactFlowProvider>
         <Builder />
