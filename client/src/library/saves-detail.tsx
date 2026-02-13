@@ -27,7 +27,7 @@ type SavesDetailProps = {
   setOpen: (open: boolean) => void;
 };
 
-export const Content = ({
+const Content = ({
   selectedSave,
   saves,
   onSelectSave,
