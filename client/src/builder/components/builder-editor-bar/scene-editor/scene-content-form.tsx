@@ -28,8 +28,6 @@ const SceneContentForm = ({ scene }: { scene: Scene }) => {
     onSave: (payload) => updateScene({ key: scene.key, ...payload }),
   });
 
-  console.log(scene.key);
-
   return (
     <Form {...form}>
       <form
