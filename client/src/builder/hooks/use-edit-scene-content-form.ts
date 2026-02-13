@@ -36,5 +36,3 @@ export const useEditSceneContentForm = ({
 
   return form;
 };
-
-export type SceneContentFormType = ReturnType<typeof useEditSceneContentForm>;
