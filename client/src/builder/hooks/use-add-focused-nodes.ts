@@ -1,7 +1,6 @@
 import { useReactFlow, useStoreApi } from "@xyflow/react";
 import { BuilderNode } from "../types";
 import { useBuilderEditorStore } from "./use-builder-editor-store";
-import { nodeToSceneAdapter } from "../adapters";
 
 export const useAddFocusedNodes = () => {
   const { getState, setState } = useStoreApi();
@@ -17,7 +16,7 @@ export const useAddFocusedNodes = () => {
     if (nodes.length === 1) {
       openSceneEditor({
         type: "scene-editor",
-        payload: { scene: nodeToSceneAdapter(nodes[0]!), isFirstScene: false },
+        payload: { sceneKey: nodes[0]!.data.key, isFirstScene: false },
       });
     }
   };

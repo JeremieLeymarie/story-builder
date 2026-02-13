@@ -9,7 +9,6 @@ import {
   ToolbarHeader,
   ToolbarTitle,
 } from "@/design-system/components/toolbar";
-import { SceneUpdatePayload } from "@/builder/hooks/use-builder-editor-store";
 import { SceneContentFormContainer } from "./scene-content-form";
 
 export const SceneEditorHeader = () => {
@@ -20,7 +19,7 @@ export const SceneEditorHeader = () => {
   );
 };
 
-export const SceneEditor = ({ scene }: { scene: SceneUpdatePayload }) => {
+export const SceneEditor = ({ sceneKey }: { sceneKey: string }) => {
   return (
     <Tabs defaultValue="scene" className="w-full">
       <TabsList>
@@ -29,10 +28,10 @@ export const SceneEditor = ({ scene }: { scene: SceneUpdatePayload }) => {
       </TabsList>
 
       <TabsContent value="scene">
-        <SceneContentFormContainer sceneKey={scene.key} />
+        <SceneContentFormContainer sceneKey={sceneKey} />
       </TabsContent>
       <TabsContent value="actions">
-        <ActionsFormContainer sceneKey={scene.key} />
+        <ActionsFormContainer sceneKey={sceneKey} />
       </TabsContent>
     </Tabs>
   );
