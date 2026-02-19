@@ -6,6 +6,7 @@ import {
 } from "./progress-repository";
 import { round } from "@/lib/number";
 import { Scene } from "@/lib/storage/domain";
+import { EntityNotExistError } from "../errors";
 
 export type VisitedScenesData = [
   {
@@ -45,6 +46,8 @@ export const _getAnalyticsService = async ({
     progressRepository.get(progressKey),
     gameRepository.getScenes(gameKey),
   ]);
+
+  if (!progress) throw new EntityNotExistError("story-progress", progressKey);
 
   return {
     getVisitedScenesChart: () => {
