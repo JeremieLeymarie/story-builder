@@ -36,7 +36,7 @@ const ImportPreview = ({
           </p>
           <div className="flex gap-2">
             {storyFromImport.story.genres.map((genre) => (
-              <StoryGenreBadge key={genre} variant={genre} size="sm" />
+              <StoryGenreBadge key={genre} variant={genre} />
             ))}
           </div>
           <p>{storyFromImport.scenes.length} scenes</p>

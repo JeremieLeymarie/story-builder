@@ -63,7 +63,6 @@ export const AddCategoryPopover = ({ trigger }: { trigger: ReactNode }) => {
                     <ColorPicker
                       onChange={field.onChange}
                       defaultValue={field.value}
-                      size="sm"
                       position="right"
                       offset={20}
                     />

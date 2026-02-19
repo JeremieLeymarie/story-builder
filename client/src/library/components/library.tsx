@@ -67,7 +67,7 @@ export const Library = ({ stories }: Library) => {
                 onImportStory={importStory}
                 parseFile={parseFile}
                 trigger={
-                  <Button size="sm">
+                  <Button>
                     <BracesIcon size="16px" />
                     &nbsp; Import from JSON
                   </Button>

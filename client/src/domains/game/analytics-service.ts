@@ -5,6 +5,7 @@ import {
   ProgressRepositoryPort,
 } from "./progress-repository";
 import { round } from "@/lib/number";
+import { Scene } from "@/lib/storage/domain";
 
 export type VisitedScenesData = [
   {
@@ -19,12 +20,14 @@ export type VisitedScenesData = [
   },
 ];
 
-type AnalyticsServicePort = {
+export type AnalyticsServicePort = {
   getVisitedScenesChart: () => {
     data: VisitedScenesData;
     config: ChartConfig;
     rate: number;
   };
+  isSceneVisited: (sceneKey: string) => boolean;
+  getAllScenes: () => Scene[];
 };
 
 export const _getAnalyticsService = async ({
@@ -83,9 +86,18 @@ export const _getAnalyticsService = async ({
         } satisfies ChartConfig,
       };
     },
+
+    // TODO: test
+    isSceneVisited: (sceneKey) => progress?.history.includes(sceneKey) ?? false,
+
+    // TODO: test
+    getAllScenes: () => scenes,
   };
 };
 
+/**
+ * Asynchronously construct a service to synchronously get detailed analytics about a specific story progress
+ */
 export const makeAnalyticsService = async ({
   progressKey,
   gameKey,

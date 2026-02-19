@@ -7,8 +7,8 @@ import { cn } from "@/lib/style";
 const ANYTHING_BUT_WHITESPACES_REGEXP = /[^\s]/g;
 
 export const ProgressNode = ({ data }: NodeProps<ProgressNodeType>) => {
-  const { progress } = useVisualizationContext();
-  const isVisited = progress.history.includes(data.key);
+  const { analyticsService } = useVisualizationContext();
+  const isVisited = analyticsService.isSceneVisited(data.key);
 
   const title = isVisited
     ? data.title

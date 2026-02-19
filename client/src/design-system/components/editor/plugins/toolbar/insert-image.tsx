@@ -13,7 +13,7 @@ import { InsertImageForm } from "../images-plugin/insert-image-form";
 export const InsertImage = () => (
   <Dialog>
     <DialogTrigger asChild>
-      <Button variant="outline" size="sm">
+      <Button variant="outline">
         <div className="flex items-center gap-1">
           <ImageIcon className="size-4" />
           <span>Image</span>

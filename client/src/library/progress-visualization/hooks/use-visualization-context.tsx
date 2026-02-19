@@ -1,24 +1,25 @@
 /* eslint-disable react-refresh/only-export-components */
-import { StoryProgress } from "@/lib/storage/domain";
+import { AnalyticsServicePort } from "@/domains/game/analytics-service";
 import { createContext, ReactNode, useContext } from "react";
 
 type VisualizationContextType = {
-  progress: StoryProgress;
+  analyticsService: AnalyticsServicePort;
 };
 
 const VisualizationContext = createContext<VisualizationContextType | null>(
   null,
 );
 
+// Maybe this should not be specific to the progress visualization but global to the whole analytics UI instead?
 export const VisualizationContextProvider = ({
   children,
-  progress,
+  analyticsService,
 }: {
   children: ReactNode;
-  progress: StoryProgress;
+  analyticsService: AnalyticsServicePort;
 }) => {
   return (
-    <VisualizationContext.Provider value={{ progress }}>
+    <VisualizationContext.Provider value={{ analyticsService }}>
       {children}
     </VisualizationContext.Provider>
   );
