@@ -6,9 +6,6 @@ import {
   CardDescription,
   CardTitle,
 } from "@/design-system/primitives";
-// @ts-expect-error until the component is used
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { StoryProgressVisualization } from "./story-progress-visualization";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 import { BookMarkedIcon, PlusIcon, XIcon } from "lucide-react";
 import { cn } from "@/lib/style";
