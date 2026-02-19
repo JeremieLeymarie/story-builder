@@ -12,9 +12,9 @@ import { useMaskito } from "@maskito/react";
 import { EdgeProps } from "@xyflow/react";
 import { BuilderEdge } from "../types";
 import { useBuilderErrorStore } from "./use-builder-error-store";
-import { makeInvalidTargetPercentageError } from "../builder-errors";
 import { makeGetSceneQueryOptions } from "./use-get-scene";
 import { useQueryClient } from "@tanstack/react-query";
+import { useHandleActionTargetsError } from "./use-handle-action-targets-error";
 
 const percentMask = {
   mask: /([0-9]{0,3})/,
@@ -44,13 +44,10 @@ export const useEdgeProbability = ({
 
   const { builderService } = useBuilderContext();
   const { handleError } = useErrorToast();
-  const [addOrReplaceError, maybeRemoveError, hasError] = useBuilderErrorStore(
-    (state) => [
-      state.addOrReplaceError,
-      state.maybeRemoveError,
-      state.hasError("invalid-action-target-percentages", sourceHandleId),
-    ],
+  const hasError = useBuilderErrorStore((state) =>
+    state.hasError("invalid-action-target-percentages", sourceHandleId),
   );
+  const handleActionError = useHandleActionTargetsError();
   const queryClient = useQueryClient();
 
   const onChange = (e: FocusEvent) => {
@@ -71,12 +68,7 @@ export const useEdgeProbability = ({
           if (!action)
             throw new Error(`Action not found for handle: ${sourceHandleId}`);
 
-          const areTargetsValid =
-            builderService.checkActionTargetsValidity(action);
-
-          const error = makeInvalidTargetPercentageError({ scene, action });
-          if (!areTargetsValid) addOrReplaceError(error);
-          else maybeRemoveError(error);
+          handleActionError(scene, action);
 
           // Invalidate scene queries used in builder editor
           const queryKey = makeGetSceneQueryOptions(source).queryKey;
