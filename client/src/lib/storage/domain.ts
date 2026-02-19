@@ -32,6 +32,7 @@ export type StoryGenre = (typeof STORY_GENRES)[number];
 export const STORY_TYPE = ["builder", "published", "imported"] as const;
 
 type CharacterNumericAttribute = {
+  key: string;
   name: string;
   description: string;
   isEditableByPlayer: boolean;
