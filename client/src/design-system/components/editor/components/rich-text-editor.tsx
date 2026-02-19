@@ -41,7 +41,7 @@ export const RichText = ({
   return (
     <div
       className={cn(
-        editable && "bg-background min-h-25 rounded-lg border shadow",
+        editable && "bg-background min-h-25 rounded-lg border",
         "focus-within:border-ring focus-within:ring-ring/10 focus-within:ring-[3px]", // The focus style is the same as the input's & textarea's
         // TODO: handle error state like other inputs
       )}
