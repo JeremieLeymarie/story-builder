@@ -35,7 +35,7 @@ export const ActionsDropdown = ({
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen} modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button variant="outline" className="gap-2">
           <SettingsIcon size="18px" />
           {username}
         </Button>

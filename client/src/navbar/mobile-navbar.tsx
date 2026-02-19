@@ -117,7 +117,6 @@ const NavbarActions = ({
       <div className="flex flex-col items-center gap-1">
         <Button
           variant="outline"
-          size="sm"
           className="gap-2"
           onClick={() => isOnline && setIsModalOpen(true)}
           disabled={!isOnline}

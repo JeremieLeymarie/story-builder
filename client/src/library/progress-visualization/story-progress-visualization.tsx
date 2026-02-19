@@ -1,52 +1,95 @@
-import { getBuilderService } from "@/get-builder-service";
-import { Story, StoryProgress } from "@/lib/storage/domain";
-import { useQuery } from "@tanstack/react-query";
 import {
   Background,
   BackgroundVariant,
+  Edge,
   ReactFlow,
   ReactFlowProvider,
+  useReactFlow,
 } from "@xyflow/react";
 import { ProgressNode } from "./progress-node";
 import { ProgressEdge } from "./progress-edge";
-import { scenesToNodesAndEdgesAdapter } from "./adapters";
+import { ProgressNodeType, scenesToNodesAndEdgesAdapter } from "./adapters";
 import { VisualizationContextProvider } from "./hooks/use-visualization-context";
+import { AnalyticsServicePort } from "@/domains/game/analytics-service";
+import { useEffect, useEffectEvent } from "react";
+import { Button } from "@/design-system/primitives";
+import { RotateCcwIcon } from "lucide-react";
+import { FIT_VIEW_DURATION } from "@/builder/constants";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/design-system/primitives/tooltip";
 
 const nodeTypes = { scene: ProgressNode } as const;
 const edgeTypes = { edge: ProgressEdge } as const;
 
-export const StoryProgressVisualization = ({
-  story,
-  progress,
+const Flow = ({
+  nodes,
+  edges,
 }: {
-  story: Story;
-  progress: StoryProgress;
+  nodes: ProgressNodeType[];
+  edges: Edge[];
 }) => {
-  const { data: storyData } = useQuery({
-    queryKey: ["get-story-progress"],
-    queryFn: async () => {
-      // TODO: use library service or dedicated analytics service
-      return getBuilderService().getBuilderStoryData(story.key);
-    },
+  const { fitView } = useReactFlow();
+
+  const handleResize = useEffectEvent(() => {
+    fitView();
   });
 
-  if (!storyData) return null;
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
 
-  const [nodes, edges] = scenesToNodesAndEdgesAdapter(storyData.scenes);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
-    <VisualizationContextProvider progress={progress}>
+    <div className="relative h-100 w-full rounded-lg border">
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            size="icon-sm"
+            variant="outline"
+            className="absolute -top-8 right-0"
+            onClick={() => fitView({ duration: FIT_VIEW_DURATION })}
+          >
+            <RotateCcwIcon size={8} />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Reset view</TooltipContent>
+      </Tooltip>
+
+      <ReactFlow
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        defaultNodes={nodes}
+        defaultEdges={edges}
+        fitView
+        minZoom={0.05}
+      >
+        <Background
+          color="var(--secondary)"
+          gap={25}
+          variant={BackgroundVariant.Cross}
+        />
+      </ReactFlow>
+    </div>
+  );
+};
+
+export const StoryProgressVisualization = ({
+  analyticsService,
+}: {
+  analyticsService: AnalyticsServicePort;
+}) => {
+  const [nodes, edges] = scenesToNodesAndEdgesAdapter(
+    analyticsService.getAllScenes(),
+  );
+
+  return (
+    <VisualizationContextProvider analyticsService={analyticsService}>
       <ReactFlowProvider>
-        <ReactFlow
-          nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
-          defaultNodes={nodes}
-          defaultEdges={edges}
-          fitView
-          minZoom={0.05}
-        >
-          <Background variant={BackgroundVariant.Dots} gap={25} size={1.5} />
-        </ReactFlow>
+        <Flow nodes={nodes} edges={edges} />
       </ReactFlowProvider>
     </VisualizationContextProvider>
   );

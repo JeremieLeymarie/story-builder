@@ -8,7 +8,7 @@ import {
 } from "@/design-system/primitives";
 import { SettingsIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
-import { useDeleteGame } from "./hooks/use-delete-game";
+import { useDeleteGame } from "../hooks/use-delete-game";
 import { useNavigate } from "@tanstack/react-router";
 
 export const GameDropdown = ({ gameKey }: { gameKey: string }) => {

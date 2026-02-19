@@ -50,7 +50,6 @@ const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
       </ToolbarHeader>
       <div className="flex w-full flex-col gap-2">
         <Button
-          size="sm"
           className={btnClassname}
           onClick={() => addScene({ position: "auto" })}
         >
@@ -59,7 +58,6 @@ const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
           <ButtonShortCutDoc doc="N" />
         </Button>
         <Button
-          size="sm"
           variant="outline"
           className={btnClassname}
           onClick={() => testStory(story.firstSceneKey)}
@@ -70,7 +68,7 @@ const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
         </Button>
         <ExportModal
           trigger={
-            <Button size="sm" variant="outline" className={btnClassname}>
+            <Button variant="outline" className={btnClassname}>
               <DownloadIcon />
               Export
               <ButtonShortCutDoc doc="E" />
@@ -79,7 +77,6 @@ const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
         />
         <Button
           className={btnClassname}
-          size="sm"
           variant="outline"
           onClick={() =>
             openBuilderEditor({ type: "story-editor", payload: null })
@@ -95,7 +92,6 @@ const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
         >
           <Button
             className={btnClassname}
-            size="sm"
             variant="outline"
             onClick={() =>
               openBuilderEditor({ type: "story-editor", payload: null })

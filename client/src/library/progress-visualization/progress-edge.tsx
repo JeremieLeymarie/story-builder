@@ -22,8 +22,8 @@ export const ProgressEdge = ({
     targetY,
     targetPosition,
   });
-  const { progress } = useVisualizationContext();
-  const isVisited = progress.history.some((sceneKey) => sceneKey === target);
+  const { analyticsService } = useVisualizationContext();
+  const isVisited = analyticsService.isSceneVisited(target);
 
   return (
     <BaseEdge

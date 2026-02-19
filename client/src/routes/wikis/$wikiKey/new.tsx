@@ -23,9 +23,7 @@ const RouteComponent = () => {
       <ErrorMessage className="flex flex-col gap-2">
         You don't have permission to create article in this wiki...
         <Link to="/wikis/$wikiKey" params={{ wikiKey }}>
-          <Button size="sm" variant="link">
-            Go back to wiki home page
-          </Button>
+          <Button variant="link">Go back to wiki home page</Button>
         </Link>
       </ErrorMessage>
     );

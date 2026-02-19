@@ -95,7 +95,7 @@ export const WikiList = ({
               <WikiFormDialog
                 onSubmit={createWiki}
                 trigger={
-                  <Button size="sm">
+                  <Button>
                     <PlusIcon size="16px" /> &nbsp;Create your own world!
                   </Button>
                 }

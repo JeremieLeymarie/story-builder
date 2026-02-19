@@ -65,13 +65,13 @@ export const ArticleEditor = ({
     <div className="flex flex-col gap-3">
       {mode === "update" ? (
         <Link to="/wikis/$wikiKey/$articleKey" params={{ wikiKey, articleKey }}>
-          <Button variant="outline" size="sm" className="w-max items-center">
+          <Button variant="outline" className="w-max items-center">
             <CornerDownLeft size={20} /> Back to article
           </Button>
         </Link>
       ) : (
         <Link to="/wikis/$wikiKey" params={{ wikiKey }}>
-          <Button variant="outline" size="sm" className="w-max items-center">
+          <Button variant="outline" className="w-max items-center">
             <CornerDownLeft size={20} /> Back to home
           </Button>
         </Link>

@@ -37,7 +37,7 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
             <CreateStoryFormDialog
               onSubmit={createStory}
               trigger={
-                <Button size="sm">
+                <Button>
                   <PlusIcon size="16px" /> &nbsp;Build your own story
                 </Button>
               }
@@ -49,7 +49,7 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
               parseFile={parseFile}
               onImportStory={handleImportFromJSON}
               trigger={
-                <Button size="sm" variant="outline">
+                <Button variant="outline">
                   <BracesIcon size="16px" />
                   &nbsp; Import from JSON
                 </Button>

@@ -105,7 +105,6 @@ export const ColorPicker = ({
             disabled={disabled}
           />
           <Button
-            size="sm"
             variant="outline"
             onClick={() => _onChange(randomHexColor())}
             disabled={disabled}

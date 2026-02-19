@@ -103,7 +103,6 @@ export const WikiPlugin = ({ wikiKey }: { wikiKey: string | null }) => {
     >
       <PopoverTrigger asChild>
         <Button
-          size="sm"
           variant="outline"
           disabled={!wikiKey}
           onClick={() => {

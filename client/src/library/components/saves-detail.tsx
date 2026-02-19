@@ -11,11 +11,11 @@ import { BookMarkedIcon, PlusIcon, XIcon } from "lucide-react";
 import { cn } from "@/lib/style";
 import { Save } from "./types";
 import { formatDate, timeFrom } from "@/lib/date";
-import { useCreateSave } from "./hooks/use-create-save";
+import { useCreateSave } from "../hooks/use-create-save";
 import { ScrollArea, ScrollBar } from "@/design-system/primitives/scroll-area";
 import { useState } from "react";
 import { ConfirmDialog } from "@/design-system/components";
-import { useDeleteProgress } from "./hooks/use-delete-progress";
+import { useDeleteProgress } from "../hooks/use-delete-progress";
 
 type SavesDetailProps = {
   selectedSave: Save;
@@ -44,7 +44,6 @@ const Content = ({
     <>
       <div className="mb-2 flex w-full justify-end pr-4">
         <Button
-          size="sm"
           title="New save"
           disabled={isCreatingSave}
           onClick={() => createSave(storyKey)}
