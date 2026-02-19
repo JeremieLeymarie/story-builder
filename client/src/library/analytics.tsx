@@ -8,9 +8,7 @@ import {
 import { useGetAnalyticsService } from "./hooks/use-get-analytics-service";
 import { SimpleLoader } from "@/design-system/components/simple-loader";
 import { Title } from "@/design-system/components";
-// @ts-expect-error Temporary
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { StoryProgressVisualization } from "./story-progress-visualization";
+import { StoryProgressVisualization } from "./progress-visualization/story-progress-visualization";
 import { VisitedScenesChart } from "./visited-scenes-chart";
 
 export const Analytics = ({
@@ -38,6 +36,17 @@ export const Analytics = ({
         </CardHeader>
         <CardContent>
           <VisitedScenesChart {...analyticsService.getVisitedScenesChart()} />
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Progress summary</CardTitle>
+          {/* <CardDescription>
+            Rate of visited scenes, including all possible paths
+          </CardDescription> */}
+        </CardHeader>
+        <CardContent>
+          <StoryProgressVisualization />
         </CardContent>
       </Card>
     </div>
