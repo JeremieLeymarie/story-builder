@@ -1,5 +1,16 @@
 import { LexicalContent } from "../lexical-content";
 
+/* USER */
+
+export type User = {
+  key: string;
+  username: string;
+  email: string;
+  token?: string;
+};
+
+/* STORY & SCENES */
+
 export const STORY_GENRES = [
   "adventure",
   "children",
@@ -18,14 +29,21 @@ export const STORY_GENRES = [
 ] as const;
 export type StoryGenre = (typeof STORY_GENRES)[number];
 
-export type User = {
-  key: string;
-  username: string;
-  email: string;
-  token?: string;
+export const STORY_TYPE = ["builder", "published", "imported"] as const;
+
+type CharacterNumericAttribute = {
+  name: string;
+  description: string;
+  isEditableByPlayer: boolean;
+  visibility: "visible" | "invisible";
+  initialValue: number;
 };
 
-export const STORY_TYPE = ["builder", "published", "imported"] as const;
+export type CharacterConfiguration = {
+  key: string;
+  storyKey: string;
+  attributes: Record<string, CharacterNumericAttribute>;
+};
 
 type Author = {
   key: string;
@@ -52,37 +70,6 @@ export type LibraryStory = StoryBase & {
 export type BuilderStory = StoryBase & { type: "builder" };
 
 export type Story = LibraryStory | BuilderStory;
-
-export const TITLE_SIZES = ["small", "medium", "large", "huge"] as const;
-export const ACTION_BUTTON_SIZES = [
-  "small",
-  "medium",
-  "large",
-  "huge",
-] as const;
-
-export type StoryThemeConfig = {
-  title: {
-    hidden: boolean;
-    size: (typeof TITLE_SIZES)[number];
-    color: string;
-  };
-  action: {
-    backgroundColor: string;
-    textColor: string;
-    size: (typeof ACTION_BUTTON_SIZES)[number];
-  };
-  scene: {
-    background: { color: string; image?: string | null };
-    text: { color: string };
-  };
-};
-
-export type StoryTheme = {
-  key: string;
-  storyKey: string;
-  theme: StoryThemeConfig;
-};
 
 type ActionBase = {
   key: string;
@@ -115,17 +102,60 @@ export type Scene = {
   builderParams: { position: BuilderPosition };
 };
 
+export const TITLE_SIZES = ["small", "medium", "large", "huge"] as const;
+export const ACTION_BUTTON_SIZES = [
+  "small",
+  "medium",
+  "large",
+  "huge",
+] as const;
+
+export type StoryThemeConfig = {
+  title: {
+    hidden: boolean;
+    size: (typeof TITLE_SIZES)[number];
+    color: string;
+  };
+  action: {
+    backgroundColor: string;
+    textColor: string;
+    size: (typeof ACTION_BUTTON_SIZES)[number];
+  };
+  scene: {
+    background: { color: string; image?: string | null };
+    text: { color: string };
+  };
+};
+
+export type StoryTheme = {
+  key: string;
+  storyKey: string;
+  theme: StoryThemeConfig;
+};
+
+/* STORY PROGRESS */
+
+type ProgressCharacterNumericAttribute = CharacterNumericAttribute & {
+  value: number;
+};
+
+type ProgressCharacter = {
+  attributes: Record<string, ProgressCharacterNumericAttribute>;
+};
+
 export type StoryProgress = {
   key: string;
   storyKey: string;
   userKey: string | undefined;
   history: string[];
   currentSceneKey: string;
-  character?: Record<string, unknown>;
+  character?: ProgressCharacter;
   inventory?: Record<string, unknown>;
   lastPlayedAt: Date;
   finished?: boolean;
 };
+
+/* WIKI */
 
 export type Wiki = {
   key: string;
@@ -168,10 +198,13 @@ export type WikiArticleLink = {
   entityKey: string;
 };
 
+/* ALL ENTITIES */
+
 export const ENTITIES = [
   "story",
   "scene",
   "story-theme",
+  "character-configuration",
   "user",
   "story-progress",
   "wiki",
