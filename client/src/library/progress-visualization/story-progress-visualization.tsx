@@ -66,6 +66,9 @@ const Flow = ({
         defaultEdges={edges}
         fitView
         minZoom={0.05}
+        zoomOnScroll={false}
+        panOnScroll={false}
+        preventScrolling={false}
       >
         <Background
           color="var(--secondary)"
