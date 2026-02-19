@@ -1,17 +1,28 @@
-import { MouseEvent } from "react";
+import { MouseEvent, useEffect, useEffectEvent } from "react";
 import { useBuilderEdges } from "./use-builder-edges";
 import { BuilderNode, BuilderEdge } from "../types";
 import { useBuilderShortCuts } from "./use-builder-shortcuts";
 import { useBuilderContext } from "./use-builder-context";
 import { useErrorToast } from "./use-error-toast";
 import { toast } from "sonner";
-import { OnBeforeDelete } from "@xyflow/react";
+import { OnBeforeDelete, useReactFlow } from "@xyflow/react";
 
 export const useBuilder = () => {
   const { story, builderService } = useBuilderContext();
 
   const { handleError } = useErrorToast();
   const { onConnect, onConnectEnd, onEdgesDelete } = useBuilderEdges();
+  const { fitView } = useReactFlow();
+
+  const handleWindowResize = useEffectEvent(() => {
+    fitView();
+  });
+
+  useEffect(() => {
+    window.addEventListener("resize", handleWindowResize);
+
+    return () => window.removeEventListener("resize", handleWindowResize);
+  }, []);
 
   useBuilderShortCuts({ firstSceneKey: story.firstSceneKey });
 

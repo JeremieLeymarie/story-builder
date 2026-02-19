@@ -55,7 +55,11 @@ const BuilderFlow = () => {
       fitViewOptions={{ duration: FIT_VIEW_DURATION }}
       onPaneClick={closeActiveEditor}
     >
-      <MiniMap position="bottom-left" />
+      <MiniMap
+        position="bottom-left"
+        nodeBorderRadius={8}
+        className="[&>svg]:rounded-lg"
+      />
       <Background variant={BackgroundVariant.Dots} gap={25} size={1.5} />
     </ReactFlow>
   );
