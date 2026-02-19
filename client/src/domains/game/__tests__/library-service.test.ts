@@ -10,7 +10,7 @@ import {
   BASIC_USER,
 } from "@/repositories/stubs/data";
 import dayjs from "dayjs";
-import { _getLibraryService } from "../game/library-service";
+import { _getLibraryService } from "../library-service";
 import {
   MockImportService,
   getImportServiceStub,
@@ -18,13 +18,13 @@ import {
 import {
   MOCK_IMPORTED_SCENE,
   MOCK_IMPORTED_STORY,
-} from "./data/imported-story-mocks";
+} from "../../__tests__/data/imported-story-mocks";
 import { getTestFactory } from "@/lib/testing/factory";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import {
   getStubGameRepository,
   MockGameRepository,
-} from "../game/stubs/game-repository-stub";
+} from "../stubs/game-repository-stub";
 import { Scene } from "@/lib/storage/domain";
 
 const factory = getTestFactory();
@@ -264,7 +264,6 @@ describe("library-service", () => {
           { ...OTHER, lastScene: OTHER_SCENE },
           { ...FINISHED, lastScene: FINISHED_SCENE },
         ],
-        totalScenes: 1,
       });
     });
   });

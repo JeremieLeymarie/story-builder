@@ -57,7 +57,7 @@ const ControlledCreateStoryFormDialog = ({
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
       {!!trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-      <DialogContent>
+      <DialogContent className="min-w-120">
         <DialogHeader className="p-1">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>

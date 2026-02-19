@@ -1,13 +1,6 @@
-import { PlusIcon, Play, X } from "lucide-react";
-import { formatDate, timeFrom } from "@/lib/date";
-import { ExtendedProgress } from "./types";
-import { cn } from "@/lib/style";
-import { GameLink } from "./game-link";
-import { useState } from "react";
-import { useDeleteProgress } from "./hooks/use-delete-progress";
-import { Button } from "@/design-system/primitives/button";
-import { ConfirmDialog } from "@/design-system/components";
+import { ResponsiveDrawer } from "@/design-system/components/responsive-drawer";
 import {
+  Button,
   Card,
   CardContent,
   CardDescription,
@@ -16,137 +9,165 @@ import {
 // @ts-expect-error until the component is used
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { StoryProgressVisualization } from "./story-progress-visualization";
+import { useIsMobile } from "@/hooks/use-is-mobile";
+import { BookMarkedIcon, PlusIcon, XIcon } from "lucide-react";
+import { cn } from "@/lib/style";
+import { Save } from "./types";
+import { formatDate, timeFrom } from "@/lib/date";
+import { useCreateSave } from "./hooks/use-create-save";
+import { ScrollArea, ScrollBar } from "@/design-system/primitives/scroll-area";
+import { useState } from "react";
+import { ConfirmDialog } from "@/design-system/components";
+import { useDeleteProgress } from "./hooks/use-delete-progress";
 
-export const SavesDetail = ({
-  startNewGame,
-  currentProgress,
-  otherProgresses,
-}: {
-  startNewGame: () => void;
-  currentProgress: ExtendedProgress;
-  otherProgresses: ExtendedProgress[];
-}) => {
-  const PROGRESSES_BY_PAGE = 3;
-  const [endProgressIndex, setEndProgressIndex] = useState(PROGRESSES_BY_PAGE);
-  const { deleteProgress, isDeleting } = useDeleteProgress(
-    currentProgress.storyKey,
-  );
+type SavesDetailProps = {
+  selectedSave: Save;
+  saves: Save[];
+  onSelectSave: (save: Save) => void;
+  setOpen: (open: boolean) => void;
+};
 
-  const progresses = [currentProgress, ...otherProgresses];
-  const slicedProgresses = progresses.slice(0, endProgressIndex);
-
-  const handleDeleteProgress = async (progressKey: string) => {
-    await deleteProgress(progressKey);
-  };
+const Content = ({
+  selectedSave,
+  saves,
+  onSelectSave,
+  setOpen,
+}: SavesDetailProps) => {
+  const storyKey = selectedSave.storyKey; // All saves should have the same story key
+  const { createSave, isPending: isCreatingSave } = useCreateSave({
+    onSuccess: (createdSave) => {
+      onSelectSave(createdSave);
+      setOpen(false);
+    },
+  });
+  const isMobile = useIsMobile();
+  const { deleteProgress, isDeleting } = useDeleteProgress(storyKey);
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <div className="mb-8 flex items-center justify-between">
-          <h2 className="text-primary text-2xl font-semibold">Your saves:</h2>
-          <Button
-            onClick={startNewGame}
-            size="icon"
-            className="rounded-full"
-            title="New save"
-          >
-            <PlusIcon size={24} />
-          </Button>
-        </div>
+    <>
+      <div className="mb-2 flex w-full justify-end pr-4">
+        <Button
+          size="sm"
+          title="New save"
+          disabled={isCreatingSave}
+          onClick={() => createSave(storyKey)}
+        >
+          New save
+          <PlusIcon size={24} />
+        </Button>
+      </div>
 
-        <div className="space-y-4">
-          {slicedProgresses.map((progress, index) => (
+      <ScrollArea>
+        <div
+          className={cn(
+            "mb-4 space-y-4 px-4 pt-4",
+            isMobile ? "max-h-80" : "max-h-[calc(100dvh-200px)]",
+          )}
+        >
+          {saves.map((save) => (
             <Card
-              key={progress.key}
+              key={save.key}
               className={cn(
-                "group ring-primary bg-background relative p-4 shadow-md ring-2 transition-all hover:shadow-lg",
-                index === 0 && "bg-primary/5",
-                progress.finished && "opacity-75",
+                "ring-primary relative p-3 ring-2 transition-all hover:shadow-lg",
+                save.key === selectedSave.key && "bg-primary/15",
+                save.finished && "bg-accent/75 ring-accent-foreground/10",
               )}
+              onClick={() => {
+                onSelectSave(save);
+                setOpen(false);
+              }}
             >
               <div className="flex items-center justify-between">
-                <GameLink
-                  progress={progress}
-                  gameKey={progress.storyKey}
-                  disabled={progress.finished}
-                >
+                <div className="flex items-center justify-between">
                   <div className="flex-1 cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      <CardTitle>
-                        Save #{index + 1} -{" "}
-                        {progress.lastScene?.title || "Unknown scene"}
+                    <div className="flex items-start justify-between">
+                      <CardTitle className="text-base">
+                        {save.lastScene?.title || "Unknown scene"}
                       </CardTitle>
-                      {progress.finished && (
-                        <span className="rounded-full bg-green-500 px-2 py-1 text-xs text-white">
-                          COMPLETED
-                        </span>
-                      )}
                     </div>
                     <CardDescription>
-                      {timeFrom(progress.lastPlayedAt)}
+                      {timeFrom(save.lastPlayedAt)}
                     </CardDescription>
                     <CardContent className="pl-0">
                       <p className="text-muted-foreground/80 text-xs">
-                        {formatDate(progress.lastPlayedAt)}
+                        {formatDate(save.lastPlayedAt)}
                       </p>
                     </CardContent>
                   </div>
-                </GameLink>
+                </div>
 
-                <div className="flex items-center gap-3">
-                  {/* Play button */}
-                  <GameLink
-                    progress={progress}
-                    gameKey={progress.storyKey}
-                    disabled={progress.finished}
-                  >
-                    <Button
-                      size="icon"
-                      disabled={progress.finished}
-                      className="rounded-full"
-                    >
-                      <Play size={18} />
-                    </Button>
-                  </GameLink>
-
-                  {/* Delete button - outside GameLink */}
+                {save.key !== selectedSave.key && (
                   <ConfirmDialog
                     title="Delete this save?"
                     description="This action cannot be undone. This save will be permanently deleted."
                     confirmLabel="Delete"
-                    onConfirm={() => handleDeleteProgress(progress.key)}
+                    onConfirm={(e) => {
+                      e.stopPropagation();
+                      deleteProgress(save.key);
+                    }}
+                    onCancel={(e) => {
+                      e.stopPropagation();
+                    }}
                     trigger={
                       <Button
                         disabled={isDeleting}
                         variant="destructive"
-                        size="icon"
-                        className="h-8 w-8 rounded-full opacity-0 shadow-md transition-all group-hover:opacity-100"
+                        size="xs"
+                        className="rounded-full"
                         title="Delete this save"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
                       >
-                        <X size={14} />
+                        <XIcon />
                       </Button>
                     }
                   />
-                </div>
+                )}
+                {save.finished && (
+                  <span className="absolute -top-2 left-2.5 z-1 rounded-full bg-green-500/75 px-1.5 py-0.5 text-xs text-white">
+                    COMPLETED
+                  </span>
+                )}
               </div>
             </Card>
           ))}
+          {/* Only way I could find to add padding at the bottom of a scroll area */}
+          <div className="h-4"></div>
         </div>
+        <ScrollBar />
+      </ScrollArea>
+    </>
+  );
+};
 
-        {endProgressIndex < progresses.length && (
-          <div className="flex justify-center">
-            <Button
-              onClick={() =>
-                setEndProgressIndex((prev) => prev + PROGRESSES_BY_PAGE)
-              }
-              variant="ghost"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              - Load more -
-            </Button>
-          </div>
-        )}
-      </div>
-    </div>
+export const SavesDetail = ({
+  selectedSave,
+  saves,
+  onSelectSave,
+}: Omit<SavesDetailProps, "setOpen">) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <ResponsiveDrawer
+      open={open}
+      setOpen={setOpen}
+      trigger={
+        <Button size="default" variant="outline">
+          <BookMarkedIcon />
+          Select another save
+        </Button>
+      }
+      content={
+        <Content
+          setOpen={setOpen}
+          selectedSave={selectedSave}
+          saves={saves}
+          onSelectSave={onSelectSave}
+        />
+      }
+      title="Your saves"
+      description="Click on a save to select it"
+    />
   );
 };

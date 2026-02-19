@@ -15,6 +15,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { makeGetSceneQueryOptions } from "./use-get-scene";
 import { useBuilderErrorStore } from "./use-builder-error-store";
 import { makeInvalidTargetPercentageError } from "../builder-errors";
+import { makeGetSceneQueryOptions } from "./use-get-scene";
+import { useQueryClient } from "@tanstack/react-query";
 
 const percentMask = {
   mask: /([0-9]{0,3})/,
