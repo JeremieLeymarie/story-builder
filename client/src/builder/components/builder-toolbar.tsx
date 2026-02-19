@@ -180,7 +180,7 @@ export const BuilderToolbar = () => {
   const { isExpanded, toggleExpanded } = useToolbar();
 
   return (
-    <Toolbar className={cn(isExpanded && "w-[250px]")}>
+    <Toolbar className={cn(isExpanded && "w-55")}>
       {isExpanded ? (
         <ExpandedToolbarContent toggleExpanded={toggleExpanded} />
       ) : (
