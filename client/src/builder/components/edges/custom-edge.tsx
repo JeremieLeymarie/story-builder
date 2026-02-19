@@ -64,7 +64,7 @@ const InnerEdge = ({
                 setIsFocused(true);
               }}
               className={cn(
-                "relative flex h-10 w-16 origin-center cursor-pointer items-center justify-center rounded border bg-white text-base",
+                "relative flex h-8 w-14 origin-center cursor-pointer items-center justify-center rounded-lg border bg-white text-sm",
                 hasError && "border-destructive text-destructive",
               )}
             >
@@ -72,9 +72,7 @@ const InnerEdge = ({
                 <Input
                   autoFocus
                   defaultValue={`${value}%`}
-                  className={cn(
-                    "h-full border-none px-2 text-center md:text-base",
-                  )}
+                  className={cn("h-full border-none px-1 text-center")}
                   onBlur={onChange}
                   ref={inputRef}
                 />
