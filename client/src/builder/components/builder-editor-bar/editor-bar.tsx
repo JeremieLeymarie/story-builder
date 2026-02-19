@@ -1,30 +1,22 @@
 import { match } from "ts-pattern";
-import { cn } from "@/lib/style";
 import { useBuilderEditorStore } from "@/builder/hooks/use-builder-editor-store";
-import { Toolbar } from "@/design-system/components/toolbar";
-import { StoryEditor, StoryEditorHeader } from "./story-editor/story-editor";
-import { SceneEditor, SceneEditorHeader } from "./scene-editor/scene-editor";
+import { StoryEditor } from "./story-editor/story-editor";
+import { SceneEditor } from "./scene-editor/scene-editor";
+import { CharacterEditor } from "./character-editor/character-editor";
 
 export const EditorBar = () => {
   const currentEditor = useBuilderEditorStore((state) => state.editor);
-  if (!currentEditor) return null;
+  if (!currentEditor || currentEditor.type === null) return null;
 
   return (
     <div className="flex">
-      <Toolbar
-        className={cn("w-[500px]", currentEditor.type === null && "hidden")}
-      >
-        {match(currentEditor)
-          .with({ type: "scene-editor" }, () => <SceneEditorHeader />)
-          .with({ type: "story-editor" }, () => <StoryEditorHeader />)
-          .exhaustive()}
-        {match(currentEditor)
-          .with({ type: "scene-editor" }, ({ payload }) => (
-            <SceneEditor sceneKey={payload.sceneKey} />
-          ))
-          .with({ type: "story-editor" }, () => <StoryEditor />)
-          .exhaustive()}
-      </Toolbar>
+      {match(currentEditor)
+        .with({ type: "scene-editor" }, ({ payload }) => (
+          <SceneEditor sceneKey={payload.sceneKey} />
+        ))
+        .with({ type: "story-editor" }, () => <StoryEditor />)
+        .with({ type: "character-editor" }, () => <CharacterEditor />)
+        .exhaustive()}
     </div>
   );
 };
