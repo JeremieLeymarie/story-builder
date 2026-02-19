@@ -12,6 +12,11 @@ import { getTestFactory } from "@/lib/testing/factory";
 
 const factory = getTestFactory();
 
+const _makeScenes = (num: number = 10) =>
+  Array(num)
+    .fill(null)
+    .map(() => factory.scene());
+
 describe("analytics-service", () => {
   let gameRepository: MockGameRepository;
   let progressRepository: MockProgressRepository;
@@ -31,11 +36,6 @@ describe("analytics-service", () => {
   };
 
   describe("getVisitedScenesChart", () => {
-    const _makeScenes = (num: number = 10) =>
-      Array(num)
-        .fill(null)
-        .map(() => factory.scene());
-
     const _test = async ({
       expectedVisited,
       expectedUnvisited,
@@ -117,6 +117,70 @@ describe("analytics-service", () => {
         expectedUnvisited: 6,
         expectedVisited: 3,
       });
+    });
+  });
+
+  describe("isSceneVisited", () => {
+    const _isSceneVisited = async ({
+      sceneKey,
+      mockHistory,
+    }: {
+      sceneKey: string;
+      mockHistory: string[];
+    }) => {
+      progressRepository.get.mockResolvedValueOnce(
+        factory.storyProgress({ history: mockHistory }),
+      );
+      const svc = await _getSvc();
+      return svc.isSceneVisited(sceneKey);
+    };
+
+    test("empty history", async () => {
+      expect(
+        await _isSceneVisited({
+          sceneKey: "tutu",
+          mockHistory: [],
+        }),
+      ).toBeFalsy();
+    });
+    test("scene is not present", async () => {
+      expect(
+        await _isSceneVisited({
+          sceneKey: "tutu",
+          mockHistory: ["a", "b", "c"],
+        }),
+      ).toBeFalsy();
+    });
+    test("scene is present", async () => {
+      expect(
+        await _isSceneVisited({
+          sceneKey: "tutu",
+          mockHistory: ["a", "b", "tutu", "c"],
+        }),
+      ).toBeTruthy();
+    });
+    test("scene is present multiple times in history", async () => {
+      expect(
+        await _isSceneVisited({
+          sceneKey: "tutu",
+          mockHistory: ["a", "tutu", "b", "tutu"],
+        }),
+      ).toBeTruthy();
+    });
+  });
+
+  describe("getAllScenes", () => {
+    test("no scenes", async () => {
+      gameRepository.getScenes.mockResolvedValueOnce([]);
+      const svc = await _getSvc();
+      expect(svc.getAllScenes()).toStrictEqual([]);
+    });
+
+    test("simple", async () => {
+      const scenes = _makeScenes();
+      gameRepository.getScenes.mockResolvedValueOnce(scenes);
+      const svc = await _getSvc();
+      expect(svc.getAllScenes()).toStrictEqual(scenes);
     });
   });
 });
