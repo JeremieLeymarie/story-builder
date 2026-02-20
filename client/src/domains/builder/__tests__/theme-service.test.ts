@@ -28,7 +28,7 @@ describe("theme-service", () => {
       expect(theme).toStrictEqual(mockTheme.theme);
     });
 
-    test("should get default theme when theme does not exists yet", async () => {
+    test("should get default theme when theme does not exist yet", async () => {
       repository.get.mockResolvedValue(null);
 
       const theme = await svc.getTheme("plouf");

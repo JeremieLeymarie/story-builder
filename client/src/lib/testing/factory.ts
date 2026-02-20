@@ -1,6 +1,8 @@
 import {
   ACTION_BUTTON_SIZES,
   BuilderStory,
+  CharacterConfiguration,
+  CharacterAttribute,
   LibraryStory,
   Scene,
   STORY_GENRES,
@@ -132,6 +134,40 @@ const _storyThemeFactory = {
   }),
 } satisfies StoryThemeFactory;
 
+type CharacterConfigAttributeFactory = _BaseFactory<CharacterAttribute>;
+const _characterConfigAttributeFactory = {
+  key: nanoid,
+  type: () => "numeric",
+  name: () =>
+    faker.helpers.arrayElement([
+      "force",
+      "dexterity",
+      "charisma",
+      "constitution",
+      "strength",
+      "wisdom",
+    ]),
+  description: faker.word.words,
+  isEditableByPlayer: () => Math.random() > 0.5,
+  visibility: () => (Math.random() > 0.5 ? "visible" : "invisible"),
+  initialValue: faker.number.int,
+} satisfies CharacterConfigAttributeFactory;
+
+type CharacterConfigFactory = _BaseFactory<CharacterConfiguration>;
+const _characterConfigFactory = {
+  key: nanoid,
+  storyKey: nanoid,
+  attributes: () =>
+    Object.fromEntries(
+      Array(faker.number.int({ min: 1, max: 5 }))
+        .fill(null)
+        .map(() => {
+          const attr = makeRandomEntity(_characterConfigAttributeFactory, {});
+          return [attr.key, attr];
+        }),
+    ),
+} satisfies CharacterConfigFactory;
+
 type SceneFactory = _BaseFactory<Scene>;
 const _sceneFactory = {
   key: nanoid,
@@ -166,6 +202,22 @@ const _storyProgressFactory = {
   storyKey: nanoid,
   userKey: nanoid,
   finished: () => Math.random() > 0.5,
+  character: () => {
+    const hasCharacter = Math.random() > 0.5;
+    if (hasCharacter) {
+      const config = makeRandomEntity(_characterConfigFactory, {});
+      return {
+        ...config,
+        attributes: Object.fromEntries(
+          Object.entries(config.attributes).map(([key, attributeConfig]) => [
+            key,
+            { ...attributeConfig, value: faker.number.int() },
+          ]),
+        ),
+      };
+    }
+    return undefined;
+  },
 } satisfies StoryProgressFactory;
 
 type UserFactory = _BaseFactory<User>;
@@ -205,6 +257,14 @@ export const getTestFactory = () => {
 
     storyTheme: (partial: Partial<StoryTheme> = {}) => {
       return makeRandomEntity(_storyThemeFactory, partial);
+    },
+
+    characterConfig: (partial: Partial<CharacterConfiguration> = {}) => {
+      return makeRandomEntity(_characterConfigFactory, partial);
+    },
+
+    characterConfigAttribute: (partial: Partial<CharacterAttribute> = {}) => {
+      return makeRandomEntity(_characterConfigAttributeFactory, partial);
     },
 
     scene: (partial: Partial<Scene> = {}) => {

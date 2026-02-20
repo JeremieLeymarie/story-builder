@@ -1,8 +1,11 @@
 import { Entity } from "@/lib/storage/domain";
 
 export class EntityNotExistError extends Error {
-  constructor(entityType: Entity, key: string) {
-    super(`Entity [${entityType}] with key {${key}} does not exist.`);
+  constructor(entityType: Entity, key: string | Record<string, string>) {
+    const keys = typeof key === "string" ? { key } : key;
+    super(
+      `Entity [${entityType}] does not exist. Tried to get entity with keys : ${JSON.stringify(keys)}`,
+    );
   }
 }
 
