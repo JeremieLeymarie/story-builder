@@ -32,6 +32,7 @@ export type StoryGenre = (typeof STORY_GENRES)[number];
 export const STORY_TYPE = ["builder", "published", "imported"] as const;
 
 type CharacterNumericAttribute = {
+  type: "numeric";
   key: string;
   name: string;
   description: string;
@@ -40,10 +41,14 @@ type CharacterNumericAttribute = {
   initialValue: number;
 };
 
+// Extend this union as we add more attribute types
+// (remember to also update `ProgressCharacterAttribute` union)
+export type CharacterAttribute = CharacterNumericAttribute;
+
 export type CharacterConfiguration = {
   key: string;
   storyKey: string;
-  attributes: Record<string, CharacterNumericAttribute>;
+  attributes: Record<string, CharacterAttribute>;
 };
 
 type Author = {
@@ -140,8 +145,11 @@ type ProgressCharacterNumericAttribute = CharacterNumericAttribute & {
   value: number;
 };
 
+// Extend this union as we add more types
+type ProgressCharacterAttribute = ProgressCharacterNumericAttribute;
+
 type ProgressCharacter = {
-  attributes: Record<string, ProgressCharacterNumericAttribute>;
+  attributes: Record<string, ProgressCharacterAttribute>;
 };
 
 export type StoryProgress = {

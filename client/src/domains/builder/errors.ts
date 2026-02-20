@@ -33,3 +33,19 @@ export class ActionTargetNotFound extends BuilderError {
     );
   }
 }
+
+export class CharacterAttributeNameAlreadyExistError extends BuilderError {
+  constructor(characterConfigKey: string, attributeName: string) {
+    super(
+      `Attribute name [${attributeName}] already exists on character config [${characterConfigKey}]`,
+    );
+  }
+}
+
+export class CharacterAttributeNotExistError extends BuilderError {
+  constructor(characterConfigKey: string, attributeKey: string) {
+    super(
+      `Attribute [${attributeKey}] does not exist on character config [${characterConfigKey}]`,
+    );
+  }
+}
