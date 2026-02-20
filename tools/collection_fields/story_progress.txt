@@ -1,7 +1,0 @@
-key
-userKey
-storyKey
-history
-currentSceneKey
-lastPlayedAt
-finished
