@@ -1,4 +1,4 @@
-import { DexieDatabase, db } from "@/lib/storage/dexie/dexie-db";
+import { DexieDatabase } from "@/lib/storage/dexie/dexie-db";
 import { CharacterConfiguration } from "@/lib/storage/domain";
 import { MaybeWithoutKey } from "@/types";
 import { EntityNotExistError } from "../errors";
@@ -42,8 +42,4 @@ export const _getDexieCharacterRepository = (
       await db.characterConfigurations.where({ storyKey }).delete();
     },
   };
-};
-
-export const getDexieCharacterRepository = (): CharacterRepositoryPort => {
-  return _getDexieCharacterRepository(db);
 };
