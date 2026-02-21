@@ -117,6 +117,7 @@ describe("story character repository", () => {
         attributes: {
           "force-key": {
             key: "force-key",
+            type: "numeric",
             name: "force",
             description: "desc",
             initialValue: 10,
@@ -126,6 +127,7 @@ describe("story character repository", () => {
           // New attribute
           "dex-key": {
             key: "dex-key",
+            type: "numeric",
             name: "dex",
             description: "pschitt",
             initialValue: 5,

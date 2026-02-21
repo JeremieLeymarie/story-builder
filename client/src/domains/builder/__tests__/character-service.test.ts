@@ -185,15 +185,22 @@ describe("character-service", () => {
     });
 
     test("attribute name is taken", async () => {
-      const attr = factory.characterConfigAttribute({ name: "dexterity" });
+      const attr1 = factory.characterConfigAttribute({
+        key: "attr1-key",
+        name: "dexterity",
+      });
+      const attr2 = factory.characterConfigAttribute({
+        key: "attr2-key",
+        name: "something else",
+      });
       repository.get.mockResolvedValueOnce({
         key: "key",
         storyKey: "plouf",
-        attributes: { [attr.key]: attr },
+        attributes: { [attr1.key]: attr1, [attr2.key]: attr2 },
       });
 
       await expect(
-        svc.updateAttribute("plouf", { ...attr, name: "dexterity" }),
+        svc.updateAttribute("plouf", { ...attr2, name: "dexterity" }), // taken by attr1
       ).rejects.toThrowError(CharacterAttributeNameAlreadyExistError);
     });
 
