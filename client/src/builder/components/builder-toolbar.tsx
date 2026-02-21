@@ -169,7 +169,7 @@ const MinifiedToolbarContent = ({ toggleExpanded }: ContentProps) => {
           <Link
             to="/game/theme-editor/$gameKey/$sceneKey"
             target="_blank"
-            params={{ gameKey: story.key, sceneKey: story.firstSceneKey }} // For now, always UI Editor with first scene
+            params={{ gameKey: story.key, sceneKey: story.firstSceneKey }} // For now, always open UI Editor with first scene
           >
             <Button size="icon" variant="ghost">
               <PaletteIcon />
