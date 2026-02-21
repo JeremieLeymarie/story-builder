@@ -90,10 +90,8 @@ export const _getAnalyticsService = async ({
       };
     },
 
-    // TODO: test
     isSceneVisited: (sceneKey) => progress?.history.includes(sceneKey) ?? false,
 
-    // TODO: test
     getAllScenes: () => scenes,
   };
 };
