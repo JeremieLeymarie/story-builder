@@ -2,7 +2,10 @@ import {
   CharacterConfiguration,
   CharacterAttribute,
 } from "@/lib/storage/domain";
-import { CharacterRepositoryPort } from "./character-repository";
+import {
+  CharacterRepositoryPort,
+  getDexieCharacterRepository,
+} from "./character-repository";
 import { EntityNotExistError } from "../errors";
 import {
   CharacterAttributeNotExistError,
@@ -42,6 +45,7 @@ export const _getCharacterService = ({
 }): CharacterServicePort => {
   return {
     getCharacter: async (storyKey) => {
+      console.log("coucou");
       return await repository.get(storyKey);
     },
 
@@ -146,3 +150,6 @@ export const _getCharacterService = ({
     },
   };
 };
+
+export const getCharacterService = () =>
+  _getCharacterService({ repository: getDexieCharacterRepository() });

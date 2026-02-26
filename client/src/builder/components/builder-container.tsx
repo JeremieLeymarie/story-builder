@@ -3,20 +3,21 @@ import { Builder } from "./builder";
 import { BuilderContextProvider } from "../hooks/use-builder-context";
 import { Scene, Story } from "@/lib/storage/domain";
 import { RefreshFunction } from "./types";
-import { BuilderServicePort } from "@/domains/builder/ports/builder-service-port";
 import { useDetectBuilderErrors } from "../hooks/use-detect-builder-errors";
+import { getCharacterService } from "@/domains/builder/character-service";
+import { getBuilderService } from "@/get-builder-service";
 
 export const BuilderContainer = ({
   refresh,
   story,
   scenes,
-  builderService,
 }: {
   refresh: RefreshFunction;
   scenes: Scene[];
   story: Story;
-  builderService: BuilderServicePort;
 }) => {
+  const builderService = getBuilderService();
+  const characterService = getCharacterService();
   useDetectBuilderErrors({ scenes, builderService });
 
   return (
@@ -26,6 +27,7 @@ export const BuilderContainer = ({
       story={story}
       scenes={scenes}
       builderService={builderService}
+      characterService={characterService}
     >
       <ReactFlowProvider>
         <Builder />
