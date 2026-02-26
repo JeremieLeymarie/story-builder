@@ -14,6 +14,7 @@ import { BuilderNode, BuilderEdge } from "../types";
 import { scenesToNodesAndEdgesAdapter } from "../adapters";
 import { RefreshFunction } from "../components/types";
 import { BuilderServicePort } from "@/domains/builder/ports/builder-service-port";
+import { CharacterServicePort } from "@/domains/builder/character-service";
 
 type BuilderContext = {
   refresh: RefreshFunction;
@@ -23,6 +24,7 @@ type BuilderContext = {
   initialNodes: BuilderNode[];
   initialEdges: BuilderEdge[];
   builderService: BuilderServicePort;
+  characterService: CharacterServicePort;
   debug: boolean;
 };
 
@@ -35,12 +37,14 @@ export const BuilderContextProvider = ({
   refresh,
   debug = false,
   builderService,
+  characterService,
 }: PropsWithChildren<{
   scenes: Scene[];
   story: Story;
   refresh: RefreshFunction;
   debug?: boolean;
   builderService: BuilderServicePort;
+  characterService: CharacterServicePort;
 }>) => {
   const reactFlowRef = useRef<HTMLDivElement>(null);
   const [story, setStory] = useState(story_);
@@ -60,6 +64,7 @@ export const BuilderContextProvider = ({
         setStory,
         refresh,
         builderService,
+        characterService,
         debug,
       }}
     >

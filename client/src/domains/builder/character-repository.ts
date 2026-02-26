@@ -1,4 +1,4 @@
-import { DexieDatabase } from "@/lib/storage/dexie/dexie-db";
+import { db, DexieDatabase } from "@/lib/storage/dexie/dexie-db";
 import { CharacterConfiguration } from "@/lib/storage/domain";
 import { MaybeWithoutKey } from "@/types";
 import { EntityNotExistError } from "../errors";
@@ -43,3 +43,6 @@ export const _getDexieCharacterRepository = (
     },
   };
 };
+
+export const getDexieCharacterRepository = () =>
+  _getDexieCharacterRepository(db);

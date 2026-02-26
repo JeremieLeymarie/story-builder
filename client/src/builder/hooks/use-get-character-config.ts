@@ -1,13 +1,13 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import { useBuilderContext } from "./use-builder-context";
 
-const useGetCharacterConfigQueryOptions = () => {
-  const { builderService, story } = useBuilderContext();
+export const useGetCharacterConfigQueryOptions = () => {
+  const { characterService, story } = useBuilderContext();
 
   return queryOptions({
     queryKey: ["character-config", story.key],
     queryFn: async () => {
-      return builderService.getCharacterConfig(story.key);
+      return await characterService.getCharacter(story.key);
     },
   });
 };

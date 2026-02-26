@@ -19,7 +19,10 @@ const characterFormSchema = z.object({
 });
 
 const useEditCharacterForm = () => {
-  const form = useForm({ resolver: zodResolver(characterFormSchema) });
+  const form = useForm({
+    resolver: zodResolver(characterFormSchema),
+    defaultValues: {},
+  });
 
   const handleSubmit = form.handleSubmit((payload) => {
     // TODO:

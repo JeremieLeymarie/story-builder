@@ -7,7 +7,6 @@ import { useBuilderEditorStore } from "@/builder/hooks/use-builder-editor-store"
 import { BackdropLoader, ErrorMessage } from "@/design-system/components";
 import { createFileRoute } from "@tanstack/react-router";
 import { queryClient } from "../__root";
-import { getBuilderService } from "@/get-builder-service";
 
 const Page = () => {
   const { storyKey } = Route.useParams();
@@ -29,7 +28,6 @@ const Page = () => {
         refresh={async () => {
           refetch();
         }}
-        builderService={getBuilderService()}
       />
     </div>
   );
