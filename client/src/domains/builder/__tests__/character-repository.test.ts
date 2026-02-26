@@ -152,8 +152,6 @@ describe("story character repository", () => {
 
       await repo.delete("story-a");
 
-      console.log(await testDB.characterConfigurations.toArray());
-
       expect(await testDB.characterConfigurations.get("ploc")).toBeUndefined();
       expect(
         await testDB.characterConfigurations.get("bis"),
