@@ -45,7 +45,6 @@ export const _getCharacterService = ({
 }): CharacterServicePort => {
   return {
     getCharacter: async (storyKey) => {
-      console.log("coucou");
       return await repository.get(storyKey);
     },
 
