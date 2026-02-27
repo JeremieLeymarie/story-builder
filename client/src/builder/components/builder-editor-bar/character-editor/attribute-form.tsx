@@ -19,8 +19,8 @@ import { useForm, Controller } from "react-hook-form";
 import z from "zod";
 
 type AttributeFormProps = {
-  onSubmit: () => void;
-  defaultValues: CharacterAttribute | null;
+  closeEditor: () => void;
+  attribute: CharacterAttribute | null;
 };
 
 const attributeSchema = z.object({
@@ -32,10 +32,7 @@ const attributeSchema = z.object({
   initialValue: z.int(),
 });
 
-const useAttributeForm = ({
-  onSubmit,
-  defaultValues: attribute,
-}: AttributeFormProps) => {
+const useAttributeForm = ({ closeEditor, attribute }: AttributeFormProps) => {
   const defaultValues = attribute ?? {
     type: "numeric",
     initialValue: 0,
@@ -54,17 +51,19 @@ const useAttributeForm = ({
   const handleSubmit = form.handleSubmit(async (payload) => {
     if (isEdition) await updateAttribute({ ...payload, key: attribute.key });
     else await addAttribute(payload);
-    onSubmit();
+    closeEditor();
   });
 
   return { form, handleSubmit };
 };
 
 export const AttributeForm = ({
-  onSubmit,
-  defaultValues,
+  closeEditor,
+  attribute,
 }: AttributeFormProps) => {
-  const { form, handleSubmit } = useAttributeForm({ onSubmit, defaultValues });
+  const { form, handleSubmit } = useAttributeForm({ closeEditor, attribute });
+  const { removeAttribute } = useCharacterAttributeActions();
+  const isEdition = !!attribute?.key;
 
   return (
     <Form {...form}>
@@ -208,7 +207,21 @@ export const AttributeForm = ({
             </FieldSet>
           )}
         />
-        <Button>Save</Button>
+        <div className="flex justify-between">
+          {isEdition && (
+            <Button
+              variant="destructive"
+              type="button"
+              onClick={() => {
+                removeAttribute(attribute.key);
+                closeEditor();
+              }}
+            >
+              Remove
+            </Button>
+          )}
+          <Button>Save</Button>
+        </div>
       </form>
     </Form>
   );
