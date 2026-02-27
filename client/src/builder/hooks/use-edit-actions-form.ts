@@ -21,6 +21,9 @@ const actionSchema = z.discriminatedUnion("showCondition", [
     showCondition: z.literal("when-user-did-not-visit"),
     targetSceneKey: z.nanoid(),
   }),
+  actionBase.extend({
+    showCondition: z.literal("character-attribute"),
+  }),
 ]);
 
 export type ActionSchema = z.infer<typeof actionSchema>;

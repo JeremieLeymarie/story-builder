@@ -87,12 +87,20 @@ type SimpleAction = ActionBase & {
   type: "simple";
 };
 
+type SceneVisitCondition = {
+  type: "user-did-visit" | "user-did-not-visit";
+  sceneKey: string;
+};
+
+type CharacterAttributeCondition = {
+  type: "character-attribute";
+  attributeKey: string;
+  comparator: "lower-than" | "greater-than"; // Add more flavors?
+};
+
 type ConditionalAction = ActionBase & {
   type: "conditional";
-  condition: {
-    type: "user-did-visit" | "user-did-not-visit";
-    sceneKey: string;
-  };
+  condition: SceneVisitCondition | CharacterAttributeCondition;
 };
 
 export type Action = SimpleAction | ConditionalAction;
