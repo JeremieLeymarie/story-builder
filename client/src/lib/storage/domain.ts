@@ -35,7 +35,7 @@ type CharacterNumericAttribute = {
   type: "numeric";
   key: string;
   name: string;
-  description: string;
+  description?: string;
   isEditableByPlayer: boolean;
   visibility: "visible" | "invisible";
   initialValue: number;
