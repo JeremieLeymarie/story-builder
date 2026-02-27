@@ -100,8 +100,8 @@ export const CharacterEditor = () => {
         <Toolbar className="relative w-75 bg-white/98">
           <ToolbarClose className="absolute top-2 right-2" onClick={close} />
           <AttributeForm
-            onSubmit={close}
-            defaultValues={state!.type === "add" ? null : state!.payload}
+            closeEditor={close}
+            attribute={state!.type === "add" ? null : state!.payload}
           />
         </Toolbar>
       )}
