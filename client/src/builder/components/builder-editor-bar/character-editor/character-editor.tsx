@@ -34,6 +34,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/design-system/primitives/table";
+import { CharacterAttribute } from "@/lib/storage/domain";
 
 const EmptyState = () => {
   const { createCharacterConfig } = useCreateCharacterConfig();
@@ -57,21 +58,46 @@ const EmptyState = () => {
   );
 };
 
+type AttributeToolbarState =
+  | { type: "add" }
+  | { type: "edit"; payload: CharacterAttribute }
+  | null;
+
+const useAttributeToolbar = () => {
+  const [state, setState] = useState<AttributeToolbarState>(null);
+
+  const close = () => {
+    setState(null);
+  };
+
+  const open = (props: Exclude<AttributeToolbarState, null>) => {
+    setState(props);
+  };
+
+  return {
+    open,
+    close,
+    isOpen: state !== null,
+    state,
+  };
+};
+
 export const CharacterEditor = () => {
   const { characterConfig, isLoading } = useGetCharacterConfig();
-  const [isAttributeFormOpen, setIsAttributeFormOpen] = useState(false);
+  const { open, close, isOpen, state } = useAttributeToolbar();
 
   const showLoader = characterConfig === undefined || isLoading;
 
+  console.log({ state, isOpen });
   return (
     <div className="z-40 flex gap-3">
-      {isAttributeFormOpen && (
+      {isOpen && (
         <Toolbar className="relative w-75 bg-white/98">
-          <ToolbarClose
-            className="absolute top-2 right-2"
-            onClick={() => setIsAttributeFormOpen(false)}
+          <ToolbarClose className="absolute top-2 right-2" onClick={close} />
+          <AttributeForm
+            onSubmit={close}
+            defaultValues={state!.type === "add" ? null : state!.payload}
           />
-          <AttributeForm onSubmit={() => setIsAttributeFormOpen(false)} />
         </Toolbar>
       )}
       <Toolbar className="h-max w-95">
@@ -90,7 +116,7 @@ export const CharacterEditor = () => {
                 variant="ghost"
                 type="button"
                 size="icon"
-                onClick={() => setIsAttributeFormOpen(true)}
+                onClick={() => open({ type: "add" })}
               >
                 <PlusIcon />
               </Button>
@@ -107,7 +133,17 @@ export const CharacterEditor = () => {
               <TableBody>
                 {Object.entries(characterConfig.attributes).map(
                   ([key, attribute]) => (
-                    <TableRow key={key}>
+                    <TableRow
+                      key={key}
+                      onClick={() =>
+                        isOpen &&
+                        (state?.type === "add" ||
+                          attribute.key === state?.payload.key)
+                          ? close()
+                          : open({ type: "edit", payload: attribute })
+                      }
+                      className="cursor-pointer"
+                    >
                       <TableCell className="font-medium">
                         {attribute.name}
                       </TableCell>
