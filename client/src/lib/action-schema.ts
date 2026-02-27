@@ -18,15 +18,26 @@ const baseActionSchema = z.object({
     ),
 });
 
+const sceneVisitCondition = z.object({
+  type: z.enum(["user-did-visit", "user-did-not-visit"]),
+  sceneKey: z.nanoid(),
+});
+
+const characterAttributeCondition = z.object({
+  type: z.literal("character-attribute"),
+  attributeKey: z.nanoid(),
+  comparator: z.union([z.literal("lower-than"), z.literal("greater-than")]),
+});
+
 export const actionSchema = z.discriminatedUnion("type", [
   baseActionSchema.extend({
     type: z.literal("simple"),
   }),
   baseActionSchema.extend({
     type: z.literal("conditional"),
-    condition: z.object({
-      type: z.enum(["user-did-visit", "user-did-not-visit"]),
-      sceneKey: z.nanoid(),
-    }),
+    condition: z.discriminatedUnion("type", [
+      sceneVisitCondition,
+      characterAttributeCondition,
+    ]),
   }),
 ]);

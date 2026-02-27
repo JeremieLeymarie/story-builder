@@ -60,7 +60,7 @@ const SceneSelector = ({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="text-foreground hover:text-foreground h-8! w-[180px] justify-between text-xs font-normal"
+            className="text-foreground hover:text-foreground h-8! w-45 justify-between text-xs font-normal"
           >
             {value ? selectedScene?.title : "No scene"}
             <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -74,7 +74,7 @@ const SceneSelector = ({
           <Command>
             <CommandInput placeholder="Search scenes..." />
             <CommandList>
-              <ScrollArea className="h-[150px]">
+              <ScrollArea className="h-37.5">
                 <CommandEmpty className="text-xs">No scene found.</CommandEmpty>
                 <CommandGroup>
                   {scenes && !isLoading ? (
@@ -190,7 +190,7 @@ export const ActionItem = ({
                     }
                     value={field.value}
                   >
-                    <SelectTrigger className="h-8! w-[180px] *:data-[slot=select-value]:text-xs">
+                    <SelectTrigger className="h-8! w-45 *:data-[slot=select-value]:text-xs">
                       <SelectValue placeholder="Select a condition" />
                     </SelectTrigger>
                     <SelectContent>
