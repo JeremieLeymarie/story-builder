@@ -35,11 +35,10 @@ const useRandomEventsToolbar = ({ scene }: { scene: Scene }) => {
 
 const ActionsFormContent = ({ scene }: { scene: Scene }) => {
   const { updateScene, makeEmptyActionPayload } = useBuilderActions();
-  const { append, fields, form, remove, adaptDomainAction } =
-    useEditActionsForm({
-      actions: scene.actions,
-      onSave: (payload) => updateScene({ key: scene.key, ...payload }),
-    });
+  const { append, fields, form, remove } = useEditActionsForm({
+    actions: scene.actions,
+    onSave: (payload) => updateScene({ key: scene.key, ...payload }),
+  });
 
   const removeAction = (index?: number | number[]) => {
     closeRandomEventsToolbar();
@@ -70,9 +69,7 @@ const ActionsFormContent = ({ scene }: { scene: Scene }) => {
                   variant="ghost"
                   type="button"
                   size="icon"
-                  onClick={() =>
-                    append(adaptDomainAction(makeEmptyActionPayload()))
-                  }
+                  onClick={() => append(makeEmptyActionPayload())}
                 >
                   <PlusIcon />
                 </Button>
@@ -107,6 +104,7 @@ const ActionsFormContent = ({ scene }: { scene: Scene }) => {
 
 export const ActionsFormContainer = ({ sceneKey }: { sceneKey: string }) => {
   const { scene, isLoading } = useGetScene(sceneKey);
+  // const {characterConfig, isCharacterLoading} = useGetC
 
   if (isLoading || scene === undefined) return <SimpleLoader />;
 
