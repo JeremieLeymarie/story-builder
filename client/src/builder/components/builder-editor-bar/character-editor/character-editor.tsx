@@ -35,6 +35,11 @@ import {
   TableRow,
 } from "@/design-system/primitives/table";
 import { CharacterAttribute } from "@/lib/storage/domain";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/design-system/primitives/tooltip";
 
 const EmptyState = () => {
   const { createCharacterConfig } = useCreateCharacterConfig();
@@ -149,18 +154,46 @@ export const CharacterEditor = () => {
                       </TableCell>
                       <TableCell>{attribute.initialValue}</TableCell>
                       <TableCell>
-                        {attribute.visibility === "visible" ? (
-                          <EyeIcon size={14} />
-                        ) : (
-                          <EyeClosedIcon size={14} />
-                        )}
+                        <Tooltip>
+                          <TooltipTrigger>
+                            {attribute.visibility === "visible" ? (
+                              <EyeIcon size={14} />
+                            ) : (
+                              <EyeClosedIcon size={14} />
+                            )}
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            The{" "}
+                            <span className="font-semibold">
+                              {attribute.name}
+                            </span>{" "}
+                            attribute is{" "}
+                            {attribute.visibility === "visible"
+                              ? "visible"
+                              : "not visible"}{" "}
+                            by the player in the story
+                          </TooltipContent>
+                        </Tooltip>
                       </TableCell>
                       <TableCell>
-                        {attribute.isEditableByPlayer ? (
-                          <PencilIcon size={14} />
-                        ) : (
-                          <PencilOffIcon size={14} />
-                        )}
+                        <Tooltip>
+                          <TooltipTrigger>
+                            {attribute.isEditableByPlayer ? (
+                              <PencilIcon size={14} />
+                            ) : (
+                              <PencilOffIcon size={14} />
+                            )}
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            The&nbsp;
+                            <span className="font-semibold">
+                              {attribute.name}
+                            </span>
+                            &nbsp;attribute&nbsp;
+                            {attribute.isEditableByPlayer ? "can" : "cannot"}
+                            &nbsp;be edited by the player in the story
+                          </TooltipContent>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   ),
