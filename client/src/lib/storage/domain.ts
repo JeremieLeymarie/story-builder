@@ -96,11 +96,25 @@ type CharacterAttributeCondition = {
   type: "character-attribute";
   attributeKey: string;
   comparator: "lower-than" | "greater-than"; // Add more flavors?
+  value: number;
 };
 
-type ConditionalAction = ActionBase & {
+type ActionCondition = SceneVisitCondition | CharacterAttributeCondition;
+
+export const isSceneVisitCondition = (
+  condition: ActionCondition,
+): condition is SceneVisitCondition =>
+  condition.type === "user-did-not-visit" ||
+  condition.type === "user-did-visit";
+
+export const isCharacterAttributeCondition = (
+  condition: ActionCondition,
+): condition is CharacterAttributeCondition =>
+  condition.type === "character-attribute";
+
+export type ConditionalAction = ActionBase & {
   type: "conditional";
-  condition: SceneVisitCondition | CharacterAttributeCondition;
+  condition: ActionCondition;
 };
 
 export type Action = SimpleAction | ConditionalAction;

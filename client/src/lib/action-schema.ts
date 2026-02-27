@@ -27,6 +27,7 @@ const characterAttributeCondition = z.object({
   type: z.literal("character-attribute"),
   attributeKey: z.nanoid(),
   comparator: z.union([z.literal("lower-than"), z.literal("greater-than")]),
+  value: z.int(),
 });
 
 export const actionSchema = z.discriminatedUnion("type", [
