@@ -15,10 +15,25 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/design-system/primitives/empty";
-import { BookUserIcon, PlusIcon } from "lucide-react";
+import {
+  BookUserIcon,
+  EyeClosedIcon,
+  EyeIcon,
+  PencilIcon,
+  PencilOffIcon,
+  PlusIcon,
+} from "lucide-react";
 import { Button } from "@/design-system/primitives";
 import { useCreateCharacterConfig } from "@/builder/hooks/use-create-character-config";
 import { useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/design-system/primitives/table";
 
 const EmptyState = () => {
   const { createCharacterConfig } = useCreateCharacterConfig();
@@ -70,7 +85,7 @@ export const CharacterEditor = () => {
         ) : (
           <div>
             <div className="flex items-center gap-2">
-              <p className="text-lg">Attributes</p>
+              <p className="text-lg font-semibold">Attributes</p>
               <Button
                 variant="ghost"
                 type="button"
@@ -80,11 +95,42 @@ export const CharacterEditor = () => {
                 <PlusIcon />
               </Button>
             </div>
-            {Object.entries(characterConfig.attributes).map(
-              ([key, attribute]) => (
-                <div key={key}>{attribute.name}</div>
-              ),
-            )}
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Initial Value</TableHead>
+                  <TableHead>Visibility</TableHead>
+                  <TableHead>Edition</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {Object.entries(characterConfig.attributes).map(
+                  ([key, attribute]) => (
+                    <TableRow key={key}>
+                      <TableCell className="font-medium">
+                        {attribute.name}
+                      </TableCell>
+                      <TableCell>{attribute.initialValue}</TableCell>
+                      <TableCell>
+                        {attribute.visibility === "visible" ? (
+                          <EyeIcon size={14} />
+                        ) : (
+                          <EyeClosedIcon size={14} />
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {attribute.isEditableByPlayer ? (
+                          <PencilIcon size={14} />
+                        ) : (
+                          <PencilOffIcon size={14} />
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ),
+                )}
+              </TableBody>
+            </Table>
           </div>
         )}
       </Toolbar>
