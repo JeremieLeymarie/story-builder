@@ -26,7 +26,6 @@ import {
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
 import { cn } from "@/lib/style";
-import { Divider } from "@/design-system/components";
 
 type ContentProps = {
   toggleExpanded: () => void;
@@ -77,9 +76,6 @@ const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
             </Button>
           }
         />
-        <div className="flex justify-center">
-          <Divider className="h-0.5 w-9/10" />
-        </div>
         <Button
           className={btnClassname}
           variant="outline"

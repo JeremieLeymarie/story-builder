@@ -12,42 +12,59 @@ import {
   RadioGroup,
   RadioGroupItem,
 } from "@/design-system/primitives/radio-group";
+import { CharacterAttribute } from "@/lib/storage/domain";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon, PencilIcon } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import z from "zod";
 
+type AttributeFormProps = {
+  onSubmit: () => void;
+  defaultValues: CharacterAttribute | null;
+};
+
 const attributeSchema = z.object({
   type: z.literal("numeric"),
-  name: z.string(),
-  description: z.string().optional(),
+  name: z.string().min(1),
+  description: z.string().min(1).optional(),
   isEditableByPlayer: z.boolean(),
   visibility: z.union([z.literal("visible"), z.literal("invisible")]),
   initialValue: z.int(),
 });
 
-const useAttributeForm = ({ onSubmit }: { onSubmit: () => void }) => {
+const useAttributeForm = ({
+  onSubmit,
+  defaultValues: attribute,
+}: AttributeFormProps) => {
+  const defaultValues = attribute ?? {
+    type: "numeric",
+    initialValue: 0,
+    visibility: "visible",
+    isEditableByPlayer: false,
+    name: "",
+    description: "",
+  };
+  const isEdition = !!attribute?.key;
   const form = useForm({
     resolver: zodResolver(attributeSchema),
-    defaultValues: {
-      type: "numeric",
-      initialValue: 0,
-      visibility: "visible",
-      isEditableByPlayer: false,
-    },
+    values: defaultValues,
   });
-  const { addAttribute } = useCharacterAttributeActions();
+  const { addAttribute, updateAttribute } = useCharacterAttributeActions();
 
   const handleSubmit = form.handleSubmit(async (payload) => {
-    await addAttribute(payload);
+    if (isEdition) await updateAttribute({ ...payload, key: attribute.key });
+    else await addAttribute(payload);
     onSubmit();
   });
 
   return { form, handleSubmit };
 };
 
-export const AttributeForm = ({ onSubmit }: { onSubmit: () => void }) => {
-  const { form, handleSubmit } = useAttributeForm({ onSubmit });
+export const AttributeForm = ({
+  onSubmit,
+  defaultValues,
+}: AttributeFormProps) => {
+  const { form, handleSubmit } = useAttributeForm({ onSubmit, defaultValues });
 
   return (
     <Form {...form}>
