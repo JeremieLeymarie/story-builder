@@ -93,7 +93,12 @@ export const CharacterEditor = () => {
 
   const showLoader = characterConfig === undefined || isLoading;
 
-  console.log({ state, isOpen });
+  const onRowClick = (attribute: CharacterAttribute) =>
+    // Only close toolbar when clicking on the already open row
+    isOpen && state?.type === "edit" && attribute.key === state?.payload.key
+      ? close()
+      : open({ type: "edit", payload: attribute });
+
   return (
     <div className="z-40 flex gap-3">
       {isOpen && (
@@ -140,13 +145,7 @@ export const CharacterEditor = () => {
                   ([key, attribute]) => (
                     <TableRow
                       key={key}
-                      onClick={() =>
-                        isOpen &&
-                        (state?.type === "add" ||
-                          attribute.key === state?.payload.key)
-                          ? close()
-                          : open({ type: "edit", payload: attribute })
-                      }
+                      onClick={() => onRowClick(attribute)}
                       className="cursor-pointer"
                     >
                       <TableCell className="font-medium">
