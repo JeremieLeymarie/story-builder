@@ -67,3 +67,6 @@ jobs:
 
       - name: Dead Code Detection
         run: uv run vulture app
+
+      - name: CI tests
+        run: uv run pytest
