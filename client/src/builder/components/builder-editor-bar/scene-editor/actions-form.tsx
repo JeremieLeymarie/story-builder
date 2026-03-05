@@ -1,6 +1,5 @@
 import { Button, Form, FormDescription } from "@/design-system/primitives";
 import { PlusIcon } from "lucide-react";
-import { ActionItem } from "./action-item";
 import { useEditActionsForm } from "@/builder/hooks/use-edit-actions-form";
 import { Toolbar } from "@/design-system/components/toolbar";
 import {
@@ -10,8 +9,10 @@ import {
 import { useBuilderActions } from "@/builder/hooks/use-builder-actions";
 import { useGetScene } from "@/builder/hooks/use-get-scene";
 import { SimpleLoader } from "@/design-system/components/simple-loader";
-import { Scene } from "@/lib/storage/domain";
+import { CharacterConfiguration, Scene } from "@/lib/storage/domain";
 import { useState } from "react";
+import { useGetCharacterConfig } from "@/builder/hooks/use-get-character-config";
+import { ActionItem } from "./action-item";
 
 const useRandomEventsToolbar = ({ scene }: { scene: Scene }) => {
   const [randomEventsActionKey, setRandomEventsActionKey] = useState<
@@ -33,7 +34,13 @@ const useRandomEventsToolbar = ({ scene }: { scene: Scene }) => {
   };
 };
 
-const ActionsFormContent = ({ scene }: { scene: Scene }) => {
+const ActionsFormContent = ({
+  scene,
+  characterConfig,
+}: {
+  scene: Scene;
+  characterConfig: CharacterConfiguration | null;
+}) => {
   const { updateScene, makeEmptyActionPayload } = useBuilderActions();
   const { append, fields, form, remove } = useEditActionsForm({
     actions: scene.actions,
@@ -81,12 +88,13 @@ const ActionsFormContent = ({ scene }: { scene: Scene }) => {
               Buttons that allow the player to move in your story
             </FormDescription>
             <div>
-              {fields.map((field, index) => (
+              {fields.map((field, actionIndex) => (
                 <ActionItem
                   key={field.id}
                   actionField={field}
                   form={form}
-                  index={index}
+                  actionIndex={actionIndex}
+                  characterConfig={characterConfig}
                   removeAction={removeAction}
                   openRandomEventsSettings={() =>
                     openRandomEventsToolbar(field.key)
@@ -104,9 +112,16 @@ const ActionsFormContent = ({ scene }: { scene: Scene }) => {
 
 export const ActionsFormContainer = ({ sceneKey }: { sceneKey: string }) => {
   const { scene, isLoading } = useGetScene(sceneKey);
-  // const {characterConfig, isCharacterLoading} = useGetC
+  const { characterConfig, isLoading: isCharacterLoading } =
+    useGetCharacterConfig();
 
-  if (isLoading || scene === undefined) return <SimpleLoader />;
+  if (
+    isLoading ||
+    scene === undefined ||
+    isCharacterLoading ||
+    characterConfig === undefined
+  )
+    return <SimpleLoader />;
 
-  return <ActionsFormContent scene={scene} />;
+  return <ActionsFormContent scene={scene} characterConfig={characterConfig} />;
 };

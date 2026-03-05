@@ -1,11 +1,5 @@
-import { FieldArrayWithId } from "react-hook-form";
-import {
-  Button,
-  FormControl,
-  FormField,
-  FormItem,
-  Input,
-} from "@/design-system/primitives";
+import { Controller, FieldArrayWithId } from "react-hook-form";
+import { Button, FormItem, Input } from "@/design-system/primitives";
 import { SettingsIcon, Trash2Icon } from "lucide-react";
 import { FormError } from "@/design-system/components";
 import {
@@ -18,105 +12,73 @@ import {
   SelectValue,
 } from "@/design-system/primitives/select";
 import { useState } from "react";
-import { useBuilderContext } from "@/builder/hooks/use-builder-context";
 import {
   EditActionsForm,
   EditActionsSchema,
 } from "@/builder/hooks/use-edit-actions-form";
-import { ConditionalAction, isSceneVisitCondition } from "@/lib/storage/domain";
+import { CharacterConfiguration } from "@/lib/storage/domain";
 import { match, P } from "ts-pattern";
 import { SceneSelector } from "./scene-selector";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+} from "@/design-system/primitives/field";
+import { CharacterConditionFormSection } from "./character-condition-section";
+import {
+  ALWAYS,
+  Condition,
+  useConditionChange,
+} from "./hooks/use-condition-change";
 
-// const useCondition = () => {
-//   const onConditionChange = (condition: Condition) => {
-//     setCondition(condition);
-//     match(condition)
-//       .with(P.union("user-did-visit", "user-did-not-visit"), () => {})
-//       .with("always", () => {})
-//       .exhaustive();
-//   };
-// };
+const CONDITION_OPTIONS: Record<Condition, string> = {
+  [ALWAYS]: "Always",
+  "user-did-visit": "If player visited",
+  "user-did-not-visit": "If player did not visit",
+  "character-attribute": "If character's attribute...", // TODO: only show when character is set up with at least one attribute
+};
 
-const ALWAYS = "always";
-type Condition = ConditionalAction["condition"]["type"] | "always";
-
-const CONDITION_OPTIONS: {
-  value: Condition;
-  label: string;
-}[] = [
-  { value: ALWAYS, label: "Always" },
-  { value: "user-did-visit", label: "If player visited" },
-  { value: "user-did-not-visit", label: "If player did not visit" },
-  { value: "character-attribute", label: "If character's attribute..." }, // TODO: only show when character is set up with at least one attribute
-] as const;
-
+// TODO: test this
+// TODO: selectors have horrendous performance on open, we should dig into it
 export const ActionItem = ({
   actionField,
   form,
-  index,
+  actionIndex,
+  characterConfig,
   removeAction,
   openRandomEventsSettings,
   closeRandomEventsSettings,
 }: {
   actionField: FieldArrayWithId<EditActionsSchema, "actions", "id">;
   form: EditActionsForm;
-  index: number;
+  actionIndex: number;
+  characterConfig: CharacterConfiguration | null;
   removeAction: (index: number) => void;
   openRandomEventsSettings: () => void;
   closeRandomEventsSettings: () => void;
 }) => {
   const [openSettings, setOpenSettings] = useState(false);
-  const { story } = useBuilderContext();
-  const [condition, setCondition] = useState<Condition>(
-    actionField.type === "conditional" ? actionField.condition.type : ALWAYS,
-  );
-
-  const onConditionChange = (condition: Condition) => {
-    const currentCondition = form.getValues(`actions.${index}.condition`);
-
-    form.setValue(
-      `actions.${index}.type`,
-      condition === "always" ? "simple" : "conditional",
-    );
-
-    match(condition)
-      .with(P.union("user-did-visit", "user-did-not-visit"), (condition) => {
-        // Use first scene there is no current value for scene key
-        const sceneKey = isSceneVisitCondition(currentCondition)
-          ? currentCondition.sceneKey
-          : story.firstSceneKey;
-
-        form.setValue(`actions.${index}.condition`, {
-          type: condition,
-          sceneKey,
-        });
-      })
-      .with("character-attribute", (condition) => {
-        form.setValue(`actions.${index}.condition`, {
-          type: condition,
-          attributeKey: "", // TODO:
-          comparator: "greater-than",
-          value: 0,
-        });
-      })
-      .with("always", () => {
-        // TODO: do we need to do something to remove potential extra fields?
-      })
-      .exhaustive();
-
-    // This is a workaround around the fact that:
-    // 1. form.watch doesn't work with react compiler for now
-    // 2. using form.setValue in a nested field of a field array doesn't trigger a rerender for the parent field
-    setCondition(condition);
-  };
+  const { condition, onConditionChange } = useConditionChange({
+    form,
+    actionField,
+    actionIndex,
+    characterConfig,
+  });
 
   return (
-    <FormItem className="my-2" key={actionField.id}>
+    <div className="my-2" key={actionField.id}>
       <div className="flex items-center gap-2">
-        <Input
-          placeholder="Go to the village"
-          {...form.register(`actions.${index}.text` as const)}
+        <Controller
+          control={form.control}
+          name={`actions.${actionIndex}.text`}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid} className="w-full">
+              <Input {...field} placeholder="Go to the village" />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
         />
+
         <Button
           variant="outline"
           size="icon"
@@ -133,75 +95,81 @@ export const ActionItem = ({
           variant="outline"
           size="icon"
           type="button"
-          onClick={() => removeAction(index)}
+          onClick={() => removeAction(actionIndex)}
         >
           <Trash2Icon />
         </Button>
       </div>
       {openSettings && (
-        <div className="flex items-center gap-2 text-sm">
+        <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
           Show
-          <FormField
+          <Controller
             control={form.control}
-            name={`actions.${index}.condition.type`}
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Select
-                    onValueChange={(value) => onConditionChange(value)}
-                    value={field.value ?? "always"}
-                  >
-                    <SelectTrigger className="h-8! w-45 *:data-[slot=select-value]:text-xs">
-                      <SelectValue placeholder="Select a condition" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup defaultValue="always">
-                        <SelectLabel>Show</SelectLabel>
-                        {CONDITION_OPTIONS.map(({ label, value }) => (
+            name={`actions.${actionIndex}.condition.type`}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="w-max">
+                <Select
+                  onValueChange={(value) => onConditionChange(value)}
+                  value={field.value ?? "always"}
+                >
+                  <SelectTrigger className="*:data-[slot=select-value]:text-xs">
+                    <SelectValue placeholder="Select a condition" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup defaultValue="always">
+                      <SelectLabel>Show</SelectLabel>
+                      {Object.entries(CONDITION_OPTIONS).map(
+                        ([value, label]) => (
                           <SelectItem className="text-xs" value={value}>
                             {label}
                           </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-              </FormItem>
+                        ),
+                      )}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
             )}
           />
           {match(condition)
             .with(P.union("user-did-visit", "user-did-not-visit"), () => (
-              <FormField
+              <Controller
                 control={form.control}
-                name={`actions.${index}.condition.sceneKey`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <SceneSelector
-                        onChange={field.onChange}
-                        value={field.value}
-                      />
-                    </FormControl>
-                  </FormItem>
+                name={`actions.${actionIndex}.condition.sceneKey`}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid} className="w-max">
+                    <SceneSelector
+                      onChange={field.onChange}
+                      value={field.value}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
                 )}
               />
             ))
-            .with("character-attribute", () => (
-              <FormField
-                control={form.control}
-                name={`actions.${index}.condition.attributeKey`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>COUCOU</FormControl>
-                  </FormItem>
-                )}
-              />
-            ))
+            .with("character-attribute", () => {
+              if (!characterConfig)
+                throw new Error(
+                  `Cannot render character condition form if no character exists in story`,
+                );
+              return (
+                <CharacterConditionFormSection
+                  form={form}
+                  actionIndex={actionIndex}
+                  characterConfig={characterConfig}
+                />
+              );
+            })
             .with("always", () => null)
             .exhaustive()}
         </div>
       )}
-      {Object.entries(form.formState.errors.actions?.[index] ?? {}).map(
+      {Object.entries(form.formState.errors.actions?.[actionIndex] ?? {}).map(
         ([_fieldName, error]) =>
           error ? (
             <FormError className="text-xs">
@@ -213,6 +181,6 @@ export const ActionItem = ({
             </FormError>
           ) : null,
       )}
-    </FormItem>
+    </div>
   );
 };
