@@ -92,7 +92,7 @@ type SceneVisitCondition = {
   sceneKey: string;
 };
 
-type CharacterAttributeCondition = {
+export type CharacterAttributeCondition = {
   type: "character-attribute";
   attributeKey: string;
   comparator: "lower-than" | "greater-than"; // Add more flavors?
