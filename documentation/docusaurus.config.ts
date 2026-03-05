@@ -6,7 +6,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'Story Builder',
-  tagline: 'Dinosaurs are cool',
+  tagline: 'Building you dream stories',
   favicon: 'img/story-builder-logo.svg',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -52,7 +52,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/JeremieLeymarie/story-builder?tab=readme-ov-file#dev-guide',
+            'https://github.com/JeremieLeymarie/story-builder',
           // Useful options to enforce blogging best practices
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
