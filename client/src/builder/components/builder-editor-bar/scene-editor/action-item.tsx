@@ -1,5 +1,5 @@
 import { Controller, FieldArrayWithId } from "react-hook-form";
-import { Button, FormItem, Input } from "@/design-system/primitives";
+import { Button, Input } from "@/design-system/primitives";
 import { SettingsIcon, Trash2Icon } from "lucide-react";
 import { FormError } from "@/design-system/components";
 import {
@@ -19,11 +19,7 @@ import {
 import { CharacterConfiguration } from "@/lib/storage/domain";
 import { match, P } from "ts-pattern";
 import { SceneSelector } from "./scene-selector";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-} from "@/design-system/primitives/field";
+import { Field, FieldError } from "@/design-system/primitives/field";
 import { CharacterConditionFormSection } from "./character-condition-section";
 import {
   ALWAYS,
