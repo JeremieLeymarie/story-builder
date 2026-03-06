@@ -5,8 +5,6 @@ import z from "zod";
 import { useAutoSubmitForm } from "@/hooks/use-auto-submit-form";
 import { actionSchema } from "@/lib/action-schema";
 
-export type ActionSchema = z.infer<typeof actionSchema>;
-
 const schema = z.object({ actions: z.array(actionSchema) });
 
 export type EditActionsSchema = z.infer<typeof schema>;
