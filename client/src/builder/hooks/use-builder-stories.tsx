@@ -42,7 +42,10 @@ export const useBuilderStories = () => {
         description: "You can start working on this story in the builder!",
       });
     } catch (error) {
-      toast.error("Import failed!", { description: (error as Error).message });
+      toast.error("Import failed!", {
+        description: (error as Error).message,
+        duration: Number.POSITIVE_INFINITY,
+      });
     }
   };
 
@@ -50,7 +53,10 @@ export const useBuilderStories = () => {
     const result = getImportService().parseJSON(content);
 
     if (!result.isOk) {
-      toast.error("Import failed", { description: result.error });
+      toast.error("Import failed", {
+        description: result.error,
+        duration: Number.POSITIVE_INFINITY,
+      });
       return null;
     }
     return result.data;

@@ -120,6 +120,11 @@ export const _getLibraryService = ({
               newStoryKey: story.data.key,
               theme: importData.theme,
             });
+          if (importData.characterConfig)
+            await importService.createCharacterConfig({
+              newStoryKey: story.data.key,
+              characterConfig: importData.characterConfig,
+            });
 
           if (importData.wiki)
             await importService.createWiki({
@@ -137,6 +142,7 @@ export const _getLibraryService = ({
             "scene",
             "story",
             "story-theme",
+            "character-configuration",
             "user",
             "wiki",
             "wiki-article",
