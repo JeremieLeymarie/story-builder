@@ -12,7 +12,7 @@ import { match } from "ts-pattern";
 
 type APISceneAction =
   | components["schemas"]["SimpleAction"]
-  | components["schemas"]["ConditionalAction"];
+  | components["schemas"]["ConditionalAction-Output"];
 
 const _toAPIDate = (date: Date) => dayjs(date).format("YYYY-MM-DD[T]hh:mm:ss");
 
