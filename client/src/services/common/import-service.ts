@@ -1,8 +1,15 @@
-import { BuilderStory, LibraryStory, Story, Wiki } from "@/lib/storage/domain";
+import {
+  BuilderStory,
+  ConditionalAction,
+  LibraryStory,
+  Scene,
+  Story,
+  Wiki,
+} from "@/lib/storage/domain";
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 import { WithoutKey } from "@/types";
 import z from "zod";
-import { produce } from "immer";
+import { produce, WritableDraft } from "immer";
 import {
   CharacterConfigFromImport,
   ImportData,
@@ -23,6 +30,7 @@ import {
   CharacterRepositoryPort,
   getDexieCharacterRepository,
 } from "@/domains/builder/character-repository";
+import { match, P } from "ts-pattern";
 
 export const ANONYMOUS_AUTHOR = {
   key: "ANONYMOUS_AUTHOR_KEY",
@@ -59,6 +67,7 @@ export type ImportServicePort = {
   createScenes: (props: {
     story: ImportData;
     newStoryKey: string;
+    oldCharacterAttrToNew: Record<string, string>;
   }) => Promise<Record<string, string>>;
   createTheme: (props: {
     theme: ThemeFromImport;
@@ -67,7 +76,7 @@ export type ImportServicePort = {
   createCharacterConfig: (props: {
     characterConfig: CharacterConfigFromImport;
     newStoryKey: string;
-  }) => Promise<void>;
+  }) => Promise<Record<string, string>>;
   createWiki: (props: {
     wikiData: WikiFromImport;
     type: Wiki["type"];
@@ -76,12 +85,49 @@ export type ImportServicePort = {
   }) => Promise<void>;
 };
 
+// We should implement some kind of context instead of passing everything every time
+const _mutateConditionAction = ({
+  action,
+  scene,
+  oldScenesToNewScenes,
+  oldCharacterAttrToNew,
+}: {
+  action: WritableDraft<ConditionalAction>;
+  scene: Scene;
+  oldScenesToNewScenes: Record<string, string>;
+  oldCharacterAttrToNew: Record<string, string>;
+}) => {
+  match(action.condition)
+    .with(
+      { type: P.union("user-did-not-visit", "user-did-visit") },
+      (condition) => {
+        const newTargetSceneKey = oldScenesToNewScenes[condition.sceneKey];
+        if (!newTargetSceneKey)
+          throw new Error(
+            `sceneKey not found in old scene to new scenes mapping, for scene [${scene.title}] and action [${action.text}]`,
+          );
+        condition.sceneKey = newTargetSceneKey;
+      },
+    )
+    .with({ type: "character-attribute" }, (condition) => {
+      const newAttrKey = oldCharacterAttrToNew[condition.attributeKey];
+      if (!newAttrKey)
+        throw new Error(
+          `attributeKey not found in old character attributes to new attributes mapping, for character attribute [newAttrKey]`,
+        );
+      condition.attributeKey = newAttrKey;
+    })
+    .exhaustive();
+};
+
 export const _makeBulkSceneUpdatePayload = ({
   storyFromImport,
   oldScenesToNewScenes,
+  oldCharacterAttrToNew,
 }: {
   storyFromImport: ImportData;
   oldScenesToNewScenes: Record<string, string>;
+  oldCharacterAttrToNew: Record<string, string>;
 }) => {
   const scenesByKey = storyFromImport.scenes.reduce(
     (acc, scene) => ({
@@ -114,15 +160,13 @@ export const _makeBulkSceneUpdatePayload = ({
               sceneKey: newSceneKey,
             };
           });
-          if (draft.type === "conditional") {
-            const newTargetSceneKey =
-              oldScenesToNewScenes[draft.condition.sceneKey];
-            if (!newTargetSceneKey)
-              throw new Error(
-                `sceneKey not found in old scene to new scenes mapping, for scene [${scene.title}] and action [${action.text}]`,
-              ); // Should we throw here or should gracefully fallback on a simple action?
-            draft.condition.sceneKey = newTargetSceneKey;
-          }
+          if (draft.type === "conditional")
+            _mutateConditionAction({
+              action: draft,
+              scene,
+              oldScenesToNewScenes,
+              oldCharacterAttrToNew,
+            });
         }),
       );
 
@@ -313,7 +357,11 @@ export const _getImportService = ({
       return { data: story };
     },
 
-    createScenes: async ({ story: storyFromImport, newStoryKey }) => {
+    createScenes: async ({
+      story: storyFromImport,
+      newStoryKey,
+      oldCharacterAttrToNew,
+    }) => {
       const oldScenesToNewScenes: Record<string, string> = {};
 
       // Create scenes without actions
@@ -332,6 +380,7 @@ export const _getImportService = ({
         _makeBulkSceneUpdatePayload({
           storyFromImport,
           oldScenesToNewScenes,
+          oldCharacterAttrToNew,
         }),
       );
 
@@ -353,12 +402,23 @@ export const _getImportService = ({
     },
 
     createCharacterConfig: async ({ newStoryKey, characterConfig }) => {
+      const oldCharacterAttrToNew: Record<string, string> = Object.fromEntries(
+        Object.keys(characterConfig.attributes).map((key) => [key, nanoid()]),
+      );
+      const attributes = Object.entries(characterConfig.attributes).reduce(
+        (acc, [key, attr]) => {
+          const newKey = oldCharacterAttrToNew[key]!;
+          return { ...acc, [newKey]: { ...attr, key: newKey } };
+        },
+        {},
+      );
+
       await characterRepository.create({
         storyKey: newStoryKey,
-        attributes: characterConfig.attributes,
+        attributes,
       });
 
-      // TODO: update conditional actions when implemented
+      return oldCharacterAttrToNew;
     },
 
     createWiki: async ({ wikiData, type, oldScenesToNew, newStoryKey }) => {

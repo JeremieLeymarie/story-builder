@@ -110,20 +110,23 @@ export const _getLibraryService = ({
             type: "imported",
           });
 
+          let oldCharacterAttrToNew: Record<string, string> = {};
+          if (importData.characterConfig)
+            oldCharacterAttrToNew = await importService.createCharacterConfig({
+              newStoryKey: story.data.key,
+              characterConfig: importData.characterConfig,
+            });
+
           const oldScenesToNew = await importService.createScenes({
             story: importData,
             newStoryKey: story.data.key,
+            oldCharacterAttrToNew,
           });
 
           if (importData.theme)
             await importService.createTheme({
               newStoryKey: story.data.key,
               theme: importData.theme,
-            });
-          if (importData.characterConfig)
-            await importService.createCharacterConfig({
-              newStoryKey: story.data.key,
-              characterConfig: importData.characterConfig,
             });
 
           if (importData.wiki)

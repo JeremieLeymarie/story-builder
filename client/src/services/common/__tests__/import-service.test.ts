@@ -33,7 +33,6 @@ import {
 const STORY_KEY = nanoid();
 const SCENE_KEY_A = nanoid();
 const SCENE_KEY_B = nanoid();
-const SCENE_KEY_C = nanoid();
 
 const DEX_ATTRIBUTE = {
   key: nanoid(),
@@ -81,7 +80,8 @@ const BASIC_SCENE: ImportData["scenes"][number] = {
   },
 };
 
-const SCENE_WITH_SIMPLE_ACTION: ImportData["scenes"][number] = {
+// TODO: add probabilities
+const SCENE_WITH_ACTIONS: ImportData["scenes"][number] = {
   key: SCENE_KEY_B,
   storyKey: STORY_KEY,
   title: "Your first scene",
@@ -98,33 +98,35 @@ const SCENE_WITH_SIMPLE_ACTION: ImportData["scenes"][number] = {
         },
       ],
     },
-  ],
-  builderParams: {
-    position: {
-      x: 0,
-      y: 0,
-    },
-  },
-};
-
-const SCENE_WITH_CONDITIONAL_ACTIONS: ImportData["scenes"][number] = {
-  key: SCENE_KEY_C,
-  storyKey: BASIC_SCENE.key,
-  title: "Your first scene",
-  content: BASIC_SCENE_CONTENT,
-  actions: [
     {
       key: nanoid(),
       type: "conditional",
-      text: "conditional-action",
+      text: "conditional-action-visit",
       targets: [
         {
-          sceneKey: SCENE_WITH_SIMPLE_ACTION.key,
+          sceneKey: SCENE_KEY_A,
           probability: 100,
         },
       ],
       condition: { type: "user-did-visit", sceneKey: BASIC_SCENE.key },
     },
+    {
+      key: nanoid(),
+      type: "conditional",
+      text: "conditional-action-attribute",
+      targets: [
+        {
+          sceneKey: SCENE_KEY_A,
+          probability: 100,
+        },
+      ],
+      condition: {
+        type: "character-attribute",
+        attributeKey: DEX_ATTRIBUTE.key,
+        comparator: "lower-than",
+        value: 10,
+      },
+    },
   ],
   builderParams: {
     position: {
@@ -134,20 +136,16 @@ const SCENE_WITH_CONDITIONAL_ACTIONS: ImportData["scenes"][number] = {
   },
 };
 
-const importedScenes = [
-  BASIC_SCENE,
-  SCENE_WITH_SIMPLE_ACTION,
-  SCENE_WITH_CONDITIONAL_ACTIONS,
-];
+const IMPORTED_SCENES = [BASIC_SCENE, SCENE_WITH_ACTIONS];
 
-const theme = DEFAULT_STORY_THEME;
+const IMPORTED_THEME = DEFAULT_STORY_THEME;
 
-const importData = {
+const IMPORTED_DATA = {
   story: IMPORTED_STORY,
-  scenes: importedScenes,
+  scenes: IMPORTED_SCENES,
 } satisfies ImportData;
 
-const fileContent = JSON.stringify(importData);
+const fileContent = JSON.stringify(IMPORTED_DATA);
 
 describe("import-service", () => {
   let localRepository: MockLocalRepository;
@@ -200,7 +198,7 @@ describe("import-service", () => {
 
       expect(result).toStrictEqual({
         isOk: true,
-        data: importData,
+        data: IMPORTED_DATA,
       });
       expect(localRepository.createStory).not.toHaveBeenCalled();
     });
@@ -209,7 +207,7 @@ describe("import-service", () => {
   describe("createStory", () => {
     it("should create story (imported)", async () => {
       const result = await importService.createStory({
-        story: { story: importData.story, scenes: importData.scenes },
+        story: { story: IMPORTED_DATA.story, scenes: IMPORTED_DATA.scenes },
         type: "imported",
       });
 
@@ -237,8 +235,8 @@ describe("import-service", () => {
     it("should create story with anonymous author", async () => {
       const result = await importService.createStory({
         story: {
-          story: { ...importData.story, author: undefined },
-          scenes: importData.scenes,
+          story: { ...IMPORTED_DATA.story, author: undefined },
+          scenes: IMPORTED_DATA.scenes,
         },
         type: "imported",
       });
@@ -274,7 +272,7 @@ describe("import-service", () => {
       );
 
       const result = await importService.createStory({
-        story: { story: importData.story, scenes: importData.scenes },
+        story: { story: IMPORTED_DATA.story, scenes: IMPORTED_DATA.scenes },
         type: "builder",
       });
 
@@ -302,79 +300,48 @@ describe("import-service", () => {
 
   describe("createScenes", () => {
     it("should produce correct bulk update payload", () => {
-      const storyFromImport: ImportData = {
-        story: IMPORTED_STORY,
-        scenes: [
-          {
-            key: "old-source-scene",
-            storyKey: IMPORTED_STORY.key,
-            title: "Your first scene",
-            content: BASIC_SCENE_CONTENT,
-            actions: [
-              {
-                key: "action-key-a",
-                text: "An action that leads to a scene",
-                targets: [
-                  {
-                    sceneKey: "old-dest-scene",
-                    probability: 100,
-                  },
-                ],
-                type: "simple",
-              },
-              {
-                key: "action-key-b",
-                text: "An action that leads to another scene",
-                targets: [],
-                type: "simple",
-              },
-            ],
-            builderParams: {
-              position: {
-                x: 0,
-                y: 0,
-              },
-            },
-          },
-          {
-            key: "old-dest-scene",
-            storyKey: IMPORTED_STORY.key,
-            title: "title",
-            content: BASIC_SCENE_CONTENT,
-            actions: [],
-            builderParams: {
-              position: {
-                x: 0,
-                y: 0,
-              },
-            },
-          },
-        ],
-      };
-
       const payload = _makeBulkSceneUpdatePayload({
         oldScenesToNewScenes: {
-          "old-dest-scene": "new-dest-scene",
-          "old-source-scene": "new-source-scene",
+          [BASIC_SCENE.key]: "new-basic-scene",
+          [SCENE_WITH_ACTIONS.key]: "new-scene-with-actions",
         },
-        storyFromImport,
+        storyFromImport: IMPORTED_DATA,
+        oldCharacterAttrToNew: { [DEX_ATTRIBUTE.key]: "new-dex-key" },
       });
+
+      // BASIC_SCENE is skipped because it doesn't need to be updated (no actions)
 
       expect(payload).toStrictEqual([
         {
-          key: "new-source-scene",
+          key: "new-scene-with-actions",
           actions: [
             {
               key: expect.any(String),
               type: "simple",
               text: "An action that leads to a scene",
-              targets: [{ sceneKey: "new-dest-scene", probability: 100 }],
+              targets: [{ sceneKey: "new-basic-scene", probability: 100 }],
             },
             {
               key: expect.any(String),
-              type: "simple",
-              text: "An action that leads to another scene",
-              targets: [],
+              type: "conditional",
+              text: "conditional-action-visit",
+              targets: [{ sceneKey: "new-basic-scene", probability: 100 }],
+              condition: {
+                type: "user-did-visit",
+                sceneKey: "new-basic-scene",
+              },
+            },
+            {
+              key: expect.any(String),
+              type: "conditional",
+              text: "conditional-action-attribute",
+              targets: [{ sceneKey: "new-basic-scene", probability: 100 }],
+              condition: {
+                type: "character-attribute",
+                attributeKey: "new-dex-key",
+                comparator: "lower-than",
+                value: 10,
+              },
             },
           ],
         },
@@ -392,8 +359,9 @@ describe("import-service", () => {
       });
 
       const result = await importService.createScenes({
-        story: { story: importData.story, scenes: importData.scenes },
+        story: { story: IMPORTED_DATA.story, scenes: IMPORTED_DATA.scenes },
         newStoryKey: "new-story-key",
+        oldCharacterAttrToNew: { [DEX_ATTRIBUTE.key]: "new-dex-key" },
       });
 
       // Scene is created with new story key & no actions at first
@@ -416,9 +384,8 @@ describe("import-service", () => {
         "new-scene-key-2",
       );
       expect(result).toStrictEqual({
-        [importData.scenes[0]!.key]: "new-scene-key-1",
-        [importData.scenes[1]!.key]: "new-scene-key-2",
-        [importData.scenes[2]!.key]: "new-scene-key-3",
+        [IMPORTED_DATA.scenes[0]!.key]: "new-scene-key-1",
+        [IMPORTED_DATA.scenes[1]!.key]: "new-scene-key-2",
       });
     });
   });
@@ -427,26 +394,32 @@ describe("import-service", () => {
     it("should import theme with new story key", async () => {
       await importService.createTheme({
         newStoryKey: "new-story-key",
-        theme,
+        theme: IMPORTED_THEME,
       });
 
       expect(themeRepository.create).toHaveBeenCalledWith({
         storyKey: "new-story-key",
-        theme,
+        theme: IMPORTED_THEME,
       });
     });
   });
 
   describe("createCharacterConfig", () => {
     it("should import characterConfig with new story key", async () => {
+      characterRepository.create = vi.fn(async (cc) => {
+        expect(cc.storyKey).toStrictEqual("new-story-key");
+        expect(Object.keys(cc.attributes)).toHaveLength(1);
+
+        const [key, attr] = Object.entries(cc.attributes)[0]!;
+        expect(key).not.toStrictEqual(DEX_ATTRIBUTE.key);
+        expect(attr.key).not.toStrictEqual(DEX_ATTRIBUTE.key);
+
+        return Promise.resolve("new-key");
+      });
+
       await importService.createCharacterConfig({
         newStoryKey: "new-story-key",
         characterConfig: CHARACTER_CONFIG,
-      });
-
-      expect(characterRepository.create).toHaveBeenCalledWith({
-        storyKey: "new-story-key",
-        attributes: CHARACTER_CONFIG.attributes,
       });
     });
   });
