@@ -35,10 +35,17 @@ class MongoSimpleAction(_ActionBase):
     type: Literal["simple"]
 
 
-class MongoActionCondition(TypedDict):
+class MongoActionSceneVisitCondition(TypedDict):
     type: Literal["user-did-visit", "user-did-not-visit"]
     sceneKey: str
 
+class MongoActionCharacterAttributeCondition(TypedDict):
+    type : Literal["character-attribute"]
+    attributeKey: str
+    comparator : Literal["lower-than", "greater-than"]
+    value: int
+
+type MongoActionCondition = MongoActionSceneVisitCondition | MongoActionCharacterAttributeCondition
 
 class MongoConditionalAction(_ActionBase):
     type: Literal["conditional"]
