@@ -12,6 +12,7 @@ export const getImportServiceStub = (): MockImportService => {
       Promise.resolve({ isOk: true, data: BASIC_STORY }),
     ),
     createTheme: vi.fn(),
+    createCharacterConfig: vi.fn(),
     createWiki: vi.fn(() => Promise.resolve()),
     parseJSON: vi.fn(() => ({
       isOk: true,

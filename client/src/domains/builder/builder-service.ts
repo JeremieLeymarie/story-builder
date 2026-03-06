@@ -409,6 +409,11 @@ export const _getBuilderService = ({
               newStoryKey: storyResult.data.key,
               theme: importData.theme,
             });
+          if (importData.characterConfig)
+            await importService.createCharacterConfig({
+              newStoryKey: storyResult.data.key,
+              characterConfig: importData.characterConfig,
+            });
 
           if (importData.wiki)
             await importService.createWiki({
@@ -425,6 +430,7 @@ export const _getBuilderService = ({
             "scene",
             "story",
             "story-theme",
+            "character-configuration",
             "user",
             "wiki",
             "wiki-article",

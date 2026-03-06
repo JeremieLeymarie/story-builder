@@ -34,7 +34,7 @@ export const Library = ({ stories }: Library) => {
     if (!result.isOk) {
       toast.error("Import failed", {
         description: result.error,
-        duration: Infinity,
+        duration: Number.POSITIVE_INFINITY,
       });
       return null;
     }
@@ -48,7 +48,10 @@ export const Library = ({ stories }: Library) => {
         description: "Game was successfully downloaded on this device.",
       });
     } catch (error) {
-      toast.error("Import failed!", { description: (error as Error).message });
+      toast.error("Import failed!", {
+        duration: Number.POSITIVE_INFINITY,
+        description: (error as Error).message,
+      });
     }
   };
 

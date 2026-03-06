@@ -4,6 +4,7 @@ import { WithoutKey } from "@/types";
 import z from "zod";
 import { produce } from "immer";
 import {
+  CharacterConfigFromImport,
   ImportData,
   importDataSchema,
   ThemeFromImport,
@@ -18,6 +19,10 @@ import {
   getDexieThemeRepository,
   ThemeRepositoryPort,
 } from "@/domains/builder/theme-repository";
+import {
+  CharacterRepositoryPort,
+  getDexieCharacterRepository,
+} from "@/domains/builder/character-repository";
 
 export const ANONYMOUS_AUTHOR = {
   key: "ANONYMOUS_AUTHOR_KEY",
@@ -57,6 +62,10 @@ export type ImportServicePort = {
   }) => Promise<Record<string, string>>;
   createTheme: (props: {
     theme: ThemeFromImport;
+    newStoryKey: string;
+  }) => Promise<void>;
+  createCharacterConfig: (props: {
+    characterConfig: CharacterConfigFromImport;
     newStoryKey: string;
   }) => Promise<void>;
   createWiki: (props: {
@@ -132,10 +141,12 @@ export const _getImportService = ({
   localRepository,
   wikiRepository,
   themeRepository,
+  characterRepository,
 }: {
   localRepository: LocalRepositoryPort;
   wikiRepository: WikiRepositoryPort;
   themeRepository: ThemeRepositoryPort;
+  characterRepository: CharacterRepositoryPort;
 }): ImportServicePort => {
   const _createWikiCategories = async (
     categories: WikiFromImport["categories"],
@@ -341,6 +352,13 @@ export const _getImportService = ({
       await themeRepository.create({ storyKey: newStoryKey, theme });
     },
 
+    createCharacterConfig: async ({ newStoryKey, characterConfig }) => {
+      await characterRepository.create({
+        storyKey: newStoryKey,
+        attributes: characterConfig.attributes,
+      });
+    },
+
     createWiki: async ({ wikiData, type, oldScenesToNew, newStoryKey }) => {
       const wikiKey = await wikiRepository.create({
         createdAt: new Date(),
@@ -378,4 +396,5 @@ export const getImportService = () =>
     localRepository: getLocalRepository(),
     wikiRepository: getDexieWikiRepository(),
     themeRepository: getDexieThemeRepository(),
+    characterRepository: getDexieCharacterRepository(),
   });

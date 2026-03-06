@@ -24,90 +24,118 @@ import {
   getStubThemeRepository,
   MockThemeRepository,
 } from "@/domains/builder/stubs/stub-theme-repository";
+import {
+  getStubCharacterRepository,
+  MockCharacterRepository,
+} from "@/domains/builder/stubs/stub-character-repository";
+import { DEFAULT_STORY_THEME } from "@/domains/builder/story-theme";
+import {
+  CharacterConfiguration,
+  CharacterNumericAttribute,
+} from "@/lib/storage/domain";
+
+const STORY_KEY = nanoid();
 const SCENE_KEY_B = nanoid();
+const importedStory: ImportData["story"] = {
+  key: STORY_KEY,
+  title: "The Great Journey To The Green River",
+  description: "A wonderful epic tale through the world of Penthetir. ",
+  image:
+    "https://b2-backblaze-stackpath.b-cdn.net/2178699/c5jpvq_12e7c09178a6a75a5979d117f779bb07ff07f8f9.jpg",
+  type: "builder" as const,
+  genres: ["adventure" as const, "fantasy" as const],
+  creationDate: new Date(),
+  firstSceneKey: SCENE_KEY_B,
+  author: {
+    username: "author",
+    key: nanoid(),
+  },
+};
+
+const sourceSceneA: ImportData["scenes"][number] = {
+  key: nanoid(),
+  storyKey: STORY_KEY,
+  title: "Your second scene",
+  content: BASIC_SCENE_CONTENT,
+  actions: [],
+  builderParams: {
+    position: {
+      x: 0,
+      y: 0,
+    },
+  },
+};
+
+const sourceSceneB: ImportData["scenes"][number] = {
+  key: SCENE_KEY_B,
+  storyKey: sourceSceneA.key,
+  title: "Your first scene",
+  content: BASIC_SCENE_CONTENT,
+  actions: [
+    {
+      key: nanoid(),
+      type: "simple",
+      text: "An action that leads to a scene",
+      targets: [
+        {
+          sceneKey: sourceSceneA.key,
+          probability: 100,
+        },
+      ],
+    },
+  ],
+  builderParams: {
+    position: {
+      x: 0,
+      y: 0,
+    },
+  },
+};
+
+const importedScenes = [sourceSceneA, sourceSceneB];
+const dexAttribute = {
+  key: nanoid(),
+  type: "numeric" as const,
+  name: "Dexterity",
+  description: "Yiplaloop",
+  isEditableByPlayer: false,
+  visibility: "visible",
+  initialValue: 10,
+} satisfies CharacterNumericAttribute;
+
+const characterConfig = {
+  key: nanoid(),
+  storyKey: STORY_KEY,
+  attributes: { [dexAttribute.key]: dexAttribute },
+} satisfies CharacterConfiguration;
+
+const theme = DEFAULT_STORY_THEME;
+
+const importData = {
+  story: importedStory,
+  scenes: importedScenes,
+} satisfies ImportData;
+
+const fileContent = JSON.stringify(importData);
 
 describe("import-service", () => {
   let localRepository: MockLocalRepository;
   let wikiRepository: MockWikiRepository;
   let themeRepository: MockThemeRepository;
+  let characterRepository: MockCharacterRepository;
   let importService: ImportServicePort;
-
-  const importedStory: ImportData["story"] = {
-    key: nanoid(),
-    title: "The Great Journey To The Green River",
-    description: "A wonderful epic tale through the world of Penthetir. ",
-    image:
-      "https://b2-backblaze-stackpath.b-cdn.net/2178699/c5jpvq_12e7c09178a6a75a5979d117f779bb07ff07f8f9.jpg",
-    type: "builder" as const,
-    genres: ["adventure" as const, "fantasy" as const],
-    creationDate: new Date(),
-    firstSceneKey: SCENE_KEY_B,
-    author: {
-      username: "author",
-      key: nanoid(),
-    },
-  };
-
-  const sourceSceneA: ImportData["scenes"][number] = {
-    key: nanoid(),
-    storyKey: nanoid(),
-    title: "Your second scene",
-    content: BASIC_SCENE_CONTENT,
-    actions: [],
-    builderParams: {
-      position: {
-        x: 0,
-        y: 0,
-      },
-    },
-  };
-
-  const sourceSceneB: ImportData["scenes"][number] = {
-    key: SCENE_KEY_B,
-    storyKey: sourceSceneA.key,
-    title: "Your first scene",
-    content: BASIC_SCENE_CONTENT,
-    actions: [
-      {
-        key: nanoid(),
-        type: "simple",
-        text: "An action that leads to a scene",
-        targets: [
-          {
-            sceneKey: sourceSceneA.key,
-            probability: 100,
-          },
-        ],
-      },
-    ],
-    builderParams: {
-      position: {
-        x: 0,
-        y: 0,
-      },
-    },
-  };
-
-  const importedScenes = [sourceSceneA, sourceSceneB];
-  const fileContent = JSON.stringify({
-    story: importedStory,
-    scenes: importedScenes,
-  });
-
-  const parsed = {
-    story: importedStory,
-    scenes: importedScenes,
-  };
 
   beforeEach(() => {
     localRepository = getLocalRepositoryStub();
     wikiRepository = getStubWikiRepository();
     themeRepository = getStubThemeRepository();
+    characterRepository = getStubCharacterRepository();
 
     importService = _getImportService({
       localRepository,
       wikiRepository,
       themeRepository,
+      characterRepository,
     });
 
     vi.useFakeTimers();
@@ -141,7 +169,7 @@ describe("import-service", () => {
 
       expect(result).toStrictEqual({
         isOk: true,
-        data: parsed,
+        data: importData,
       });
       expect(localRepository.createStory).not.toHaveBeenCalled();
     });
@@ -150,7 +178,7 @@ describe("import-service", () => {
   describe("createStory", () => {
     it("should create story (imported)", async () => {
       const result = await importService.createStory({
-        story: parsed,
+        story: { story: importData.story, scenes: importData.scenes },
         type: "imported",
       });
 
@@ -178,8 +206,8 @@ describe("import-service", () => {
     it("should create story with anonymous author", async () => {
       const result = await importService.createStory({
         story: {
-          story: { ...parsed.story, author: undefined },
-          scenes: parsed.scenes,
+          story: { ...importData.story, author: undefined },
+          scenes: importData.scenes,
         },
         type: "imported",
       });
@@ -215,7 +243,7 @@ describe("import-service", () => {
       );
 
       const result = await importService.createStory({
-        story: parsed,
+        story: { story: importData.story, scenes: importData.scenes },
         type: "builder",
       });
 
@@ -328,7 +356,7 @@ describe("import-service", () => {
       );
 
       const result = await importService.createScenes({
-        story: parsed,
+        story: { story: importData.story, scenes: importData.scenes },
         newStoryKey: "new-story-key",
       });
 
@@ -352,8 +380,36 @@ describe("import-service", () => {
         "new-scene-key",
       );
       expect(result).toStrictEqual({
-        [parsed.scenes[0]!.key]: "new-scene-key",
-        [parsed.scenes[1]!.key]: "new-scene-key",
+        [importData.scenes[0]!.key]: "new-scene-key",
+        [importData.scenes[1]!.key]: "new-scene-key",
+      });
+    });
+  });
+
+  describe("createTheme", () => {
+    it("should import theme with new story key", async () => {
+      await importService.createTheme({
+        newStoryKey: "new-story-key",
+        theme,
+      });
+
+      expect(themeRepository.create).toHaveBeenCalledWith({
+        storyKey: "new-story-key",
+        theme,
+      });
+    });
+  });
+
+  describe("createCharacterConfig", () => {
+    it("should import characterConfig with new story key", async () => {
+      await importService.createCharacterConfig({
+        newStoryKey: "new-story-key",
+        characterConfig,
+      });
+
+      expect(characterRepository.create).toHaveBeenCalledWith({
+        storyKey: "new-story-key",
+        attributes: characterConfig.attributes,
       });
     });
   });
