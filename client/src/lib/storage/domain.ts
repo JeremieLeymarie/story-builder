@@ -107,11 +107,6 @@ export const isSceneVisitCondition = (
   condition.type === "user-did-not-visit" ||
   condition.type === "user-did-visit";
 
-export const isCharacterAttributeCondition = (
-  condition: ActionCondition,
-): condition is CharacterAttributeCondition =>
-  condition.type === "character-attribute";
-
 export type ConditionalAction = ActionBase & {
   type: "conditional";
   condition: ActionCondition;
