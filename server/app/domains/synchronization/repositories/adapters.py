@@ -1,5 +1,7 @@
 from domains.synchronization.type_defs import (
-    SyncActionCondition,
+    SyncActionCharacterAttributeCondition,
+    SyncActionSceneVisitCondition,
+    SyncCondition,
     SyncActionTarget,
     SyncConditionalAction,
     SyncSimpleAction,
@@ -12,7 +14,9 @@ from domains.synchronization.type_defs import (
     SynchronizationStoryProgress,
 )
 from utils.mongo.base_repository import (
+    MongoActionCharacterAttributeCondition,
     MongoActionCondition,
+    MongoActionSceneVisitCondition,
     MongoActionTarget,
     MongoBuilderParams,
     MongoBuilderPosition,
@@ -37,6 +41,13 @@ def make_mongo_builder_params(
         position=MongoBuilderPosition(x=domain.position.x, y=domain.position.y)
     )
 
+def make_mongo_action_condition(domain: SyncCondition) -> MongoActionCondition:
+    if isinstance(domain, SyncActionSceneVisitCondition):
+        return MongoActionSceneVisitCondition(type=domain.type, sceneKey=domain.scene_key)
+    elif isinstance(domain, SyncActionCharacterAttributeCondition):
+        return MongoActionCharacterAttributeCondition(type=domain.type, attributeKey=domain.attribute_key, comparator=domain.comparator, value=domain.value)
+    else:
+        assert_never()
 
 def make_mongo_scene_action(domain: SynchronizationSceneAction) -> MongoSceneAction:
     if isinstance(domain, SyncSimpleAction):
@@ -62,9 +73,7 @@ def make_mongo_scene_action(domain: SynchronizationSceneAction) -> MongoSceneAct
                 )
                 for target in domain.targets
             ],
-            condition=MongoActionCondition(
-                type=domain.condition.type, sceneKey=domain.condition.scene_key
-            ),
+            condition=make_mongo_action_condition(domain.condition)
         )
     assert_never()
 
@@ -179,6 +188,15 @@ def make_synchronization_author(
     )
 
 
+def make_synchronization_condition(condition: MongoActionCondition) -> SyncCondition:
+    if condition["type"] == "user-did-not-visit" or condition["type"] == "user-did-visit" :
+        return SyncActionSceneVisitCondition(type=condition["type"], scene_key=condition["sceneKey"])
+    elif condition["type"] == "character-attribute":
+        return SyncActionCharacterAttributeCondition(type=condition["type"], attribute_key=condition["attributeKey"], comparator=condition["comparator"], value=condition["value"])
+    else:
+        assert_never()
+
+
 def make_synchronization_action(action: MongoSceneAction) -> SynchronizationSceneAction:
     if action["type"] == "simple":
         return SyncSimpleAction(
@@ -203,10 +221,7 @@ def make_synchronization_action(action: MongoSceneAction) -> SynchronizationScen
                 )
                 for target in action["targets"]
             ],
-            condition=SyncActionCondition(
-                type=action["condition"]["type"],
-                scene_key=action["condition"]["sceneKey"],
-            ),
+            condition=make_synchronization_condition(condition=action["condition"])
         )
     assert_never()
 

@@ -3,8 +3,10 @@ from typing import Annotated, Literal, Self, Union, assert_never
 from pydantic import Field, JsonValue
 
 from domains.synchronization.type_defs import (
-    SyncActionCondition,
+    SyncActionCharacterAttributeCondition,
+    SyncActionSceneVisitCondition,
     SyncActionTarget,
+    SyncCondition,
     SyncConditionalAction,
     SyncSimpleAction,
     SynchronizationBuilderParams,
@@ -34,10 +36,17 @@ class SimpleAction(_ActionBase):
     type: Literal["simple"]
 
 
-class Condition(BaseAPIModel):
+class SceneVisitCondition(BaseAPIModel):
     type: Literal["user-did-visit", "user-did-not-visit"]
     scene_key: str
 
+class CharacterAttributeCondition(BaseAPIModel):
+    type : Literal["character-attribute"]
+    attribute_key: str
+    comparator : Literal["lower-than", "greater-than"]
+    value: int
+
+type Condition = SceneVisitCondition | CharacterAttributeCondition
 
 class ConditionalAction(_ActionBase):
     type: Literal["conditional"]
@@ -63,6 +72,15 @@ class Scene(BaseAPIModel):
     content: dict[str, JsonValue]
     actions: list[Action]
     builder_params: BuilderParams
+
+    @classmethod
+    def _make_condition_from_domain(cls, domain_cond: SyncCondition) -> Condition:
+        if isinstance(domain_cond,SyncActionSceneVisitCondition ):
+            return SceneVisitCondition(type=domain_cond.type,scene_key=domain_cond.scene_key)
+        elif isinstance(domain_cond, SyncActionCharacterAttributeCondition):
+            return CharacterAttributeCondition(type=domain_cond.type, attribute_key=domain_cond.attribute_key, comparator=domain_cond.comparator, value=domain_cond.value )
+        else:
+            assert_never()
 
     @classmethod
     def _make_action_from_domain(
@@ -91,10 +109,7 @@ class Scene(BaseAPIModel):
                     for target in domain_action.targets
                 ],
                 type="conditional",
-                condition=Condition(
-                    type=domain_action.condition.type,
-                    scene_key=domain_action.condition.scene_key,
-                ),
+                condition=cls._make_condition_from_domain(domain_action.condition),
             )
         assert_never()
 
@@ -113,6 +128,14 @@ class Scene(BaseAPIModel):
                 )
             ),
         )
+
+    def _condition_to_domain(self, condition: Condition) -> SyncCondition:
+        if isinstance(condition, SceneVisitCondition):
+            return SyncActionSceneVisitCondition(type=condition.type, scene_key=condition.scene_key)
+        elif isinstance(condition, CharacterAttributeCondition):
+            return SyncActionCharacterAttributeCondition(type=condition.type, attribute_key=condition.attribute_key, comparator=condition.comparator, value=condition.value)
+        else:
+            assert_never()
 
     def _action_to_domain(self, action: Action) -> SynchronizationSceneAction:
         if isinstance(action, SimpleAction):
@@ -138,9 +161,7 @@ class Scene(BaseAPIModel):
                     for target in action.targets
                 ],
                 type="conditional",
-                condition=SyncActionCondition(
-                    type=action.condition.type, scene_key=action.condition.scene_key
-                ),
+                condition=self._condition_to_domain(action.condition),
             )
         assert_never()
 
