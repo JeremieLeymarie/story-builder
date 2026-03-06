@@ -11,9 +11,22 @@ import {
 import { useState } from "react";
 import { FieldArrayWithId } from "react-hook-form";
 import { match, P } from "ts-pattern";
+import z from "zod";
 
 export const ALWAYS = "always";
 export type Condition = ConditionalAction["condition"]["type"] | "always";
+
+const conditionSchema = z.union([
+  z.literal("always"),
+  z.literal("user-did-visit"),
+  z.literal("user-did-not-visit"),
+  z.literal("character-attribute"),
+]);
+
+function assertIsCondition(value: string): asserts value is Condition {
+  // This will throw
+  conditionSchema.parse(value);
+}
 
 // TODO: test this
 export const useConditionChange = ({
@@ -34,7 +47,8 @@ export const useConditionChange = ({
     actionField.type === "conditional" ? actionField.condition.type : ALWAYS,
   );
 
-  const onConditionChange = (condition: Condition) => {
+  const onConditionChange = (condition: string) => {
+    assertIsCondition(condition);
     const currentCondition = form.getValues(`actions.${actionIndex}.condition`);
 
     form.setValue(
