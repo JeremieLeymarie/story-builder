@@ -57,7 +57,7 @@ const ActionsFormContent = ({ scene }: { scene: Scene }) => {
       {randomEventsAction && randomEventsAction.targets.length > 1 && (
         <Toolbar className="absolute top-0 right-128 w-60">
           <RandomEventEditorHeader />
-          <RandomEventEditor action={randomEventsAction} />
+          <RandomEventEditor action={randomEventsAction} sourceScene={scene} />
         </Toolbar>
       )}
       <Form {...form}>

@@ -1,26 +1,31 @@
 import { useReactFlow } from "@xyflow/react";
-import { BuilderNode } from "../types";
+import { BuilderEdge, BuilderNode } from "../types";
 import { useBuilderContext } from "./use-builder-context";
 import { useErrorToast } from "./use-error-toast";
 import { Scene } from "@/lib/storage/domain";
-import { sceneToNodeAdapter } from "../adapters";
+import { sceneToEdgesAdapter, sceneToNodeAdapter } from "../adapters";
 
 export const useBuilderActions = () => {
   const { story, setStory, builderService } = useBuilderContext();
-  const { setNodes } = useReactFlow<BuilderNode>();
+  const { setNodes, updateEdgeData } = useReactFlow<BuilderNode, BuilderEdge>();
   const { handleError } = useErrorToast();
 
   const updateScene = async (scene: Partial<Scene> & Pick<Scene, "key">) => {
     try {
       const updated = await builderService.updateScene(scene);
       if (!updated) return handleError(`Failed to update scene ${scene.key}`);
+      const node = sceneToNodeAdapter({ scene: updated, story });
       setNodes((prev) =>
         prev.map((n) =>
           n.data.key === updated.key
-            ? { ...n, data: sceneToNodeAdapter({ scene: updated, story }).data } // Only copy data to preserve UI states (selection for example)
+            ? { ...n, data: node.data } // Only copy data to preserve UI states (selection for example)
             : n,
         ),
       );
+
+      // pas oublier que ca ne declanche pas les erreur et que le form ne valide pas si les pourcentage sont juste
+      const edges = sceneToEdgesAdapter(updated);
+      edges.forEach((edge) => updateEdgeData(edge.id, edge.data));
     } catch (err) {
       handleError(err);
     }
