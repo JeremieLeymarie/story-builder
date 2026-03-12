@@ -7,10 +7,14 @@ const baseActionSchema = z.object({
     .array(z.object({ sceneKey: z.nanoid(), probability: z.number() }))
     .refine(
       (values) => {
+        if (values.length === 0) return true;
+
         const totalProbabilities = values.reduce(
           (acc, v) => acc + v.probability,
           0,
         );
+
+        console.log({ totalProbabilities });
 
         return totalProbabilities > 0;
       },
