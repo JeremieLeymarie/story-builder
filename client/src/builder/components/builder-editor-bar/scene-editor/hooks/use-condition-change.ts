@@ -24,7 +24,6 @@ const conditionSchema = z.union([
 ]);
 
 function assertIsCondition(value: string): asserts value is Condition {
-  // This will throw
   conditionSchema.parse(value);
 }
 
@@ -34,14 +33,14 @@ export const useConditionChange = ({
   actionField,
   actionIndex,
   characterConfig,
+  hasCharacterConfig,
 }: {
   form: EditActionsForm;
   actionField: FieldArrayWithId<EditActionsSchema, "actions", "id">;
   actionIndex: number;
   characterConfig: CharacterConfiguration | null;
+  hasCharacterConfig: boolean;
 }) => {
-  const isCharacterConfigured =
-    Object.keys(characterConfig?.attributes ?? {}).length > 0;
   const { story } = useBuilderContext();
   const [condition, setCondition] = useState<Condition>(
     actionField.type === "conditional" ? actionField.condition.type : ALWAYS,
@@ -49,41 +48,51 @@ export const useConditionChange = ({
 
   const onConditionChange = (condition: string) => {
     assertIsCondition(condition);
-    const currentCondition = form.getValues(`actions.${actionIndex}.condition`);
-
-    form.setValue(
-      `actions.${actionIndex}.type`,
-      condition === "always" ? "simple" : "conditional",
-    );
+    const currentAction = form.getValues(`actions.${actionIndex}`);
+    const commonFields = {
+      key: currentAction.key,
+      targets: currentAction.targets,
+      text: currentAction.text,
+    };
 
     match(condition)
       .with(P.union("user-did-visit", "user-did-not-visit"), (condition) => {
-        // Use first scene there is no current value for scene key
-        const sceneKey = isSceneVisitCondition(currentCondition)
-          ? currentCondition.sceneKey
-          : story.firstSceneKey;
+        const isConditionAction = currentAction.type === "conditional";
+        // Use first scene if there is no current value for scene key
+        const sceneKey =
+          isConditionAction && isSceneVisitCondition(currentAction.condition)
+            ? currentAction.condition.sceneKey
+            : story.firstSceneKey;
 
-        form.setValue(`actions.${actionIndex}.condition`, {
-          type: condition,
-          sceneKey,
+        form.setValue(`actions.${actionIndex}`, {
+          ...commonFields,
+          type: "conditional",
+          condition: { type: condition, sceneKey },
         });
       })
       .with("character-attribute", (condition) => {
         // This should never happen
-        if (!isCharacterConfigured)
+        if (!hasCharacterConfig)
           throw new Error(
             `Cannot setup conditional on character if no character exists in story`,
           );
 
-        form.setValue(`actions.${actionIndex}.condition`, {
-          type: condition,
-          attributeKey: Object.keys(characterConfig!.attributes)[0]!, // Random key in character's attributes
-          comparator: "greater-than",
-          value: 0,
+        form.setValue(`actions.${actionIndex}`, {
+          ...commonFields,
+          type: "conditional",
+          condition: {
+            type: condition,
+            attributeKey: Object.keys(characterConfig!.attributes)[0]!, // Random key in character's attributes
+            comparator: "greater-than",
+            value: 0,
+          },
         });
       })
       .with("always", () => {
-        // TODO: do we need to do something to remove potential extra fields?
+        form.setValue(`actions.${actionIndex}`, {
+          ...commonFields,
+          type: "simple",
+        });
       })
       .exhaustive();
 

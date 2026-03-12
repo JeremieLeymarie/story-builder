@@ -166,11 +166,12 @@ export const CharacterConditionFormSection = ({
         control={form.control}
         name={`actions.${actionIndex}.condition.value`}
         render={({ field, fieldState }) => (
-          <Field
-            data-invalid={fieldState.invalid}
-            className="h-8 max-w-12 text-xs!"
-          >
-            <NumberInput onChange={field.onChange} defaultValue={field.value} />
+          <Field data-invalid={fieldState.invalid} className="h-8 max-w-10">
+            <NumberInput
+              onChange={field.onChange}
+              defaultValue={field.value}
+              className="text-xs!"
+            />
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}

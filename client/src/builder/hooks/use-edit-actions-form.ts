@@ -7,7 +7,8 @@ import { actionSchema } from "@/lib/action-schema";
 
 const schema = z.object({ actions: z.array(actionSchema) });
 
-export type EditActionsSchema = z.infer<typeof schema>;
+export type EditActionsSchemaInput = z.input<typeof schema>;
+export type EditActionsSchema = z.output<typeof schema>;
 
 export const useEditActionsForm = ({
   actions,
@@ -16,7 +17,7 @@ export const useEditActionsForm = ({
   actions: Scene["actions"];
   onSave: (payload: { actions: Scene["actions"] }) => void;
 }) => {
-  const form = useForm<EditActionsSchema>({
+  const form = useForm<EditActionsSchemaInput, unknown, EditActionsSchema>({
     resolver: zodResolver(schema),
     values: { actions },
   });
@@ -31,13 +32,7 @@ export const useEditActionsForm = ({
     onSubmit: (values) => onSave({ actions: values.actions }),
   });
 
-  return {
-    form,
-    fields,
-    append,
-    remove,
-    update,
-  };
+  return { form, fields, append, remove, update };
 };
 
 export type EditActionsForm = UseFormReturn<EditActionsSchema>;
