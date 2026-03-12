@@ -20,7 +20,7 @@ const ActionTooltip = ({
   return (
     <Tooltip open={isVisible ? false : undefined}>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
-      <TooltipContent className="max-w-[300px] text-xs">
+      <TooltipContent className="max-w-75 text-xs">
         You did not unlock this choice...
         {isTestMode && (
           <p className="mt-0.5 italic">
@@ -43,7 +43,7 @@ const ActionButton = ({
 }) => (
   <Button
     className={cn(
-      "cursor-pointer text-left text-wrap whitespace-normal select-none",
+      "h-auto cursor-pointer py-1 text-left text-wrap whitespace-normal select-none",
     )}
     style={{
       backgroundColor: actionTheme.backgroundColor,
@@ -85,7 +85,6 @@ export const SceneAction = ({
   if (isTestMode) {
     return (
       <ActionTooltip isTestMode isVisible={isVisible} key={action.text}>
-        {/* TODO: implement probability logic to handle multiple targets cf (https://github.com/JeremieLeymarie/story-builder/issues/367) */}
         <Link
           to="/game/test/$gameKey/$sceneKey"
           params={{ gameKey: storyKey, sceneKey: nextScene }}
@@ -102,7 +101,6 @@ export const SceneAction = ({
 
   return (
     <ActionTooltip isTestMode={false} isVisible={isVisible}>
-      {/* TODO: implement probability logic to handle multiple targets cf (https://github.com/JeremieLeymarie/story-builder/issues/367) */}
       <Link
         key={action.text}
         to="/game/$gameKey/$sceneKey"
