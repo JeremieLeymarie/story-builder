@@ -14,8 +14,6 @@ const baseActionSchema = z.object({
           0,
         );
 
-        console.log({ totalProbabilities });
-
         return totalProbabilities > 0;
       },
       { error: "All targets of an action must add up to at least 1%" },

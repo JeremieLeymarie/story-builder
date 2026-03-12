@@ -7,7 +7,7 @@ import { actionSchema } from "@/lib/action-schema";
 
 const schema = z.object({ actions: z.array(actionSchema) });
 
-export type EditActionsSchemaInput = z.input<typeof schema>;
+type EditActionsSchemaInput = z.input<typeof schema>;
 export type EditActionsSchema = z.output<typeof schema>;
 
 export const useEditActionsForm = ({

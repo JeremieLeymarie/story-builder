@@ -26,6 +26,7 @@ import {
   Condition,
   useConditionChange,
 } from "./hooks/use-condition-change";
+import { Separator } from "@/design-system/primitives/separator";
 
 const useConditionOptions = ({
   hasCharacterConfig,
@@ -46,7 +47,6 @@ const useConditionOptions = ({
 };
 
 // TODO: test this
-// TODO: selectors have horrendous performance on open, we should dig into it
 export const ActionItem = ({
   actionField,
   form,
@@ -67,6 +67,14 @@ export const ActionItem = ({
   const hasCharacterConfig =
     Object.keys(characterConfig?.attributes ?? {}).length > 0;
   const [openSettings, setOpenSettings] = useState(false);
+
+  const toggleSettings = () => {
+    setOpenSettings((prev) => {
+      // Clear form errors when closing settings since erroneous values will be discarded
+      if (prev) form.clearErrors();
+      return !prev;
+    });
+  };
 
   const { condition, onConditionChange } = useConditionChange({
     form,
@@ -96,7 +104,7 @@ export const ActionItem = ({
           size="icon"
           type="button"
           onClick={() => {
-            setOpenSettings((prev) => !prev);
+            toggleSettings();
             if (openSettings) closeRandomEventsSettings();
             else openRandomEventsSettings();
           }}
@@ -113,7 +121,7 @@ export const ActionItem = ({
         </Button>
       </div>
       {openSettings && (
-        <div className="mt-2 flex flex-wrap items-center gap-1">
+        <div className="mt-2 flex flex-wrap items-center gap-1 pl-2">
           <p className="text-sm">Show</p>
           <div className="flex flex-wrap items-center gap-2 text-sm">
             <Select
@@ -152,9 +160,6 @@ export const ActionItem = ({
                         onChange={field.onChange}
                         value={field.value}
                       />
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
                     </Field>
                   )}
                 />
@@ -175,20 +180,25 @@ export const ActionItem = ({
               .with("always", () => null)
               .exhaustive()}
           </div>
+          {Object.values(
+            form.formState.errors.actions?.[actionIndex] ?? {},
+          ).map((actionErrors) => {
+            if (typeof actionErrors === "string") return null;
+
+            return Object.entries(actionErrors).map(([fieldName, error]) =>
+              error ? (
+                <FormError className="text-xs" key={`${fieldName}-error`}>
+                  {typeof error === "string"
+                    ? error
+                    : "message" in error
+                      ? error.message
+                      : null}
+                </FormError>
+              ) : null,
+            );
+          })}
+          <Separator className="my-2" />
         </div>
-      )}
-      {/* TODO: improve error messages */}
-      {Object.entries(form.formState.errors.actions?.[actionIndex] ?? {}).map(
-        ([_fieldName, error]) =>
-          error ? (
-            <FormError className="text-xs" key={`${_fieldName}-error`}>
-              {typeof error === "string"
-                ? error
-                : "message" in error
-                  ? error.message
-                  : null}
-            </FormError>
-          ) : null,
       )}
     </div>
   );

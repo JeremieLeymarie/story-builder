@@ -12,7 +12,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/design-system/primitives";
-import { Field, FieldError } from "@/design-system/primitives/field";
+import { Field } from "@/design-system/primitives/field";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
 import {
   Select,
@@ -108,7 +108,6 @@ const CHARACTER_ATTR_COMPARATOR_OPTIONS: Record<
   string
 > = { "greater-than": "is greater than", "lower-than": "is lower than" };
 
-// TODO: handle errors in prettier way
 export const CharacterConditionFormSection = ({
   form,
   actionIndex,
@@ -130,7 +129,6 @@ export const CharacterConditionFormSection = ({
               onChange={field.onChange}
               value={field.value}
             />
-            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
@@ -158,7 +156,6 @@ export const CharacterConditionFormSection = ({
                 </SelectGroup>
               </SelectContent>
             </Select>
-            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
@@ -172,7 +169,6 @@ export const CharacterConditionFormSection = ({
               defaultValue={field.value}
               className="text-xs!"
             />
-            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
