@@ -5,8 +5,9 @@ import {
   BookOpenTextIcon,
   DownloadIcon,
   PaletteIcon,
-  SettingsIcon,
   TestTubesIcon,
+  BookUserIcon,
+  NotebookTextIcon,
 } from "lucide-react";
 import { ExportModal } from "./export-modal";
 import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
@@ -50,16 +51,14 @@ const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
       </ToolbarHeader>
       <div className="flex w-full flex-col gap-2">
         <Button
-          size="sm"
           className={btnClassname}
           onClick={() => addScene({ position: "auto" })}
         >
-          <BookOpenTextIcon />
+          <NotebookTextIcon />
           Add a scene
           <ButtonShortCutDoc doc="N" />
         </Button>
         <Button
-          size="sm"
           variant="outline"
           className={btnClassname}
           onClick={() => testStory(story.firstSceneKey)}
@@ -70,7 +69,7 @@ const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
         </Button>
         <ExportModal
           trigger={
-            <Button size="sm" variant="outline" className={btnClassname}>
+            <Button variant="outline" className={btnClassname}>
               <DownloadIcon />
               Export
               <ButtonShortCutDoc doc="E" />
@@ -79,13 +78,12 @@ const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
         />
         <Button
           className={btnClassname}
-          size="sm"
           variant="outline"
           onClick={() =>
             openBuilderEditor({ type: "story-editor", payload: null })
           }
         >
-          <SettingsIcon />
+          <BookOpenTextIcon />
           Edit story
         </Button>
         <Link
@@ -93,18 +91,21 @@ const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
           target="_blank"
           params={{ gameKey: story.key, sceneKey: story.firstSceneKey }} // For now, always open UI Editor with first scene
         >
-          <Button
-            className={btnClassname}
-            size="sm"
-            variant="outline"
-            onClick={() =>
-              openBuilderEditor({ type: "story-editor", payload: null })
-            }
-          >
+          <Button className={btnClassname} variant="outline">
             <PaletteIcon />
             Edit Game Theme
           </Button>
         </Link>
+        <Button
+          className={btnClassname}
+          variant="outline"
+          onClick={() => {
+            openBuilderEditor({ type: "character-editor", payload: null });
+          }}
+        >
+          <BookUserIcon />
+          Edit Character
+        </Button>
       </div>
     </>
   );
@@ -119,10 +120,10 @@ const MinifiedToolbarContent = ({ toggleExpanded }: ContentProps) => {
       <Tooltip>
         <TooltipTrigger asChild>
           <Button size="icon" onClick={() => addScene({ position: "auto" })}>
-            <BookOpenTextIcon />
+            <NotebookTextIcon />
           </Button>
         </TooltipTrigger>
-        <TooltipContent> Add a scene</TooltipContent>
+        <TooltipContent>Add a scene</TooltipContent>
       </Tooltip>
       <Tooltip>
         <TooltipTrigger asChild>
@@ -153,10 +154,10 @@ const MinifiedToolbarContent = ({ toggleExpanded }: ContentProps) => {
               openBuilderEditor({ type: "story-editor", payload: null })
             }
           >
-            <SettingsIcon />
+            <BookOpenTextIcon />
           </Button>
         </TooltipTrigger>
-        <TooltipContent> Open story settings</TooltipContent>{" "}
+        <TooltipContent>Open story settings</TooltipContent>{" "}
       </Tooltip>
 
       <Tooltip>
@@ -171,7 +172,21 @@ const MinifiedToolbarContent = ({ toggleExpanded }: ContentProps) => {
             </Button>
           </Link>
         </TooltipTrigger>
-        <TooltipContent> Open Game Theme editor</TooltipContent>
+        <TooltipContent>Open game theme editor</TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => {
+              openBuilderEditor({ type: "character-editor", payload: null });
+            }}
+          >
+            <BookUserIcon />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Open character editor</TooltipContent>
       </Tooltip>
       <Button size="icon" variant="ghost" onClick={toggleExpanded}>
         <ArrowDownFromLineIcon />
@@ -184,7 +199,7 @@ export const BuilderToolbar = () => {
   const { isExpanded, toggleExpanded } = useToolbar();
 
   return (
-    <Toolbar className={cn(isExpanded && "w-[250px]")}>
+    <Toolbar className={cn(isExpanded && "w-60")}>
       {isExpanded ? (
         <ExpandedToolbarContent toggleExpanded={toggleExpanded} />
       ) : (

@@ -31,7 +31,7 @@ export const Article = ({
                 to="/wikis/$wikiKey/$articleKey/edit"
                 params={{ articleKey: article.key, wikiKey: article.wikiKey }}
               >
-                <Button className="gap-2" size="sm">
+                <Button className="gap-2">
                   <PencilIcon />
                   Edit
                 </Button>

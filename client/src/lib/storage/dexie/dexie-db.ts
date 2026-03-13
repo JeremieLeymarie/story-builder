@@ -11,6 +11,7 @@ import {
   WikiArticleLink,
   Action,
   StoryTheme,
+  CharacterConfiguration,
 } from "../domain";
 import { DEMO_IMPORTED_STORY, DEMO_SCENES, DEMO_STORY } from "./seed";
 import { getLibraryService } from "@/domains/game/library-service";
@@ -20,6 +21,7 @@ type Tables = {
   stories: EntityTable<Story, "key">;
   scenes: EntityTable<Scene, "key">;
   storyThemes: EntityTable<StoryTheme, "key">;
+  characterConfigurations: EntityTable<CharacterConfiguration, "key">;
   storyProgresses: EntityTable<StoryProgress, "key">;
   wikis: EntityTable<Wiki, "key">;
   wikiArticles: EntityTable<WikiArticle, "key">;
@@ -36,6 +38,7 @@ const tables: Record<keyof Tables, string> = {
     "&key, firstSceneKey, title, description, image, status, genres, publicationDate, creationDate, author, finished",
   scenes: "&key, storyKey, title, content, actions, builderParams",
   storyThemes: "&key, &storyKey",
+  characterConfigurations: "&key, &storyKey",
   storyProgresses:
     "&key, storyKey, userKey, currentSceneKey, character, inventory, history, lastPlayedAt",
   wikis: "&key, userKey",

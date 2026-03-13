@@ -1,6 +1,10 @@
 import { cn } from "@/lib/style";
+import { XIcon } from "lucide-react";
 import { ReactNode } from "react";
+import { Button, buttonVariants } from "../primitives";
+import { VariantProps } from "class-variance-authority";
 
+// TODO: add closing capabilities (w/ context directly in DS)
 export const Toolbar = ({
   children,
   className,
@@ -10,7 +14,10 @@ export const Toolbar = ({
 }) => {
   return (
     <div
-      className={cn("z-40 rounded border bg-white/95 p-4 shadow-sm", className)}
+      className={cn(
+        "ring-border z-40 rounded-xl bg-white/98 p-3 shadow-sm ring-1",
+        className,
+      )}
     >
       {children}
     </div>
@@ -19,10 +26,15 @@ export const Toolbar = ({
 
 export const ToolbarHeader = ({
   className,
+  children,
   ...props
-}: { className?: string } & React.HTMLAttributes<HTMLHeadingElement>) => {
+}: {
+  className?: string;
+} & React.HTMLAttributes<HTMLHeadingElement>) => {
   return (
-    <div className={cn("mb-2 flex flex-col space-y-1", className)} {...props} />
+    <div className={cn("mb-2 flex flex-col space-y-1", className)} {...props}>
+      {children}
+    </div>
   );
 };
 
@@ -50,5 +62,18 @@ export const ToolbarDescription = ({
       className={cn("text-muted-foreground leading-none italic", className)}
       {...props}
     />
+  );
+};
+
+export const ToolbarClose = (
+  props?: React.ComponentProps<"button"> &
+    VariantProps<typeof buttonVariants> & {
+      asChild?: boolean;
+    },
+) => {
+  return (
+    <Button variant="ghost" size="icon-sm" {...props}>
+      <XIcon />
+    </Button>
   );
 };

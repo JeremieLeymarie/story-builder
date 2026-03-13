@@ -1,21 +1,6 @@
-import { FieldArrayWithId, UseFormStateReturn } from "react-hook-form";
-import {
-  Button,
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  FormControl,
-  FormField,
-  FormItem,
-  Input,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/design-system/primitives";
-import { ChevronDown, SettingsIcon, Trash2Icon } from "lucide-react";
+import { Controller, FieldArrayWithId } from "react-hook-form";
+import { Button, Input } from "@/design-system/primitives";
+import { SettingsIcon, Trash2Icon } from "lucide-react";
 import { FormError } from "@/design-system/components";
 import {
   Select,
@@ -27,139 +12,99 @@ import {
   SelectValue,
 } from "@/design-system/primitives/select";
 import { useState } from "react";
-import { Check } from "lucide-react";
-import { useGetBuilder } from "@/builder/hooks/use-get-builder";
-import { useBuilderContext } from "@/builder/hooks/use-builder-context";
-import { ScrollArea } from "@/design-system/primitives/scroll-area";
-import { capitalize } from "@/lib/string";
-import { cn } from "@/lib/style";
-import { SimpleLoader } from "@/design-system/components/simple-loader";
 import {
-  ActionSchema,
   EditActionsForm,
   EditActionsSchema,
 } from "@/builder/hooks/use-edit-actions-form";
+import { CharacterConfiguration } from "@/lib/storage/domain";
+import { match, P } from "ts-pattern";
+import { SceneSelector } from "./scene-selector";
+import { Field, FieldError } from "@/design-system/primitives/field";
+import { CharacterConditionFormSection } from "./character-condition-section";
+import {
+  ALWAYS,
+  Condition,
+  useConditionChange,
+} from "./hooks/use-condition-change";
+import { Separator } from "@/design-system/primitives/separator";
 
-const SceneSelector = ({
-  onChange,
-  value,
+const useConditionOptions = ({
+  hasCharacterConfig,
 }: {
-  onChange: (value?: string | null) => void;
-  value?: string | null;
+  hasCharacterConfig: boolean;
 }) => {
-  const { story } = useBuilderContext();
-  const { scenes, isLoading } = useGetBuilder({ storyKey: story.key });
-  const [open, setOpen] = useState(false);
-  const selectedScene = scenes?.find((scene) => scene.key === value);
+  const options: Record<Condition, { label: string; disabled?: boolean }> = {
+    [ALWAYS]: { label: "Always" },
+    "user-did-visit": { label: "If player visited" },
+    "user-did-not-visit": { label: "If player did not visit" },
+    "character-attribute": {
+      label: "If character's attribute",
+      disabled: !hasCharacterConfig,
+    },
+  };
 
-  return (
-    <>
-      <Popover open={open} onOpenChange={setOpen} modal={true}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className="text-foreground hover:text-foreground h-8! w-[180px] justify-between text-xs font-normal"
-          >
-            {value ? selectedScene?.title : "No scene"}
-            <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent
-          className="w-full p-0 text-xs"
-          align="start"
-          side="bottom"
-        >
-          <Command>
-            <CommandInput placeholder="Search scenes..." />
-            <CommandList>
-              <ScrollArea className="h-[150px]">
-                <CommandEmpty className="text-xs">No scene found.</CommandEmpty>
-                <CommandGroup>
-                  {scenes && !isLoading ? (
-                    scenes.map((scene) => (
-                      <CommandItem
-                        className="flex justify-between text-xs"
-                        key={scene.key}
-                        value={scene.key}
-                        onSelect={(value) => onChange(value)}
-                      >
-                        {capitalize(scene.title)}
-                        <Check
-                          className={cn(
-                            "h-4 w-4",
-                            value === scene.key ? "opacity-100" : "opacity-0",
-                          )}
-                        />
-                      </CommandItem>
-                    ))
-                  ) : (
-                    <SimpleLoader />
-                  )}
-                </CommandGroup>
-              </ScrollArea>
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      </Popover>
-    </>
-  );
+  return options;
 };
 
+// TODO: test this
 export const ActionItem = ({
   actionField,
   form,
-  index,
+  actionIndex,
+  characterConfig,
   removeAction,
   openRandomEventsSettings,
   closeRandomEventsSettings,
 }: {
   actionField: FieldArrayWithId<EditActionsSchema, "actions", "id">;
   form: EditActionsForm;
-  index: number;
+  actionIndex: number;
+  characterConfig: CharacterConfiguration | null;
   removeAction: (index: number) => void;
   openRandomEventsSettings: () => void;
   closeRandomEventsSettings: () => void;
 }) => {
+  const hasCharacterConfig =
+    Object.keys(characterConfig?.attributes ?? {}).length > 0;
   const [openSettings, setOpenSettings] = useState(false);
-  const { story } = useBuilderContext();
-  const [showCondition, setShowCondition] = useState(actionField.showCondition);
 
-  const onShowConditionChange = (
-    value: string,
-    formState: UseFormStateReturn<EditActionsSchema>,
-  ) => {
-    form.setValue(
-      `actions.${index}.showCondition`,
-      value as ActionSchema["showCondition"],
-    );
-    const hasTargetSceneKeyBeenModified =
-      formState.dirtyFields.actions?.[index] &&
-      "targetSceneKey" in formState.dirtyFields.actions[index];
-
-    if (value !== "always" && !hasTargetSceneKeyBeenModified) {
-      form.setValue(`actions.${index}.targetSceneKey`, story.firstSceneKey);
-    }
-    // This is a workaround around the fact that:
-    // 1. form.watch doesn't work with react compiler for now
-    // 2. using form.setValue in a nested field of a field array doesn't trigger a rerender for the parent field
-    setShowCondition(value as ActionSchema["showCondition"]);
+  const toggleSettings = () => {
+    setOpenSettings((prev) => {
+      // Clear form errors when closing settings since erroneous values will be discarded
+      if (prev) form.clearErrors();
+      return !prev;
+    });
   };
 
+  const { condition, onConditionChange } = useConditionChange({
+    form,
+    actionField,
+    actionIndex,
+    characterConfig,
+    hasCharacterConfig,
+  });
+  const conditionOptions = useConditionOptions({ hasCharacterConfig });
+
   return (
-    <FormItem className="my-2" key={actionField.id}>
+    <div className="my-2" key={actionField.id}>
       <div className="flex items-center gap-2">
-        <Input
-          placeholder="Go to the village"
-          {...form.register(`actions.${index}.text` as const)}
+        <Controller
+          control={form.control}
+          name={`actions.${actionIndex}.text`}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid} className="w-full">
+              <Input {...field} placeholder="Go to the village" />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
         />
+
         <Button
           variant="outline"
           size="icon"
           type="button"
           onClick={() => {
-            setOpenSettings((prev) => !prev);
+            toggleSettings();
             if (openSettings) closeRandomEventsSettings();
             else openRandomEventsSettings();
           }}
@@ -170,86 +115,91 @@ export const ActionItem = ({
           variant="outline"
           size="icon"
           type="button"
-          onClick={() => removeAction(index)}
+          onClick={() => removeAction(actionIndex)}
         >
           <Trash2Icon />
         </Button>
       </div>
       {openSettings && (
-        <div className="flex items-center gap-2 text-sm">
-          Show
-          <FormField
-            control={form.control}
-            name={`actions.${index}.showCondition`}
-            render={({ field, formState }) => (
-              <FormItem>
-                <FormControl>
-                  <Select
-                    onValueChange={(value) =>
-                      onShowConditionChange(value, formState)
-                    }
-                    value={field.value}
-                  >
-                    <SelectTrigger className="h-8! w-[180px] *:data-[slot=select-value]:text-xs">
-                      <SelectValue placeholder="Select a condition" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel className="text-xs">
-                          Show this action
-                        </SelectLabel>
-                        <SelectItem className="text-xs" value="always">
-                          Always
-                        </SelectItem>
-                        <SelectItem
-                          className="text-xs"
-                          value="when-user-did-visit"
-                        >
-                          If player visited
-                        </SelectItem>
-                        <SelectItem
-                          className="text-xs"
-                          value="when-user-did-not-visit"
-                        >
-                          If player did not visit
-                        </SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          {showCondition !== "always" && (
-            <FormField
-              control={form.control}
-              name={`actions.${index}.targetSceneKey`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <SceneSelector
-                      onChange={field.onChange}
-                      value={field.value}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-          )}
+        <div className="mt-2 flex flex-wrap items-center gap-1 pl-2">
+          <p className="text-sm">Show</p>
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            <Select
+              onValueChange={(value) => onConditionChange(value)}
+              value={condition}
+            >
+              <SelectTrigger className="*:data-[slot=select-value]:text-xs">
+                <SelectValue placeholder="Select a condition" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Show</SelectLabel>
+                  {Object.entries(conditionOptions).map(
+                    ([value, { label, disabled }]) => (
+                      <SelectItem
+                        key={value}
+                        className="text-xs"
+                        value={value}
+                        disabled={disabled}
+                      >
+                        {label}
+                      </SelectItem>
+                    ),
+                  )}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            {match(condition)
+              .with(P.union("user-did-visit", "user-did-not-visit"), () => (
+                <Controller
+                  control={form.control}
+                  name={`actions.${actionIndex}.condition.sceneKey`}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid} className="w-max">
+                      <SceneSelector
+                        onChange={field.onChange}
+                        value={field.value}
+                      />
+                    </Field>
+                  )}
+                />
+              ))
+              .with("character-attribute", () => {
+                if (!characterConfig)
+                  throw new Error(
+                    `Cannot render character condition form if no character exists in story`,
+                  );
+                return (
+                  <CharacterConditionFormSection
+                    form={form}
+                    actionIndex={actionIndex}
+                    characterConfig={characterConfig}
+                  />
+                );
+              })
+              .with("always", () => null)
+              .exhaustive()}
+          </div>
+          {Object.values(
+            form.formState.errors.actions?.[actionIndex] ?? {},
+          ).map((actionErrors) => {
+            if (typeof actionErrors === "string") return null;
+
+            return Object.entries(actionErrors).map(([fieldName, error]) =>
+              error ? (
+                <FormError className="text-xs" key={`${fieldName}-error`}>
+                  {typeof error === "string"
+                    ? error
+                    : "message" in error
+                      ? error.message
+                      : null}
+                </FormError>
+              ) : null,
+            );
+          })}
+          <Separator className="my-2" />
         </div>
       )}
-      {Object.entries(form.formState.errors.actions?.[index] ?? {}).map(
-        ([_fieldName, error]) =>
-          error ? (
-            <FormError className="text-xs">
-              {typeof error === "string"
-                ? error
-                : "message" in error
-                  ? error.message
-                  : null}
-            </FormError>
-          ) : null,
-      )}
-    </FormItem>
+    </div>
   );
 };

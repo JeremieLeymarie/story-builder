@@ -26,7 +26,6 @@ export const DeleteStoryModal = ({
             <Button
               variant="destructive"
               className="w-full justify-start gap-4"
-              size="sm"
             >
               <Trash2Icon />
               Delete

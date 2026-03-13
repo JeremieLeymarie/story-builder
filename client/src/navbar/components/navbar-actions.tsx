@@ -39,7 +39,6 @@ export const NavbarActions = ({
             <span>
               <Button
                 variant="outline"
-                size="sm"
                 className="gap-2"
                 onClick={() => isOnline && setIsModalOpen(true)}
                 disabled={!isOnline}

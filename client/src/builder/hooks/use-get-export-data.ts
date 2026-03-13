@@ -1,15 +1,22 @@
 import { useBuilderContext } from "./use-builder-context";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Scene, Story, StoryThemeConfig } from "@/lib/storage/domain";
+import {
+  CharacterConfiguration,
+  Scene,
+  Story,
+  StoryThemeConfig,
+} from "@/lib/storage/domain";
 import { getWikiService, WikiExportData } from "@/domains/wiki/wiki-service";
 import { getThemeService } from "@/domains/builder/theme-service";
+import { getCharacterService } from "@/domains/builder/character-service";
 
 const getExportData = (data: {
   story: Story;
   scenes: Scene[];
   wiki: WikiExportData | null;
   theme: StoryThemeConfig;
+  characterConfig?: CharacterConfiguration;
 }) => {
   const storyJson = JSON.stringify(data, null, 2);
   const blob = new Blob([storyJson], { type: "text/json" });
@@ -30,6 +37,7 @@ export const useGetExportData = () => {
   } = useQuery({
     queryKey: ["get-export-data", storyKey],
     queryFn: async () => {
+      // TODO: this logic should be in a service somewhere
       const { story, scenes } =
         await builderService.getBuilderStoryData(storyKey);
 
@@ -43,8 +51,16 @@ export const useGetExportData = () => {
         : null;
 
       const theme = await getThemeService().getTheme(storyKey);
+      const characterConfig =
+        await getCharacterService().getCharacter(storyKey);
       return {
-        exportData: getExportData({ story, scenes, wiki, theme }),
+        exportData: getExportData({
+          story,
+          scenes,
+          wiki,
+          theme,
+          ...(characterConfig ? { characterConfig } : {}),
+        }),
         story,
       };
     },

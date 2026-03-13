@@ -50,7 +50,6 @@ export const FontFormatToolbarPlugin = ({
     <Toggle
       aria-label="Toggle bold"
       variant="outline"
-      size="sm"
       defaultPressed={isSelected}
       pressed={isSelected}
       onPressedChange={setIsSelected}

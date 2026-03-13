@@ -10,7 +10,7 @@ export const useErrorToast = () => {
       console.error(error);
       toast.error("Something went wrong, please refresh the page", {
         action: (
-          <Button variant="secondary" size="sm" onClick={() => refresh()}>
+          <Button variant="secondary" onClick={() => refresh()}>
             Refresh
           </Button>
         ),

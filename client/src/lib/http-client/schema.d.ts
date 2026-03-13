@@ -122,18 +122,42 @@ export interface components {
             /** Y */
             y: number;
         };
-        /** Condition */
-        Condition: {
+        /** CharacterAttributeCondition */
+        CharacterAttributeCondition: {
             /**
              * Type
+             * @constant
              * @enum {string}
              */
-            type: "user-did-visit" | "user-did-not-visit";
-            /** Scenekey */
-            sceneKey: string;
+            type: "character-attribute";
+            /** Attributekey */
+            attributeKey: string;
+            /**
+             * Comparator
+             * @enum {string}
+             */
+            comparator: "lower-than" | "greater-than";
+            /** Value */
+            value: number;
+        };
+        Condition: components["schemas"]["SceneVisitCondition"] | components["schemas"]["CharacterAttributeCondition"];
+        /** ConditionalAction */
+        "ConditionalAction-Input": {
+            /** Key */
+            key: string;
+            /** Text */
+            text: string;
+            /** Targets */
+            targets: components["schemas"]["ActionTarget"][];
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "conditional";
+            condition: components["schemas"]["Condition"];
         };
         /** ConditionalAction */
-        ConditionalAction: {
+        "ConditionalAction-Output": {
             /** Key */
             key: string;
             /** Text */
@@ -258,7 +282,7 @@ export interface components {
                 [key: string]: components["schemas"]["JsonValue"];
             };
             /** Actions */
-            actions: (components["schemas"]["SimpleAction"] | components["schemas"]["ConditionalAction"])[];
+            actions: (components["schemas"]["SimpleAction"] | components["schemas"]["ConditionalAction-Input"])[];
             builderParams: components["schemas"]["BuilderParams"];
         };
         /** Scene */
@@ -274,8 +298,18 @@ export interface components {
                 [key: string]: components["schemas"]["JsonValue"];
             };
             /** Actions */
-            actions: (components["schemas"]["SimpleAction"] | components["schemas"]["ConditionalAction"])[];
+            actions: (components["schemas"]["SimpleAction"] | components["schemas"]["ConditionalAction-Output"])[];
             builderParams: components["schemas"]["BuilderParams"];
+        };
+        /** SceneVisitCondition */
+        SceneVisitCondition: {
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "user-did-visit" | "user-did-not-visit";
+            /** Scenekey */
+            sceneKey: string;
         };
         /** SimpleAction */
         SimpleAction: {

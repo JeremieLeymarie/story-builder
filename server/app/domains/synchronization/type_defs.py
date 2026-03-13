@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Literal, Union
+from typing import Any, Literal
 from pydantic import BaseModel
 
 from utils.type_defs import StoryGenre, StoryType
@@ -21,17 +21,25 @@ class SyncSimpleAction(_ActionBase):
     type: Literal["simple"]
 
 
-class SyncActionCondition(BaseModel):
+class SyncActionSceneVisitCondition(BaseModel):
     type: Literal["user-did-visit", "user-did-not-visit"]
     scene_key: str
 
 
+class SyncActionCharacterAttributeCondition(BaseModel):
+    type : Literal["character-attribute"]
+    attribute_key: str
+    comparator : Literal["lower-than", "greater-than"]
+    value: int
+
+type SyncCondition = SyncActionSceneVisitCondition | SyncActionCharacterAttributeCondition
+
 class SyncConditionalAction(_ActionBase):
     type: Literal["conditional"]
-    condition: SyncActionCondition
+    condition: SyncCondition
 
 
-SynchronizationSceneAction = Union[SyncSimpleAction, SyncConditionalAction]
+type SynchronizationSceneAction = SyncSimpleAction |  SyncConditionalAction
 
 
 class SynchronizationBuilderPosition(BaseModel):

@@ -19,5 +19,9 @@ export const useActionVisibility = ({
       { type: "user-did-not-visit" },
       (condition) => !progress.history.includes(condition.sceneKey),
     )
+    .with({ type: "character-attribute" }, () => {
+      // TODO: handle this (https://github.com/JeremieLeymarie/story-builder/issues/458)
+      return true;
+    })
     .exhaustive();
 };

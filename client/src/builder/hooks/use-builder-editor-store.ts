@@ -16,7 +16,9 @@ type SceneEditorStore = EditorBase<
 
 type StoryEditorStore = EditorBase<"story-editor", null>;
 
-type Editors = SceneEditorStore | StoryEditorStore | null;
+type CharacterEditor = EditorBase<"character-editor", null>;
+
+type Editors = SceneEditorStore | StoryEditorStore | CharacterEditor | null;
 
 type BuilderStore = {
   open: (editor: Exclude<Editors, null>) => void;

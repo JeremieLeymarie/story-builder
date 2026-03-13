@@ -16,6 +16,7 @@ import { Story } from "@/lib/storage/domain";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { getStubBuilderService } from "@/domains/builder/stubs/stub-builder-service";
 import { hashEdgeId } from "@/builder/adapters";
+import { getCharacterService } from "@/domains/builder/character-service";
 
 const nodeTypes = { scene: SceneNode };
 
@@ -152,6 +153,7 @@ export const BuilderShowcase = () => {
           story={MOCK_STORY}
           scenes={[]}
           builderService={getStubBuilderService()}
+          characterService={getCharacterService()}
         >
           <ReactFlow
             nodeTypes={nodeTypes}

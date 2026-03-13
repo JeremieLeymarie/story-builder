@@ -11,6 +11,7 @@ import {
 } from "../adapters";
 import { useQueryClient } from "@tanstack/react-query";
 import { makeGetSceneQueryOptions } from "./use-get-scene";
+import { useHandleActionTargetsError } from "./use-handle-action-targets-error";
 
 // TODO: test this
 export const useBuilderEdges = () => {
@@ -20,6 +21,7 @@ export const useBuilderEdges = () => {
   const { addScene } = useAddScene();
   const { builderService, story } = useBuilderContext();
   const queryClient = useQueryClient();
+  const handleActionTargetsError = useHandleActionTargetsError();
 
   const _updateNodeAndEdges = (updatedScene: Scene) => {
     const node = sceneToNodeAdapter({ scene: updatedScene, story });
@@ -56,6 +58,8 @@ export const useBuilderEdges = () => {
       // Update React Flow
       addEdges([edge]);
       _updateNodeAndEdges(scene);
+      // Handle (add or remove) errors on action targets
+      handleActionTargetsError(scene, action);
 
       // Invalidate scene queries used in builder editor
       const queryKey = makeGetSceneQueryOptions(sourceSceneKey).queryKey;
@@ -136,11 +140,15 @@ export const useBuilderEdges = () => {
           };
         }),
       );
-      // TODO: if probabilities don't add up to 100% here we should set an error (for example if there are 3 connections and one is deleted)
 
-      // Update React Flow
-      Object.values(updatedScenesByKey).forEach(_updateNodeAndEdges);
-
+      Object.values(updatedScenesByKey).forEach((scene) => {
+        // Update React Flow
+        _updateNodeAndEdges(scene);
+        scene.actions.forEach((action) =>
+          // Handle (add or remove) errors on action targets
+          handleActionTargetsError(scene, action),
+        );
+      });
       // Invalidate scene queries used in builder editor
       edges.forEach((edge) => {
         const sourceSceneKey = edge.source;

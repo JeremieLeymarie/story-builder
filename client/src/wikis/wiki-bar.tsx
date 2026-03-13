@@ -141,7 +141,6 @@ export const WikiBar = () => {
           trigger={
             <Button
               variant="ghost"
-              size="sm"
               className="text-muted-foreground mt-1 flex items-center gap-2 text-xs"
             >
               New category <PlusIcon className="cursor-pointer" size={14} />

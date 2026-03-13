@@ -17,8 +17,8 @@ from utils.mongo.base_repository import (
 URL = "/api/save/stories"
 
 
-def test_unauthorized(api_test_infra_no_auth) -> None:
-    response = api_test_infra_no_auth.client.put(URL)
+def test_unauthorized(api_test_infra_no_token) -> None:
+    response = api_test_infra_no_token.client.put(URL)
 
     assert response.status_code == HTTPStatus.UNAUTHORIZED
     assert response.json() == {"detail": "Invalid token"}

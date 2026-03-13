@@ -16,7 +16,7 @@ export const useAutoSubmitForm = <TFormSchema extends FieldValues>({
 
   const debouncer = useDebouncer(
     () => {
-      form.handleSubmit(onSubmit)();
+      form.handleSubmit(onSubmit, (invalid) => console.error(invalid))();
     },
     { wait: debounceAfter },
     () => {}, // Never re-render when internal debouncer state changes

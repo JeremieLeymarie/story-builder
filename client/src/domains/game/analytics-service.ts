@@ -5,6 +5,8 @@ import {
   ProgressRepositoryPort,
 } from "./progress-repository";
 import { round } from "@/lib/number";
+import { Scene } from "@/lib/storage/domain";
+import { EntityNotExistError } from "../errors";
 
 export type VisitedScenesData = [
   {
@@ -19,12 +21,14 @@ export type VisitedScenesData = [
   },
 ];
 
-type AnalyticsServicePort = {
+export type AnalyticsServicePort = {
   getVisitedScenesChart: () => {
     data: VisitedScenesData;
     config: ChartConfig;
     rate: number;
   };
+  isSceneVisited: (sceneKey: string) => boolean;
+  getAllScenes: () => Scene[];
 };
 
 export const _getAnalyticsService = async ({
@@ -42,6 +46,8 @@ export const _getAnalyticsService = async ({
     progressRepository.get(progressKey),
     gameRepository.getScenes(gameKey),
   ]);
+
+  if (!progress) throw new EntityNotExistError("story-progress", progressKey);
 
   return {
     getVisitedScenesChart: () => {
@@ -83,9 +89,16 @@ export const _getAnalyticsService = async ({
         } satisfies ChartConfig,
       };
     },
+
+    isSceneVisited: (sceneKey) => progress?.history.includes(sceneKey) ?? false,
+
+    getAllScenes: () => scenes,
   };
 };
 
+/**
+ * Asynchronously construct a service to synchronously get detailed analytics about a specific story progress
+ */
 export const makeAnalyticsService = async ({
   progressKey,
   gameKey,

@@ -8,6 +8,23 @@ import {
 } from "@/lib/storage/domain";
 import z from "zod";
 
+const characterConfigurationSchema = z.object({
+  key: z.nanoid(),
+  storyKey: z.nanoid(),
+  attributes: z.record(
+    z.string(),
+    z.object({
+      key: z.nanoid(),
+      type: z.literal("numeric"),
+      name: z.string(),
+      description: z.string().optional(),
+      isEditableByPlayer: z.boolean(),
+      visibility: z.union([z.literal("visible"), z.literal("invisible")]),
+      initialValue: z.int(),
+    }),
+  ),
+});
+
 const authorSchema = z
   .object({
     username: z.string(),
@@ -98,8 +115,12 @@ export const importDataSchema = z.object({
     .nullable()
     .optional(),
   theme: gameThemeSchema.optional(),
+  characterConfig: characterConfigurationSchema.optional(),
 });
 
 export type ImportData = z.infer<typeof importDataSchema>;
 export type WikiFromImport = NonNullable<ImportData["wiki"]>;
 export type ThemeFromImport = NonNullable<ImportData["theme"]>;
+export type CharacterConfigFromImport = NonNullable<
+  ImportData["characterConfig"]
+>;

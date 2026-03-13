@@ -7,9 +7,11 @@ import { getTestFactory } from "@/lib/testing/factory";
 import { BuilderContextProvider } from "../use-builder-context";
 import { getStubBuilderService } from "@/domains/builder/stubs/stub-builder-service";
 import { Action, Scene } from "@/lib/storage/domain";
+import { getStubCharacterService } from "@/domains/builder/stubs/stub-character-service";
 
 const factory = getTestFactory();
 const builderSvc = getStubBuilderService();
+const characterSvc = getStubCharacterService();
 
 const useTestHook = () => {
   const edgeActions = useBuilderEdges();
@@ -24,6 +26,7 @@ const makeWrapper = ({ scenes }: { scenes?: Scene[] } = {}) => {
       story={factory.story.builder()}
       scenes={scenes ?? [factory.scene()]}
       builderService={builderSvc}
+      characterService={characterSvc}
       refresh={() => Promise.resolve()}
     >
       <ReactFlowProvider>{children}</ReactFlowProvider>

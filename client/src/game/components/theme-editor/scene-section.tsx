@@ -76,7 +76,6 @@ export const SceneSection = ({ form }: { form: ThemeEditorForm }) => {
                 <p className="text-muted-foreground">--- OR ---</p>
                 <FileDropInput
                   onUploadFile={(v) => field.onChange(v || null)}
-                  size="sm"
                   accept="image"
                   readAs="dataURL"
                 />

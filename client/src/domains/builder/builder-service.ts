@@ -399,9 +399,17 @@ export const _getBuilderService = ({
             type: "builder",
           });
 
+          let oldCharacterAttrToNew: Record<string, string> = {};
+          if (importData.characterConfig)
+            oldCharacterAttrToNew = await importService.createCharacterConfig({
+              newStoryKey: storyResult.data.key,
+              characterConfig: importData.characterConfig,
+            });
+
           const oldScenesToNew = await importService.createScenes({
             story: importData,
             newStoryKey: storyResult.data.key,
+            oldCharacterAttrToNew,
           });
 
           if (importData.theme)
@@ -425,6 +433,7 @@ export const _getBuilderService = ({
             "scene",
             "story",
             "story-theme",
+            "character-configuration",
             "user",
             "wiki",
             "wiki-article",

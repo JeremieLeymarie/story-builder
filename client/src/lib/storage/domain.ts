@@ -1,5 +1,16 @@
 import { LexicalContent } from "../lexical-content";
 
+/* USER */
+
+export type User = {
+  key: string;
+  username: string;
+  email: string;
+  token?: string;
+};
+
+/* STORY & SCENES */
+
 export const STORY_GENRES = [
   "adventure",
   "children",
@@ -18,14 +29,27 @@ export const STORY_GENRES = [
 ] as const;
 export type StoryGenre = (typeof STORY_GENRES)[number];
 
-export type User = {
+export const STORY_TYPE = ["builder", "published", "imported"] as const;
+
+export type CharacterNumericAttribute = {
   key: string;
-  username: string;
-  email: string;
-  token?: string;
+  type: "numeric";
+  name: string;
+  description?: string;
+  isEditableByPlayer: boolean;
+  visibility: "visible" | "invisible";
+  initialValue: number;
 };
 
-export const STORY_TYPE = ["builder", "published", "imported"] as const;
+// Extend this union as we add more attribute types
+// (remember to also update `ProgressCharacterAttribute` union)
+export type CharacterAttribute = CharacterNumericAttribute;
+
+export type CharacterConfiguration = {
+  key: string;
+  storyKey: string;
+  attributes: Record<string, CharacterAttribute>;
+};
 
 type Author = {
   key: string;
@@ -52,6 +76,54 @@ export type LibraryStory = StoryBase & {
 export type BuilderStory = StoryBase & { type: "builder" };
 
 export type Story = LibraryStory | BuilderStory;
+
+type ActionBase = {
+  key: string;
+  text: string;
+  targets: { sceneKey: string; probability: number }[];
+};
+
+type SimpleAction = ActionBase & {
+  type: "simple";
+};
+
+type SceneVisitCondition = {
+  type: "user-did-visit" | "user-did-not-visit";
+  sceneKey: string;
+};
+
+export type CharacterAttributeCondition = {
+  type: "character-attribute";
+  attributeKey: string;
+  comparator: "lower-than" | "greater-than"; // Add more flavors?
+  value: number;
+};
+
+type ActionCondition = SceneVisitCondition | CharacterAttributeCondition;
+
+export const isSceneVisitCondition = (
+  condition: ActionCondition,
+): condition is SceneVisitCondition =>
+  condition.type === "user-did-not-visit" ||
+  condition.type === "user-did-visit";
+
+export type ConditionalAction = ActionBase & {
+  type: "conditional";
+  condition: ActionCondition;
+};
+
+export type Action = SimpleAction | ConditionalAction;
+
+export type BuilderPosition = { x: number; y: number };
+
+export type Scene = {
+  key: string;
+  storyKey: string;
+  title: string;
+  content: LexicalContent;
+  actions: Action[];
+  builderParams: { position: BuilderPosition };
+};
 
 export const TITLE_SIZES = ["small", "medium", "large", "huge"] as const;
 export const ACTION_BUTTON_SIZES = [
@@ -84,35 +156,17 @@ export type StoryTheme = {
   theme: StoryThemeConfig;
 };
 
-type ActionBase = {
-  key: string;
-  text: string;
-  targets: { sceneKey: string; probability: number }[];
+/* STORY PROGRESS */
+
+type ProgressCharacterNumericAttribute = CharacterNumericAttribute & {
+  value: number;
 };
 
-type SimpleAction = ActionBase & {
-  type: "simple";
-};
+// Extend this union as we add more types
+type ProgressCharacterAttribute = ProgressCharacterNumericAttribute;
 
-type ConditionalAction = ActionBase & {
-  type: "conditional";
-  condition: {
-    type: "user-did-visit" | "user-did-not-visit";
-    sceneKey: string;
-  };
-};
-
-export type Action = SimpleAction | ConditionalAction;
-
-export type BuilderPosition = { x: number; y: number };
-
-export type Scene = {
-  key: string;
-  storyKey: string;
-  title: string;
-  content: LexicalContent;
-  actions: Action[];
-  builderParams: { position: BuilderPosition };
+type ProgressCharacter = {
+  attributes: Record<string, ProgressCharacterAttribute>;
 };
 
 export type StoryProgress = {
@@ -121,11 +175,13 @@ export type StoryProgress = {
   userKey: string | undefined;
   history: string[];
   currentSceneKey: string;
-  character?: Record<string, unknown>;
+  character?: ProgressCharacter;
   inventory?: Record<string, unknown>;
   lastPlayedAt: Date;
   finished?: boolean;
 };
+
+/* WIKI */
 
 export type Wiki = {
   key: string;
@@ -168,10 +224,13 @@ export type WikiArticleLink = {
   entityKey: string;
 };
 
+/* ALL ENTITIES */
+
 export const ENTITIES = [
   "story",
   "scene",
   "story-theme",
+  "character-configuration",
   "user",
   "story-progress",
   "wiki",
