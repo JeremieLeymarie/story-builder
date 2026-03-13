@@ -1,4 +1,10 @@
-import { Scene, Story, StoryProgress } from "@/lib/storage/domain";
+import {
+  CharacterConfiguration,
+  ProgressCharacter,
+  Scene,
+  Story,
+  StoryProgress,
+} from "@/lib/storage/domain";
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 import {
   getImportService,
@@ -7,17 +13,53 @@ import {
 } from "@/services/common/import-service";
 import { ImportData } from "@/services/common/schema";
 import { GameRepositoryPort, getDexieGameRepository } from "./game-repository";
+import {
+  CharacterRepositoryPort,
+  getDexieCharacterRepository,
+} from "./character-repository";
 
 // TODO: uniformize responses
 export const _getLibraryService = ({
   localRepository,
   importService,
   gameRepository,
+  characterRepository,
 }: {
   localRepository: LocalRepositoryPort;
   importService: ImportServicePort;
   gameRepository: GameRepositoryPort;
+  characterRepository: CharacterRepositoryPort;
 }) => {
+  const _createInitialCharacter = (characterConfig: CharacterConfiguration) => {
+    return {
+      attributes: Object.fromEntries(
+        Object.values(characterConfig.attributes).map(
+          ({
+            key,
+            type,
+            name,
+            description,
+            isEditableByPlayer,
+            visibility,
+            initialValue,
+          }) => [
+            key,
+            {
+              key,
+              type,
+              name,
+              description,
+              isEditableByPlayer,
+              visibility,
+              initialValue,
+              value: initialValue,
+            },
+          ],
+        ),
+      ),
+    } satisfies ProgressCharacter;
+  };
+
   const _createBlankStoryProgress = async ({
     storyKey,
   }: {
@@ -25,6 +67,7 @@ export const _getLibraryService = ({
   }) => {
     const user = await localRepository.getUser();
     const story = await localRepository.getStory(storyKey);
+    const characterConfig = await characterRepository.get(storyKey);
 
     if (!story) throw new Error(`Error: invalid story key: ${storyKey}`);
 
@@ -40,6 +83,9 @@ export const _getLibraryService = ({
       currentSceneKey: story.firstSceneKey,
       lastPlayedAt: new Date(),
       userKey: user?.key ?? undefined,
+      ...(characterConfig
+        ? { character: _createInitialCharacter(characterConfig) }
+        : {}),
     });
 
     return progress;
@@ -279,4 +325,5 @@ export const getLibraryService = () =>
     localRepository: getLocalRepository(),
     importService: getImportService(),
     gameRepository: getDexieGameRepository(),
+    characterRepository: getDexieCharacterRepository(),
   });

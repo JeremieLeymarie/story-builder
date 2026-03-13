@@ -165,7 +165,7 @@ type ProgressCharacterNumericAttribute = CharacterNumericAttribute & {
 // Extend this union as we add more types
 type ProgressCharacterAttribute = ProgressCharacterNumericAttribute;
 
-type ProgressCharacter = {
+export type ProgressCharacter = {
   attributes: Record<string, ProgressCharacterAttribute>;
 };
 

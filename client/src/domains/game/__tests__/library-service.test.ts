@@ -2,7 +2,7 @@ import {
   getLocalRepositoryStub,
   MockLocalRepository,
 } from "@/repositories/stubs";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, test, vi } from "vitest";
 import {
   BASIC_SCENE,
   BASIC_STORY,
@@ -26,6 +26,10 @@ import {
   MockGameRepository,
 } from "../stubs/game-repository-stub";
 import { Scene } from "@/lib/storage/domain";
+import {
+  getStubCharacterRepository,
+  MockCharacterRepository,
+} from "../stubs/stub-character-repository";
 
 const factory = getTestFactory();
 
@@ -34,16 +38,19 @@ describe("library-service", () => {
   let localRepository: MockLocalRepository;
   let importService: MockImportService;
   let gameRepository: MockGameRepository;
+  let characterRepository: MockCharacterRepository;
 
   beforeEach(() => {
     localRepository = getLocalRepositoryStub();
     importService = getImportServiceStub();
     gameRepository = getStubGameRepository();
+    characterRepository = getStubCharacterRepository();
 
     libraryService = _getLibraryService({
       localRepository,
       importService,
       gameRepository,
+      characterRepository,
     });
 
     vi.useFakeTimers();
@@ -269,8 +276,9 @@ describe("library-service", () => {
   });
 
   describe("createBlankStoryProgress", () => {
-    it("should create a story progress in the local database", async () => {
+    test("simple story configuration", async () => {
       localRepository.getStoryProgress.mockResolvedValueOnce(null);
+      characterRepository.get.mockResolvedValueOnce(null);
 
       const createdProgress = await libraryService.createBlankStoryProgress({
         storyKey: BASIC_STORY.key,
@@ -286,6 +294,70 @@ describe("library-service", () => {
       });
 
       expect(createdProgress).toStrictEqual(BASIC_STORY_PROGRESS);
+    });
+
+    test("with character config", async () => {
+      const cc = factory.characterConfig({
+        attributes: {
+          "dex-key": {
+            key: "dex-key",
+            name: "dex",
+            description: "dexterity",
+            initialValue: 10,
+            isEditableByPlayer: true,
+            type: "numeric",
+            visibility: "visible",
+          },
+          "cha-key": {
+            key: "cha-key",
+            name: "cha",
+            description: "charisma",
+            initialValue: -10,
+            isEditableByPlayer: false,
+            type: "numeric",
+            visibility: "invisible",
+          },
+        },
+      });
+      localRepository.getStoryProgress.mockResolvedValueOnce(null);
+      characterRepository.get.mockResolvedValueOnce(cc);
+
+      await libraryService.createBlankStoryProgress({
+        storyKey: BASIC_STORY.key,
+      });
+
+      expect(localRepository.getUser).toHaveBeenCalled();
+      expect(localRepository.createStoryProgress).toHaveBeenCalledWith({
+        history: [BASIC_STORY.firstSceneKey],
+        currentSceneKey: BASIC_STORY.firstSceneKey,
+        lastPlayedAt: new Date(),
+        userKey: BASIC_USER.key,
+        storyKey: BASIC_STORY.key,
+        character: {
+          attributes: {
+            "dex-key": {
+              key: "dex-key",
+              name: "dex",
+              description: "dexterity",
+              initialValue: 10,
+              value: 10, // value is created
+              isEditableByPlayer: true,
+              type: "numeric",
+              visibility: "visible",
+            },
+            "cha-key": {
+              key: "cha-key",
+              name: "cha",
+              description: "charisma",
+              initialValue: -10,
+              value: -10, // value is created
+              isEditableByPlayer: false,
+              type: "numeric",
+              visibility: "invisible",
+            },
+          },
+        },
+      });
     });
   });
 

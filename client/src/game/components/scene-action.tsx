@@ -40,26 +40,31 @@ const ActionButton = ({
   text: string;
   isVisible: boolean;
   actionTheme: StoryThemeConfig["action"];
-}) => (
-  <Button
-    className={cn(
-      "h-auto cursor-pointer py-1 text-left text-wrap whitespace-normal select-none",
-    )}
-    style={{
-      backgroundColor: actionTheme.backgroundColor,
-      color: actionTheme.textColor,
-    }}
-    disabled={!isVisible}
-    size={match(actionTheme.size)
-      .with("huge", () => "xl" as const)
-      .with("large", () => "lg" as const)
-      .with("medium", () => "default" as const)
-      .with("small", () => "sm" as const)
-      .exhaustive()}
-  >
-    {isVisible ? text : "????"}
-  </Button>
-);
+}) => {
+  const [className, size] = match(actionTheme.size)
+    .with("huge", () => ["py-3 px-4.5", "xl"] as const)
+    .with("large", () => ["py-2 px-3.5", "lg"] as const)
+    .with("medium", () => ["py-1.5", "default"] as const)
+    .with("small", () => ["py-1", "sm"] as const)
+    .exhaustive();
+
+  return (
+    <Button
+      className={cn(
+        "h-auto cursor-pointer text-left text-wrap whitespace-normal select-none",
+        className,
+      )}
+      style={{
+        backgroundColor: actionTheme.backgroundColor,
+        color: actionTheme.textColor,
+      }}
+      disabled={!isVisible}
+      size={size}
+    >
+      {isVisible ? text : "????"}
+    </Button>
+  );
+};
 
 export const SceneAction = ({
   action,
