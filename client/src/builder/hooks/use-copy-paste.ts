@@ -74,7 +74,11 @@ export const useCopyPaste = () => {
         const scenes = clipboardScenesSchema.parse(data);
         duplicateScenes(scenes);
       } else {
-        // Paste from freeform text
+        handleError("Invalid clipboard data");
+      }
+    } catch (error) {
+      // Non-JSON string
+      if (typeof text === "string") {
         addScene({
           payload: {
             ...DEFAULT_SCENE,
@@ -82,9 +86,9 @@ export const useCopyPaste = () => {
           },
           position: "auto",
         });
+      } else {
+        handleError(error);
       }
-    } catch (error) {
-      handleError(error);
     }
   };
 
