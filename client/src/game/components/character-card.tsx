@@ -27,7 +27,14 @@ export const CharacterCard = ({
 
   return (
     <Card className="gap-1 py-2">
-      <CardHeader className="flex items-center justify-between">
+      <CardHeader
+        className="flex items-center justify-between"
+        onClick={() => {
+          setSettings((prev) => ({
+            isCharacterCardOpen: !prev.isCharacterCardOpen,
+          }));
+        }}
+      >
         <CardTitle className="flex items-center gap-1">
           <BookUserIcon size={18} /> Your character
         </CardTitle>
