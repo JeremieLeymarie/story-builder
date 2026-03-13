@@ -4,7 +4,7 @@ import { useReactFlow, useStoreApi } from "@xyflow/react";
 import { BuilderNode } from "../types";
 import { getUserOS } from "@/lib/get-os";
 import { useCopyPaste } from "./use-copy-paste";
-import { useEffect } from "react";
+import { useEffect, useEffectEvent } from "react";
 import { useBuilderEditorStore } from "./use-builder-editor-store";
 import { useAddScene } from "./use-add-scene";
 
@@ -56,7 +56,7 @@ export const useBuilderShortCuts = ({
     },
   };
 
-  const handleKeyDown = (e: KeyboardEvent) => {
+  const handleKeyDown = useEffectEvent((e: KeyboardEvent) => {
     if (e.isComposing || isAnyInputFocused()) return;
     const key = e.key.toLocaleLowerCase();
     for (const binding of Object.keys(shortcuts)) {
@@ -72,7 +72,7 @@ export const useBuilderShortCuts = ({
       if (binding.match("alt") && !e.altKey) continue;
       shortcuts[binding]!(e);
     }
-  };
+  });
 
   useEffect(() => {
     document.body.addEventListener("keydown", handleKeyDown);
@@ -85,5 +85,5 @@ export const useBuilderShortCuts = ({
       document.body.removeEventListener("cut", onCopyOrCut);
       document.body.removeEventListener("paste", onPaste);
     };
-  });
+  }, [onCopyOrCut, onPaste]);
 };
