@@ -1,6 +1,7 @@
 import { Controller, FieldArrayWithId } from "react-hook-form";
 import { Button, Input } from "@/design-system/primitives";
-import { SettingsIcon, Trash2Icon } from "lucide-react";
+import { GripVerticalIcon, SettingsIcon, Trash2Icon } from "lucide-react";
+import { DragEvent } from "react";
 import { FormError } from "@/design-system/components";
 import {
   Select,
@@ -28,6 +29,13 @@ import {
 } from "./hooks/use-condition-change";
 import { Separator } from "@/design-system/primitives/separator";
 
+export type DragHandlers = {
+  onDragStart: (e: DragEvent<HTMLDivElement>) => void;
+  onDragOver: (e: DragEvent<HTMLDivElement>) => void;
+  onDrop: (e: DragEvent<HTMLDivElement>) => void;
+  onDragEnd: (e: DragEvent<HTMLDivElement>) => void;
+};
+
 const useConditionOptions = ({
   hasCharacterConfig,
 }: {
@@ -46,6 +54,10 @@ const useConditionOptions = ({
   return options;
 };
 
+const setDragOver = (e: DragEvent<HTMLDivElement>, value: string) => {
+  e.currentTarget.dataset.dragOver = value;
+};
+
 // TODO: test this
 export const ActionItem = ({
   actionField,
@@ -53,12 +65,14 @@ export const ActionItem = ({
   actionIndex,
   characterConfig,
   removeAction,
+  dragHandlers,
 }: {
   actionField: FieldArrayWithId<EditActionsSchema, "actions", "id">;
   form: EditActionsForm;
   actionIndex: number;
   characterConfig: CharacterConfiguration | null;
   removeAction: (index: number) => void;
+  dragHandlers: DragHandlers;
 }) => {
   const hasCharacterConfig =
     Object.keys(characterConfig?.attributes ?? {}).length > 0;
@@ -82,8 +96,32 @@ export const ActionItem = ({
   const conditionOptions = useConditionOptions({ hasCharacterConfig });
 
   return (
-    <div className="my-2" key={actionField.id}>
+    <div
+      className="my-2 border-t-2 border-transparent data-[drag-over=true]:border-primary"
+      key={actionField.id}
+      draggable
+      onDragStart={dragHandlers.onDragStart}
+      onDragOver={(e) => {
+        dragHandlers.onDragOver(e);
+        setDragOver(e, "true");
+      }}
+      onDragLeave={(e) => {
+        setDragOver(e, "false");
+      }}
+      onDrop={(e) => {
+        dragHandlers.onDrop(e);
+        setDragOver(e, "false");
+      }}
+      onDragEnd={(e) => {
+        dragHandlers.onDragEnd(e);
+        setDragOver(e, "false");
+      }}
+    >
       <div className="flex items-center gap-2">
+        <GripVerticalIcon
+          size={18}
+          className="shrink-0 cursor-grab text-muted-foreground active:cursor-grabbing"
+        />
         <Controller
           control={form.control}
           name={`actions.${actionIndex}.text`}

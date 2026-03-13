@@ -5,8 +5,37 @@ import { useBuilderActions } from "@/builder/hooks/use-builder-actions";
 import { useGetScene } from "@/builder/hooks/use-get-scene";
 import { SimpleLoader } from "@/design-system/components/simple-loader";
 import { CharacterConfiguration, Scene } from "@/lib/storage/domain";
+import { DragEvent, useRef } from "react";
 import { useGetCharacterConfig } from "@/builder/hooks/use-get-character-config";
-import { ActionItem } from "./action-item";
+import { ActionItem, DragHandlers } from "./action-item";
+
+const useActionDrag = (move: (from: number, to: number) => void) => {
+  const dragIndexRef = useRef<number | null>(null);
+
+  const getDragHandlers = (index: number): DragHandlers => ({
+    onDragStart(e: DragEvent<HTMLDivElement>) {
+      dragIndexRef.current = index;
+      e.dataTransfer.effectAllowed = "move";
+    },
+    onDragOver(e: DragEvent<HTMLDivElement>) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+    },
+    onDrop(e: DragEvent<HTMLDivElement>) {
+      e.preventDefault();
+      const fromIndex = dragIndexRef.current;
+      if (fromIndex !== null && fromIndex !== index) {
+        move(fromIndex, index);
+      }
+      dragIndexRef.current = null;
+    },
+    onDragEnd() {
+      dragIndexRef.current = null;
+    },
+  });
+
+  return { getDragHandlers };
+};
 
 const ActionsFormContent = ({
   scene,
@@ -16,7 +45,7 @@ const ActionsFormContent = ({
   characterConfig: CharacterConfiguration | null;
 }) => {
   const { updateScene, makeEmptyActionPayload } = useBuilderActions();
-  const { append, fields, form, remove } = useEditActionsForm({
+  const { append, fields, form, remove, move } = useEditActionsForm({
     actions: scene.actions,
     onSave: (payload) => updateScene({ key: scene.key, ...payload }),
   });
@@ -24,6 +53,8 @@ const ActionsFormContent = ({
   const removeAction = (index?: number | number[]) => {
     remove(index);
   };
+
+  const { getDragHandlers } = useActionDrag(move);
 
   return (
     <Form {...form}>
@@ -56,6 +87,7 @@ const ActionsFormContent = ({
                 actionIndex={actionIndex}
                 characterConfig={characterConfig}
                 removeAction={removeAction}
+                dragHandlers={getDragHandlers(actionIndex)}
               />
             ))}
           </div>
