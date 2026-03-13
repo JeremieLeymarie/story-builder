@@ -36,18 +36,14 @@ export const useEdgeProbability = ({
   const handleActionError = useHandleActionTargetsError();
   const queryClient = useQueryClient();
 
-  const [validationError, setValidationError] = useState<string | null>(null);
+  const [validationError] = useState<string | null>(null);
 
   const onChange = (e: FocusEvent) => {
     const val = parseInt((e.target as HTMLInputElement).value);
     const parsed = schema.safeParse(val);
     if (parsed.error) {
-      const message =
-        "Invalid value: only values between 0 and 100 are allowed";
-      setValidationError(message);
-      toast.error(message);
+      toast.error("Invalid value: only values between 0 and 100 are allowed");
     } else {
-      setValidationError(null);
       builderService
         .updateTargetProbability({
           sourceSceneKey: source,

@@ -1,47 +1,35 @@
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  Input,
-} from "@/design-system/primitives";
-import { FormError } from "@/design-system/components/form-error";
+import { Form, FormMessage, Input } from "@/design-system/primitives";
 import { useBuilderActions } from "@/builder/hooks/use-builder-actions";
 import { Action, Scene } from "@/lib/storage/domain";
 import {
   useEditRandomEventForm,
   RandomEventSchema,
-  parseProbability,
 } from "@/builder/hooks/use-random-event-form";
 import { useProbabilityMask } from "@/builder/hooks/use-probability-mask";
-import { ControllerRenderProps } from "react-hook-form";
+import { Controller, ControllerRenderProps } from "react-hook-form";
+import {
+  Field,
+  FieldError,
+  FieldLabel,
+} from "@/design-system/primitives/field";
+import { FormError } from "@/design-system/components";
 
 const ProbabilityInput = ({
   field,
   fieldState,
-  targetSceneKey,
-  hasRootError,
-  onProbabilityBlur,
 }: {
   field: ControllerRenderProps<RandomEventSchema, string>;
   fieldState: { invalid: boolean };
-  targetSceneKey: string;
-  hasRootError: boolean;
-  onProbabilityBlur: (targetSceneKey: string, value: string) => void;
 }) => {
   const inputRef = useProbabilityMask();
 
   return (
     <Input
       className="max-w-15 min-w-15"
-      aria-invalid={fieldState.invalid || hasRootError}
+      aria-invalid={fieldState.invalid}
       value={field.value}
       onInput={(e) => {
         field.onChange(e.currentTarget.value);
-      }}
-      onBlur={() => {
-        onProbabilityBlur(targetSceneKey, field.value);
       }}
       ref={(node) => {
         inputRef(node);
@@ -62,7 +50,7 @@ export const RandomEventsForm = ({
 }) => {
   const { updateTargetProbability } = useBuilderActions();
 
-  const { form, handleProbabilityBlur } = useEditRandomEventForm({
+  const { form } = useEditRandomEventForm({
     defaultValues: Object.fromEntries(
       action.targets.map((target) => [
         target.sceneKey,
@@ -74,48 +62,54 @@ export const RandomEventsForm = ({
     updateTargetProbability,
   });
 
-  const values = form.watch();
-  const total = Object.values(values).reduce(
-    (sum, v) => sum + parseProbability(v),
-    0,
-  );
-  const hasRootError = total !== 100;
-
+  console.log(form.formState.errors);
+  // const values = form.watch();
+  // const total = Object.values(values).reduce(
+  //   (sum, v) => sum + parseProbability(v),
+  //   0,
+  // );
+  // const hasRootError = total !== 100;
   return (
     <Form {...form}>
       <form onSubmit={(e) => e.preventDefault()}>
         <div className="w-112.5 w-full space-y-4">
-          <div className="h-75">
+          <div className="flex h-75 flex-col gap-3">
             {action.targets.map((target) => {
               const scene = scenesByKey[target.sceneKey]!;
               return (
-                <FormField
+                <Controller
                   key={scene.key}
                   control={form.control}
                   name={scene.key}
                   render={({ field, fieldState }) => (
-                    <FormItem className="flex justify-between">
-                      <FormLabel className="mt-3 mb-3 truncate">
-                        {scene.title}
-                      </FormLabel>
-                      <ProbabilityInput
-                        field={field}
-                        fieldState={fieldState}
-                        targetSceneKey={target.sceneKey}
-                        hasRootError={hasRootError}
-                        onProbabilityBlur={handleProbabilityBlur}
-                      />
-                      <FormMessage />
-                    </FormItem>
+                    <Field data-invalid={fieldState.invalid}>
+                      <div className="flex items-center justify-between gap-3">
+                        <FieldLabel
+                          className="flex-1 truncate"
+                          htmlFor={field.name}
+                        >
+                          {scene.title}
+                        </FieldLabel>
+                        <ProbabilityInput
+                          field={field}
+                          fieldState={fieldState}
+                        />
+                      </div>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
                   )}
                 />
               );
             })}
           </div>
-          {hasRootError && (
+          {form.formState.errors.root && (
             <FormError>
+              ERROR
+              {/* {" "}
               Le total des probabilités doit être égal à 100% (actuellement{" "}
-              {total}%)
+              {total}%) */}
             </FormError>
           )}
         </div>
