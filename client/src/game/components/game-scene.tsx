@@ -9,6 +9,7 @@ import { RichText } from "@/design-system/components/editor/components/rich-text
 import { EditorContextProvider } from "@/design-system/components/editor/hooks/use-editor-context";
 import { WikiNode } from "@/builder/lexical-wiki-node";
 import { SceneTitle } from "./scene-title";
+import { CharacterCard } from "./character-card";
 
 type BaseProps = {
   scene: Scene;
@@ -46,8 +47,12 @@ export const GameScene = (props: GameSceneProps) => {
         backgroundSize: "cover",
       }}
     >
-      <div className="w-11/12 lg:w-8/12">
-        <div className="w-full px-6 py-8">
+      <div className="w-11/12 px-6 lg:w-8/12">
+        {/* TODO: enable progress in test mode (https://github.com/JeremieLeymarie/story-builder/issues/479) */}
+        {props.mode === "game" && (
+          <CharacterCard character={props.progress.character} />
+        )}
+        <div className="w-full py-4">
           <div>
             <SceneTitle
               color={theme.title.color}
