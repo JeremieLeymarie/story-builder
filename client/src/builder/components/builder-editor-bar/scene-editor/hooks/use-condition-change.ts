@@ -46,6 +46,12 @@ export const useConditionChange = ({
     actionField.type === "conditional" ? actionField.condition.type : ALWAYS,
   );
 
+  /** This is a hack around RHF's system:
+   * the form field responsible for changing the condition does not update form values directly,
+   * because action.condition is not defined for simple actions
+   * Instead we set form values imperatively in this function.
+   * ⚠️ We have to set `shouldDirty` to true to trigger form validation in auto-submit form
+   * */
   const onConditionChange = (condition: string) => {
     assertIsCondition(condition);
     const currentAction = form.getValues(`actions.${actionIndex}`);
@@ -64,11 +70,15 @@ export const useConditionChange = ({
             ? currentAction.condition.sceneKey
             : story.firstSceneKey;
 
-        form.setValue(`actions.${actionIndex}`, {
-          ...commonFields,
-          type: "conditional",
-          condition: { type: condition, sceneKey },
-        });
+        form.setValue(
+          `actions.${actionIndex}`,
+          {
+            ...commonFields,
+            type: "conditional",
+            condition: { type: condition, sceneKey },
+          },
+          { shouldDirty: true },
+        );
       })
       .with("character-attribute", (condition) => {
         // This should never happen
@@ -77,22 +87,30 @@ export const useConditionChange = ({
             `Cannot setup conditional on character if no character exists in story`,
           );
 
-        form.setValue(`actions.${actionIndex}`, {
-          ...commonFields,
-          type: "conditional",
-          condition: {
-            type: condition,
-            attributeKey: Object.keys(characterConfig!.attributes)[0]!, // Random key in character's attributes
-            comparator: "greater-than",
-            value: 0,
+        form.setValue(
+          `actions.${actionIndex}`,
+          {
+            ...commonFields,
+            type: "conditional",
+            condition: {
+              type: condition,
+              attributeKey: Object.keys(characterConfig!.attributes)[0]!, // Random key in character's attributes
+              comparator: "greater-than",
+              value: 0,
+            },
           },
-        });
+          { shouldDirty: true },
+        );
       })
       .with("always", () => {
-        form.setValue(`actions.${actionIndex}`, {
-          ...commonFields,
-          type: "simple",
-        });
+        form.setValue(
+          `actions.${actionIndex}`,
+          {
+            ...commonFields,
+            type: "simple",
+          },
+          { shouldDirty: true },
+        );
       })
       .exhaustive();
 
