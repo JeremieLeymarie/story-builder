@@ -12,17 +12,22 @@ import { Action, Scene } from "@/lib/storage/domain";
 import {
   useEditRandomEventForm,
   RandomEventSchema,
+  parseProbability,
 } from "@/builder/hooks/use-random-event-form";
 import { useProbabilityMask } from "@/builder/hooks/use-probability-mask";
 import { ControllerRenderProps } from "react-hook-form";
 
 const ProbabilityInput = ({
   field,
+  fieldState,
   targetSceneKey,
+  hasRootError,
   onProbabilityBlur,
 }: {
   field: ControllerRenderProps<RandomEventSchema, string>;
+  fieldState: { invalid: boolean };
   targetSceneKey: string;
+  hasRootError: boolean;
   onProbabilityBlur: (targetSceneKey: string, value: string) => void;
 }) => {
   const inputRef = useProbabilityMask();
@@ -30,6 +35,7 @@ const ProbabilityInput = ({
   return (
     <Input
       className="max-w-15 min-w-15"
+      aria-invalid={fieldState.invalid || hasRootError}
       value={field.value}
       onInput={(e) => {
         field.onChange(e.currentTarget.value);
@@ -54,7 +60,7 @@ export const RandomEventsForm = ({
   action: Action;
   sourceScene: Scene;
 }) => {
-  const { updateScene } = useBuilderActions();
+  const { updateTargetProbability } = useBuilderActions();
 
   const { form, handleProbabilityBlur } = useEditRandomEventForm({
     defaultValues: Object.fromEntries(
@@ -65,8 +71,15 @@ export const RandomEventsForm = ({
     ),
     sourceScene,
     action,
-    updateScene,
+    updateTargetProbability,
   });
+
+  const values = form.watch();
+  const total = Object.values(values).reduce(
+    (sum, v) => sum + parseProbability(v),
+    0,
+  );
+  const hasRootError = total !== 100;
 
   return (
     <Form {...form}>
@@ -80,14 +93,16 @@ export const RandomEventsForm = ({
                   key={scene.key}
                   control={form.control}
                   name={scene.key}
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <FormItem className="flex justify-between">
                       <FormLabel className="mt-3 mb-3 truncate">
                         {scene.title}
                       </FormLabel>
                       <ProbabilityInput
                         field={field}
+                        fieldState={fieldState}
                         targetSceneKey={target.sceneKey}
+                        hasRootError={hasRootError}
                         onProbabilityBlur={handleProbabilityBlur}
                       />
                       <FormMessage />
@@ -97,8 +112,11 @@ export const RandomEventsForm = ({
               );
             })}
           </div>
-          {form.formState.errors.root && (
-            <FormError>{form.formState.errors.root.message}</FormError>
+          {hasRootError && (
+            <FormError>
+              Le total des probabilités doit être égal à 100% (actuellement{" "}
+              {total}%)
+            </FormError>
           )}
         </div>
       </form>

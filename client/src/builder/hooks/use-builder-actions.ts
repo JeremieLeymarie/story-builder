@@ -17,15 +17,31 @@ export const useBuilderActions = () => {
       const node = sceneToNodeAdapter({ scene: updated, story });
       setNodes((prev) =>
         prev.map((n) =>
-          n.data.key === updated.key
-            ? { ...n, data: node.data } // Only copy data to preserve UI states (selection for example)
-            : n,
+          n.data.key === updated.key ? { ...n, data: node.data } : n,
         ),
       );
 
-      // pas oublier que ca ne declanche pas les erreur et que le form ne valide pas si les pourcentage sont juste
       const edges = sceneToEdgesAdapter(updated);
       edges.forEach((edge) => updateEdgeData(edge.id, edge.data));
+    } catch (err) {
+      handleError(err);
+    }
+  };
+
+  const updateTargetProbability = async (
+    props: Parameters<typeof builderService.updateTargetProbability>[0],
+  ) => {
+    try {
+      const updated = await builderService.updateTargetProbability(props);
+      const node = sceneToNodeAdapter({ scene: updated, story });
+      setNodes((prev) =>
+        prev.map((n) =>
+          n.data.key === updated.key ? { ...n, data: node.data } : n,
+        ),
+      );
+      const edges = sceneToEdgesAdapter(updated);
+      edges.forEach((edge) => updateEdgeData(edge.id, edge.data));
+      return updated;
     } catch (err) {
       handleError(err);
     }
@@ -44,6 +60,7 @@ export const useBuilderActions = () => {
 
   return {
     updateScene,
+    updateTargetProbability,
     setFirstScene,
     makeEmptyActionPayload: builderService.makeEmptyActionPayload,
   };

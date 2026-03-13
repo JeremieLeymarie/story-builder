@@ -6,17 +6,17 @@ import { useBuilderActions } from "./use-builder-actions";
 import { useBuilderContext } from "./use-builder-context";
 import { useBuilderErrorStore } from "./use-builder-error-store";
 import { makeInvalidTargetPercentageError } from "../builder-errors";
-import { useQueryClient } from "@tanstack/react-query";
-import { makeGetSceneQueryOptions } from "./use-get-scene";
 
 const probabilitySchema = z.int().min(0).max(100);
 
-const parseProbability = (val: string) => parseInt(val.replace("%", "")) || 0;
+export const parseProbability = (val: string) =>
+  parseInt(val.replace("%", "")) || 0;
 
-const probabilityValue = z.string().refine(
-  (val) => probabilitySchema.safeParse(parseProbability(val)).success,
-  { error: "La probabilité doit être entre 0 et 100" },
-);
+const probabilityValue = z
+  .string()
+  .refine((val) => probabilitySchema.safeParse(parseProbability(val)).success, {
+    error: "La probabilité doit être entre 0 et 100",
+  });
 
 export const randomEventSchema = z
   .record(z.string(), probabilityValue)
@@ -33,18 +33,19 @@ export const useEditRandomEventForm = ({
   defaultValues,
   sourceScene,
   action,
-  updateScene,
+  updateTargetProbability,
 }: {
   defaultValues: RandomEventSchema;
   sourceScene: Scene;
   action: Action;
-  updateScene: ReturnType<typeof useBuilderActions>["updateScene"];
+  updateTargetProbability: ReturnType<
+    typeof useBuilderActions
+  >["updateTargetProbability"];
 }) => {
   const { builderService } = useBuilderContext();
   const [addOrReplaceError, maybeRemoveError] = useBuilderErrorStore(
     (state) => [state.addOrReplaceError, state.maybeRemoveError],
   );
-  const queryClient = useQueryClient();
 
   const form = useForm<RandomEventSchema>({
     resolver: zodResolver(randomEventSchema),
@@ -52,47 +53,33 @@ export const useEditRandomEventForm = ({
     mode: "onChange",
   });
 
-  const handleProbabilityBlur = (targetSceneKey: string, value: string) => {
+  const handleProbabilityBlur = async (
+    targetSceneKey: string,
+    value: string,
+  ) => {
     const newProbability = parseProbability(value);
     if (!probabilitySchema.safeParse(newProbability).success) return;
 
-    updateScene({
-      key: sourceScene.key,
-      actions: sourceScene.actions.map((sceneAction) =>
-        sceneAction.key === action.key
-          ? {
-              ...sceneAction,
-              targets: sceneAction.targets.map((t) =>
-                t.sceneKey === targetSceneKey
-                  ? { ...t, probability: newProbability }
-                  : t,
-              ),
-            }
-          : sceneAction,
-      ),
+    const updated = await updateTargetProbability({
+      sourceSceneKey: sourceScene.key,
+      actionKey: action.key,
+      targetSceneKey,
+      probability: newProbability,
     });
 
-    // Update builder error store so edges reflect the error
-    const updatedAction = {
-      ...action,
-      targets: action.targets.map((t) =>
-        t.sceneKey === targetSceneKey
-          ? { ...t, probability: newProbability }
-          : t,
-      ),
-    };
+    if (!updated) return;
+
+    const updatedAction = updated.actions.find((a) => a.key === action.key);
+    if (!updatedAction) return;
+
     const areTargetsValid =
       builderService.checkActionTargetsValidity(updatedAction);
     const error = makeInvalidTargetPercentageError({
-      scene: sourceScene,
+      scene: updated,
       action: updatedAction,
     });
     if (!areTargetsValid) addOrReplaceError(error);
     else maybeRemoveError(error);
-
-    // Invalidate scene queries used in builder editor
-    const queryKey = makeGetSceneQueryOptions(sourceScene.key).queryKey;
-    queryClient.invalidateQueries({ queryKey });
   };
 
   return { form, handleProbabilityBlur };
