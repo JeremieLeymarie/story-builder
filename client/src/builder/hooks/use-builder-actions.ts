@@ -17,7 +17,9 @@ export const useBuilderActions = () => {
       const node = sceneToNodeAdapter({ scene: updated, story });
       setNodes((prev) =>
         prev.map((n) =>
-          n.data.key === updated.key ? { ...n, data: node.data } : n,
+          n.data.key === updated.key
+            ? { ...n, data: node.data } // Only copy data to preserve UI states (selection for example)
+            : n,
         ),
       );
 
