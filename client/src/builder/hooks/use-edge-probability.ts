@@ -70,6 +70,7 @@ export const useEdgeProbability = ({
           if (!areTargetsValid) addOrReplaceError(error);
           else maybeRemoveError(error);
 
+          // Invalidate scene queries used in builder editor
           const queryKey = makeGetSceneQueryOptions(source).queryKey;
           queryClient.invalidateQueries({ queryKey });
         })

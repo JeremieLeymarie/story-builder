@@ -57,6 +57,7 @@ export const useBuilderEdges = () => {
       addEdges([edge]);
       _updateNodeAndEdges(scene);
 
+      // Invalidate scene queries used in builder editor
       const queryKey = makeGetSceneQueryOptions(sourceSceneKey).queryKey;
       queryClient.invalidateQueries({ queryKey });
     } catch (e) {
@@ -135,11 +136,12 @@ export const useBuilderEdges = () => {
           };
         }),
       );
-
+      // TODO: if probabilities don't add up to 100% here we should set an error (for example if there are 3 connections and one is deleted)
       // Update React Flow
       Object.values(updatedScenesByKey).forEach(_updateNodeAndEdges);
 
       edges.forEach((edge) => {
+        // Invalidate scene queries used in builder editor
         const sourceSceneKey = edge.source;
         const queryKey = makeGetSceneQueryOptions(sourceSceneKey).queryKey;
         queryClient.invalidateQueries({ queryKey });
