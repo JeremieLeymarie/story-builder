@@ -97,7 +97,7 @@ export const ActionItem = ({
 
   return (
     <div
-      className="my-2 border-t-2 border-transparent data-[drag-over=true]:border-primary"
+      className="data-[drag-over=true]:border-primary my-2 border-t-2 border-transparent"
       key={actionField.id}
       draggable
       onDragStart={dragHandlers.onDragStart}
@@ -120,7 +120,7 @@ export const ActionItem = ({
       <div className="flex items-center gap-2">
         <GripVerticalIcon
           size={18}
-          className="shrink-0 cursor-grab text-muted-foreground active:cursor-grabbing"
+          className="text-muted-foreground shrink-0 cursor-grab active:cursor-grabbing"
         />
         <Controller
           control={form.control}
