@@ -1,9 +1,8 @@
-import { Form, FormMessage, Input } from "@/design-system/primitives";
-import { useBuilderActions } from "@/builder/hooks/use-builder-actions";
+import { Form, Input } from "@/design-system/primitives";
 import { Action, Scene } from "@/lib/storage/domain";
 import {
+  RandomEventSchemaInput,
   useEditRandomEventForm,
-  RandomEventSchema,
 } from "@/builder/hooks/use-random-event-form";
 import { useProbabilityMask } from "@/builder/hooks/use-probability-mask";
 import { Controller, ControllerRenderProps } from "react-hook-form";
@@ -16,17 +15,17 @@ import { FormError } from "@/design-system/components";
 
 const ProbabilityInput = ({
   field,
-  fieldState,
+  isInvalid,
 }: {
-  field: ControllerRenderProps<RandomEventSchema, string>;
-  fieldState: { invalid: boolean };
+  field: ControllerRenderProps<RandomEventSchemaInput, string>;
+  isInvalid: boolean;
 }) => {
   const inputRef = useProbabilityMask();
 
   return (
     <Input
       className="max-w-15 min-w-15"
-      aria-invalid={fieldState.invalid}
+      aria-invalid={isInvalid}
       value={field.value}
       onInput={(e) => {
         field.onChange(e.currentTarget.value);
@@ -48,9 +47,7 @@ export const RandomEventsForm = ({
   action: Action;
   sourceScene: Scene;
 }) => {
-  const { updateTargetProbability } = useBuilderActions();
-
-  const { form } = useEditRandomEventForm({
+  const { form, rootError } = useEditRandomEventForm({
     defaultValues: Object.fromEntries(
       action.targets.map((target) => [
         target.sceneKey,
@@ -59,21 +56,13 @@ export const RandomEventsForm = ({
     ),
     sourceScene,
     action,
-    updateTargetProbability,
   });
 
-  console.log(form.formState.errors);
-  // const values = form.watch();
-  // const total = Object.values(values).reduce(
-  //   (sum, v) => sum + parseProbability(v),
-  //   0,
-  // );
-  // const hasRootError = total !== 100;
   return (
     <Form {...form}>
       <form onSubmit={(e) => e.preventDefault()}>
-        <div className="w-112.5 w-full space-y-4">
-          <div className="flex h-75 flex-col gap-3">
+        <div className="w-full space-y-4">
+          <div className="flex flex-col gap-2">
             {action.targets.map((target) => {
               const scene = scenesByKey[target.sceneKey]!;
               return (
@@ -82,7 +71,7 @@ export const RandomEventsForm = ({
                   control={form.control}
                   name={scene.key}
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
+                    <Field data-invalid={fieldState.invalid} className="gap-1">
                       <div className="flex items-center justify-between gap-3">
                         <FieldLabel
                           className="flex-1 truncate"
@@ -92,7 +81,7 @@ export const RandomEventsForm = ({
                         </FieldLabel>
                         <ProbabilityInput
                           field={field}
-                          fieldState={fieldState}
+                          isInvalid={fieldState.invalid || !!rootError}
                         />
                       </div>
                       {fieldState.invalid && (
@@ -104,14 +93,7 @@ export const RandomEventsForm = ({
               );
             })}
           </div>
-          {form.formState.errors.root && (
-            <FormError>
-              ERROR
-              {/* {" "}
-              Le total des probabilités doit être égal à 100% (actuellement{" "}
-              {total}%) */}
-            </FormError>
-          )}
+          {rootError && <FormError>{rootError}</FormError>}
         </div>
       </form>
     </Form>

@@ -219,11 +219,11 @@ export const _getBuilderService = ({
       return { ...sourceScene, actions };
     },
 
-    checkActionTargetsValidity: (action) => {
+    checkActionTargetsValidity: (targets) => {
       // An action with no targets is always valid
-      if (action.targets.length === 0) return true;
+      if (targets.length === 0) return true;
 
-      const totalPercentages = action.targets.reduce(
+      const totalPercentages = targets.reduce(
         (acc, target) => acc + target.probability,
         0,
       );

@@ -17,7 +17,7 @@ export const useDetectBuilderErrors = ({
   // This is a really naive implementation. We should make this async and probably use zod to do this instead
   scenes.forEach((scene) => {
     scene.actions.forEach((action) => {
-      const isValid = builderService.checkActionTargetsValidity(action);
+      const isValid = builderService.checkActionTargetsValidity(action.targets);
 
       if (!isValid)
         addOrReplaceError(makeInvalidTargetPercentageError({ scene, action }));

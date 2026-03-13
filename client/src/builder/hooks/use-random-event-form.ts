@@ -2,99 +2,95 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, UseFormReturn } from "react-hook-form";
 import z from "zod";
 import { Action, Scene } from "@/lib/storage/domain";
-import { useBuilderActions } from "./use-builder-actions";
 import { useBuilderContext } from "./use-builder-context";
-import { useBuilderErrorStore } from "./use-builder-error-store";
-// import { makeInvalidTargetPercentageError } from "../builder-errors";
 import { useAutoSubmitForm } from "@/hooks/use-auto-submit-form";
+import { useState } from "react";
+import { useBuilderActions } from "./use-builder-actions";
+import { makeGetSceneQueryOptions } from "./use-get-scene";
+import { useQueryClient } from "@tanstack/react-query";
 
-const probabilitySchema = z.int().min(0).max(100);
+const formValuesToTargets = (values: RandomEventSchemaOutput) => {
+  return Object.entries(values).map(([sceneKey, probability]) => ({
+    sceneKey,
+    probability,
+  }));
+};
 
-export const parseProbability = (val: string) =>
-  parseInt(val.replace("%", "")) || 0;
+const useRandomEventSchema = (setRootError: (err: string | null) => void) => {
+  const { builderService } = useBuilderContext();
+  const parseProbability = (val: string) => parseInt(val.replace("%", "")) || 0;
 
-const probabilityValue = z
-  .string()
-  .refine((val) => probabilitySchema.safeParse(parseProbability(val)).success, {
-    error: "La probabilité doit être entre 0 et 100",
-  });
-
-export const randomEventSchema = z
-  .record(z.string(), probabilityValue)
-  .refine(
-    (data) =>
-      Object.values(data).reduce((sum, v) => sum + parseProbability(v), 0) ===
-      100,
-    {
-      error: "Le total des probabilités doit être égal à 100%",
-      path: ["root"],
-    },
+  const probabilityValue = z.preprocess(
+    parseProbability,
+    z.int().min(0).max(100),
   );
 
-export type RandomEventSchema = z.input<typeof randomEventSchema>;
+  const randomEventSchema = z
+    .record(z.string(), probabilityValue)
+    .superRefine((data) => {
+      const isValid = builderService.checkActionTargetsValidity(
+        formValuesToTargets(data),
+      );
+      if (isValid) setRootError(null);
+      else setRootError("Target probabilities should add up to exactly 100%");
+    });
+
+  return randomEventSchema;
+};
+
+export type RandomEventSchemaInput = z.input<
+  ReturnType<typeof useRandomEventSchema>
+>;
+export type RandomEventSchemaOutput = z.output<
+  ReturnType<typeof useRandomEventSchema>
+>;
 
 export const useEditRandomEventForm = ({
   defaultValues,
   sourceScene,
   action,
-  updateTargetProbability,
 }: {
-  defaultValues: RandomEventSchema;
+  defaultValues: RandomEventSchemaInput;
   sourceScene: Scene;
   action: Action;
-  updateTargetProbability: ReturnType<
-    typeof useBuilderActions
-  >["updateTargetProbability"];
 }) => {
-  const { builderService } = useBuilderContext();
-  const [addOrReplaceError, maybeRemoveError] = useBuilderErrorStore(
-    (state) => [state.addOrReplaceError, state.maybeRemoveError],
-  );
+  const [rootError, setRootError] = useState<string | null>(null);
+  const schema = useRandomEventSchema(setRootError);
+  const { updateScene } = useBuilderActions();
+  const queryClient = useQueryClient();
 
-  const form = useForm<RandomEventSchema>({
-    resolver: zodResolver(randomEventSchema),
+  // TODO: validate on load
+  const form = useForm<
+    RandomEventSchemaInput,
+    unknown,
+    RandomEventSchemaOutput
+  >({
+    resolver: zodResolver(schema),
     defaultValues,
-    mode: "onChange",
   });
 
-  // const handleProbabilityBlur = async (
-  //   targetSceneKey: string,
-  //   value: string,
-  // ) => {
-  //   const newProbability = parseProbability(value);
-  //   if (!probabilitySchema.safeParse(newProbability).success) return;
-
-  //   const updated = await updateTargetProbability({
-  //     sourceSceneKey: sourceScene.key,
-  //     actionKey: action.key,
-  //     targetSceneKey,
-  //     probability: newProbability,
-  //   });
-
-  //   if (!updated) return;
-
-  //   const updatedAction = updated.actions.find((a) => a.key === action.key);
-  //   if (!updatedAction) return;
-
-  //   const areTargetsValid =
-  //     builderService.checkActionTargetsValidity(updatedAction);
-  //   const error = makeInvalidTargetPercentageError({
-  //     scene: updated,
-  //     action: updatedAction,
-  //   });
-  //   if (!areTargetsValid) addOrReplaceError(error);
-  //   else maybeRemoveError(error);
-  // };
+  const onSubmit = async (data: RandomEventSchemaOutput) => {
+    console.log({ data });
+    const targets = formValuesToTargets(data);
+    const actions = sourceScene.actions.map((a) =>
+      a.key === action.key ? { ...a, targets } : a,
+    );
+    await updateScene({ key: sourceScene.key, actions });
+    const queryKey = makeGetSceneQueryOptions(sourceScene.key).queryKey;
+    queryClient.invalidateQueries({ queryKey });
+    // TODO: invalidate edges?
+  };
 
   useAutoSubmitForm({
     form,
-    onSubmit: (data) => {
-      console.log(data);
-      // TODO: persist data
-    },
+    onSubmit,
   });
 
-  return { form };
+  return { form, rootError };
 };
 
-export type EditStoryFormType = UseFormReturn<RandomEventSchema>;
+export type EditStoryFormType = UseFormReturn<
+  RandomEventSchemaInput,
+  unknown,
+  RandomEventSchemaOutput
+>;

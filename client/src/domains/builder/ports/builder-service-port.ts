@@ -37,7 +37,7 @@ export type BuilderServicePort = {
     targetSceneKey: string;
     probability: number;
   }) => Promise<Scene>;
-  checkActionTargetsValidity: (action: Action) => boolean;
+  checkActionTargetsValidity: (targets: Action["targets"]) => boolean;
   createStoryWithFirstScene: (
     storyData: Omit<
       WithoutKey<Story>,

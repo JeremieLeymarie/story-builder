@@ -30,25 +30,6 @@ export const useBuilderActions = () => {
     }
   };
 
-  const updateTargetProbability = async (
-    props: Parameters<typeof builderService.updateTargetProbability>[0],
-  ) => {
-    try {
-      const updated = await builderService.updateTargetProbability(props);
-      const node = sceneToNodeAdapter({ scene: updated, story });
-      setNodes((prev) =>
-        prev.map((n) =>
-          n.data.key === updated.key ? { ...n, data: node.data } : n,
-        ),
-      );
-      const edges = sceneToEdgesAdapter(updated);
-      edges.forEach((edge) => updateEdgeData(edge.id, edge.data));
-      return updated;
-    } catch (err) {
-      handleError(err);
-    }
-  };
-
   const setFirstScene = (sceneKey: string) => {
     builderService.changeFirstScene(story.key, sceneKey).catch(handleError);
     setStory({ ...story, firstSceneKey: sceneKey });
@@ -62,7 +43,6 @@ export const useBuilderActions = () => {
 
   return {
     updateScene,
-    updateTargetProbability,
     setFirstScene,
     makeEmptyActionPayload: builderService.makeEmptyActionPayload,
   };

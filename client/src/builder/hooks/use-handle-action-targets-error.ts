@@ -17,7 +17,9 @@ export const useHandleActionTargetsError = () => {
    * @param action the action to check
    */
   const handleActionTargetsError = (scene: Scene, action: Action) => {
-    const areTargetsValid = builderService.checkActionTargetsValidity(action);
+    const areTargetsValid = builderService.checkActionTargetsValidity(
+      action.targets,
+    );
 
     const error = makeInvalidTargetPercentageError({ scene, action });
     if (!areTargetsValid) addOrReplaceError(error);

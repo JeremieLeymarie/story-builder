@@ -8,7 +8,7 @@ export const FormError = ({
 }: PropsWithChildren<{ className?: string }>) => {
   return (
     <FormDescription
-      className={cn("text-destructive text-sm font-medium", className)}
+      className={cn("text-destructive text-sm font-normal", className)}
     >
       {children}
     </FormDescription>
