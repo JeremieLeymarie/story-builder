@@ -103,6 +103,7 @@ def test_load(api_test_infra_authenticated) -> None:
             MongoStoryProgress(
                 key="key",
                 currentSceneKey="another-current-scene-key",
+                createdAt=datetime(1999, 11, 1),
                 finished=True,
                 history=["scene-1"],
                 lastPlayedAt=datetime(1999, 11, 26),
@@ -113,6 +114,7 @@ def test_load(api_test_infra_authenticated) -> None:
             MongoStoryProgress(
                 key="another-key",
                 currentSceneKey="something-current-scene-key",
+                createdAt=datetime(1999, 11, 2),
                 finished=True,
                 history=["some-scene-1", "some-scene-2"],
                 lastPlayedAt=datetime(1999, 11, 26),
@@ -183,6 +185,7 @@ def test_load(api_test_infra_authenticated) -> None:
             {
                 "key": "key",
                 "currentSceneKey": "another-current-scene-key",
+                "createdAt": datetime(1999, 11, 1).isoformat(),
                 "finished": True,
                 "history": ["scene-1"],
                 "lastPlayedAt": datetime(1999, 11, 26).isoformat(),

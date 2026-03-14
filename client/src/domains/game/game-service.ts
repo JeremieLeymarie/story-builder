@@ -32,7 +32,9 @@ export const _getGameService = ({
 
       const persistedProgress =
         (await localRepository.getStoryProgress(progress.key)) ?? progress;
-      const newHistory = persistedProgress.history.includes(currentSceneKey)
+      const isImmediateDuplicate =
+        persistedProgress.history.at(-1) === currentSceneKey;
+      const newHistory = isImmediateDuplicate
         ? persistedProgress.history
         : [...persistedProgress.history, currentSceneKey];
 

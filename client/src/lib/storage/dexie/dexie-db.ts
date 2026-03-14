@@ -121,17 +121,8 @@ export const createDb = (
       await db.scenes.bulkUpdate(bulkPayload);
     });
 
-  if (seed)
-    db.on("populate", async () => {
-      // Add story to builder
-      await db.stories.add(DEMO_STORY);
-      await db.scenes.bulkAdd(DEMO_SCENES);
-
-      // Add story to library
-      await getLibraryService().importStory(DEMO_IMPORTED_STORY);
-    });
-
-  db.version(9)
+  // Migration: add createdAt to story progresses
+  db.version(10)
     .stores(tables)
     .upgrade(async () => {
       const bulkPayload: { key: string; changes: Partial<StoryProgress> }[] =
@@ -149,6 +140,16 @@ export const createDb = (
       if (bulkPayload.length) {
         await db.storyProgresses.bulkUpdate(bulkPayload);
       }
+    });
+
+  if (seed)
+    db.on("populate", async () => {
+      // Add story to builder
+      await db.stories.add(DEMO_STORY);
+      await db.scenes.bulkAdd(DEMO_SCENES);
+
+      // Add story to library
+      await getLibraryService().importStory(DEMO_IMPORTED_STORY);
     });
 
   // Register nanoid middleware
