@@ -101,6 +101,7 @@ class MongoStoryProgress(WithId):
     userKey: str
     history: list[str]
     currentSceneKey: str
+    createdAt: datetime
     lastPlayedAt: datetime
     finished: bool | None
     storyKey: str

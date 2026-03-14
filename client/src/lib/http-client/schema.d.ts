@@ -406,6 +406,11 @@ export interface components {
             /** Currentscenekey */
             currentSceneKey: string;
             /**
+             * Createdat
+             * Format: date-time
+             */
+            createdAt: string;
+            /**
              * Lastplayedat
              * Format: date-time
              */

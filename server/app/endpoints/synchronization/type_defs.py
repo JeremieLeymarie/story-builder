@@ -280,6 +280,7 @@ class StoryProgress(BaseAPIModel):
     user_key: str
     history: list[str]
     current_scene_key: str
+    created_at: datetime
     last_played_at: datetime
     finished: bool | None = None
     story_key: str
@@ -292,6 +293,7 @@ class StoryProgress(BaseAPIModel):
             user_key=domain.user_key,
             history=domain.history,
             current_scene_key=domain.current_scene_key,
+            created_at=domain.created_at,
             last_played_at=domain.last_played_at,
             finished=domain.finished,
             story_key=domain.story_key,
@@ -304,6 +306,7 @@ class StoryProgress(BaseAPIModel):
             user_key=self.user_key,
             history=self.history,
             current_scene_key=self.current_scene_key,
+            created_at=self.created_at,
             last_played_at=self.last_played_at,
             finished=self.finished,
             story_key=self.story_key,

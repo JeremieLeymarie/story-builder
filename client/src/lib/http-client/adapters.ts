@@ -116,7 +116,7 @@ const fromAPIStoryProgressAdapter = (
 ): StoryProgress => {
   return {
     ...storyProgress,
-    createdAt: new Date(storyProgress.lastPlayedAt),
+    createdAt: new Date(storyProgress.createdAt),
     lastPlayedAt: new Date(storyProgress.lastPlayedAt),
     finished: !!storyProgress.finished,
   };
@@ -165,6 +165,7 @@ const fromClientStoryProgressAdapter = (
 ): components["schemas"]["StoryProgress"] => {
   return {
     ...storyProgress,
+    createdAt: _toAPIDate(storyProgress.createdAt),
     userKey,
     lastPlayedAt: _toAPIDate(storyProgress.lastPlayedAt),
   };

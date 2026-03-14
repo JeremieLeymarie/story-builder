@@ -89,6 +89,30 @@ describe("game-service", () => {
       });
     });
 
+    it("should keep revisits in history when they are not consecutive", async () => {
+      const existingProgress = {
+        ...BASIC_STORY_PROGRESS,
+        history: ["scene-a", "scene-b"],
+        currentSceneKey: "scene-b",
+      };
+      localRepository.getStoryProgress.mockResolvedValue(existingProgress);
+
+      await gameService.saveProgress(BASIC_STORY_PROGRESS.key, {
+        currentSceneKey: "scene-a",
+        sceneActions: [
+          { key: "action-key", type: "simple", targets: [], text: "bzz bzz" },
+        ],
+      });
+
+      expect(localRepository.updateStoryProgress).toHaveBeenCalledWith({
+        ...existingProgress,
+        currentSceneKey: "scene-a",
+        history: ["scene-a", "scene-b", "scene-a"],
+        lastPlayedAt: new Date(),
+        userKey: BASIC_USER.key,
+      });
+    });
+
     it("should mark as finished if the story ends on this scene", async () => {
       await gameService.saveProgress(BASIC_STORY_PROGRESS.key, {
         currentSceneKey: "bim",
