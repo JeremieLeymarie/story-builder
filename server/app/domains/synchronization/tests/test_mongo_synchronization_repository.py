@@ -333,6 +333,7 @@ def test_save_story_progresses_with_existing_story_progresses() -> None:
             MongoStoryProgress(
                 key="key",
                 currentSceneKey="another-current-scene-key",
+                createdAt=datetime(1999, 11, 1),
                 finished=True,
                 history=["scene-1"],
                 lastPlayedAt=datetime(1999, 11, 26),
@@ -343,6 +344,7 @@ def test_save_story_progresses_with_existing_story_progresses() -> None:
             MongoStoryProgress(
                 key="another-key",
                 currentSceneKey="something-current-scene-key",
+                createdAt=datetime(1999, 11, 2),
                 finished=True,
                 history=["some-scene-1", "some-scene-2"],
                 lastPlayedAt=datetime(1999, 11, 26),
@@ -370,6 +372,7 @@ def test_save_story_progresses_some_existing_story_progresses() -> None:
         MongoStoryProgress(
             key="key",
             currentSceneKey="some-current-scene-key",
+            createdAt=datetime(1999, 11, 1),
             finished=True,
             history=["some-scene-1", "some-scene-2"],
             lastPlayedAt=datetime(1999, 11, 26),
@@ -529,6 +532,7 @@ def test_get_sp_no_sp_linked() -> None:
         MongoStoryProgress(
             key="key",
             currentSceneKey="another-current-scene-key",
+            createdAt=datetime(1999, 11, 1),
             finished=True,
             history=["scene-1"],
             lastPlayedAt=datetime(1999, 11, 26),
@@ -548,6 +552,7 @@ def test_get_sp() -> None:
             MongoStoryProgress(
                 key="key",
                 currentSceneKey="another-current-scene-key",
+                createdAt=datetime(1999, 11, 1),
                 finished=True,
                 history=["scene-1"],
                 lastPlayedAt=datetime(1999, 11, 26),
@@ -558,6 +563,7 @@ def test_get_sp() -> None:
             MongoStoryProgress(
                 key="another-key",
                 currentSceneKey="something-current-scene-key",
+                createdAt=datetime(1999, 11, 2),
                 finished=True,
                 history=["some-scene-1", "some-scene-2"],
                 lastPlayedAt=datetime(1999, 11, 26),
@@ -574,6 +580,7 @@ def test_get_sp() -> None:
         SynchronizationStoryProgress(
             key="key",
             current_scene_key="another-current-scene-key",
+            created_at=datetime(1999, 11, 1),
             finished=True,
             history=["scene-1"],
             last_played_at=datetime(1999, 11, 26),
