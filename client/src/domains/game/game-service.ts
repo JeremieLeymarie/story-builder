@@ -30,16 +30,14 @@ export const _getGameService = ({
       if (!progress)
         throw new Error(`No progress found for story ${storyProgressKey}`);
 
-      const persistedProgress =
-        (await localRepository.getStoryProgress(progress.key)) ?? progress;
       const isImmediateDuplicate =
-        persistedProgress.history.at(-1) === currentSceneKey;
+        progress.history.at(-1) === currentSceneKey;
       const newHistory = isImmediateDuplicate
-        ? persistedProgress.history
-        : [...persistedProgress.history, currentSceneKey];
+        ? progress.history
+        : [...progress.history, currentSceneKey];
 
       const updatedProgress = await localRepository.updateStoryProgress({
-        ...persistedProgress,
+        ...progress,
         currentSceneKey,
         history: newHistory,
         lastPlayedAt: new Date(),
