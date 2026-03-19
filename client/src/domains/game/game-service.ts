@@ -30,8 +30,7 @@ export const _getGameService = ({
       if (!progress)
         throw new Error(`No progress found for story ${storyProgressKey}`);
 
-      const isImmediateDuplicate =
-        progress.history.at(-1) === currentSceneKey;
+      const isImmediateDuplicate = progress.history.at(-1) === currentSceneKey;
       const newHistory = isImmediateDuplicate
         ? progress.history
         : [...progress.history, currentSceneKey];
