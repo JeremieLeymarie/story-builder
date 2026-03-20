@@ -1,5 +1,6 @@
 import { Action, Scene, Story, StoryProgress } from "@/lib/storage/domain";
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
+import { match } from "ts-pattern";
 
 type GameServicePort = {
   saveProgress: (
@@ -15,6 +16,13 @@ type GameServicePort = {
       probability: number;
     }[],
   ) => string;
+  /**
+   * Compute whether or not an action is visible based on progress in the story and action configuration.
+   */
+  getActionVisibility: (options: {
+    action: Action;
+    progress: StoryProgress | null;
+  }) => boolean;
 
   getLastGamePlayed: () => Promise<Story | null>;
   getSceneData: (sceneKey: string) => Promise<Scene | null>;
@@ -86,6 +94,25 @@ export const _getGameService = ({
       }
 
       return options[options.length - 1]!.sceneKey;
+    },
+
+    getActionVisibility: ({ action, progress }) => {
+      if (action.type === "simple") return true;
+      if (!progress) return false;
+
+      return match(action.condition)
+        .with({ type: "user-did-visit" }, (condition) =>
+          progress.history.includes(condition.sceneKey),
+        )
+        .with(
+          { type: "user-did-not-visit" },
+          (condition) => !progress.history.includes(condition.sceneKey),
+        )
+        .with({ type: "character-attribute" }, () => {
+          // TODO: handle this (https://github.com/JeremieLeymarie/story-builder/issues/458)
+          return true;
+        })
+        .exhaustive();
     },
 
     getLastGamePlayed: async () => {

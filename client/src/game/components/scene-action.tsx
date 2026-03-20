@@ -2,7 +2,6 @@ import { Button } from "@/design-system/primitives";
 import { Action, StoryProgress, StoryThemeConfig } from "@/lib/storage/domain";
 import { cn } from "@/lib/style";
 import { Link } from "@tanstack/react-router";
-import { useActionVisibility } from "../hooks/use-action-visibility";
 import {
   Tooltip,
   TooltipContent,
@@ -77,13 +76,11 @@ export const SceneAction = ({
   storyKey: string;
   actionTheme: StoryThemeConfig["action"];
 }) => {
-  const isVisible = useActionVisibility({ action, progress });
   const gameService = getGameService();
+  const isVisible = gameService.getActionVisibility({ action, progress });
 
   // Only show actions that lead somewhere
-  if (action.targets.length === 0) {
-    return null;
-  }
+  if (action.targets.length === 0) return null;
   const nextScene = gameService.getNextKey(action.targets);
   const isTestMode = !progress;
 

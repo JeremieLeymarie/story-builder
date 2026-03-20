@@ -1,4 +1,4 @@
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, test, vi } from "vitest";
 import {
   getLocalRepositoryStub,
   MockLocalRepository,
@@ -10,6 +10,10 @@ import {
   BASIC_STORY_PROGRESS,
   BASIC_USER,
 } from "../../../repositories/stubs/data";
+import { getTestFactory } from "@/lib/testing/factory";
+import { nanoid } from "nanoid";
+
+const factory = getTestFactory();
 
 describe("game-service", () => {
   let gameService: ReturnType<typeof _getGameService>;
@@ -128,6 +132,135 @@ describe("game-service", () => {
         createdAt: BASIC_STORY_PROGRESS.createdAt,
         userKey: BASIC_USER.key,
         finished: true,
+      });
+    });
+  });
+
+  describe("getActionVisibility", () => {
+    test("simple actions are always visible", () => {
+      const isVisible = gameService.getActionVisibility({
+        action: { key: "key", type: "simple", targets: [], text: "tutu" },
+        progress: factory.storyProgress({ history: [] }),
+      });
+
+      expect(isVisible).toBe(true);
+    });
+
+    test("simple actions are always visible in test mode", () => {
+      const isVisible = gameService.getActionVisibility({
+        action: { key: "key", type: "simple", targets: [], text: "tutu" },
+        progress: null,
+      });
+
+      expect(isVisible).toBe(true);
+    });
+
+    test("conditional actions are never visible in test mode", () => {
+      const isVisible = gameService.getActionVisibility({
+        action: {
+          key: "key",
+          type: "conditional",
+          targets: [],
+          text: "tutu",
+          condition: { type: "user-did-not-visit", sceneKey: "" },
+        },
+        progress: null,
+      });
+
+      expect(isVisible).toBe(false);
+    });
+
+    describe("[user-did-visit] conditional actions", () => {
+      test("page was not visited", () => {
+        const isVisibleEmptyHistory = gameService.getActionVisibility({
+          action: {
+            key: "key",
+            type: "conditional",
+            targets: [],
+            text: "tutu",
+            condition: { type: "user-did-visit", sceneKey: "fake-key" },
+          },
+          progress: factory.storyProgress({ history: [] }),
+        });
+
+        expect(isVisibleEmptyHistory).toBe(false);
+
+        const isVisibleFullHistory = gameService.getActionVisibility({
+          action: {
+            key: "key",
+            type: "conditional",
+            targets: [],
+            text: "tutu",
+            condition: { type: "user-did-visit", sceneKey: "fake-key" },
+          },
+          progress: factory.storyProgress({ history: [nanoid(), nanoid()] }),
+        });
+
+        expect(isVisibleFullHistory).toBe(false);
+      });
+
+      test("page was visited", () => {
+        const isVisible = gameService.getActionVisibility({
+          action: {
+            key: "key",
+            type: "conditional",
+            targets: [],
+            text: "tutu",
+            condition: { type: "user-did-visit", sceneKey: "fake-key" },
+          },
+          progress: factory.storyProgress({
+            history: [nanoid(), "fake-key", nanoid()],
+          }),
+        });
+
+        expect(isVisible).toBe(true);
+      });
+    });
+
+    describe("[user-did-not-visit] conditional actions", () => {
+      test("page was visited", () => {
+        const isVisible = gameService.getActionVisibility({
+          action: {
+            key: "key",
+            type: "conditional",
+            targets: [],
+            text: "tutu",
+            condition: { type: "user-did-not-visit", sceneKey: "fake-key" },
+          },
+          progress: factory.storyProgress({
+            history: [nanoid(), "fake-key", nanoid()],
+          }),
+        });
+
+        expect(isVisible).toBe(false);
+      });
+
+      test("page was not visited", () => {
+        const isVisibleEmptyHistory = gameService.getActionVisibility({
+          action: {
+            key: "key",
+            type: "conditional",
+            targets: [],
+            text: "tutu",
+            condition: { type: "user-did-not-visit", sceneKey: "fake-key" },
+          },
+          progress: factory.storyProgress({ history: [] }),
+        });
+
+        expect(isVisibleEmptyHistory).toBe(true);
+
+        const isVisibleFullHistory = gameService.getActionVisibility({
+          action: {
+            key: "key",
+            type: "conditional",
+            targets: [],
+            text: "tutu",
+            condition: { type: "user-did-not-visit", sceneKey: "fake-key" },
+          },
+          progress: factory.storyProgress({ history: [nanoid(), nanoid()] }),
+        });
+
+        expect(isVisibleFullHistory).toBe(true);
       });
     });
   });
