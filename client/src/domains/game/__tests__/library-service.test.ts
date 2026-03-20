@@ -308,7 +308,6 @@ describe("library-service", () => {
             name: "dex",
             description: "dexterity",
             initialValue: 10,
-            isEditableByPlayer: true,
             type: "numeric",
             visibility: "visible",
           },
@@ -317,7 +316,6 @@ describe("library-service", () => {
             name: "cha",
             description: "charisma",
             initialValue: -10,
-            isEditableByPlayer: false,
             type: "numeric",
             visibility: "invisible",
           },
@@ -346,7 +344,6 @@ describe("library-service", () => {
               description: "dexterity",
               initialValue: 10,
               value: 10, // value is created
-              isEditableByPlayer: true,
               type: "numeric",
               visibility: "visible",
             },
@@ -356,7 +353,6 @@ describe("library-service", () => {
               description: "charisma",
               initialValue: -10,
               value: -10, // value is created
-              isEditableByPlayer: false,
               type: "numeric",
               visibility: "invisible",
             },

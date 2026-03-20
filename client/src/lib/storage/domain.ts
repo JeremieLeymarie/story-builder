@@ -36,7 +36,6 @@ export type CharacterNumericAttribute = {
   type: "numeric";
   name: string;
   description?: string;
-  isEditableByPlayer: boolean;
   visibility: "visible" | "invisible";
   initialValue: number;
 };

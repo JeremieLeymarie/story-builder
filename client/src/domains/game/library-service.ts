@@ -34,22 +34,13 @@ export const _getLibraryService = ({
     return {
       attributes: Object.fromEntries(
         Object.values(characterConfig.attributes).map(
-          ({
-            key,
-            type,
-            name,
-            description,
-            isEditableByPlayer,
-            visibility,
-            initialValue,
-          }) => [
+          ({ key, type, name, description, visibility, initialValue }) => [
             key,
             {
               key,
               type,
               name,
               description,
-              isEditableByPlayer,
               visibility,
               initialValue,
               value: initialValue,
