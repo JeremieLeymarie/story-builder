@@ -201,6 +201,7 @@ const _sceneFactory = {
         effect: {
           type: "character-attribute",
           increment: faker.number.int({ min: -10, max: 10 }),
+          attributeKey: nanoid(),
           title: Math.random() > 0.8 ? faker.word.words() : undefined,
           description: Math.random() > 0.8 ? faker.word.words() : undefined,
         },
