@@ -123,7 +123,7 @@ type CharacterAttributeSideEffect = {
 };
 
 type SideEffect = {
-  executionTime: "before" | "after"; // Wether the side effect runs when the user arrives on the scene or when they leave it
+  trigger: "scene-load"; // Determine when the effect runs. For now, only scene loads is implement, but we could extend it ("timer", ...)
   isVisible: boolean; // Whether the side effect is visible in-game
   effect: CharacterAttributeSideEffect;
 };
