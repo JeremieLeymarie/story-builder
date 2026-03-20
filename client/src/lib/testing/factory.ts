@@ -148,7 +148,6 @@ const _characterConfigAttributeFactory = {
       "wisdom",
     ]),
   description: faker.word.words,
-  isEditableByPlayer: () => Math.random() > 0.5,
   visibility: () => (Math.random() > 0.5 ? "visible" : "invisible"),
   initialValue: faker.number.int,
 } satisfies CharacterConfigAttributeFactory;

@@ -39,7 +39,6 @@ const DEX_ATTRIBUTE = {
   type: "numeric" as const,
   name: "Dexterity",
   description: "Yiplaloop",
-  isEditableByPlayer: false,
   visibility: "visible",
   initialValue: 10,
 } satisfies CharacterNumericAttribute;

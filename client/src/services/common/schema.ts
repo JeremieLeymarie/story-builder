@@ -18,7 +18,6 @@ const characterConfigurationSchema = z.object({
       type: z.literal("numeric"),
       name: z.string(),
       description: z.string().optional(),
-      isEditableByPlayer: z.boolean(),
       visibility: z.union([z.literal("visible"), z.literal("invisible")]),
       initialValue: z.int(),
     }),
