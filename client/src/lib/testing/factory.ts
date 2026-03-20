@@ -190,6 +190,19 @@ const _sceneFactory = {
   builderParams: () => ({
     position: { x: faker.number.float(), y: faker.number.float() },
   }),
+  sideEffects: () =>
+    Array(faker.number.int({ min: 0, max: 3 }))
+      .fill(null)
+      .map(() => ({
+        executionTime: faker.helpers.arrayElement(["before", "after"]),
+        isVisible: Math.random() > 0.5,
+        effect: {
+          type: "character-attribute",
+          increment: faker.number.int({ min: -10, max: 10 }),
+          title: Math.random() > 0.8 ? faker.word.words() : undefined,
+          description: Math.random() > 0.8 ? faker.word.words() : undefined,
+        },
+      })),
 } satisfies SceneFactory;
 
 type StoryProgressFactory = _BaseFactory<StoryProgress>;
