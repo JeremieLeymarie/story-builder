@@ -108,9 +108,18 @@ export const _getGameService = ({
           { type: "user-did-not-visit" },
           (condition) => !progress.history.includes(condition.sceneKey),
         )
-        .with({ type: "character-attribute" }, () => {
-          // TODO: handle this (https://github.com/JeremieLeymarie/story-builder/issues/458)
-          return true;
+        .with({ type: "character-attribute" }, (condition) => {
+          const attribute =
+            progress.character?.attributes[condition.attributeKey];
+
+          // This case shouldn't never happen, but we don't want to block the story if it does
+          // Maybe this could issue an error in test mode?
+          if (!attribute) return true;
+
+          return match(condition.comparator)
+            .with("lower-than", () => attribute.value < condition.value)
+            .with("greater-than", () => attribute.value > condition.value)
+            .exhaustive();
         })
         .exhaustive();
     },
