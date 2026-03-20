@@ -118,6 +118,7 @@ export type BuilderPosition = { x: number; y: number };
 type CharacterAttributeSideEffect = {
   type: "character-attribute";
   increment: number;
+  attributeKey: string;
   title?: string;
   description?: string;
 };
