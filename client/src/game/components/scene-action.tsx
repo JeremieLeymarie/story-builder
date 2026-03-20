@@ -77,7 +77,10 @@ export const SceneAction = ({
   actionTheme: StoryThemeConfig["action"];
 }) => {
   const gameService = getGameService();
-  const isVisible = gameService.getActionVisibility({ action, progress });
+  const isVisible = gameService.getActionVisibility({
+    action,
+    progress,
+  });
 
   // Only show actions that lead somewhere
   if (action.targets.length === 0) return null;
