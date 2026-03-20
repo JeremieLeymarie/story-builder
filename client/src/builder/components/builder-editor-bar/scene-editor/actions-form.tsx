@@ -5,29 +5,8 @@ import { useBuilderActions } from "@/builder/hooks/use-builder-actions";
 import { useGetScene } from "@/builder/hooks/use-get-scene";
 import { SimpleLoader } from "@/design-system/components/simple-loader";
 import { CharacterConfiguration, Scene } from "@/lib/storage/domain";
-import { useState } from "react";
 import { useGetCharacterConfig } from "@/builder/hooks/use-get-character-config";
 import { ActionItem } from "./action-item";
-
-const useRandomEventsToolbar = ({ scene }: { scene: Scene }) => {
-  const [randomEventsActionKey, setRandomEventsActionKey] = useState<
-    string | null
-  >(null);
-
-  const closeRandomEventsToolbar = () => {
-    setRandomEventsActionKey(null);
-  };
-
-  const randomEventsAction = scene.actions.find(
-    (action) => action.key === randomEventsActionKey,
-  );
-
-  return {
-    randomEventsAction,
-    openRandomEventsToolbar: setRandomEventsActionKey,
-    closeRandomEventsToolbar,
-  };
-};
 
 const ActionsFormContent = ({
   scene,
@@ -43,12 +22,8 @@ const ActionsFormContent = ({
   });
 
   const removeAction = (index?: number | number[]) => {
-    closeRandomEventsToolbar();
     remove(index);
   };
-
-  const { openRandomEventsToolbar, closeRandomEventsToolbar } =
-    useRandomEventsToolbar({ scene });
 
   return (
     <Form {...form}>
@@ -81,10 +56,6 @@ const ActionsFormContent = ({
                 actionIndex={actionIndex}
                 characterConfig={characterConfig}
                 removeAction={removeAction}
-                openRandomEventsSettings={() =>
-                  openRandomEventsToolbar(field.key)
-                }
-                closeRandomEventsSettings={closeRandomEventsToolbar}
               />
             ))}
           </div>
