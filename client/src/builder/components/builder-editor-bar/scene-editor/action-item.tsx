@@ -53,16 +53,12 @@ export const ActionItem = ({
   actionIndex,
   characterConfig,
   removeAction,
-  openRandomEventsSettings,
-  closeRandomEventsSettings,
 }: {
   actionField: FieldArrayWithId<EditActionsSchema, "actions", "id">;
   form: EditActionsForm;
   actionIndex: number;
   characterConfig: CharacterConfiguration | null;
   removeAction: (index: number) => void;
-  openRandomEventsSettings: () => void;
-  closeRandomEventsSettings: () => void;
 }) => {
   const hasCharacterConfig =
     Object.keys(characterConfig?.attributes ?? {}).length > 0;
@@ -105,8 +101,6 @@ export const ActionItem = ({
           type="button"
           onClick={() => {
             toggleSettings();
-            if (openSettings) closeRandomEventsSettings();
-            else openRandomEventsSettings();
           }}
         >
           <SettingsIcon />
