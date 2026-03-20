@@ -12,6 +12,7 @@ import {
 } from "../../../repositories/stubs/data";
 import { getTestFactory } from "@/lib/testing/factory";
 import { nanoid } from "nanoid";
+import { randomInArray } from "@/lib/random";
 
 const factory = getTestFactory();
 
@@ -261,6 +262,194 @@ describe("game-service", () => {
         });
 
         expect(isVisibleFullHistory).toBe(true);
+      });
+    });
+
+    describe("[character-attribute]", () => {
+      test("character is not configured", () => {
+        const isVisible = gameService.getActionVisibility({
+          action: {
+            key: "key",
+            type: "conditional",
+            targets: [],
+            text: "tutu",
+            condition: {
+              type: "character-attribute",
+              attributeKey: "plouf",
+              comparator: "greater-than",
+              value: 10,
+            },
+          },
+          progress: factory.storyProgress({ character: undefined }),
+        });
+
+        expect(isVisible).toBe(true);
+      });
+      test("attribute does not exist", () => {
+        const isVisible = gameService.getActionVisibility({
+          action: {
+            key: "key",
+            type: "conditional",
+            targets: [],
+            text: "tutu",
+            condition: {
+              type: "character-attribute",
+              attributeKey: "plouf",
+              comparator: "greater-than",
+              value: 10,
+            },
+          },
+          progress: factory.storyProgress({
+            character: factory.progressCharacter(),
+          }),
+        });
+
+        expect(isVisible).toBe(true);
+      });
+
+      const _runTestCondition = ({
+        condValue,
+        actualValue,
+        comparator,
+      }: {
+        condValue: number;
+        actualValue: number;
+        comparator: "lower-than" | "greater-than";
+      }) => {
+        const character = factory.progressCharacter();
+        const attr = randomInArray(Object.values(character.attributes));
+        character.attributes[attr.key]!.value = actualValue;
+        return gameService.getActionVisibility({
+          action: {
+            key: "key",
+            type: "conditional",
+            targets: [],
+            text: "tutu",
+            condition: {
+              type: "character-attribute",
+              attributeKey: attr.key,
+              comparator,
+              value: condValue,
+            },
+          },
+          progress: factory.storyProgress({ character }),
+        });
+      };
+
+      test("attribute is strictly lower than 10", () => {
+        // Lower than condition
+        expect(
+          _runTestCondition({
+            condValue: 10,
+            actualValue: 9,
+            comparator: "lower-than",
+          }),
+        ).toBe(true);
+
+        // Exactly condition
+        expect(
+          _runTestCondition({
+            condValue: 10,
+            actualValue: 10,
+            comparator: "lower-than",
+          }),
+        ).toBe(false);
+
+        // Higher than condition
+        expect(
+          _runTestCondition({
+            condValue: 10,
+            actualValue: 11,
+            comparator: "lower-than",
+          }),
+        ).toBe(false);
+      });
+
+      test("attribute is strictly lower than -10", () => {
+        // Lower than condition
+        expect(
+          _runTestCondition({
+            condValue: -10,
+            actualValue: -11,
+            comparator: "lower-than",
+          }),
+        ).toBe(true);
+
+        // Exactly condition
+        expect(
+          _runTestCondition({
+            condValue: -10,
+            actualValue: -10,
+            comparator: "lower-than",
+          }),
+        ).toBe(false);
+
+        // Higher than condition
+        expect(
+          _runTestCondition({
+            condValue: -10,
+            actualValue: -9,
+            comparator: "lower-than",
+          }),
+        ).toBe(false);
+      });
+
+      test("attribute is strictly higher than 10", () => {
+        // Higher than condition
+        expect(
+          _runTestCondition({
+            condValue: 10,
+            actualValue: 11,
+            comparator: "greater-than",
+          }),
+        ).toBe(true);
+
+        // Exactly condition
+        expect(
+          _runTestCondition({
+            condValue: 10,
+            actualValue: 10,
+            comparator: "greater-than",
+          }),
+        ).toBe(false);
+
+        // Lower than condition
+        expect(
+          _runTestCondition({
+            condValue: 10,
+            actualValue: 9,
+            comparator: "greater-than",
+          }),
+        ).toBe(false);
+      });
+
+      test("attribute is strictly higher than -10", () => {
+        // Higher than condition
+        expect(
+          _runTestCondition({
+            condValue: -10,
+            actualValue: -9,
+            comparator: "greater-than",
+          }),
+        ).toBe(true);
+
+        // Exactly condition
+        expect(
+          _runTestCondition({
+            condValue: -10,
+            actualValue: -10,
+            comparator: "greater-than",
+          }),
+        ).toBe(false);
+
+        // Lower than condition
+        expect(
+          _runTestCondition({
+            condValue: -10,
+            actualValue: -11,
+            comparator: "greater-than",
+          }),
+        ).toBe(false);
       });
     });
   });

@@ -15,13 +15,13 @@ import {
   WikiArticle,
   WikiArticleLink,
   WikiCategory,
+  ProgressCharacter,
 } from "../storage/domain";
 import { faker } from "@faker-js/faker";
 import { nanoid } from "nanoid";
 import { makeSimpleLexicalContent } from "../lexical-content";
 
 type _EntityBase = {
-  key: string;
   [k: string]: unknown;
 };
 
@@ -193,6 +193,19 @@ const _sceneFactory = {
   }),
 } satisfies SceneFactory;
 
+type ProgressCharacterFactory = _BaseFactory<ProgressCharacter>;
+const _progressCharacterFactory = {
+  attributes: () =>
+    Object.fromEntries(
+      Array(faker.number.int({ min: 1, max: 5 }))
+        .fill(null)
+        .map(() => {
+          const attr = makeRandomEntity(_characterConfigAttributeFactory, {});
+          return [attr.key, { ...attr, value: faker.number.int() }];
+        }),
+    ),
+} satisfies ProgressCharacterFactory;
+
 type StoryProgressFactory = _BaseFactory<StoryProgress>;
 const _storyProgressFactory = {
   key: nanoid,
@@ -205,18 +218,7 @@ const _storyProgressFactory = {
   finished: () => Math.random() > 0.5,
   character: () => {
     const hasCharacter = Math.random() > 0.5;
-    if (hasCharacter) {
-      const config = makeRandomEntity(_characterConfigFactory, {});
-      return {
-        ...config,
-        attributes: Object.fromEntries(
-          Object.entries(config.attributes).map(([key, attributeConfig]) => [
-            key,
-            { ...attributeConfig, value: faker.number.int() },
-          ]),
-        ),
-      };
-    }
+    if (hasCharacter) return makeRandomEntity(_progressCharacterFactory, {});
     return undefined;
   },
 } satisfies StoryProgressFactory;
@@ -274,6 +276,10 @@ export const getTestFactory = () => {
 
     storyProgress: (partial: Partial<StoryProgress> = {}) => {
       return makeRandomEntity(_storyProgressFactory, partial);
+    },
+
+    progressCharacter: (partial: Partial<ProgressCharacter> = {}) => {
+      return makeRandomEntity(_progressCharacterFactory, partial);
     },
 
     user: (partial: Partial<User> = {}) => {
