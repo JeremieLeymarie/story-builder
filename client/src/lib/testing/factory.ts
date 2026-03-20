@@ -193,8 +193,9 @@ const _sceneFactory = {
   sideEffects: () =>
     Array(faker.number.int({ min: 0, max: 3 }))
       .fill(null)
-      .map(() => ({
+      .map((_, i) => ({
         key: nanoid(),
+        name: `Side Effect #${i}`,
         trigger: faker.helpers.arrayElement(["scene-load"]),
         isVisible: Math.random() > 0.5,
         effect: {
