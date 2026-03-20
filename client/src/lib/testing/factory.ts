@@ -194,7 +194,7 @@ const _sceneFactory = {
     Array(faker.number.int({ min: 0, max: 3 }))
       .fill(null)
       .map(() => ({
-        executionTime: faker.helpers.arrayElement(["before", "after"]),
+        trigger: faker.helpers.arrayElement(["scene-load"]),
         isVisible: Math.random() > 0.5,
         effect: {
           type: "character-attribute",
