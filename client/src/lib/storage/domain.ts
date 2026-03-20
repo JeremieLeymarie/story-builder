@@ -115,6 +115,19 @@ export type Action = SimpleAction | ConditionalAction;
 
 export type BuilderPosition = { x: number; y: number };
 
+type CharacterAttributeSideEffect = {
+  type: "character-attribute";
+  increment: number;
+  title?: string;
+  description?: string;
+};
+
+type SideEffect = {
+  executionTime: "before" | "after"; // Wether the side effect runs when the user arrives on the scene or when they leave it
+  isVisible: boolean; // Whether the side effect is visible in-game
+  effect: CharacterAttributeSideEffect;
+};
+
 export type Scene = {
   key: string;
   storyKey: string;
@@ -122,6 +135,7 @@ export type Scene = {
   content: LexicalContent;
   actions: Action[];
   builderParams: { position: BuilderPosition };
+  sideEffects?: SideEffect[];
 };
 
 export const TITLE_SIZES = ["small", "medium", "large", "huge"] as const;
