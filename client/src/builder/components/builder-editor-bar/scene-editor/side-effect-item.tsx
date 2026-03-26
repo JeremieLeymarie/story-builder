@@ -22,7 +22,13 @@ import { NumberInput } from "@/design-system/components/number-input";
 import { CharacterAttributeSelector } from "./character-attribute-selector";
 import { useState } from "react";
 import { capitalize } from "@/lib/string";
-import { SettingsIcon, Trash2Icon, ZapIcon } from "lucide-react";
+import {
+  EyeClosedIcon,
+  EyeIcon,
+  SettingsIcon,
+  Trash2Icon,
+  ZapIcon,
+} from "lucide-react";
 
 const SideEffectFormItem = ({
   characterConfig,
@@ -139,13 +145,20 @@ const SideEffectPreview = ({
 }) => {
   const attribute = characterConfig.attributes[field.effect.attributeKey]!;
   return (
-    <FieldDescription>
-      <ZapIcon size={16} className="mr-1 inline-flex font-normal" />
-      When the player lands on this scene, their{" "}
-      <span className="font-semibold">
-        {capitalize(attribute.name)}
-      </span> will {field.effect.operation === "add" ? "increase" : "decrease"}{" "}
-      by {field.effect.value} point{field.effect.value === 1 ? "" : "s"}
+    <FieldDescription className="space-y-1">
+      <p className="flex items-center gap-1">
+        {field.isVisible ? <EyeIcon size={16} /> : <EyeClosedIcon size={16} />}
+        This is {field.isVisible ? "" : "not"} visible by the player.
+      </p>
+      <p>
+        <ZapIcon size={16} className="mr-1 inline-flex font-normal" />
+        When the player lands on this scene, their{" "}
+        <span className="font-semibold">
+          {capitalize(attribute.name)}
+        </span> will{" "}
+        {field.effect.operation === "add" ? "increase" : "decrease"} by{" "}
+        {field.effect.value} point{field.effect.value === 1 ? "" : "s"}
+      </p>
     </FieldDescription>
   );
 };
@@ -165,7 +178,6 @@ export const SideEffectItem = ({
 }) => {
   const [isEditMode, setIsEditMode] = useState(false);
 
-  console.log({ field });
   return (
     <div className="gap-2">
       <div className="flex items-center justify-between">
