@@ -17,6 +17,7 @@ import {
 import { useBuilderEditorStore } from "@/builder/hooks/use-builder-editor-store";
 import { FieldGroup, FieldSeparator } from "@/design-system/primitives/field";
 import { Controller } from "react-hook-form";
+import { ScrollArea, ScrollBar } from "@/design-system/primitives/scroll-area";
 
 const SideEffectForm = ({
   characterConfig,
@@ -53,27 +54,36 @@ const SideEffectForm = ({
               <PlusIcon />
             </Button>
           </div>
-          <FieldGroup className="gap-4">
-            {fields.map((_, effectIndex) => (
-              <Controller
-                control={form.control}
-                name="effects"
-                render={({ field }) => (
-                  <>
-                    <SideEffectItem
-                      key={field.value[effectIndex]!.key}
-                      field={field.value[effectIndex]!}
-                      form={form}
-                      effectIndex={effectIndex}
-                      characterConfig={characterConfig}
-                      removeEffect={() => removeEffect(effectIndex)}
-                    />
-                    {effectIndex !== fields.length - 1 && <FieldSeparator />}
-                  </>
-                )}
-              ></Controller>
-            ))}
-          </FieldGroup>
+          {fields.length > 0 ? (
+            <ScrollArea className="px-2">
+              <FieldGroup className="max-h-100 gap-4">
+                {fields.map((_, effectIndex) => (
+                  <Controller
+                    control={form.control}
+                    name="effects"
+                    render={({ field }) => (
+                      <>
+                        <SideEffectItem
+                          key={field.value[effectIndex]!.key}
+                          field={field.value[effectIndex]!}
+                          form={form}
+                          effectIndex={effectIndex}
+                          characterConfig={characterConfig}
+                          removeEffect={() => removeEffect(effectIndex)}
+                        />
+                        {effectIndex !== fields.length - 1 && (
+                          <FieldSeparator className="shrink-0" />
+                        )}
+                      </>
+                    )}
+                  />
+                ))}
+              </FieldGroup>
+              <ScrollBar orientation="vertical" />
+            </ScrollArea>
+          ) : (
+            <EmptyDescription>No attribute yet</EmptyDescription>
+          )}
         </div>
       </form>
     </Form>
