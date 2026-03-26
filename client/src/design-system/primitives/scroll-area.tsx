@@ -4,6 +4,8 @@ import * as React from "react";
 import { ScrollArea as ScrollAreaPrimitive } from "radix-ui";
 import { cn } from "@/lib/style";
 
+// Modified to fix scrollbar display (https://github.com/shadcn-ui/ui/issues/9196)
+
 function ScrollArea({
   className,
   children,
