@@ -2,9 +2,9 @@ import { useGetCharacterConfig } from "@/builder/hooks/use-get-character-config"
 import { useGetScene } from "@/builder/hooks/use-get-scene";
 import { SimpleLoader } from "@/design-system/components/simple-loader";
 import { Button, Form } from "@/design-system/primitives";
-import { PlusIcon, SparklesIcon } from "lucide-react";
+import { PlusIcon, ZapIcon } from "lucide-react";
 import { SideEffectItem } from "./side-effect-item";
-import { useSideEffectsForm } from "./hooks/use-side-effects-schema";
+import { useSideEffectsForm } from "./hooks/use-side-effects-form";
 import { CharacterConfiguration } from "@/lib/storage/domain";
 import {
   Empty,
@@ -16,6 +16,7 @@ import {
 } from "@/design-system/primitives/empty";
 import { useBuilderEditorStore } from "@/builder/hooks/use-builder-editor-store";
 import { FieldGroup, FieldSeparator } from "@/design-system/primitives/field";
+import { Controller } from "react-hook-form";
 
 const SideEffectForm = ({
   characterConfig,
@@ -52,19 +53,25 @@ const SideEffectForm = ({
               <PlusIcon />
             </Button>
           </div>
-          <FieldGroup>
-            {fields.map((field, effectIndex) => (
-              <>
-                <SideEffectItem
-                  key={field.id}
-                  field={field}
-                  form={form}
-                  effectIndex={effectIndex}
-                  characterConfig={characterConfig}
-                  removeEffect={removeEffect}
-                />
-                {effectIndex !== fields.length - 1 && <FieldSeparator />}
-              </>
+          <FieldGroup className="gap-4">
+            {fields.map((_, effectIndex) => (
+              <Controller
+                control={form.control}
+                name="effects"
+                render={({ field }) => (
+                  <>
+                    <SideEffectItem
+                      key={field.value[effectIndex]!.key}
+                      field={field.value[effectIndex]!}
+                      form={form}
+                      effectIndex={effectIndex}
+                      characterConfig={characterConfig}
+                      removeEffect={() => removeEffect(effectIndex)}
+                    />
+                    {effectIndex !== fields.length - 1 && <FieldSeparator />}
+                  </>
+                )}
+              ></Controller>
             ))}
           </FieldGroup>
         </div>
@@ -100,7 +107,7 @@ export const SideEffectsFormContainer = ({
     return (
       <Empty>
         <EmptyMedia variant="icon">
-          <SparklesIcon />
+          <ZapIcon />
         </EmptyMedia>
         <EmptyHeader>
           <EmptyTitle>No Character configured</EmptyTitle>

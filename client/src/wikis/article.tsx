@@ -2,7 +2,7 @@ import { Title } from "@/design-system/components";
 import { Button } from "@/design-system/primitives";
 import { WikiArticle } from "@/lib/storage/domain";
 import { Link } from "@tanstack/react-router";
-import { PencilIcon } from "lucide-react";
+import { SquarePenIcon } from "lucide-react";
 import { useWikiStore } from "./hooks/use-wiki-store";
 import { WikiDataCategory } from "@/domains/wiki/types";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
@@ -32,7 +32,7 @@ export const Article = ({
                 params={{ articleKey: article.key, wikiKey: article.wikiKey }}
               >
                 <Button className="gap-2">
-                  <PencilIcon />
+                  <SquarePenIcon />
                   Edit
                 </Button>
               </Link>

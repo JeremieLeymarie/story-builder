@@ -1,5 +1,5 @@
-import { Controller, FieldArray, UseFormReturn } from "react-hook-form";
-import { SideEffectsSchema } from "./hooks/use-side-effects-schema";
+import { Controller, UseFormReturn } from "react-hook-form";
+import { SideEffectsSchema } from "./hooks/use-side-effects-form";
 import { CharacterConfiguration } from "@/lib/storage/domain";
 import {
   Field,
@@ -9,7 +9,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/design-system/primitives/field";
-import { Input, Switch } from "@/design-system/primitives";
+import { Button, Input, Switch } from "@/design-system/primitives";
 import {
   Select,
   SelectContent,
@@ -20,19 +20,18 @@ import {
 } from "@/design-system/primitives/select";
 import { NumberInput } from "@/design-system/components/number-input";
 import { CharacterAttributeSelector } from "./character-attribute-selector";
+import { useState } from "react";
+import { capitalize } from "@/lib/string";
+import { SettingsIcon, Trash2Icon, ZapIcon } from "lucide-react";
 
-export const SideEffectItem = ({
-  form,
-  field,
-  effectIndex,
+const SideEffectFormItem = ({
   characterConfig,
-  removeEffect,
+  effectIndex,
+  form,
 }: {
   form: UseFormReturn<SideEffectsSchema>;
-  field: FieldArray<SideEffectsSchema, "effects">;
   effectIndex: number;
   characterConfig: CharacterConfiguration;
-  removeEffect: () => void;
 }) => {
   return (
     <div className="space-y-4">
@@ -127,6 +126,78 @@ export const SideEffectItem = ({
           )}
         />
       </FieldGroup>
+    </div>
+  );
+};
+
+const SideEffectPreview = ({
+  field,
+  characterConfig,
+}: {
+  field: SideEffectsSchema["effects"][number];
+  characterConfig: CharacterConfiguration;
+}) => {
+  const attribute = characterConfig.attributes[field.effect.attributeKey]!;
+  return (
+    <FieldDescription>
+      <ZapIcon size={16} className="mr-1 inline-flex font-normal" />
+      When the player lands on this scene, their{" "}
+      <span className="font-semibold">
+        {capitalize(attribute.name)}
+      </span> will {field.effect.operation === "add" ? "increase" : "decrease"}{" "}
+      by {field.effect.value} point{field.effect.value === 1 ? "" : "s"}
+    </FieldDescription>
+  );
+};
+
+export const SideEffectItem = ({
+  field,
+  characterConfig,
+  effectIndex,
+  form,
+  removeEffect,
+}: {
+  form: UseFormReturn<SideEffectsSchema>;
+  field: SideEffectsSchema["effects"][number];
+  effectIndex: number;
+  characterConfig: CharacterConfiguration;
+  removeEffect: () => void;
+}) => {
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  console.log({ field });
+  return (
+    <div className="gap-2">
+      <div className="flex items-center justify-between">
+        <FieldLabel>{field.name}</FieldLabel>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            type="button"
+            onClick={() => setIsEditMode((prev) => !prev)}
+          >
+            <SettingsIcon />
+          </Button>
+          <Button
+            variant="destructive"
+            size="icon"
+            type="button"
+            onClick={() => removeEffect()}
+          >
+            <Trash2Icon />
+          </Button>
+        </div>
+      </div>
+      {isEditMode ? (
+        <SideEffectFormItem
+          characterConfig={characterConfig}
+          effectIndex={effectIndex}
+          form={form}
+        />
+      ) : (
+        <SideEffectPreview field={field} characterConfig={characterConfig} />
+      )}
     </div>
   );
 };

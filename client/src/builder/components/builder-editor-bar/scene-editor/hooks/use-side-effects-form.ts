@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import z from "zod";
 
-export const sideEffectSchema = z.object({
+const sideEffectSchema = z.object({
   key: z.nanoid(),
   name: z.string(),
   trigger: z.literal("scene-load"),
