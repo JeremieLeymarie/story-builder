@@ -50,7 +50,9 @@ const EmptyState = () => {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <Button onClick={() => createCharacterConfig()}>Add a character</Button>
+        <Button size="sm" onClick={() => createCharacterConfig()}>
+          Add a character
+        </Button>
       </EmptyContent>
     </Empty>
   );
