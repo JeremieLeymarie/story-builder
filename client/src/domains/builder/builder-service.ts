@@ -18,6 +18,8 @@ import {
 import { ImportData } from "@/services/common/schema";
 import { produce } from "immer";
 import { N } from "@/lib/number";
+import { randomInArray } from "@/lib/random";
+import { capitalize } from "@/lib/string";
 
 export const _getBuilderService = ({
   localRepository,
@@ -502,6 +504,26 @@ export const _getBuilderService = ({
     },
     makeEmptyActionPayload: () => {
       return { key: nanoid(), type: "simple", targets: [], text: "" };
+    },
+    makeEmptySideEffectPayload: ({ characterConfig }) => {
+      if (Object.keys(characterConfig.attributes).length < 1)
+        throw new Error(
+          "Cannot create side effect payload when character configuration has no attributes.",
+        );
+      const attribute = randomInArray(
+        Object.values(characterConfig.attributes),
+      );
+      return {
+        key: nanoid(),
+        name: `Level-up ${capitalize(attribute.name)}`,
+        isVisible: true,
+        trigger: "scene-load",
+        effect: {
+          type: "character-attribute",
+          increment: 1,
+          attributeKey: attribute.key,
+        },
+      };
     },
   };
 };

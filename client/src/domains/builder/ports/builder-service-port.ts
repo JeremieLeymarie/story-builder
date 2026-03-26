@@ -3,7 +3,9 @@ import {
   Action,
   BuilderPosition,
   BuilderStory,
+  CharacterConfiguration,
   Scene,
+  SideEffect,
   Story,
 } from "@/lib/storage/domain";
 import { ImportData } from "@/services/common/schema";
@@ -88,4 +90,9 @@ export type BuilderServicePort = {
     storyKey: string;
   }) => Promise<Scene[]>;
   makeEmptyActionPayload: () => Action;
+  makeEmptySideEffectPayload: ({
+    characterConfig,
+  }: {
+    characterConfig: CharacterConfiguration;
+  }) => SideEffect;
 };

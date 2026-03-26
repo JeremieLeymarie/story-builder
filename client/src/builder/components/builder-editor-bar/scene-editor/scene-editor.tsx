@@ -11,6 +11,7 @@ import {
   ToolbarTitle,
 } from "@/design-system/components/toolbar";
 import { SceneContentFormContainer } from "./scene-content-form";
+import { SideEffectsFormContainer } from "./side-effects-form";
 
 export const SceneEditor = ({ sceneKey }: { sceneKey: string }) => {
   return (
@@ -22,6 +23,7 @@ export const SceneEditor = ({ sceneKey }: { sceneKey: string }) => {
         <TabsList>
           <TabsTrigger value="scene">Scene</TabsTrigger>
           <TabsTrigger value="actions">Actions</TabsTrigger>
+          <TabsTrigger value="side-effects">Side Effects</TabsTrigger>
         </TabsList>
 
         <TabsContent value="scene">
@@ -29,6 +31,9 @@ export const SceneEditor = ({ sceneKey }: { sceneKey: string }) => {
         </TabsContent>
         <TabsContent value="actions">
           <ActionsFormContainer sceneKey={sceneKey} />
+        </TabsContent>
+        <TabsContent value="side-effects">
+          <SideEffectsFormContainer sceneKey={sceneKey} />
         </TabsContent>
       </Tabs>
     </Toolbar>
