@@ -106,7 +106,7 @@ export const ActionItem = ({
           <SettingsIcon />
         </Button>
         <Button
-          variant="outline"
+          variant="destructive"
           size="icon"
           type="button"
           onClick={() => removeAction(actionIndex)}

@@ -27,4 +27,5 @@ export const getStubBuilderService = (): MockBuilderService => ({
   updateScene: vi.fn(),
   updateSceneBuilderPosition: vi.fn(),
   updateStory: vi.fn(),
+  makeEmptySideEffectPayload: vi.fn(),
 });
