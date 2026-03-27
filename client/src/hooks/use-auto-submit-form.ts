@@ -24,14 +24,14 @@ export const useAutoSubmitForm = <TFormSchema extends FieldValues>({
 
   useEffect(() => {
     const callback = form.subscribe({
-      formState: {
-        values: true,
-      },
+      formState: { values: true },
       callback: () => {
-        if (Object.keys(form.formState.dirtyFields).length)
-          debouncer.maybeExecute();
+        if (Object.keys(form.formState.dirtyFields).length > 0)
+          return debouncer.maybeExecute();
       },
     });
     return () => callback();
   }, [debouncer, form]);
+
+  return debouncer.maybeExecute;
 };
