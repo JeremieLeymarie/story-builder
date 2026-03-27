@@ -87,12 +87,14 @@ export const LibraryGameDetail = ({
                   onSelectSave={setSelectedSave}
                 />
               </div>
-              <p className="text-sm">
-                <span>{selectedSave.lastScene?.title}</span>&nbsp;
-                <span className="text-muted-foreground">
-                  - Last played {timeFrom(selectedSave.lastPlayedAt)}
-                </span>
-              </p>
+              {!!selectedSave.lastScene && (
+                <p className="text-sm">
+                  <span>{selectedSave.lastScene?.title}</span>&nbsp;
+                  <span className="text-muted-foreground">
+                    - Last played {timeFrom(selectedSave.lastPlayedAt)}
+                  </span>
+                </p>
+              )}
             </div>
           </div>
         </div>
