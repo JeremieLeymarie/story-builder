@@ -94,7 +94,7 @@ export const ActionItem = ({
 
   return (
     <div
-      className="relative my-2 before:pointer-events-none before:absolute before:left-0 before:right-0 before:h-0.5 before:bg-transparent data-[drag-over=above]:before:-top-[5px] data-[drag-over=above]:before:bg-primary data-[drag-over=below]:before:-bottom-[5px] data-[drag-over=below]:before:bg-primary"
+      className="data-[drag-over=above]:before:bg-primary data-[drag-over=below]:before:bg-primary relative my-2 before:pointer-events-none before:absolute before:right-0 before:left-0 before:h-0.5 before:bg-transparent data-[drag-over=above]:before:-top-[5px] data-[drag-over=below]:before:-bottom-[5px]"
       key={actionField.id}
       draggable
       onDragStart={dragHandlers.onDragStart}
