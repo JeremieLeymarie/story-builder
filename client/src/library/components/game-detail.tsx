@@ -1,14 +1,13 @@
-import { SavesDetail } from "./saves-detail";
-import { Story } from "@/lib/storage/domain";
-import { Save } from "./types";
-import { useNavigate } from "@tanstack/react-router";
-import { PlayIcon } from "lucide-react";
-import { StoryGenreBadge } from "@/design-system/components";
-import { Button } from "@/design-system/primitives/button";
 import { useState } from "react";
-import { GameDropdown } from "./game-dropdown";
+import { useNavigate } from "@tanstack/react-router";
+import { StoryGenreBadge } from "@/design-system/components";
 import { timeFrom } from "@/lib/date";
+import { Story } from "@/lib/storage/domain";
+import { useGetAnalyticsService } from "../hooks/use-get-analytics-service";
 import { Analytics } from "./analytics";
+import { GameDropdown } from "./game-dropdown";
+import { SavesPopover } from "./saves-popover";
+import { Save } from "./types";
 
 type Props = {
   story: Story;
@@ -25,15 +24,23 @@ export const LibraryGameDetail = ({
   const [selectedSave, setSelectedSave] = useState(currentProgress);
 
   const saves = [currentProgress, ...otherProgresses];
+  const { analyticsService } = useGetAnalyticsService({
+    progressKey: selectedSave.key,
+    gameKey: story.key,
+  });
+  const totalScenes = analyticsService?.getAllScenes().length ?? 0;
 
-  const playGame = () => {
+  const enrichedSave =
+    saves.find((s) => s.key === selectedSave.key) ?? selectedSave;
+
+  const playGame = (save: Save) => {
     navigate({
       to: "/game/$gameKey/$sceneKey",
       params: {
-        gameKey: selectedSave.storyKey,
-        sceneKey: selectedSave.currentSceneKey,
+        gameKey: save.storyKey,
+        sceneKey: save.currentSceneKey,
       },
-      search: { storyProgressKey: selectedSave.key },
+      search: { storyProgressKey: save.key },
     });
   };
 
@@ -71,27 +78,29 @@ export const LibraryGameDetail = ({
                 </div>
               )}
 
-              <div className="flex items-center gap-2">
-                <Button
-                  onClick={playGame}
-                  size="lg"
-                  className="bg-primary text-primary-foreground hover:bg-primary/90"
-                >
-                  <PlayIcon />
-                  Play
-                </Button>
-                <span className="text-muted-foreground">or</span>
-                <SavesDetail
-                  selectedSave={selectedSave}
-                  saves={saves}
-                  onSelectSave={setSelectedSave}
-                />
-              </div>
-              {!!selectedSave.lastScene && (
-                <p className="text-sm">
-                  <span>{selectedSave.lastScene?.title}</span>&nbsp;
+              <SavesPopover
+                saves={saves}
+                selectedSave={selectedSave}
+                storyKey={story.key}
+                totalScenes={totalScenes}
+                onSelectSave={setSelectedSave}
+                onPlay={playGame}
+              />
+              {(enrichedSave.name || enrichedSave.lastScene) && (
+                <p className="text-sm break-all">
+                  {enrichedSave.name && (
+                    <span className="font-medium">{enrichedSave.name}</span>
+                  )}
+                  {enrichedSave.name && enrichedSave.lastScene && (
+                    <span className="text-muted-foreground"> · </span>
+                  )}
+                  {enrichedSave.lastScene && (
+                    <span className="text-muted-foreground">
+                      {enrichedSave.lastScene.title} ·{" "}
+                    </span>
+                  )}
                   <span className="text-muted-foreground">
-                    - Last played {timeFrom(selectedSave.lastPlayedAt)}
+                    {timeFrom(enrichedSave.lastPlayedAt)}
                   </span>
                 </p>
               )}
