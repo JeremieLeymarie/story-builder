@@ -8,7 +8,13 @@ export const useCreateSave = ({
   onSuccess: (save: StoryProgress) => void;
 }) => {
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: async ({ storyKey, name }: { storyKey: string; name?: string }) => {
+    mutationFn: async ({
+      storyKey,
+      name,
+    }: {
+      storyKey: string;
+      name?: string;
+    }) => {
       const save = await getLibraryService().createBlankStoryProgress({
         storyKey,
         name,

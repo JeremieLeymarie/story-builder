@@ -117,110 +117,108 @@ const Content = ({
           )}
         >
           {saves.map((save) => (
-              <Card
-                key={save.key}
-                className={cn(
-                  "ring-primary relative p-3 ring-2 transition-all hover:shadow-lg",
-                  save.key === selectedSave.key && "bg-primary/15",
-                  save.finished && "bg-accent/75 ring-accent-foreground/10",
-                )}
-                onClick={() => {
-                  if (editingKey !== save.key) {
-                    onSelectSave(save);
-                    setOpen(false);
-                  }
-                }}
-              >
-                {totalScenes > 0 && (
-                  <span className="text-muted-foreground absolute top-3 right-3 text-xs font-medium">
-                    {round((new Set(save.history).size / totalScenes) * 100)}%
-                  </span>
-                )}
-                <div className="flex items-center justify-between">
-                  <div className="flex-1 cursor-pointer">
-                    <div>
-                      {editingKey === save.key ? (
-                        <form
-                          onSubmit={(e) => {
-                            e.preventDefault();
-                            handleRename(save);
-                          }}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <Input
-                            autoFocus
-                            value={editingName}
-                            onChange={(e) => setEditingName(e.target.value)}
-                            onBlur={() => handleRename(save)}
-                            className="h-7 w-40 text-sm"
-                          />
-                        </form>
-                      ) : (
-                        <CardTitle className="text-base break-all">
-                          <Button
-                            variant="ghost"
-                            size="xs"
-                            className="mr-1 inline-flex h-5 w-5 align-text-bottom p-0"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setEditingKey(save.key);
-                              setEditingName(save.name ?? "");
-                            }}
-                          >
-                            <PencilIcon size={12} />
-                          </Button>
-                          {save.name ||
-                            save.lastScene?.title ||
-                            "Unknown scene"}
-                        </CardTitle>
-                      )}
-                    </div>
-                    {save.name && (
-                      <p className="text-muted-foreground text-xs">
-                        {save.lastScene?.title || "Unknown scene"}
-                      </p>
-                    )}
-                    <CardDescription>
-                      {timeFrom(save.lastPlayedAt)} ·{" "}
-                      {formatDate(save.lastPlayedAt)}
-                    </CardDescription>
-                  </div>
-
-                  {save.key !== selectedSave.key && (
-                    <ConfirmDialog
-                      title="Delete this save?"
-                      description="This action cannot be undone. This save will be permanently deleted."
-                      confirmLabel="Delete"
-                      onConfirm={(e) => {
-                        e.stopPropagation();
-                        deleteProgress(save.key);
-                      }}
-                      onCancel={(e) => {
-                        e.stopPropagation();
-                      }}
-                      trigger={
+            <Card
+              key={save.key}
+              className={cn(
+                "ring-primary relative p-3 ring-2 transition-all hover:shadow-lg",
+                save.key === selectedSave.key && "bg-primary/15",
+                save.finished && "bg-accent/75 ring-accent-foreground/10",
+              )}
+              onClick={() => {
+                if (editingKey !== save.key) {
+                  onSelectSave(save);
+                  setOpen(false);
+                }
+              }}
+            >
+              {totalScenes > 0 && (
+                <span className="text-muted-foreground absolute top-3 right-3 text-xs font-medium">
+                  {round((new Set(save.history).size / totalScenes) * 100)}%
+                </span>
+              )}
+              <div className="flex items-center justify-between">
+                <div className="flex-1 cursor-pointer">
+                  <div>
+                    {editingKey === save.key ? (
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          handleRename(save);
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Input
+                          autoFocus
+                          value={editingName}
+                          onChange={(e) => setEditingName(e.target.value)}
+                          onBlur={() => handleRename(save)}
+                          className="h-7 w-40 text-sm"
+                        />
+                      </form>
+                    ) : (
+                      <CardTitle className="text-base break-all">
                         <Button
-                          disabled={isDeleting}
-                          variant="destructive"
+                          variant="ghost"
                           size="xs"
-                          className="rounded-full"
-                          title="Delete this save"
+                          className="mr-1 inline-flex h-5 w-5 p-0 align-text-bottom"
                           onClick={(e) => {
                             e.stopPropagation();
+                            setEditingKey(save.key);
+                            setEditingName(save.name ?? "");
                           }}
                         >
-                          <XIcon />
+                          <PencilIcon size={12} />
                         </Button>
-                      }
-                    />
+                        {save.name || save.lastScene?.title || "Unknown scene"}
+                      </CardTitle>
+                    )}
+                  </div>
+                  {save.name && (
+                    <p className="text-muted-foreground text-xs">
+                      {save.lastScene?.title || "Unknown scene"}
+                    </p>
                   )}
-                  {save.finished && (
-                    <span className="absolute -top-2 left-2.5 z-1 rounded-full bg-green-500/75 px-1.5 py-0.5 text-xs text-white">
-                      COMPLETED
-                    </span>
-                  )}
+                  <CardDescription>
+                    {timeFrom(save.lastPlayedAt)} ·{" "}
+                    {formatDate(save.lastPlayedAt)}
+                  </CardDescription>
                 </div>
-              </Card>
+
+                {save.key !== selectedSave.key && (
+                  <ConfirmDialog
+                    title="Delete this save?"
+                    description="This action cannot be undone. This save will be permanently deleted."
+                    confirmLabel="Delete"
+                    onConfirm={(e) => {
+                      e.stopPropagation();
+                      deleteProgress(save.key);
+                    }}
+                    onCancel={(e) => {
+                      e.stopPropagation();
+                    }}
+                    trigger={
+                      <Button
+                        disabled={isDeleting}
+                        variant="destructive"
+                        size="xs"
+                        className="rounded-full"
+                        title="Delete this save"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        <XIcon />
+                      </Button>
+                    }
+                  />
+                )}
+                {save.finished && (
+                  <span className="absolute -top-2 left-2.5 z-1 rounded-full bg-green-500/75 px-1.5 py-0.5 text-xs text-white">
+                    COMPLETED
+                  </span>
+                )}
+              </div>
+            </Card>
           ))}
           {/* Only way I could find to add padding at the bottom of a scroll area */}
           <div className="h-4"></div>
