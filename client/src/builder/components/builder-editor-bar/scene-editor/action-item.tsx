@@ -32,6 +32,7 @@ import { Separator } from "@/design-system/primitives/separator";
 export type DragHandlers = {
   onDragStart: (e: DragEvent<HTMLDivElement>) => void;
   onDragOver: (e: DragEvent<HTMLDivElement>) => void;
+  onDragLeave: (e: DragEvent<HTMLDivElement>) => void;
   onDrop: (e: DragEvent<HTMLDivElement>) => void;
   onDragEnd: (e: DragEvent<HTMLDivElement>) => void;
 };
@@ -52,10 +53,6 @@ const useConditionOptions = ({
   };
 
   return options;
-};
-
-const setDragOver = (e: DragEvent<HTMLDivElement>, value: string) => {
-  e.currentTarget.dataset.dragOver = value;
 };
 
 // TODO: test this
@@ -97,25 +94,14 @@ export const ActionItem = ({
 
   return (
     <div
-      className="data-[drag-over=true]:border-primary my-2 border-t-2 border-transparent"
+      className="relative my-2 before:pointer-events-none before:absolute before:left-0 before:right-0 before:h-0.5 before:bg-transparent data-[drag-over=above]:before:-top-[5px] data-[drag-over=above]:before:bg-primary data-[drag-over=below]:before:-bottom-[5px] data-[drag-over=below]:before:bg-primary"
       key={actionField.id}
       draggable
       onDragStart={dragHandlers.onDragStart}
-      onDragOver={(e) => {
-        dragHandlers.onDragOver(e);
-        setDragOver(e, "true");
-      }}
-      onDragLeave={(e) => {
-        setDragOver(e, "false");
-      }}
-      onDrop={(e) => {
-        dragHandlers.onDrop(e);
-        setDragOver(e, "false");
-      }}
-      onDragEnd={(e) => {
-        dragHandlers.onDragEnd(e);
-        setDragOver(e, "false");
-      }}
+      onDragOver={dragHandlers.onDragOver}
+      onDragLeave={dragHandlers.onDragLeave}
+      onDrop={dragHandlers.onDrop}
+      onDragEnd={dragHandlers.onDragEnd}
     >
       <div className="flex items-center gap-2">
         <GripVerticalIcon

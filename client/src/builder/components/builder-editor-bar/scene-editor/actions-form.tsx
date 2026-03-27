@@ -20,6 +20,14 @@ const useActionDrag = (move: (from: number, to: number) => void) => {
     onDragOver(e: DragEvent<HTMLDivElement>) {
       e.preventDefault();
       e.dataTransfer.dropEffect = "move";
+      const dragIndex = dragIndexRef.current;
+      if (dragIndex !== null && dragIndex !== index) {
+        e.currentTarget.dataset.dragOver =
+          dragIndex < index ? "below" : "above";
+      }
+    },
+    onDragLeave(e: DragEvent<HTMLDivElement>) {
+      delete e.currentTarget.dataset.dragOver;
     },
     onDrop(e: DragEvent<HTMLDivElement>) {
       e.preventDefault();
@@ -27,6 +35,7 @@ const useActionDrag = (move: (from: number, to: number) => void) => {
       if (fromIndex !== null && fromIndex !== index) {
         move(fromIndex, index);
       }
+      delete e.currentTarget.dataset.dragOver;
       dragIndexRef.current = null;
     },
     onDragEnd() {
