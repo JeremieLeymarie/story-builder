@@ -365,6 +365,40 @@ describe("library-service", () => {
         },
       });
     });
+
+    test("with name", async () => {
+      localRepository.getStoryProgress.mockResolvedValueOnce(null);
+      characterRepository.get.mockResolvedValueOnce(null);
+
+      await libraryService.createBlankStoryProgress({
+        storyKey: BASIC_STORY.key,
+        name: "bidoum",
+      });
+
+      expect(localRepository.createStoryProgress).toHaveBeenCalledWith({
+        history: [],
+        currentSceneKey: BASIC_STORY.firstSceneKey,
+        createdAt: new Date(),
+        lastPlayedAt: new Date(),
+        userKey: BASIC_USER.key,
+        storyKey: BASIC_STORY.key,
+        name: "bidoum",
+      });
+    });
+  });
+
+  describe("renameStoryProgress", () => {
+    test("should update the progress with the new name", async () => {
+      await libraryService.renameStoryProgress(
+        BASIC_STORY_PROGRESS,
+        "sacré nom",
+      );
+
+      expect(localRepository.updateStoryProgress).toHaveBeenCalledWith({
+        ...BASIC_STORY_PROGRESS,
+        name: "sacré nom",
+      });
+    });
   });
 
   describe("deleteGame", () => {
