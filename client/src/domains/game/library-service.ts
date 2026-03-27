@@ -53,8 +53,10 @@ export const _getLibraryService = ({
 
   const _createBlankStoryProgress = async ({
     storyKey,
+    name,
   }: {
     storyKey: string;
+    name?: string;
   }) => {
     const user = await localRepository.getUser();
     const story = await localRepository.getStory(storyKey);
@@ -76,6 +78,7 @@ export const _getLibraryService = ({
       createdAt: new Date(),
       totalPlayTimeMs: 0,
       userKey: user?.key ?? undefined,
+      ...(name ? { name } : {}),
       ...(characterConfig
         ? { character: _createInitialCharacter(characterConfig) }
         : {}),
@@ -232,6 +235,10 @@ export const _getLibraryService = ({
     },
 
     createBlankStoryProgress: _createBlankStoryProgress,
+
+    renameStoryProgress: async (progress: StoryProgress, name: string) => {
+      return localRepository.updateStoryProgress({ ...progress, name });
+    },
 
     deleteGame: async (storyKey: string) => {
       await localRepository.unitOfWork(
