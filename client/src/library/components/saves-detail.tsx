@@ -166,13 +166,17 @@ const Content = ({
                           >
                             <PencilIcon size={12} />
                           </Button>
-                          {save.name || save.lastScene?.title || "Unknown scene"}
+                          {save.name ||
+                            save.lastScene?.title ||
+                            "Unknown scene"}
                         </CardTitle>
                       )}
                     </div>
                     {totalScenes > 0 && (
                       <ProgressBadge
-                        percentage={round((new Set(save.history).size / totalScenes) * 100)}
+                        percentage={round(
+                          (new Set(save.history).size / totalScenes) * 100,
+                        )}
                         className="shrink-0"
                       />
                     )}

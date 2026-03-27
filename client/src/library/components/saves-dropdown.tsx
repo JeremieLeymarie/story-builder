@@ -96,7 +96,9 @@ export const SavesDropdown = ({
                 </span>
                 {totalScenes > 0 && (
                   <ProgressBadge
-                    percentage={round((new Set(save.history).size / totalScenes) * 100)}
+                    percentage={round(
+                      (new Set(save.history).size / totalScenes) * 100,
+                    )}
                     className="shrink-0"
                   />
                 )}
@@ -127,7 +129,7 @@ export const SavesDropdown = ({
                 <Button
                   variant="ghost"
                   size="xs"
-                  className="h-7 w-7 shrink-0 p-0 hover:!bg-primary"
+                  className="hover:!bg-primary h-7 w-7 shrink-0 p-0"
                   onClick={handleCreate}
                 >
                   <CheckIcon size={14} />
@@ -147,7 +149,7 @@ export const SavesDropdown = ({
                   e.preventDefault();
                   setNewSaveName("");
                 }}
-                className="font-medium hover:!bg-primary"
+                className="hover:!bg-primary font-medium"
               >
                 <PlusIcon size={14} />
                 New save
