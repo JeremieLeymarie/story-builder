@@ -7,6 +7,7 @@ import { useCopyPaste } from "./use-copy-paste";
 import { useEffect, useEffectEvent } from "react";
 import { useBuilderEditorStore } from "./use-builder-editor-store";
 import { useAddScene } from "./use-add-scene";
+import { toast } from "sonner";
 
 export const isAnyInputFocused = () => {
   const isInputFocused = document.activeElement?.tagName === "INPUT";
@@ -57,6 +58,12 @@ export const useBuilderShortCuts = ({
   };
 
   const handleKeyDown = useEffectEvent((e: KeyboardEvent) => {
+    const isCtrlOrMeta = getUserOS() === "Mac" ? e.metaKey : e.ctrlKey;
+    if (isCtrlOrMeta && e.key.toLocaleLowerCase() === "s") {
+      e.preventDefault();
+      if (!e.repeat) toast.info("Changes are automatically saved!");
+      return;
+    }
     if (e.isComposing || isAnyInputFocused()) return;
     const key = e.key.toLocaleLowerCase();
     for (const binding of Object.keys(shortcuts)) {
