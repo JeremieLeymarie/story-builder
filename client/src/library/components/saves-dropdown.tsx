@@ -7,23 +7,21 @@ import {
   PlusIcon,
   XIcon,
 } from "lucide-react";
-import { Button, Input } from "@/design-system/primitives";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/design-system/primitives/popover";
-import { Separator } from "@/design-system/primitives/separator";
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  Input,
+} from "@/design-system/primitives";
 import { round } from "@/lib/number";
-import { cn } from "@/lib/style";
 import { useCreateSave } from "../hooks/use-create-save";
 import { SavesDetail } from "./saves-detail";
 import { Save } from "./types";
 
-const itemClass =
-  "hover:bg-accent flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm";
-
-type SavesPopoverProps = {
+type SavesDropdownProps = {
   saves: Save[];
   selectedSave: Save;
   storyKey: string;
@@ -32,14 +30,14 @@ type SavesPopoverProps = {
   onPlay: (save: Save) => void;
 };
 
-export const SavesPopover = ({
+export const SavesDropdown = ({
   saves,
   selectedSave,
   storyKey,
   totalScenes,
   onSelectSave,
   onPlay,
-}: SavesPopoverProps) => {
+}: SavesDropdownProps) => {
   const [open, setOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [newSaveName, setNewSaveName] = useState<string | null>(null);
@@ -69,27 +67,24 @@ export const SavesPopover = ({
           <PlayIcon />
           Play
         </Button>
-        <Popover
+        <DropdownMenu
           open={open}
           onOpenChange={(v) => {
             setOpen(v);
             if (!v) setNewSaveName(null);
           }}
         >
-          <PopoverTrigger asChild>
+          <DropdownMenuTrigger asChild>
             <Button size="lg" className="rounded-l-none border-l px-2">
               <ChevronDownIcon size={16} />
             </Button>
-          </PopoverTrigger>
-          <PopoverContent align="center" side="bottom" className="w-56 p-1">
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="center" side="bottom" className="min-w-48">
             {saves.slice(0, 5).map((save) => (
-              <button
+              <DropdownMenuItem
                 key={save.key}
-                onClick={() => {
-                  onPlay(save);
-                  setOpen(false);
-                }}
-                className={cn(itemClass, "justify-between gap-4")}
+                onClick={() => onPlay(save)}
+                className="flex justify-between gap-4"
               >
                 <span className="truncate">
                   {save.name ?? save.lastScene?.title ?? "Unknown"}
@@ -99,16 +94,19 @@ export const SavesPopover = ({
                     {round((new Set(save.history).size / totalScenes) * 100)}%
                   </span>
                 )}
-              </button>
+              </DropdownMenuItem>
             ))}
             {saves.length > 5 && (
               <p className="text-muted-foreground px-2 py-1 text-xs">
                 {saves.length - 5} other{saves.length - 5 > 1 ? "s" : ""}
               </p>
             )}
-            <Separator className="my-1" />
+            <DropdownMenuSeparator />
             {isCreating ? (
-              <div className="flex items-center gap-1 px-2 py-1.5">
+              <div
+                className="flex items-center gap-1 px-2 py-1.5"
+                onKeyDown={(e) => e.stopPropagation()}
+              >
                 <Input
                   autoFocus
                   placeholder="Save name"
@@ -138,23 +136,27 @@ export const SavesPopover = ({
                 </Button>
               </div>
             ) : (
-              <button onClick={() => setNewSaveName("")} className={itemClass}>
+              <DropdownMenuItem
+                onSelect={(e) => {
+                  e.preventDefault();
+                  setNewSaveName("");
+                }}
+              >
                 <PlusIcon size={14} />
                 New save
-              </button>
+              </DropdownMenuItem>
             )}
-            <button
-              onClick={() => {
+            <DropdownMenuItem
+              onSelect={() => {
                 setOpen(false);
                 setDrawerOpen(true);
               }}
-              className={itemClass}
             >
               <BookMarkedIcon size={14} />
               Manage saves
-            </button>
-          </PopoverContent>
-        </Popover>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       <SavesDetail
         selectedSave={selectedSave}

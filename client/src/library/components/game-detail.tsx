@@ -6,7 +6,7 @@ import { Story } from "@/lib/storage/domain";
 import { useGetAnalyticsService } from "../hooks/use-get-analytics-service";
 import { Analytics } from "./analytics";
 import { GameDropdown } from "./game-dropdown";
-import { SavesPopover } from "./saves-popover";
+import { SavesDropdown } from "./saves-dropdown";
 import { Save } from "./types";
 
 type Props = {
@@ -78,7 +78,7 @@ export const LibraryGameDetail = ({
                 </div>
               )}
 
-              <SavesPopover
+              <SavesDropdown
                 saves={saves}
                 selectedSave={selectedSave}
                 storyKey={story.key}
