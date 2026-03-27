@@ -50,6 +50,14 @@ export type BuilderServicePort = {
   updateScene: (
     props: Partial<Scene> & Pick<Scene, "key">,
   ) => Promise<Scene | null>;
+  /** Replace the scene side effects on a specific scene
+   * @param options.sceneKey the key of the scene
+   * @param options.sideEffects the new side effects to write
+   */
+  saveSideEffects: (options: {
+    sceneKey: string;
+    sideEffects: SideEffect[];
+  }) => Promise<Scene>;
   getScenesByKey: (keys: string[]) => Promise<Record<string, Scene>>;
   getAutoLayout: (props: {
     nodes: BuilderNode[];

@@ -3,8 +3,11 @@ import { getTestDatabase } from "@/lib/storage/dexie/test-db";
 import { DexieDatabase } from "@/lib/storage/dexie/dexie-db";
 import { getTestFactory } from "@/lib/testing/factory";
 import { _getDexieBuilderStoryRepository } from "../builder-story-repository";
-import { BuilderSceneRepositoryPort } from "../ports/builder-scene-repository-port";
-import { _getDexieBuilderSceneRepository } from "../builder-scene-repository";
+import {
+  _getDexieBuilderSceneRepository,
+  BuilderSceneRepositoryPort,
+} from "../builder-scene-repository";
+import { Scene } from "@/lib/storage/domain";
 
 const factory = getTestFactory();
 
@@ -52,6 +55,20 @@ describe("builder scene repository", () => {
       );
       expect(scenesFromDB).toHaveLength(2);
       expect(scenesFromDB).toMatchObject(scenes);
+    });
+  });
+
+  describe("update", () => {
+    test("update the correct scene", async () => {
+      const scenes = [factory.scene(), factory.scene()];
+      await repo.bulkAdd(scenes);
+      const [sceneA, sceneB] = scenes as [Scene, Scene];
+
+      const payload = factory.scene({ key: sceneA.key });
+      await repo.update(sceneA.key, payload);
+      console.log(sceneA, sceneB, payload);
+      expect(await repo.get(sceneA.key)).toStrictEqual(payload);
+      expect(await repo.get(sceneB.key)).toStrictEqual(sceneB); // Unchanged
     });
   });
 });

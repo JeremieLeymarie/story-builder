@@ -725,6 +725,58 @@ describe("builder-service", () => {
     });
   });
 
+  describe("saveSideEffects", () => {
+    test("invalid scene", async () => {
+      sceneRepository.get.mockResolvedValueOnce(null);
+
+      await expect(
+        builderService.saveSideEffects({
+          sceneKey: "invalid",
+          sideEffects: [],
+        }),
+      ).rejects.toThrowError(EntityNotExistError);
+    });
+
+    test("with no effects", async () => {
+      const scene = factory.scene({
+        sideEffects: undefined,
+      });
+      sceneRepository.get.mockResolvedValueOnce(scene);
+
+      const effect = factory.sideEffect();
+      await builderService.saveSideEffects({
+        sceneKey: scene.key,
+        sideEffects: [effect],
+      });
+
+      expect(sceneRepository.update).toHaveBeenCalledWith(scene.key, {
+        ...scene,
+        sideEffects: [effect],
+      });
+    });
+    test("with existing effects", async () => {
+      const [effectToUpdate, effectToDelete, effectToAdd] = [
+        factory.sideEffect({ isVisible: true }),
+        factory.sideEffect(),
+        factory.sideEffect(),
+      ];
+      const scene = factory.scene({
+        sideEffects: [effectToUpdate, effectToDelete],
+      });
+      sceneRepository.get.mockResolvedValueOnce(scene);
+
+      await builderService.saveSideEffects({
+        sceneKey: scene.key,
+        sideEffects: [{ ...effectToUpdate, isVisible: false }, effectToAdd],
+      });
+
+      expect(sceneRepository.update).toHaveBeenCalledWith(scene.key, {
+        ...scene,
+        sideEffects: [{ ...effectToUpdate, isVisible: false }, effectToAdd],
+      });
+    });
+  });
+
   describe("changeFirstScene", () => {
     test("should update the first scene of a story", async () => {
       const success = await builderService.changeFirstScene("CANARD", "KADOC");
