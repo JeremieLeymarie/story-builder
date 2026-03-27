@@ -19,6 +19,7 @@ import {
 import { round } from "@/lib/number";
 import { useCreateSave } from "../hooks/use-create-save";
 import { SavesDetail } from "./saves-detail";
+import { ProgressBadge } from "./progress-badge";
 import { Save } from "./types";
 
 type SavesDropdownProps = {
@@ -94,9 +95,10 @@ export const SavesDropdown = ({
                   {save.name ?? save.lastScene?.title ?? "Unknown"}
                 </span>
                 {totalScenes > 0 && (
-                  <span className="text-muted-foreground shrink-0 text-xs">
-                    {round((new Set(save.history).size / totalScenes) * 100)}%
-                  </span>
+                  <ProgressBadge
+                    percentage={round((new Set(save.history).size / totalScenes) * 100)}
+                    className="shrink-0"
+                  />
                 )}
               </DropdownMenuItem>
             ))}
@@ -125,7 +127,7 @@ export const SavesDropdown = ({
                 <Button
                   variant="ghost"
                   size="xs"
-                  className="h-7 w-7 shrink-0 p-0"
+                  className="h-7 w-7 shrink-0 p-0 hover:!bg-primary"
                   onClick={handleCreate}
                 >
                   <CheckIcon size={14} />
@@ -145,6 +147,7 @@ export const SavesDropdown = ({
                   e.preventDefault();
                   setNewSaveName("");
                 }}
+                className="font-medium hover:!bg-primary"
               >
                 <PlusIcon size={14} />
                 New save
@@ -152,9 +155,11 @@ export const SavesDropdown = ({
             )}
             <DropdownMenuItem
               onSelect={() => {
+                setNewSaveName(null);
                 setOpen(false);
                 setDrawerOpen(true);
               }}
+              className="text-muted-foreground"
             >
               <BookMarkedIcon size={14} />
               Manage saves

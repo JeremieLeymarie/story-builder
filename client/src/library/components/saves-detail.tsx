@@ -18,6 +18,7 @@ import { ConfirmDialog } from "@/design-system/components";
 import { useDeleteProgress } from "../hooks/use-delete-progress";
 import { useRenameSave } from "../hooks/use-rename-save";
 import { round } from "@/lib/number";
+import { ProgressBadge } from "./progress-badge";
 
 type SavesDetailProps = {
   selectedSave: Save;
@@ -131,46 +132,49 @@ const Content = ({
                 }
               }}
             >
-              {totalScenes > 0 && (
-                <span className="text-muted-foreground absolute top-3 right-3 text-xs font-medium">
-                  {round((new Set(save.history).size / totalScenes) * 100)}%
-                </span>
-              )}
               <div className="flex items-center justify-between">
                 <div className="flex-1 cursor-pointer">
-                  <div>
-                    {editingKey === save.key ? (
-                      <form
-                        onSubmit={(e) => {
-                          e.preventDefault();
-                          handleRename(save);
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Input
-                          autoFocus
-                          value={editingName}
-                          onChange={(e) => setEditingName(e.target.value)}
-                          onBlur={() => handleRename(save)}
-                          className="h-7 w-40 text-sm"
-                        />
-                      </form>
-                    ) : (
-                      <CardTitle className="text-base break-all">
-                        <Button
-                          variant="ghost"
-                          size="xs"
-                          className="mr-1 inline-flex h-5 w-5 p-0 align-text-bottom"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setEditingKey(save.key);
-                            setEditingName(save.name ?? "");
+                  <div className="flex items-start gap-2">
+                    <div className="min-w-0 flex-1">
+                      {editingKey === save.key ? (
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            handleRename(save);
                           }}
+                          onClick={(e) => e.stopPropagation()}
                         >
-                          <PencilIcon size={12} />
-                        </Button>
-                        {save.name || save.lastScene?.title || "Unknown scene"}
-                      </CardTitle>
+                          <Input
+                            autoFocus
+                            value={editingName}
+                            onChange={(e) => setEditingName(e.target.value)}
+                            onBlur={() => handleRename(save)}
+                            className="h-7 w-40 text-sm"
+                          />
+                        </form>
+                      ) : (
+                        <CardTitle className="text-base break-all">
+                          <Button
+                            variant="ghost"
+                            size="xs"
+                            className="mr-1 inline-flex h-5 w-5 p-0 align-text-bottom"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingKey(save.key);
+                              setEditingName(save.name ?? "");
+                            }}
+                          >
+                            <PencilIcon size={12} />
+                          </Button>
+                          {save.name || save.lastScene?.title || "Unknown scene"}
+                        </CardTitle>
+                      )}
+                    </div>
+                    {totalScenes > 0 && (
+                      <ProgressBadge
+                        percentage={round((new Set(save.history).size / totalScenes) * 100)}
+                        className="shrink-0"
+                      />
                     )}
                   </div>
                   {save.name && (
