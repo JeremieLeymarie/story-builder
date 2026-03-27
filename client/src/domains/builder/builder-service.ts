@@ -9,7 +9,6 @@ import { BuilderStoryRepositoryPort } from "./ports/builder-story-repository-por
 import { LayoutServicePort } from "./ports/layout-service-port";
 import { EntityNotExistError } from "../errors";
 import { nanoid } from "nanoid";
-import { BuilderSceneRepositoryPort } from "./ports/builder-scene-repository-port";
 import {
   ActionTargetNotFound,
   CannotDeleteFirstSceneError,
@@ -20,6 +19,7 @@ import { produce } from "immer";
 import { N } from "@/lib/number";
 import { randomInArray } from "@/lib/random";
 import { capitalize } from "@/lib/string";
+import { BuilderSceneRepositoryPort } from "./builder-scene-repository";
 
 export const _getBuilderService = ({
   localRepository,
@@ -281,6 +281,16 @@ export const _getBuilderService = ({
     updateScene: async ({ key, ...scene }) => {
       await localRepository.updatePartialScene(key, scene);
       return await sceneRepository.get(key);
+    },
+
+    saveSideEffects: async ({ sceneKey, sideEffects }) => {
+      const scene = await sceneRepository.get(sceneKey);
+      if (!scene) throw new EntityNotExistError("scene", sceneKey);
+
+      const newScene = { ...scene, sideEffects };
+      await sceneRepository.update(scene.key, newScene);
+
+      return newScene;
     },
 
     getAutoLayout: async ({

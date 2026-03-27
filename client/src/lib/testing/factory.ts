@@ -16,6 +16,7 @@ import {
   WikiArticleLink,
   WikiCategory,
   ProgressCharacter,
+  SideEffect,
 } from "../storage/domain";
 import { faker } from "@faker-js/faker";
 import { nanoid } from "nanoid";
@@ -167,6 +168,21 @@ const _characterConfigFactory = {
     ),
 } satisfies CharacterConfigFactory;
 
+type SideEffectFactory = _BaseFactory<SideEffect>;
+const _sideEffectFactory = {
+  key: nanoid,
+  name: faker.word.sample,
+  trigger: () => faker.helpers.arrayElement(["scene-load"]),
+  isVisible: () => Math.random() > 0.5,
+  effect: () => ({
+    type: "character-attribute",
+    increment: faker.number.int({ min: -10, max: 10 }),
+    attributeKey: nanoid(),
+    title: Math.random() > 0.8 ? faker.word.words() : undefined,
+    description: Math.random() > 0.8 ? faker.word.words() : undefined,
+  }),
+} satisfies SideEffectFactory;
+
 type SceneFactory = _BaseFactory<Scene>;
 const _sceneFactory = {
   key: nanoid,
@@ -193,19 +209,11 @@ const _sceneFactory = {
   sideEffects: () =>
     Array(faker.number.int({ min: 0, max: 3 }))
       .fill(null)
-      .map((_, i) => ({
-        key: nanoid(),
-        name: `Side Effect #${i}`,
-        trigger: faker.helpers.arrayElement(["scene-load"]),
-        isVisible: Math.random() > 0.5,
-        effect: {
-          type: "character-attribute",
-          increment: faker.number.int({ min: -10, max: 10 }),
-          attributeKey: nanoid(),
-          title: Math.random() > 0.8 ? faker.word.words() : undefined,
-          description: Math.random() > 0.8 ? faker.word.words() : undefined,
-        },
-      })),
+      .map((_, i) =>
+        makeRandomEntity(_sideEffectFactory, {
+          name: `Side Effect #${i + 1}`,
+        } as Partial<SideEffect>),
+      ),
 } satisfies SceneFactory;
 
 type ProgressCharacterFactory = _BaseFactory<ProgressCharacter>;
@@ -287,6 +295,10 @@ export const getTestFactory = () => {
 
     scene: (partial: Partial<Scene> = {}) => {
       return makeRandomEntity(_sceneFactory, partial);
+    },
+
+    sideEffect: (partial: Partial<SideEffect> = {}) => {
+      return makeRandomEntity(_sideEffectFactory, partial);
     },
 
     storyProgress: (partial: Partial<StoryProgress> = {}) => {
