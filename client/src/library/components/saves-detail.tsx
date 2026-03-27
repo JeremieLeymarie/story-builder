@@ -252,6 +252,8 @@ export const SavesDetail = ({
     <ResponsiveDrawer
       open={open}
       setOpen={setOpen}
+      // HACK: ResponsiveDrawer requires a trigger but this drawer is opened programmatically via open/setOpen.
+      // Ideal fix: make trigger optional in ResponsiveDrawer
       trigger={<span />}
       content={
         <Content

@@ -22,6 +22,8 @@ import { SavesDetail } from "./saves-detail";
 import { ProgressBadge } from "./progress-badge";
 import { Save } from "./types";
 
+const MAX_DISPLAYED_SAVES = 3;
+
 type SavesDropdownProps = {
   saves: Save[];
   selectedSave: Save;
@@ -44,6 +46,7 @@ export const SavesDropdown = ({
   const [newSaveName, setNewSaveName] = useState<string | null>(null);
 
   const isCreating = newSaveName !== null;
+  const otherSaves = saves.filter((s) => s.key !== selectedSave.key);
 
   const { createSave } = useCreateSave({
     onSuccess: (createdSave) => {
@@ -85,7 +88,7 @@ export const SavesDropdown = ({
             side="bottom"
             className="min-w-48"
           >
-            {saves.slice(0, 3).map((save) => (
+            {otherSaves.slice(0, MAX_DISPLAYED_SAVES).map((save) => (
               <DropdownMenuItem
                 key={save.key}
                 onClick={() => onPlay(save)}
@@ -104,9 +107,10 @@ export const SavesDropdown = ({
                 )}
               </DropdownMenuItem>
             ))}
-            {saves.length > 3 && (
+            {otherSaves.length > MAX_DISPLAYED_SAVES && (
               <p className="text-muted-foreground px-2 py-1 text-xs">
-                {saves.length - 3} other{saves.length - 3 > 1 ? "s" : ""}
+                {otherSaves.length - MAX_DISPLAYED_SAVES} other
+                {otherSaves.length - MAX_DISPLAYED_SAVES > 1 ? "s" : ""}
               </p>
             )}
             <DropdownMenuSeparator />
@@ -126,14 +130,12 @@ export const SavesDropdown = ({
                   }}
                   className="h-7 text-sm"
                 />
-                <Button
-                  variant="ghost"
-                  size="xs"
-                  className="hover:!bg-primary h-7 w-7 shrink-0 p-0"
+                <button
+                  className="hover:bg-primary flex h-7 w-7 shrink-0 items-center justify-center rounded-sm"
                   onClick={handleCreate}
                 >
                   <CheckIcon size={14} />
-                </Button>
+                </button>
                 <Button
                   variant="ghost"
                   size="xs"
@@ -149,7 +151,7 @@ export const SavesDropdown = ({
                   e.preventDefault();
                   setNewSaveName("");
                 }}
-                className="hover:!bg-primary font-medium"
+                className="font-medium data-[highlighted]:bg-primary"
               >
                 <PlusIcon size={14} />
                 New save
