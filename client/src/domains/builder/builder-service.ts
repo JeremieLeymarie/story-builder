@@ -284,7 +284,6 @@ export const _getBuilderService = ({
     },
 
     saveSideEffects: async ({ sceneKey, sideEffects }) => {
-      console.log("ça submit la team ? ");
       const scene = await sceneRepository.get(sceneKey);
       if (!scene) throw new EntityNotExistError("scene", sceneKey);
 

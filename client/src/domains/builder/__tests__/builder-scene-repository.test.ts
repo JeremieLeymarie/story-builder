@@ -66,7 +66,6 @@ describe("builder scene repository", () => {
 
       const payload = factory.scene({ key: sceneA.key });
       await repo.update(sceneA.key, payload);
-      console.log(sceneA, sceneB, payload);
       expect(await repo.get(sceneA.key)).toStrictEqual(payload);
       expect(await repo.get(sceneB.key)).toStrictEqual(sceneB); // Unchanged
     });
