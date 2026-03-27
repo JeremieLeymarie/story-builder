@@ -31,6 +31,22 @@ const authorSchema = z
   })
   .optional();
 
+const characterAttrSideEffect = z.object({
+  type: z.literal("character-attribute"),
+  increment: z.int(),
+  attributeKey: z.nanoid(),
+  title: z.string().optional(),
+  description: z.string().optional(),
+});
+
+const sideEffectSchema = z.object({
+  key: z.nanoid(),
+  name: z.string(),
+  trigger: z.literal("scene-load"),
+  isVisible: z.boolean(),
+  effect: z.union([characterAttrSideEffect]),
+});
+
 export const importDataSchema = z.object({
   story: z.object(
     {
@@ -68,6 +84,7 @@ export const importDataSchema = z.object({
           y: z.number({ message: "Y is required" }),
         }),
       }),
+      sideEffects: z.array(sideEffectSchema).optional(),
     }),
     { message: "Scenes are required" },
   ),
