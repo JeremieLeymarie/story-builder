@@ -3,6 +3,7 @@ import { ImagesPlugin } from "../plugins/images-plugin/plugin";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { ReactNode } from "react";
 import { InsertImage } from "./toolbar/insert-image";
+import { BlockFormatToolbarPlugin } from "./toolbar/block-format-toolbar-plugin";
 
 export const EditorPlugins = ({
   toolbarPlugins,
@@ -16,6 +17,7 @@ export const EditorPlugins = ({
         <FontFormatToolbarPlugin format="italic" />
         <FontFormatToolbarPlugin format="underline" />
         <FontFormatToolbarPlugin format="strikethrough" />
+        <BlockFormatToolbarPlugin />
         <InsertImage />
         {...toolbarPlugins ?? []}
       </div>
