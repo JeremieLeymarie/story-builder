@@ -151,7 +151,7 @@ export const SavesDropdown = ({
                   e.preventDefault();
                   setNewSaveName("");
                 }}
-                className="font-medium data-[highlighted]:bg-primary"
+                className="data-[highlighted]:bg-primary font-medium"
               >
                 <PlusIcon size={14} />
                 New save
