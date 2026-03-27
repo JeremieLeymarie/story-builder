@@ -193,6 +193,7 @@ export type StoryProgress = {
   currentSceneKey: string;
   character?: ProgressCharacter;
   inventory?: Record<string, unknown>;
+  name?: string;
   createdAt: Date;
   lastPlayedAt: Date;
   finished?: boolean;
