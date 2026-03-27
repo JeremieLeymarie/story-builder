@@ -79,7 +79,11 @@ export const SavesDropdown = ({
               <ChevronDownIcon size={16} />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="center" side="bottom" className="min-w-48">
+          <DropdownMenuContent
+            align="center"
+            side="bottom"
+            className="min-w-48"
+          >
             {saves.slice(0, 5).map((save) => (
               <DropdownMenuItem
                 key={save.key}
