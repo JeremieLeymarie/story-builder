@@ -55,9 +55,7 @@ export const SavesPopover = ({
   });
 
   const handleCreate = () => {
-    if (newSaveName?.trim()) {
-      createSave({ storyKey, name: newSaveName.trim() });
-    }
+    createSave({ storyKey, name: newSaveName?.trim() || undefined });
   };
 
   return (
