@@ -31,6 +31,7 @@ import {
   getDexieCharacterRepository,
 } from "@/domains/builder/character-repository";
 import { match, P } from "ts-pattern";
+import { KeyNotFoundError } from "./errors";
 
 export const ANONYMOUS_AUTHOR = {
   key: "ANONYMOUS_AUTHOR_KEY",
@@ -86,7 +87,7 @@ export type ImportServicePort = {
 };
 
 // We should implement some kind of context instead of passing everything every time
-const _mutateConditionAction = ({
+const _prepareConditionActionPayload = ({
   action,
   scene,
   oldScenesToNewScenes,
@@ -103,18 +104,14 @@ const _mutateConditionAction = ({
       (condition) => {
         const newTargetSceneKey = oldScenesToNewScenes[condition.sceneKey];
         if (!newTargetSceneKey)
-          throw new Error(
-            `sceneKey not found in old scene to new scenes mapping, for scene [${scene.title}] and action [${action.text}]`,
-          );
+          throw new KeyNotFoundError("sceneKey", "scene", scene.key);
         condition.sceneKey = newTargetSceneKey;
       },
     )
     .with({ type: "character-attribute" }, (condition) => {
       const newAttrKey = oldCharacterAttrToNew[condition.attributeKey];
       if (!newAttrKey)
-        throw new Error(
-          `attributeKey not found in old character attributes to new attributes mapping, for character attribute [newAttrKey]`,
-        );
+        throw new KeyNotFoundError("attributeKey", "action", action.key);
       condition.attributeKey = newAttrKey;
     })
     .exhaustive();
@@ -142,8 +139,10 @@ export const _makeBulkSceneUpdatePayload = ({
       if (!scenesByKey[scene.key]) return null;
 
       const actions = scenesByKey[scene.key]!.actions;
-
       if (!actions.length) return null; // No need to update if the scene doesn't have any actions
+
+      const newSceneKey = oldScenesToNewScenes[scene.key];
+      if (!newSceneKey) return null;
 
       const newActions = actions?.map((action) =>
         produce(action, (draft) => {
@@ -151,8 +150,10 @@ export const _makeBulkSceneUpdatePayload = ({
           draft.targets = draft.targets.map((target) => {
             const newSceneKey = oldScenesToNewScenes[target.sceneKey];
             if (!newSceneKey) {
-              throw new Error(
-                `sceneKey not found in old scene to new scenes mapping, for scene [${scene.title}] and action [${action.text}]`,
+              throw new KeyNotFoundError(
+                "sceneKey",
+                "action.target",
+                target.sceneKey,
               );
             }
             return {
@@ -161,7 +162,7 @@ export const _makeBulkSceneUpdatePayload = ({
             };
           });
           if (draft.type === "conditional")
-            _mutateConditionAction({
+            _prepareConditionActionPayload({
               action: draft,
               scene,
               oldScenesToNewScenes,
@@ -170,13 +171,27 @@ export const _makeBulkSceneUpdatePayload = ({
         }),
       );
 
-      const newSceneKey = oldScenesToNewScenes[scene.key];
+      const newSideEffects = scene.sideEffects?.map((effectConfig) =>
+        produce(effectConfig, (draft) => {
+          const oldAttrKey = draft.effect.attributeKey;
+          const newAttrKey = oldCharacterAttrToNew[oldAttrKey];
+          if (!newAttrKey)
+            throw new KeyNotFoundError(
+              "attributeKey",
+              "scene.sideEffects",
+              oldAttrKey,
+            );
 
-      if (!newSceneKey) {
-        return null;
-      }
+          draft.key = nanoid();
+          draft.effect.attributeKey = newAttrKey;
+        }),
+      );
 
-      return { key: newSceneKey, actions: newActions };
+      return {
+        key: newSceneKey,
+        actions: newActions,
+        sideEffects: newSideEffects,
+      };
     })
     .filter((scene) => !!scene);
 };
