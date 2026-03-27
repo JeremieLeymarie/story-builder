@@ -1,4 +1,4 @@
-export class ImportError extends Error {}
+class ImportError extends Error {}
 
 export class KeyNotFoundError extends ImportError {
   constructor(keyField: string, objectType: string, objectKey: string) {

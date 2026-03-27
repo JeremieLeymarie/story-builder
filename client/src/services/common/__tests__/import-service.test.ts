@@ -133,6 +133,19 @@ const SCENE_WITH_ACTIONS: ImportData["scenes"][number] = {
       y: 0,
     },
   },
+  sideEffects: [
+    {
+      key: nanoid(),
+      isVisible: true,
+      name: "Dexterity Level Up",
+      trigger: "scene-load",
+      effect: {
+        type: "character-attribute",
+        attributeKey: DEX_ATTRIBUTE.key,
+        increment: 3,
+      },
+    },
+  ],
 };
 
 const IMPORTED_SCENES = [BASIC_SCENE, SCENE_WITH_ACTIONS];
@@ -364,7 +377,7 @@ describe("import-service", () => {
       });
 
       // Scene is created with new story key & no actions at first
-      expect(localRepository.createScene).toHaveBeenCalledWith({
+      expect(localRepository.createScene).toHaveBeenNthCalledWith(2, {
         storyKey: "new-story-key",
         title: "Your first scene",
         content: BASIC_SCENE_CONTENT,
@@ -375,6 +388,19 @@ describe("import-service", () => {
             y: 0,
           },
         },
+        sideEffects: [
+          {
+            key: expect.any(String),
+            isVisible: true,
+            name: "Dexterity Level Up",
+            trigger: "scene-load",
+            effect: {
+              type: "character-attribute",
+              attributeKey: "new-dex-key",
+              increment: 3,
+            },
+          },
+        ],
       });
       // Scene is updated with the new keys in the action (only the ones with a sceneKey)
       expect(localRepository.updateScenes).toHaveBeenCalledOnce();

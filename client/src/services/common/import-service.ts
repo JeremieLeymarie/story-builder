@@ -86,6 +86,30 @@ export type ImportServicePort = {
   }) => Promise<void>;
 };
 
+const _makeNewSideEffects = ({
+  scene,
+  oldCharacterAttrToNew,
+}: {
+  scene: Scene;
+  oldCharacterAttrToNew: Record<string, string>;
+}) => {
+  return scene.sideEffects?.map((effectConfig) =>
+    produce(effectConfig, (draft) => {
+      const oldAttrKey = draft.effect.attributeKey;
+      const newAttrKey = oldCharacterAttrToNew[oldAttrKey];
+      if (!newAttrKey)
+        throw new KeyNotFoundError(
+          "attributeKey",
+          "scene.sideEffects",
+          oldAttrKey,
+        );
+
+      draft.key = nanoid();
+      draft.effect.attributeKey = newAttrKey;
+    }),
+  );
+};
+
 // We should implement some kind of context instead of passing everything every time
 const _prepareConditionActionPayload = ({
   action,
@@ -171,26 +195,9 @@ export const _makeBulkSceneUpdatePayload = ({
         }),
       );
 
-      const newSideEffects = scene.sideEffects?.map((effectConfig) =>
-        produce(effectConfig, (draft) => {
-          const oldAttrKey = draft.effect.attributeKey;
-          const newAttrKey = oldCharacterAttrToNew[oldAttrKey];
-          if (!newAttrKey)
-            throw new KeyNotFoundError(
-              "attributeKey",
-              "scene.sideEffects",
-              oldAttrKey,
-            );
-
-          draft.key = nanoid();
-          draft.effect.attributeKey = newAttrKey;
-        }),
-      );
-
       return {
         key: newSceneKey,
         actions: newActions,
-        sideEffects: newSideEffects,
       };
     })
     .filter((scene) => !!scene);
@@ -386,6 +393,14 @@ export const _getImportService = ({
           ...sceneData,
           storyKey: newStoryKey,
           actions: [],
+          ...((scene?.sideEffects ?? []).length > 0
+            ? {
+                sideEffects: _makeNewSideEffects({
+                  scene,
+                  oldCharacterAttrToNew,
+                }),
+              }
+            : {}),
         });
         oldScenesToNewScenes[oldSceneKey] = key;
       }
