@@ -84,7 +84,7 @@ export const SavesDropdown = ({
             side="bottom"
             className="min-w-48"
           >
-            {saves.slice(0, 5).map((save) => (
+            {saves.slice(0, 3).map((save) => (
               <DropdownMenuItem
                 key={save.key}
                 onClick={() => onPlay(save)}
@@ -100,9 +100,9 @@ export const SavesDropdown = ({
                 )}
               </DropdownMenuItem>
             ))}
-            {saves.length > 5 && (
+            {saves.length > 3 && (
               <p className="text-muted-foreground px-2 py-1 text-xs">
-                {saves.length - 5} other{saves.length - 5 > 1 ? "s" : ""}
+                {saves.length - 3} other{saves.length - 3 > 1 ? "s" : ""}
               </p>
             )}
             <DropdownMenuSeparator />
