@@ -8,7 +8,13 @@ export const useRenameSave = ({
   onSuccess?: () => void;
 } = {}) => {
   const { mutateAsync } = useMutation({
-    mutationFn: async ({ progress, name }: { progress: StoryProgress; name: string }) => {
+    mutationFn: async ({
+      progress,
+      name,
+    }: {
+      progress: StoryProgress;
+      name: string;
+    }) => {
       return getLibraryService().renameStoryProgress(progress, name);
     },
     onSuccess() {
