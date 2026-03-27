@@ -146,11 +146,11 @@ const SideEffectPreview = ({
   const attribute = characterConfig.attributes[field.effect.attributeKey]!;
   return (
     <FieldDescription className="space-y-1">
-      <p className="flex items-center gap-1">
+      <span className="flex items-center gap-1">
         {field.isVisible ? <EyeIcon size={16} /> : <EyeClosedIcon size={16} />}
         This is {field.isVisible ? "" : "not"} visible by the player.
-      </p>
-      <p>
+      </span>
+      <span>
         <ZapIcon size={16} className="mr-1 inline-flex font-normal" />
         When the player lands on this scene, their{" "}
         <span className="font-semibold">
@@ -158,7 +158,7 @@ const SideEffectPreview = ({
         </span> will{" "}
         {field.effect.operation === "add" ? "increase" : "decrease"} by{" "}
         {field.effect.value} point{field.effect.value === 1 ? "" : "s"}
-      </p>
+      </span>
     </FieldDescription>
   );
 };
@@ -176,7 +176,7 @@ export const SideEffectItem = ({
   characterConfig: CharacterConfiguration;
   removeEffect: () => void;
 }) => {
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(form.formState.isDirty);
 
   return (
     <div className="gap-2">

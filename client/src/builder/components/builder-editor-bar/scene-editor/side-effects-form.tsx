@@ -5,7 +5,7 @@ import { Button, Form } from "@/design-system/primitives";
 import { PlusIcon, ZapIcon } from "lucide-react";
 import { SideEffectItem } from "./side-effect-item";
 import { useSideEffectsForm } from "./hooks/use-side-effects-form";
-import { CharacterConfiguration } from "@/lib/storage/domain";
+import { CharacterConfiguration, Scene } from "@/lib/storage/domain";
 import {
   Empty,
   EmptyContent,
@@ -20,11 +20,14 @@ import { Controller } from "react-hook-form";
 import { ScrollArea, ScrollBar } from "@/design-system/primitives/scroll-area";
 
 const SideEffectForm = ({
+  scene,
   characterConfig,
 }: {
+  scene: Scene;
   characterConfig: CharacterConfiguration;
 }) => {
   const { form, fields, addEffect, removeEffect } = useSideEffectsForm({
+    scene,
     characterConfig,
   });
 
@@ -57,27 +60,29 @@ const SideEffectForm = ({
           {fields.length > 0 ? (
             <ScrollArea className="px-2">
               <FieldGroup className="max-h-100 gap-4">
-                {fields.map((_, effectIndex) => (
-                  <Controller
-                    control={form.control}
-                    name="effects"
-                    render={({ field }) => (
-                      <>
-                        <SideEffectItem
-                          key={field.value[effectIndex]!.key}
-                          field={field.value[effectIndex]!}
-                          form={form}
-                          effectIndex={effectIndex}
-                          characterConfig={characterConfig}
-                          removeEffect={() => removeEffect(effectIndex)}
-                        />
-                        {effectIndex !== fields.length - 1 && (
-                          <FieldSeparator className="shrink-0" />
-                        )}
-                      </>
-                    )}
-                  />
-                ))}
+                {fields.map((fieldConfig, effectIndex) => {
+                  return (
+                    <Controller
+                      key={fieldConfig.key}
+                      control={form.control}
+                      name="effects"
+                      render={({ field }) => (
+                        <>
+                          <SideEffectItem
+                            field={field.value[effectIndex]!}
+                            form={form}
+                            effectIndex={effectIndex}
+                            characterConfig={characterConfig}
+                            removeEffect={() => removeEffect(effectIndex)}
+                          />
+                          {effectIndex !== fields.length - 1 && (
+                            <FieldSeparator className="shrink-0" />
+                          )}
+                        </>
+                      )}
+                    />
+                  );
+                })}
               </FieldGroup>
               <ScrollBar orientation="vertical" />
             </ScrollArea>
@@ -135,5 +140,5 @@ export const SideEffectsFormContainer = ({
       </Empty>
     );
 
-  return <SideEffectForm characterConfig={characterConfig!} />;
+  return <SideEffectForm scene={scene} characterConfig={characterConfig!} />;
 };

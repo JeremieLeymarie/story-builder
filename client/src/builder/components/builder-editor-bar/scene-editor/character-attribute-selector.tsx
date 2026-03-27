@@ -26,7 +26,11 @@ export const CharacterAttributeSelector = ({
       <SelectContent>
         <SelectGroup>
           {Object.values(characterConfig.attributes).map((attribute) => (
-            <SelectItem className="text-xs" value={attribute.key}>
+            <SelectItem
+              key={attribute.key}
+              className="text-xs"
+              value={attribute.key}
+            >
               {capitalize(attribute.name)}
             </SelectItem>
           ))}
