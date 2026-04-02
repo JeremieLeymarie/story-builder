@@ -1,7 +1,7 @@
 import { Button } from "@/design-system/primitives";
 import { Action, StoryProgress, StoryThemeConfig } from "@/lib/storage/domain";
 import { cn } from "@/lib/style";
-import { Link } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import {
   Tooltip,
   TooltipContent,
@@ -35,10 +35,12 @@ const ActionButton = ({
   text,
   isVisible,
   actionTheme,
+  onClick,
 }: {
   text: string;
   isVisible: boolean;
   actionTheme: StoryThemeConfig["action"];
+  onClick: () => void;
 }) => {
   const [className, size] = match(actionTheme.size)
     .with("huge", () => ["py-3 px-4.5", "xl"] as const)
@@ -59,6 +61,7 @@ const ActionButton = ({
       }}
       disabled={!isVisible}
       size={size}
+      onClick={onClick}
     >
       {isVisible ? text : "????"}
     </Button>
@@ -81,6 +84,7 @@ export const SceneAction = ({
     action,
     progress,
   });
+  const navigate = useNavigate();
 
   // Only show actions that lead somewhere
   if (action.targets.length === 0) return null;
@@ -90,35 +94,39 @@ export const SceneAction = ({
   if (isTestMode) {
     return (
       <ActionTooltip isTestMode isVisible={isVisible} key={action.text}>
-        <Link
-          to="/game/test/$gameKey/$sceneKey"
-          params={{ gameKey: storyKey, sceneKey: nextScene }}
-        >
-          <ActionButton
-            text={action.text}
-            isVisible={isVisible}
-            actionTheme={actionTheme}
-          />
-        </Link>
+        <ActionButton
+          key={action.key}
+          text={action.text}
+          isVisible={isVisible}
+          actionTheme={actionTheme}
+          onClick={() =>
+            navigate({
+              to: "/game/test/$gameKey/$sceneKey",
+              params: { gameKey: storyKey, sceneKey: nextScene },
+              replace: true,
+            })
+          }
+        />
       </ActionTooltip>
     );
   }
 
   return (
     <ActionTooltip isTestMode={false} isVisible={isVisible}>
-      <Link
-        key={action.text}
-        to="/game/$gameKey/$sceneKey"
-        params={{ gameKey: storyKey, sceneKey: nextScene }}
-        search={{ storyProgressKey: progress.key }}
-        disabled={!isVisible}
-      >
-        <ActionButton
-          text={action.text}
-          isVisible={isVisible}
-          actionTheme={actionTheme}
-        />
-      </Link>
+      <ActionButton
+        key={action.key}
+        text={action.text}
+        isVisible={isVisible}
+        actionTheme={actionTheme}
+        onClick={() =>
+          navigate({
+            to: "/game/$gameKey/$sceneKey",
+            params: { gameKey: storyKey, sceneKey: nextScene },
+            search: { storyProgressKey: progress.key },
+            replace: true,
+          })
+        }
+      />
     </ActionTooltip>
   );
 };

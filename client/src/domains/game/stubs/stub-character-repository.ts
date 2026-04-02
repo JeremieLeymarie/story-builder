@@ -7,5 +7,5 @@ const factory = getTestFactory();
 export type MockCharacterRepository = MockPort<CharacterRepositoryPort>;
 
 export const getStubCharacterRepository = (): MockCharacterRepository => ({
-  get: vi.fn(() => Promise.resolve(factory.characterConfig())),
+  getConfig: vi.fn(() => Promise.resolve(factory.characterConfig())),
 });

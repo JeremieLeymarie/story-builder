@@ -20,7 +20,7 @@ describe("game character repository", () => {
 
   describe("get", () => {
     test("should return null if not exists", async () => {
-      const result = await repo.get("plouf");
+      const result = await repo.getConfig("plouf");
       expect(result).toBeNull();
     });
 
@@ -28,7 +28,7 @@ describe("game character repository", () => {
       const character = factory.characterConfig();
       await testDB.characterConfigurations.add(character);
 
-      const result = await repo.get(character.storyKey);
+      const result = await repo.getConfig(character.storyKey);
 
       expect(result).toStrictEqual(character);
     });

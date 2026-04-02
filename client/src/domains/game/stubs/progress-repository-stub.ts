@@ -10,5 +10,6 @@ const factory = getTestFactory();
 export const getStubProgressRepository = (): MockProgressRepository => {
   return {
     get: vi.fn(() => Promise.resolve(factory.storyProgress())),
+    update: vi.fn(),
   };
 };
