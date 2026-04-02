@@ -53,12 +53,19 @@ export const CharacterCard = ({
     character?.attributes ?? {},
   ).some((attr) => attr.visibility === "visible");
   const [{ isCharacterCardOpen }, setSettings] = useLocalGameSettings();
+  const wereCharacterSideEffectsTriggered =
+    triggeredSideEffects.filter(
+      (se) => se.effect.type === "character-attribute",
+    ).length > 0;
 
   if (!shouldDisplayCharacter) return null;
 
   return (
     <Card
-      className="gap-1 py-2"
+      className={cn(
+        "gap-1 py-2",
+        wereCharacterSideEffectsTriggered && "ring-emerald-600",
+      )}
       onClick={() => {
         setSettings((prev) => ({
           isCharacterCardOpen: !prev.isCharacterCardOpen,
