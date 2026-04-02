@@ -112,7 +112,6 @@ export const _getGameService = ({
 
       let updatePayload: Partial<StoryProgress> = {};
       const effectsTriggered: SideEffect[] = [];
-      console.log({ isImmediateDuplicate });
 
       if (isImmediateDuplicate) {
         updatePayload = { userKey: user?.key, lastPlayedAt: new Date() };
