@@ -1,4 +1,10 @@
-import { Action, Scene, Story, StoryProgress } from "@/lib/storage/domain";
+import {
+  Action,
+  Scene,
+  SideEffect,
+  Story,
+  StoryProgress,
+} from "@/lib/storage/domain";
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 import { match } from "ts-pattern";
 import { produce } from "immer";
@@ -13,7 +19,7 @@ type GameServicePort = {
     currentScene: Scene,
   ) => Promise<{
     updatedProgress: StoryProgress | null;
-    effectsTriggered: number;
+    effectsTriggered: SideEffect[];
   }>;
   getNextKey: (
     options: {
@@ -68,9 +74,9 @@ export const _getGameService = ({
     progress: StoryProgress;
   }) => {
     if ((scene.sideEffects ?? []).length <= 0)
-      return { updatedCharacter: null, effectsTriggered: 0 };
+      return { updatedCharacter: null, effectsTriggered: [] };
 
-    let effectsTriggered = 0;
+    const effectsTriggered: SideEffect[] = [];
     const updatedCharacter =
       produce(progress.character, (character) => {
         if (!character)
@@ -88,7 +94,7 @@ export const _getGameService = ({
             );
 
           attribute.value += effectConfig.effect.increment;
-          effectsTriggered += 1;
+          effectsTriggered.push(effectConfig);
         });
       }) ?? null;
 
@@ -106,7 +112,7 @@ export const _getGameService = ({
       const isImmediateDuplicate = progress.history.at(-1) === currentScene.key;
 
       let updatedProgress: StoryProgress | null = null;
-      let effectsTriggered = 0;
+      const effectsTriggered: SideEffect[] = [];
 
       if (isImmediateDuplicate) {
         updatedProgress = { ...progress, lastPlayedAt: new Date() };
@@ -129,7 +135,7 @@ export const _getGameService = ({
             character: effectsResult.updatedCharacter,
           }),
         };
-        effectsTriggered = effectsResult.effectsTriggered;
+        effectsTriggered.push(...effectsResult.effectsTriggered);
       }
 
       await progressRepo.update(progress.key, updatedProgress);

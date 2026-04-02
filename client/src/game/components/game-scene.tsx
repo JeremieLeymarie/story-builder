@@ -2,7 +2,12 @@ import { SceneAction } from "./scene-action";
 import { Button } from "@/design-system/primitives";
 import { LibraryBigIcon } from "lucide-react";
 
-import { Scene, StoryProgress, StoryThemeConfig } from "@/lib/storage/domain";
+import {
+  Scene,
+  SideEffect,
+  StoryProgress,
+  StoryThemeConfig,
+} from "@/lib/storage/domain";
 import { Divider } from "@/design-system/components/divider";
 import { Link } from "@tanstack/react-router";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
@@ -15,6 +20,7 @@ type BaseProps = {
   scene: Scene;
   isLastScene: boolean;
   theme: StoryThemeConfig;
+  triggeredSideEffects: SideEffect[];
 };
 
 type GameModeProps = BaseProps & {
@@ -28,13 +34,13 @@ type ThemeEditorModeProps = BaseProps & { mode: "theme-editor" };
 
 type GameSceneProps = GameModeProps | TestModeProps | ThemeEditorModeProps;
 
-export const GameScene = (props: GameSceneProps) => {
-  const {
-    scene: { key, content, title, actions, storyKey },
-    isLastScene,
-    theme,
-  } = props;
-
+export const GameScene = ({
+  scene: { key, content, title, actions, storyKey },
+  isLastScene,
+  theme,
+  triggeredSideEffects,
+  ...props
+}: GameSceneProps) => {
   return (
     <div
       className="flex h-full w-full justify-center py-8"
@@ -50,7 +56,10 @@ export const GameScene = (props: GameSceneProps) => {
       <div className="w-11/12 px-6 lg:w-8/12">
         {/* TODO: enable progress in test mode (https://github.com/JeremieLeymarie/story-builder/issues/479) */}
         {props.mode === "game" && (
-          <CharacterCard character={props.progress.character} />
+          <CharacterCard
+            character={props.progress.character}
+            triggeredSideEffects={triggeredSideEffects}
+          />
         )}
         <div className="w-full py-4">
           <div>

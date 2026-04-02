@@ -5,18 +5,49 @@ import {
   CardHeader,
   CardTitle,
 } from "@/design-system/primitives";
-import { ProgressCharacter } from "@/lib/storage/domain";
+import { ProgressCharacter, SideEffect } from "@/lib/storage/domain";
 import {
   ArrowDownFromLineIcon,
   ArrowUpFromLineIcon,
   BookUserIcon,
 } from "lucide-react";
 import { useLocalGameSettings } from "../hooks/use-local-game-settings";
+import React from "react";
+import { cn } from "@/lib/style";
+
+const CharacterAttribute = ({
+  name,
+  value,
+  triggeredEffect,
+}: {
+  name: string;
+  value: number;
+  triggeredEffect?: SideEffect; // The eventual effect that was just triggered on this specific attribute
+}) => {
+  const shouldShowUpdate = triggeredEffect?.isVisible;
+
+  return (
+    <div>
+      <span className="font-semibold select-none">{name}:&nbsp;</span>
+      <span className={cn("select-none", shouldShowUpdate && "font-semibold")}>
+        {value}
+        {shouldShowUpdate && (
+          <span className="animate-pulse align-text-top text-xs font-normal text-emerald-600 select-none">
+            &nbsp;({triggeredEffect.effect.increment >= 0 ? "+" : "-"}
+            {triggeredEffect.effect.increment})
+          </span>
+        )}
+      </span>
+    </div>
+  );
+};
 
 export const CharacterCard = ({
   character,
+  triggeredSideEffects,
 }: {
   character?: ProgressCharacter;
+  triggeredSideEffects: SideEffect[];
 }) => {
   const shouldDisplayCharacter = Object.values(
     character?.attributes ?? {},
@@ -26,21 +57,21 @@ export const CharacterCard = ({
   if (!shouldDisplayCharacter) return null;
 
   return (
-    <Card className="gap-1 py-2">
-      <CardHeader
-        className="flex items-center justify-between"
-        onClick={() => {
-          setSettings((prev) => ({
-            isCharacterCardOpen: !prev.isCharacterCardOpen,
-          }));
-        }}
-      >
-        <CardTitle className="flex items-center gap-1">
+    <Card
+      className="gap-1 py-2"
+      onClick={() => {
+        setSettings((prev) => ({
+          isCharacterCardOpen: !prev.isCharacterCardOpen,
+        }));
+      }}
+    >
+      <CardHeader className="flex items-center justify-between">
+        <CardTitle className="flex items-center gap-1 select-none">
           <BookUserIcon size={18} /> Your character
         </CardTitle>
         <Button
           variant="ghost"
-          size="icon-sm"
+          size="icon-xs"
           onClick={() => {
             setSettings((prev) => ({
               isCharacterCardOpen: !prev.isCharacterCardOpen,
@@ -59,13 +90,18 @@ export const CharacterCard = ({
         <CardContent className="flex flex-wrap gap-1">
           {Object.values(character!.attributes).map(
             ({ key, name, value }, i) => (
-              <div key={key}>
-                <span className="font-semibold">{name}:&nbsp;</span>
-                <span>{value}</span>
+              <React.Fragment key={key}>
+                <CharacterAttribute
+                  name={name}
+                  value={value}
+                  triggeredEffect={triggeredSideEffects.find(
+                    (effectConfig) => effectConfig.effect.attributeKey === key,
+                  )}
+                />
                 {i !== Object.keys(character!.attributes).length - 1 && (
-                  <span>&nbsp;·</span>
+                  <span className="select-none">&nbsp;·</span>
                 )}
-              </div>
+              </React.Fragment>
             ),
           )}
         </CardContent>
