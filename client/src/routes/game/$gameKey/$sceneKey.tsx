@@ -73,6 +73,7 @@ const Component = () => {
       progress={progressResult.updatedProgress}
       theme={theme}
       mode="game"
+      triggeredSideEffects={progressResult.effectsTriggered}
     />
   );
 };
