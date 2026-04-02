@@ -276,7 +276,7 @@ def make_synchronization_story_progress(
         story_key=story_progress["storyKey"],
         history=story_progress.get("history", []),
         current_scene_key=story_progress["currentSceneKey"],
-        created_at=story_progress["lastPlayedAt"],
+        created_at=story_progress["createdAt"],
         last_played_at=story_progress["lastPlayedAt"],
         finished=story_progress.get("finished"),
         last_sync_at=story_progress.get("lastSyncAt"),
