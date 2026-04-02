@@ -1,9 +1,9 @@
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { getImportService } from "@/services/common/import-service";
+import { getJsonService } from "@/services/common/json-service";
 import { Story } from "@/lib/storage/domain";
 import { WithoutKey } from "@/types";
-import { ImportData } from "@/services/common/schema";
+import { JsonData } from "@/services/common/schema";
 import { getBuilderService } from "@/get-builder-service";
 
 export type CreateStoryPayload = Omit<
@@ -30,7 +30,7 @@ export const useBuilderStories = () => {
     });
   };
 
-  const handleImportFromJSON = async (storyFromImport: ImportData) => {
+  const handleImportFromJSON = async (storyFromImport: JsonData) => {
     try {
       const storyKey = await builderService.importStory(storyFromImport);
       if (!storyKey) throw new Error("Data should be defined");
@@ -50,7 +50,7 @@ export const useBuilderStories = () => {
   };
 
   const parseFile = (content: string) => {
-    const result = getImportService().parseJSON(content);
+    const result = getJsonService().parseJSON(content);
 
     if (!result.isOk) {
       toast.error("Import failed", {

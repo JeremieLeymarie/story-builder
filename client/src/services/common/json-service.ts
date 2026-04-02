@@ -12,8 +12,8 @@ import z from "zod";
 import { produce, WritableDraft } from "immer";
 import {
   CharacterConfigFromImport,
-  ImportData,
-  importDataSchema,
+  JsonData,
+  jsonDataSchema,
   ThemeFromImport,
   WikiFromImport,
 } from "./schema";
@@ -59,14 +59,14 @@ const makeErr = (error: ImportServiceError): ImportStoryResult => ({
 });
 const makeOk = <T>(data: T): ImportStoryResult<T> => ({ data, isOk: true });
 
-export type ImportServicePort = {
-  parseJSON: (jsonData: string) => ImportStoryResult<ImportData>;
+export type JsonServicePort = {
+  parseJSON: (jsonData: string) => ImportStoryResult<JsonData>;
   createStory: (props: {
-    story: ImportData;
+    story: JsonData;
     type: Story["type"];
   }) => Promise<{ data: Story }>;
   createScenes: (props: {
-    story: ImportData;
+    story: JsonData;
     newStoryKey: string;
     oldCharacterAttrToNew: Record<string, string>;
   }) => Promise<Record<string, string>>;
@@ -146,7 +146,7 @@ export const _makeBulkSceneUpdatePayload = ({
   oldScenesToNewScenes,
   oldCharacterAttrToNew,
 }: {
-  storyFromImport: ImportData;
+  storyFromImport: JsonData;
   oldScenesToNewScenes: Record<string, string>;
   oldCharacterAttrToNew: Record<string, string>;
 }) => {
@@ -155,7 +155,7 @@ export const _makeBulkSceneUpdatePayload = ({
       ...acc,
       [scene.key]: scene,
     }),
-    {} as Record<string, ImportData["scenes"][number]>,
+    {} as Record<string, JsonData["scenes"][number]>,
   );
 
   return storyFromImport.scenes
@@ -203,7 +203,7 @@ export const _makeBulkSceneUpdatePayload = ({
     .filter((scene) => !!scene);
 };
 
-export const _getImportService = ({
+export const _getJsonService = ({
   localRepository,
   wikiRepository,
   themeRepository,
@@ -213,7 +213,7 @@ export const _getImportService = ({
   wikiRepository: WikiRepositoryPort;
   themeRepository: ThemeRepositoryPort;
   characterRepository: CharacterRepositoryPort;
-}): ImportServicePort => {
+}): JsonServicePort => {
   const _createWikiCategories = async (
     categories: WikiFromImport["categories"],
     newWikiKey: string,
@@ -344,7 +344,7 @@ export const _getImportService = ({
       } catch (_) {
         return makeErr("Invalid JSON format");
       }
-      const zodParsed = importDataSchema.safeParse(parsed);
+      const zodParsed = jsonDataSchema.safeParse(parsed);
       if (!zodParsed.success)
         return makeErr(`Invalid format: ${z.prettifyError(zodParsed.error)}`);
 
@@ -483,8 +483,8 @@ export const _getImportService = ({
   };
 };
 
-export const getImportService = () =>
-  _getImportService({
+export const getJsonService = () =>
+  _getJsonService({
     localRepository: getLocalRepository(),
     wikiRepository: getDexieWikiRepository(),
     themeRepository: getDexieThemeRepository(),

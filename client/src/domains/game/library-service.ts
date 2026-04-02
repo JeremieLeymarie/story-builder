@@ -7,11 +7,11 @@ import {
 } from "@/lib/storage/domain";
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 import {
-  getImportService,
-  ImportServicePort,
+  getJsonService,
+  JsonServicePort,
   TEMPORARY_NULL_KEY,
-} from "@/services/common/import-service";
-import { ImportData } from "@/services/common/schema";
+} from "@/services/common/json-service";
+import { JsonData } from "@/services/common/schema";
 import { GameRepositoryPort, getDexieGameRepository } from "./game-repository";
 import {
   CharacterRepositoryPort,
@@ -21,12 +21,12 @@ import {
 // TODO: uniformize responses
 export const _getLibraryService = ({
   localRepository,
-  importService,
+  jsonService,
   gameRepository,
   characterRepository,
 }: {
   localRepository: LocalRepositoryPort;
-  importService: ImportServicePort;
+  jsonService: JsonServicePort;
   gameRepository: GameRepositoryPort;
   characterRepository: CharacterRepositoryPort;
 }) => {
@@ -144,35 +144,35 @@ export const _getLibraryService = ({
   };
 
   return {
-    importStory: async (importData: ImportData) => {
+    importStory: async (importData: JsonData) => {
       await localRepository.unitOfWork(
         async () => {
-          const story = await importService.createStory({
+          const story = await jsonService.createStory({
             story: importData,
             type: "imported",
           });
 
           let oldCharacterAttrToNew: Record<string, string> = {};
           if (importData.characterConfig)
-            oldCharacterAttrToNew = await importService.createCharacterConfig({
+            oldCharacterAttrToNew = await jsonService.createCharacterConfig({
               newStoryKey: story.data.key,
               characterConfig: importData.characterConfig,
             });
 
-          const oldScenesToNew = await importService.createScenes({
+          const oldScenesToNew = await jsonService.createScenes({
             story: importData,
             newStoryKey: story.data.key,
             oldCharacterAttrToNew,
           });
 
           if (importData.theme)
-            await importService.createTheme({
+            await jsonService.createTheme({
               newStoryKey: story.data.key,
               theme: importData.theme,
             });
 
           if (importData.wiki)
-            await importService.createWiki({
+            await jsonService.createWiki({
               oldScenesToNew,
               type: "imported",
               wikiData: importData.wiki,
@@ -323,7 +323,7 @@ export const _getLibraryService = ({
 export const getLibraryService = () =>
   _getLibraryService({
     localRepository: getLocalRepository(),
-    importService: getImportService(),
+    jsonService: getJsonService(),
     gameRepository: getDexieGameRepository(),
     characterRepository: getDexieCharacterRepository(),
   });

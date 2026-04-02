@@ -5,9 +5,9 @@ import {
 } from "@/repositories/stubs/local-repository-stub";
 import { BuilderNode, BuilderEdge } from "@/builder/types";
 import {
-  getImportServiceStub,
-  MockImportService,
-} from "@/services/common/stubs/stub-import-service";
+  getJsonServiceStub,
+  MockJsonService,
+} from "@/services/common/stubs/stub-json-service";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import {
   BASIC_SCENE,
@@ -46,7 +46,7 @@ describe("builder-service", () => {
   let builderService: ReturnType<typeof _getBuilderService>;
   let localRepository: MockLocalRepository;
   let layoutService: MockLayoutService;
-  let importService: MockImportService;
+  let jsonService: MockJsonService;
   let storyRepository: MockBuilderStoryRepository;
   let sceneRepository: MockBuilderSceneRepository;
 
@@ -57,13 +57,13 @@ describe("builder-service", () => {
   beforeEach(() => {
     localRepository = getLocalRepositoryStub();
     layoutService = getStubLayoutService();
-    importService = getImportServiceStub();
+    jsonService = getJsonServiceStub();
     storyRepository = getStubBuilderStoryRepository();
     sceneRepository = getStubBuilderSceneRepository();
 
     builderService = _getBuilderService({
       localRepository,
-      importService,
+      jsonService,
       layoutService,
       storyRepository,
       sceneRepository,

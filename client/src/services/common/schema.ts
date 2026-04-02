@@ -47,7 +47,7 @@ const sideEffectSchema = z.object({
   effect: z.union([characterAttrSideEffect]),
 });
 
-export const importDataSchema = z.object({
+export const jsonDataSchema = z.object({
   story: z.object(
     {
       key: z.nanoid({ message: "Story key is required" }),
@@ -134,9 +134,9 @@ export const importDataSchema = z.object({
   characterConfig: characterConfigurationSchema.optional(),
 });
 
-export type ImportData = z.infer<typeof importDataSchema>;
-export type WikiFromImport = NonNullable<ImportData["wiki"]>;
-export type ThemeFromImport = NonNullable<ImportData["theme"]>;
+export type JsonData = z.infer<typeof jsonDataSchema>;
+export type WikiFromImport = NonNullable<JsonData["wiki"]>;
+export type ThemeFromImport = NonNullable<JsonData["theme"]>;
 export type CharacterConfigFromImport = NonNullable<
-  ImportData["characterConfig"]
+  JsonData["characterConfig"]
 >;
