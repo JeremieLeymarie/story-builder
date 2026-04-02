@@ -281,7 +281,7 @@ describe("library-service", () => {
   describe("createBlankStoryProgress", () => {
     test("simple story configuration", async () => {
       localRepository.getStoryProgress.mockResolvedValueOnce(null);
-      characterRepository.get.mockResolvedValueOnce(null);
+      characterRepository.getConfig.mockResolvedValueOnce(null);
 
       const createdProgress = await libraryService.createBlankStoryProgress({
         storyKey: BASIC_STORY.key,
@@ -322,7 +322,7 @@ describe("library-service", () => {
         },
       });
       localRepository.getStoryProgress.mockResolvedValueOnce(null);
-      characterRepository.get.mockResolvedValueOnce(cc);
+      characterRepository.getConfig.mockResolvedValueOnce(cc);
 
       await libraryService.createBlankStoryProgress({
         storyKey: BASIC_STORY.key,

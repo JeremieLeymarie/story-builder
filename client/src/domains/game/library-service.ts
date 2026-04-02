@@ -58,7 +58,7 @@ export const _getLibraryService = ({
   }) => {
     const user = await localRepository.getUser();
     const story = await localRepository.getStory(storyKey);
-    const characterConfig = await characterRepository.get(storyKey);
+    const characterConfig = await characterRepository.getConfig(storyKey);
 
     if (!story) throw new Error(`Error: invalid story key: ${storyKey}`);
 

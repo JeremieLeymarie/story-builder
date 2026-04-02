@@ -2,13 +2,13 @@ import { db, DexieDatabase } from "@/lib/storage/dexie/dexie-db";
 import { CharacterConfiguration } from "@/lib/storage/domain";
 
 export type CharacterRepositoryPort = {
-  get: (storyKey: string) => Promise<CharacterConfiguration | null>;
+  getConfig: (storyKey: string) => Promise<CharacterConfiguration | null>;
 };
 
 export const _getDexieCharacterRepository = (
   db: DexieDatabase,
 ): CharacterRepositoryPort => {
-  const get = async (storyKey: string) => {
+  const getConfig = async (storyKey: string) => {
     const characters = await db.characterConfigurations
       .filter((character) => character.storyKey === storyKey)
       .toArray();
@@ -16,7 +16,7 @@ export const _getDexieCharacterRepository = (
     return characters[0] ?? null;
   };
 
-  return { get };
+  return { getConfig };
 };
 
 export const getDexieCharacterRepository = () =>

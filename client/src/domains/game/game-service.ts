@@ -1,15 +1,20 @@
 import { Action, Scene, Story, StoryProgress } from "@/lib/storage/domain";
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 import { match } from "ts-pattern";
+import { produce } from "immer";
+import {
+  getDexieProgressRepository,
+  ProgressRepositoryPort,
+} from "./progress-repository";
 
 type GameServicePort = {
   saveProgress: (
     storyProgressKey: string,
-    params: {
-      currentSceneKey: string;
-      sceneActions: Action[];
-    },
-  ) => Promise<StoryProgress | null>;
+    currentScene: Scene,
+  ) => Promise<{
+    updatedProgress: StoryProgress | null;
+    effectsTriggered: number;
+  }>;
   getNextKey: (
     options: {
       sceneKey: string;
@@ -43,8 +48,10 @@ type GameServicePort = {
 
 export const _getGameService = ({
   localRepository,
+  progressRepo,
 }: {
   localRepository: LocalRepositoryPort;
+  progressRepo: ProgressRepositoryPort;
 }): GameServicePort => {
   const getStoryProgresses = async () => {
     const user = await localRepository.getUser();
@@ -53,32 +60,81 @@ export const _getGameService = ({
     return progresses;
   };
 
+  const _triggerSideEffects = async ({
+    scene,
+    progress,
+  }: {
+    scene: Scene;
+    progress: StoryProgress;
+  }) => {
+    if ((scene.sideEffects ?? []).length <= 0)
+      return { updatedCharacter: null, effectsTriggered: 0 };
+
+    let effectsTriggered = 0;
+    const updatedCharacter =
+      produce(progress.character, (character) => {
+        if (!character)
+          throw new Error(
+            `Character does not exist on progress ${progress.key}`,
+          );
+
+        scene.sideEffects!.forEach((effectConfig) => {
+          const attribute =
+            character.attributes[effectConfig.effect.attributeKey];
+
+          if (!attribute)
+            throw new Error(
+              `Attribute ${effectConfig.effect.attributeKey} does not exist on progress ${progress.key}`,
+            );
+
+          attribute.value += effectConfig.effect.increment;
+          effectsTriggered += 1;
+        });
+      }) ?? null;
+
+    return { updatedCharacter, effectsTriggered };
+  };
+
   return {
-    saveProgress: async (
-      storyProgressKey,
-      { currentSceneKey, sceneActions },
-    ) => {
+    saveProgress: async (storyProgressKey, currentScene) => {
       const user = await localRepository.getUser();
       const progress = await localRepository.getStoryProgress(storyProgressKey);
 
       if (!progress)
         throw new Error(`No progress found for story ${storyProgressKey}`);
 
-      const isImmediateDuplicate = progress.history.at(-1) === currentSceneKey;
-      const newHistory = isImmediateDuplicate
-        ? progress.history
-        : [...progress.history, currentSceneKey];
+      const isImmediateDuplicate = progress.history.at(-1) === currentScene.key;
 
-      const updatedProgress = await localRepository.updateStoryProgress({
-        ...progress,
-        currentSceneKey,
-        history: newHistory,
-        lastPlayedAt: new Date(),
-        ...(!sceneActions.length && { finished: true }),
-        userKey: user?.key,
-      });
+      let updatedProgress: StoryProgress | null = null;
+      let effectsTriggered = 0;
 
-      return updatedProgress;
+      if (isImmediateDuplicate) {
+        updatedProgress = { ...progress, lastPlayedAt: new Date() };
+      } else {
+        const newHistory = [...progress.history, currentScene.key];
+
+        const effectsResult = await _triggerSideEffects({
+          scene: currentScene,
+          progress,
+        });
+
+        updatedProgress = {
+          ...progress,
+          currentSceneKey: currentScene.key,
+          history: newHistory,
+          lastPlayedAt: new Date(),
+          userKey: user?.key,
+          ...(!currentScene.actions.length && { finished: true }),
+          ...(effectsResult.updatedCharacter && {
+            character: effectsResult.updatedCharacter,
+          }),
+        };
+        effectsTriggered = effectsResult.effectsTriggered;
+      }
+
+      await progressRepo.update(progress.key, updatedProgress);
+
+      return { updatedProgress, effectsTriggered };
     },
 
     getNextKey: (options) => {
@@ -157,4 +213,5 @@ export const _getGameService = ({
 export const getGameService = () =>
   _getGameService({
     localRepository: getLocalRepository(),
+    progressRepo: getDexieProgressRepository(),
   });
