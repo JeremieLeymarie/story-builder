@@ -12,9 +12,9 @@ import {
 import dayjs from "dayjs";
 import { _getLibraryService } from "../library-service";
 import {
-  MockImportService,
-  getImportServiceStub,
-} from "@/services/common/stubs/stub-import-service";
+  MockJsonService,
+  getJsonServiceStub,
+} from "@/services/common/stubs/stub-json-service";
 import {
   MOCK_IMPORTED_SCENE,
   MOCK_IMPORTED_STORY,
@@ -36,19 +36,19 @@ const factory = getTestFactory();
 describe("library-service", () => {
   let libraryService: ReturnType<typeof _getLibraryService>;
   let localRepository: MockLocalRepository;
-  let importService: MockImportService;
+  let jsonService: MockJsonService;
   let gameRepository: MockGameRepository;
   let characterRepository: MockCharacterRepository;
 
   beforeEach(() => {
     localRepository = getLocalRepositoryStub();
-    importService = getImportServiceStub();
+    jsonService = getJsonServiceStub();
     gameRepository = getStubGameRepository();
     characterRepository = getStubCharacterRepository();
 
     libraryService = _getLibraryService({
       localRepository,
-      importService,
+      jsonService,
       gameRepository,
       characterRepository,
     });

@@ -1,7 +1,7 @@
 import { Action, BuilderPosition, Scene, Story } from "@/lib/storage/domain";
 import { LocalRepositoryPort } from "@/repositories/local-repository-port";
 import { BuilderNode, BuilderEdge } from "@/builder/types";
-import { ImportServicePort } from "@/services/common/import-service";
+import { JsonServicePort } from "@/services/common/json-service";
 import { WithoutKey } from "@/types";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { BuilderServicePort } from "./ports/builder-service-port";
@@ -14,7 +14,7 @@ import {
   CannotDeleteFirstSceneError,
   DuplicationMissingPositionError,
 } from "./errors";
-import { ImportData } from "@/services/common/schema";
+import { JsonData } from "@/services/common/schema";
 import { produce } from "immer";
 import { N } from "@/lib/number";
 import { randomInArray } from "@/lib/random";
@@ -24,12 +24,12 @@ import { BuilderSceneRepositoryPort } from "./builder-scene-repository";
 export const _getBuilderService = ({
   localRepository,
   layoutService,
-  importService,
+  jsonService,
   storyRepository,
   sceneRepository,
 }: {
   layoutService: LayoutServicePort;
-  importService: ImportServicePort;
+  jsonService: JsonServicePort;
   localRepository: LocalRepositoryPort; // Legacy: should be removed and replaced by domain-specific repositories
   storyRepository: BuilderStoryRepositoryPort;
   sceneRepository: BuilderSceneRepositoryPort;
@@ -403,35 +403,35 @@ export const _getBuilderService = ({
         },
       );
     },
-    importStory: async (importData: ImportData) => {
+    importStory: async (importData: JsonData) => {
       const storyKey = await localRepository.unitOfWork(
         async () => {
-          const storyResult = await importService.createStory({
+          const storyResult = await jsonService.createStory({
             story: importData,
             type: "builder",
           });
 
           let oldCharacterAttrToNew: Record<string, string> = {};
           if (importData.characterConfig)
-            oldCharacterAttrToNew = await importService.createCharacterConfig({
+            oldCharacterAttrToNew = await jsonService.createCharacterConfig({
               newStoryKey: storyResult.data.key,
               characterConfig: importData.characterConfig,
             });
 
-          const oldScenesToNew = await importService.createScenes({
+          const oldScenesToNew = await jsonService.createScenes({
             story: importData,
             newStoryKey: storyResult.data.key,
             oldCharacterAttrToNew,
           });
 
           if (importData.theme)
-            await importService.createTheme({
+            await jsonService.createTheme({
               newStoryKey: storyResult.data.key,
               theme: importData.theme,
             });
 
           if (importData.wiki)
-            await importService.createWiki({
+            await jsonService.createWiki({
               oldScenesToNew,
               type: "created",
               wikiData: importData.wiki,

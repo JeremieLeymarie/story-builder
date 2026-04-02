@@ -4,18 +4,18 @@ import {
 } from "@/repositories/stubs";
 import { beforeEach, expect, it, vi, describe } from "vitest";
 import {
-  _getImportService,
+  _getJsonService,
   _makeBulkSceneUpdatePayload,
-  ImportServicePort,
+  JsonServicePort,
   TEMPORARY_NULL_KEY,
-} from "../import-service";
+} from "../json-service";
 import { BASIC_SCENE_CONTENT, BASIC_STORY } from "@/repositories/stubs/data";
 import { nanoid } from "nanoid";
 import {
   getStubWikiRepository,
   MockWikiRepository,
 } from "@/domains/wiki/stubs/stub-wiki-repository";
-import { ImportData } from "../schema";
+import { JsonData } from "../schema";
 import {
   getStubThemeRepository,
   MockThemeRepository,
@@ -49,7 +49,7 @@ const CHARACTER_CONFIG = {
   attributes: { [DEX_ATTRIBUTE.key]: DEX_ATTRIBUTE },
 } satisfies CharacterConfiguration;
 
-const IMPORTED_STORY: ImportData["story"] = {
+const IMPORTED_STORY: JsonData["story"] = {
   key: STORY_KEY,
   title: "The Great Journey To The Green River",
   description: "A wonderful epic tale through the world of Penthetir. ",
@@ -65,7 +65,7 @@ const IMPORTED_STORY: ImportData["story"] = {
   },
 };
 
-const BASIC_SCENE: ImportData["scenes"][number] = {
+const BASIC_SCENE: JsonData["scenes"][number] = {
   key: SCENE_KEY_A,
   storyKey: STORY_KEY,
   title: "Your second scene",
@@ -80,7 +80,7 @@ const BASIC_SCENE: ImportData["scenes"][number] = {
 };
 
 // TODO: add probabilities
-const SCENE_WITH_ACTIONS: ImportData["scenes"][number] = {
+const SCENE_WITH_ACTIONS: JsonData["scenes"][number] = {
   key: SCENE_KEY_B,
   storyKey: STORY_KEY,
   title: "Your first scene",
@@ -155,16 +155,16 @@ const IMPORTED_THEME = DEFAULT_STORY_THEME;
 const IMPORTED_DATA = {
   story: IMPORTED_STORY,
   scenes: IMPORTED_SCENES,
-} satisfies ImportData;
+} satisfies JsonData;
 
 const fileContent = JSON.stringify(IMPORTED_DATA);
 
-describe("import-service", () => {
+describe("json-service", () => {
   let localRepository: MockLocalRepository;
   let wikiRepository: MockWikiRepository;
   let themeRepository: MockThemeRepository;
   let characterRepository: MockCharacterRepository;
-  let importService: ImportServicePort;
+  let jsonService: JsonServicePort;
 
   beforeEach(() => {
     localRepository = getLocalRepositoryStub();
@@ -172,7 +172,7 @@ describe("import-service", () => {
     themeRepository = getStubThemeRepository();
     characterRepository = getStubCharacterRepository();
 
-    importService = _getImportService({
+    jsonService = _getJsonService({
       localRepository,
       wikiRepository,
       themeRepository,
@@ -184,7 +184,7 @@ describe("import-service", () => {
 
   describe("parseJSON", () => {
     it("should not create story if JSON is malformed", async () => {
-      const result = importService.parseJSON(`tutu${fileContent}`);
+      const result = jsonService.parseJSON(`tutu${fileContent}`);
 
       expect(result).toStrictEqual({
         error: "Invalid JSON format",
@@ -194,7 +194,7 @@ describe("import-service", () => {
     });
 
     it("should not create story if format is invalid", async () => {
-      const result = importService.parseJSON(
+      const result = jsonService.parseJSON(
         JSON.stringify({ plouf: ["tutu"] }),
       );
 
@@ -206,7 +206,7 @@ describe("import-service", () => {
     });
 
     it("should parse JSON", () => {
-      const result = importService.parseJSON(fileContent);
+      const result = jsonService.parseJSON(fileContent);
 
       expect(result).toStrictEqual({
         isOk: true,
@@ -218,7 +218,7 @@ describe("import-service", () => {
 
   describe("createStory", () => {
     it("should create story (imported)", async () => {
-      const result = await importService.createStory({
+      const result = await jsonService.createStory({
         story: { story: IMPORTED_DATA.story, scenes: IMPORTED_DATA.scenes },
         type: "imported",
       });
@@ -245,7 +245,7 @@ describe("import-service", () => {
     });
 
     it("should create story with anonymous author", async () => {
-      const result = await importService.createStory({
+      const result = await jsonService.createStory({
         story: {
           story: { ...IMPORTED_DATA.story, author: undefined },
           scenes: IMPORTED_DATA.scenes,
@@ -283,7 +283,7 @@ describe("import-service", () => {
         }),
       );
 
-      const result = await importService.createStory({
+      const result = await jsonService.createStory({
         story: { story: IMPORTED_DATA.story, scenes: IMPORTED_DATA.scenes },
         type: "builder",
       });
@@ -370,7 +370,7 @@ describe("import-service", () => {
         });
       });
 
-      const result = await importService.createScenes({
+      const result = await jsonService.createScenes({
         story: { story: IMPORTED_DATA.story, scenes: IMPORTED_DATA.scenes },
         newStoryKey: "new-story-key",
         oldCharacterAttrToNew: { [DEX_ATTRIBUTE.key]: "new-dex-key" },
@@ -417,7 +417,7 @@ describe("import-service", () => {
 
   describe("createTheme", () => {
     it("should import theme with new story key", async () => {
-      await importService.createTheme({
+      await jsonService.createTheme({
         newStoryKey: "new-story-key",
         theme: IMPORTED_THEME,
       });
@@ -442,7 +442,7 @@ describe("import-service", () => {
         return Promise.resolve("new-key");
       });
 
-      await importService.createCharacterConfig({
+      await jsonService.createCharacterConfig({
         newStoryKey: "new-story-key",
         characterConfig: CHARACTER_CONFIG,
       });
