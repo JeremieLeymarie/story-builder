@@ -77,13 +77,12 @@ export const _getGameService = ({
       return { updatedCharacter: null, effectsTriggered: [] };
 
     const effectsTriggered: SideEffect[] = [];
+    console.log(progress);
+    if (!progress.character)
+      throw new Error(`Character does not exist on progress ${progress.key}`);
+
     const updatedCharacter =
       produce(progress.character, (character) => {
-        if (!character)
-          throw new Error(
-            `Character does not exist on progress ${progress.key}`,
-          );
-
         scene.sideEffects!.forEach((effectConfig) => {
           const attribute =
             character.attributes[effectConfig.effect.attributeKey];
@@ -104,18 +103,19 @@ export const _getGameService = ({
   return {
     saveProgress: async (storyProgressKey, currentScene) => {
       const user = await localRepository.getUser();
-      const progress = await localRepository.getStoryProgress(storyProgressKey);
+      const progress = await progressRepo.get(storyProgressKey);
 
       if (!progress)
         throw new Error(`No progress found for story ${storyProgressKey}`);
 
       const isImmediateDuplicate = progress.history.at(-1) === currentScene.key;
 
-      let updatedProgress: StoryProgress | null = null;
+      let updatePayload: Partial<StoryProgress> = {};
       const effectsTriggered: SideEffect[] = [];
+      console.log({ isImmediateDuplicate });
 
       if (isImmediateDuplicate) {
-        updatedProgress = { ...progress, lastPlayedAt: new Date() };
+        updatePayload = { userKey: user?.key, lastPlayedAt: new Date() };
       } else {
         const newHistory = [...progress.history, currentScene.key];
 
@@ -124,8 +124,7 @@ export const _getGameService = ({
           progress,
         });
 
-        updatedProgress = {
-          ...progress,
+        updatePayload = {
           currentSceneKey: currentScene.key,
           history: newHistory,
           lastPlayedAt: new Date(),
@@ -138,9 +137,12 @@ export const _getGameService = ({
         effectsTriggered.push(...effectsResult.effectsTriggered);
       }
 
-      await progressRepo.update(progress.key, updatedProgress);
+      await progressRepo.update(progress.key, updatePayload);
 
-      return { updatedProgress, effectsTriggered };
+      return {
+        updatedProgress: { ...progress, ...updatePayload },
+        effectsTriggered,
+      };
     },
 
     getNextKey: (options) => {
@@ -209,7 +211,7 @@ export const _getGameService = ({
     },
 
     getStoryProgress: async (storyKey) => {
-      return await localRepository.getStoryProgress(storyKey);
+      return await progressRepo.get(storyKey);
     },
 
     getStoryProgresses,

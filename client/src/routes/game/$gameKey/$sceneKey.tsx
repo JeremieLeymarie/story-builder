@@ -8,6 +8,7 @@ import { getGameService } from "@/domains/game/game-service";
 import { useGetGameSceneData } from "@/game/hooks/use-get-game-scene-data";
 import { Scene } from "@/lib/storage/domain";
 
+// TODO: test life cycle
 const useGetUpdatedStoryProgress = ({ scene }: { scene?: Scene | null }) => {
   const { storyProgressKey } = Route.useSearch();
   const gameService = getGameService();
