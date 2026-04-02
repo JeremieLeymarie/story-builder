@@ -77,7 +77,6 @@ export const _getGameService = ({
       return { updatedCharacter: null, effectsTriggered: [] };
 
     const effectsTriggered: SideEffect[] = [];
-    console.log(progress);
     if (!progress.character)
       throw new Error(`Character does not exist on progress ${progress.key}`);
 
