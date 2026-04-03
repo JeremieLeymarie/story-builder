@@ -85,5 +85,5 @@ jobs:
 
       - name: Run tests
         env:
-          MONGO_URL: "mongodb://localhost:27017/testdb"
+          MONGO_URI: "mongodb://localhost:27017/testdb"
         run: uv run pytest -vv
