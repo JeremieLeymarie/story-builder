@@ -13,8 +13,9 @@ import {
   StoryTheme,
   CharacterConfiguration,
 } from "../domain";
-import { DEMO_IMPORTED_STORY, DEMO_SCENES, DEMO_STORY } from "./seed";
 import { getLibraryService } from "@/domains/game/library-service";
+import { getImportService } from "@/services/common/import-service";
+import demoStoryJSON from "./the-enchanted-mountain.json";
 
 type Tables = {
   user: EntityTable<User, "key">;
@@ -144,12 +145,16 @@ export const createDb = (
 
   if (seed)
     db.on("populate", async () => {
-      // Add story to builder
-      await db.stories.add(DEMO_STORY);
-      await db.scenes.bulkAdd(DEMO_SCENES);
-
-      // Add story to library
-      await getLibraryService().importStory(DEMO_IMPORTED_STORY);
+      // Add demo story to library
+      try {
+        const parsed = getImportService().parseJSON(
+          JSON.stringify(demoStoryJSON),
+        );
+        if (parsed.isOk) await getLibraryService().importStory(parsed.data);
+        else console.error(parsed.error);
+      } catch (err) {
+        console.error(err);
+      }
     });
 
   // Register nanoid middleware
