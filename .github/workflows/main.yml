@@ -41,17 +41,9 @@ jobs:
   server:
     runs-on: ubuntu-latest
 
-    services:
-      mongodb:
-        image: mongo
-
-        ports:
-          - 27018:27017
-        options: >-
-          --health-cmd mongo
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+    strategy:
+      matrix:
+        mongodb-version: ['8.0']
 
     defaults:
       run:
@@ -70,6 +62,11 @@ jobs:
 
       - name: Install the project
         run: uv sync --all-extras --dev
+
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.12.1
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
 
       - name: Run type check
         run: uv run mypy .
