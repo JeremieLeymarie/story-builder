@@ -81,4 +81,4 @@ jobs:
         run: uv run pytest
         env:
           MONGO_URI: "mongodb://localhost:27017/testdb"
-          JWT_SECRET_KEY: "Pommes de terre au four"
+          JWT_SECRET: "Pommes de terre au four"
