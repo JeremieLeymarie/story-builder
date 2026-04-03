@@ -67,6 +67,8 @@ jobs:
         uses: supercharge/mongodb-github-action@1.12.1
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
+        env:
+          MONGO_URI: "va te faire"
 
       - name: Run type check
         run: uv run mypy .
