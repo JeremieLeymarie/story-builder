@@ -43,7 +43,7 @@ jobs:
 
     services:
       mongodb:
-        image: mongo:8
+        image: mongodb/mongodb-community-server
         env:
           MONGO_INITDB_ROOT_USERNAME: admin
           MONGO_INITDB_ROOT_PASSWORD: password
