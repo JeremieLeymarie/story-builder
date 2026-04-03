@@ -41,10 +41,26 @@ jobs:
   server:
     runs-on: ubuntu-latest
 
+    services:
+      mongodb:
+        image: mongo:8
+        env:
+          MONGO_INITDB_ROOT_USERNAME: admin
+          MONGO_INITDB_ROOT_PASSWORD: password
+
+          MONGO_INITDB_DATABASE: database
+        ports:
+          - 27018:27017
+        options: >-
+          --health-cmd mongo
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     defaults:
       run:
         working-directory: ./server
-
+        
     steps:
       - uses: actions/checkout@v4
 
@@ -70,3 +86,6 @@ jobs:
 
       - name: CI tests
         run: uv run pytest
+
+      
+      
