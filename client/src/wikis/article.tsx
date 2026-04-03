@@ -21,15 +21,18 @@ export const Article = ({
   );
 
   return (
-    <div>
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Title variant="article">{article.title}</Title>
+    <div className="flex flex-col items-center">
+      <div className="flex w-full max-w-4xl flex-col items-center space-y-4">
+        <div className="w-full space-y-2 text-center">
+          <div className="relative flex items-center justify-center">
+            <Title variant="article" className="text-black">
+              {article.title}
+            </Title>
             {canEdit && (
               <Link
                 to="/wikis/$wikiKey/$articleKey/edit"
                 params={{ articleKey: article.key, wikiKey: article.wikiKey }}
+                className="absolute right-0"
               >
                 <Button className="gap-2">
                   <PencilIcon />
@@ -38,7 +41,7 @@ export const Article = ({
               </Link>
             )}
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center justify-center gap-4">
             <CategoryBadge color={category?.color} name={category?.name} />
             <p className="text-muted-foreground text-sm">
               Last edited on {article.updatedAt.toLocaleDateString()}, at{" "}
@@ -48,10 +51,10 @@ export const Article = ({
         </div>
         <img
           src={article.image}
-          className="border-primary w-[500px] rounded border-3 shadow-lg"
+          className="border-primary mb-[7%] w-[500px] rounded border-3 shadow-lg"
         />
       </div>
-      <article>
+      <article className="w-full max-w-4xl">
         <EditorContextProvider
           entityType="wiki-article"
           entityKey={article.key}

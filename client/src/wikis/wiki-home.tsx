@@ -2,6 +2,7 @@ import { Title } from "@/design-system/components";
 import { useWikiStore } from "./hooks/use-wiki-store";
 import { Button } from "@/design-system/primitives";
 import { Link } from "@tanstack/react-router";
+import { PlusIcon } from "lucide-react";
 
 export const WikiHome = () => {
   const [wikiData, permissions] = useWikiStore((state) => [
@@ -16,9 +17,10 @@ export const WikiHome = () => {
   return (
     <div className="flex h-full w-full items-center justify-center">
       <div className="flex w-8/12 flex-col items-center justify-center space-y-2 lg:w-6/12">
-        <img src={wikiData.wiki.image} className="w-full rounded shadow" />
+        <img src={wikiData.wiki.image} className="w-[70%] rounded shadow" />
         <Title variant="primary" className="bg-transparent">
-          Welcome to <span className="text-primary">{wikiData.wiki.name}</span>
+          <span className="text-muted-foreground">Welcome to</span>{" "}
+          <span className="text-primary">{wikiData.wiki.name}</span>
         </Title>
         <p className="text-muted-foreground italic">
           {isWikiEmpty
@@ -31,7 +33,10 @@ export const WikiHome = () => {
             params={{ wikiKey: wikiData.wiki.key }}
             search={{ categoryKey: undefined }}
           >
-            <Button>Create {isWikiEmpty ? "a first" : "a new"} article</Button>
+            <Button className="h-14 px-8 text-lg">
+              <PlusIcon className="mr-2 h-6 w-6" />
+              Create {isWikiEmpty ? "a first" : "a new"} article
+            </Button>
           </Link>
         )}
       </div>
