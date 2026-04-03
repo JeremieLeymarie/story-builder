@@ -68,7 +68,7 @@ jobs:
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
         env:
-          MONGO_URI: "va te faire"
+          MONGO_URI: "mongodb://localhost:27017/testdb"
 
       - name: Run type check
         run: uv run mypy .
