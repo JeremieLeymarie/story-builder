@@ -67,8 +67,6 @@ jobs:
         uses: supercharge/mongodb-github-action@1.12.1
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
-        env:
-          MONGO_URI: "mongodb://localhost:27017/testdb"
 
       - name: Run type check
         run: uv run mypy .
@@ -81,3 +79,5 @@ jobs:
 
       - name: CI tests
         run: uv run pytest
+        env:
+          MONGO_URI: "mongodb://localhost:27017/testdb"
