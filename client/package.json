@@ -28,6 +28,7 @@
     "@lexical/react": "^0.38.2",
     "@lexical/rich-text": "^0.38.2",
     "@lexical/table": "^0.38.2",
+    "@lexical/selection": "^0.38.2",
     "@lexical/utils": "^0.38.2",
     "@maskito/core": "^5.1.0",
     "@maskito/kit": "^5.1.0",
