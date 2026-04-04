@@ -27,12 +27,12 @@ export const useEditActionsForm = ({
     control: form.control,
   });
 
-  useAutoSubmitForm({
+  const { isSaving } = useAutoSubmitForm({
     form,
     onSubmit: (values) => onSave({ actions: values.actions }),
   });
 
-  return { form, fields, append, remove, update, move };
+  return { form, fields, append, remove, update, move, isSaving };
 };
 
 export type EditActionsForm = UseFormReturn<EditActionsSchema>;

@@ -112,7 +112,7 @@ export const useSideEffectsForm = ({
     control: form.control,
   });
 
-  const maybeSubmitForm = useAutoSubmitForm({
+  const { maybeSubmit, isSaving } = useAutoSubmitForm({
     form,
     onSubmit: ({ effects }) => saveChanges(effects.map(adaptFormSideEffect)),
   });
@@ -120,8 +120,8 @@ export const useSideEffectsForm = ({
   useEffect(() => {
     // This a HORRIBLE workaround to manage the fact that form.formState.dirtyFields is not up-to-date on the first fieldArray.append if it is not accessed here first
     // I think we can allow this for now since it should be fixed in the next RHF version, which will be compatible with the React Compiler
-    if (Object.keys(form.formState.dirtyFields).length > 0) maybeSubmitForm();
-  }, [form.formState.dirtyFields, maybeSubmitForm]);
+    if (Object.keys(form.formState.dirtyFields).length > 0) maybeSubmit();
+  }, [form.formState.dirtyFields, maybeSubmit]);
 
   const addEffect = () => {
     const newEffect = builderService.makeEmptySideEffectPayload({
@@ -136,6 +136,7 @@ export const useSideEffectsForm = ({
     fields,
     addEffect,
     removeEffect: remove,
+    isSaving,
   };
 };
 
