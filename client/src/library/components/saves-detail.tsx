@@ -122,13 +122,12 @@ const Content = ({
                             save.lastScene?.title ??
                             "Unknown scene"}
                         </span>
-                        {save.name && save.lastScene && (
-                          <span className="text-muted-foreground text-sm font-normal">
-                            {" "}
-                            · {save.lastScene.title}
-                          </span>
-                        )}
                       </CardTitle>
+                    )}
+                    {save.name && save.lastScene && (
+                      <p className="text-muted-foreground text-sm">
+                        {save.lastScene.title}
+                      </p>
                     )}
                     <CardDescription>
                       {timeFrom(save.lastPlayedAt)} ·{" "}
