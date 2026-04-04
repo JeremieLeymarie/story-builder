@@ -99,41 +99,39 @@ const Content = ({
                 }
               }}
             >
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex min-w-0 flex-1 cursor-pointer items-start gap-2">
-                  {getProgressRate && (
-                    <ProgressBadge
-                      percentage={getProgressRate(save.history)}
-                      className="mt-0.5 shrink-0"
+              <div className="flex items-center gap-2">
+                {getProgressRate && (
+                  <ProgressBadge
+                    percentage={getProgressRate(save.history)}
+                    className="mt-0.5 shrink-0"
+                  />
+                )}
+                <div className="min-w-0 flex-1 cursor-pointer overflow-hidden">
+                  {editingKey === save.key ? (
+                    <SaveNameForm
+                      variant="inline"
+                      defaultName={save.name ?? ""}
+                      onSubmit={(name) => handleRename(save, name)}
+                      onCancel={() => setEditingKey(null)}
                     />
+                  ) : (
+                    <CardTitle className="text-base break-all">
+                      <span className="font-medium">
+                        {save.name ??
+                          save.lastScene?.title ??
+                          "Unknown scene"}
+                      </span>
+                    </CardTitle>
                   )}
-                  <div className="min-w-0 flex-1">
-                    {editingKey === save.key ? (
-                      <SaveNameForm
-                        variant="inline"
-                        defaultName={save.name ?? ""}
-                        onSubmit={(name) => handleRename(save, name)}
-                        onCancel={() => setEditingKey(null)}
-                      />
-                    ) : (
-                      <CardTitle className="text-base break-all">
-                        <span className="font-medium">
-                          {save.name ??
-                            save.lastScene?.title ??
-                            "Unknown scene"}
-                        </span>
-                      </CardTitle>
-                    )}
-                    {save.name && save.lastScene && (
-                      <p className="text-muted-foreground text-sm">
-                        {save.lastScene.title}
-                      </p>
-                    )}
-                    <CardDescription>
-                      {timeFrom(save.lastPlayedAt)} ·{" "}
-                      {formatDate(save.lastPlayedAt)}
-                    </CardDescription>
-                  </div>
+                  {save.name && save.lastScene && (
+                    <p className="text-muted-foreground text-sm">
+                      {save.lastScene.title}
+                    </p>
+                  )}
+                  <CardDescription>
+                    {timeFrom(save.lastPlayedAt)} ·{" "}
+                    {formatDate(save.lastPlayedAt)}
+                  </CardDescription>
                 </div>
 
                 <div className="flex shrink-0 items-center gap-1">
