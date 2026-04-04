@@ -10,6 +10,7 @@ import {
   FormItem,
   Input,
 } from "@/design-system/primitives";
+import type { ControllerRenderProps } from "react-hook-form";
 
 const saveNameSchema = z.object({
   name: z.string(),
@@ -24,6 +25,21 @@ type SaveNameFormProps = {
   variant?: "default" | "compact" | "inline";
   disabled?: boolean;
 };
+
+const NameInput = ({
+  field,
+  className,
+  ...props
+}: {
+  field: ControllerRenderProps<SaveNameSchema, "name">;
+  className?: string;
+} & Omit<React.ComponentProps<typeof Input>, "name">) => (
+  <FormItem>
+    <FormControl>
+      <Input placeholder="Save name" {...field} className={className} {...props} />
+    </FormControl>
+  </FormItem>
+);
 
 export const SaveNameForm = ({
   onSubmit,
@@ -41,6 +57,10 @@ export const SaveNameForm = ({
     onSubmit(data.name.trim() || undefined);
   };
 
+  const escapeHandler = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") onCancel();
+  };
+
   if (variant === "inline") {
     return (
       <Form {...form}>
@@ -52,19 +72,13 @@ export const SaveNameForm = ({
             control={form.control}
             name="name"
             render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    {...field}
-                    autoFocus
-                    className="h-7 w-40 text-sm"
-                    onBlur={form.handleSubmit(handleSubmit)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Escape") onCancel();
-                    }}
-                  />
-                </FormControl>
-              </FormItem>
+              <NameInput
+                field={field}
+                autoFocus
+                className="h-7 w-40 text-sm"
+                onBlur={form.handleSubmit(handleSubmit)}
+                onKeyDown={escapeHandler}
+              />
             )}
           />
         </form>
@@ -84,19 +98,12 @@ export const SaveNameForm = ({
             control={form.control}
             name="name"
             render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    autoFocus
-                    placeholder="Save name"
-                    className="h-7 text-sm"
-                    onKeyDown={(e) => {
-                      if (e.key === "Escape") onCancel();
-                    }}
-                    {...field}
-                  />
-                </FormControl>
-              </FormItem>
+              <NameInput
+                field={field}
+                autoFocus
+                className="h-7 text-sm"
+                onKeyDown={escapeHandler}
+              />
             )}
           />
           <button
@@ -129,16 +136,7 @@ export const SaveNameForm = ({
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input
-                  autoFocus
-                  placeholder="Save name"
-                  className="h-9 w-40"
-                  {...field}
-                />
-              </FormControl>
-            </FormItem>
+            <NameInput field={field} autoFocus className="h-9 w-40" />
           )}
         />
         <Button type="submit" disabled={disabled}>
