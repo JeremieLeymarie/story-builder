@@ -23,6 +23,8 @@
   --input: oklch(0.922 0 0);
   --ring: oklch(0.205 0 0);
 
+  --progress: oklch(0.723 0.191 142.5);
+
   --chart-1: oklch(86.393% 0.17005 92.822 / 0.9);
   --chart-2: oklch(0.94 0.00213 14.45);
   --chart-3: oklch(86.438% 0.12201 77.457);
@@ -80,6 +82,8 @@
   --border: oklch(0.275 0 0);
   --input: oklch(0.325 0 0);
   --ring: oklch(0.556 0 0);
+  --progress: oklch(0.65 0.17 142.5);
+
   --chart-1: oklch(0.81 0.1 252);
   --chart-2: oklch(0.62 0.19 260);
   --chart-3: oklch(0.55 0.22 263);
@@ -136,6 +140,8 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-progress: var(--progress);
+
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
