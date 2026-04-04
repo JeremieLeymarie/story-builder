@@ -21,17 +21,16 @@ export const LibraryGameDetail = ({
   otherProgresses,
 }: Props) => {
   const navigate = useNavigate();
-  const [selectedSave, setSelectedSave] = useState(currentProgress);
+  const [selectedSaveKey, setSelectedSaveKey] = useState(currentProgress.key);
 
   const saves = [currentProgress, ...otherProgresses];
+  const selectedSave =
+    saves.find((s) => s.key === selectedSaveKey) ?? currentProgress;
   const { analyticsService } = useGetAnalyticsService({
-    progressKey: selectedSave.key,
+    progressKey: selectedSaveKey,
     gameKey: story.key,
   });
-  const totalScenes = analyticsService?.getAllScenes().length ?? 0;
-
-  const enrichedSave =
-    saves.find((s) => s.key === selectedSave.key) ?? selectedSave;
+  const getProgressRate = analyticsService?.getProgressRate;
 
   const playGame = (save: Save) => {
     navigate({
@@ -82,25 +81,25 @@ export const LibraryGameDetail = ({
                 saves={saves}
                 selectedSave={selectedSave}
                 storyKey={story.key}
-                totalScenes={totalScenes}
-                onSelectSave={setSelectedSave}
+                getProgressRate={getProgressRate}
+                onSelectSave={(save) => setSelectedSaveKey(save.key)}
                 onPlay={playGame}
               />
-              {(enrichedSave.name || enrichedSave.lastScene) && (
+              {(selectedSave.name || selectedSave.lastScene) && (
                 <p className="text-sm break-all">
-                  {enrichedSave.name && (
-                    <span className="font-medium">{enrichedSave.name}</span>
+                  {selectedSave.name && (
+                    <span className="font-medium">{selectedSave.name}</span>
                   )}
-                  {enrichedSave.name && enrichedSave.lastScene && (
+                  {selectedSave.name && selectedSave.lastScene && (
                     <span className="text-muted-foreground"> · </span>
                   )}
-                  {enrichedSave.lastScene && (
+                  {selectedSave.lastScene && (
                     <span className="text-muted-foreground">
-                      {enrichedSave.lastScene.title} ·{" "}
+                      {selectedSave.lastScene.title} ·{" "}
                     </span>
                   )}
                   <span className="text-muted-foreground">
-                    {timeFrom(enrichedSave.lastPlayedAt)}
+                    {timeFrom(selectedSave.lastPlayedAt)}
                   </span>
                 </p>
               )}

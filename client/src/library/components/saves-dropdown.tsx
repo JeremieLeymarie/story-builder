@@ -1,25 +1,24 @@
 import { useState } from "react";
 import {
   BookMarkedIcon,
-  CheckIcon,
   ChevronDownIcon,
   PlayIcon,
   PlusIcon,
-  XIcon,
 } from "lucide-react";
 import {
   Button,
+  ButtonGroup,
+  ButtonGroupSeparator,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  Input,
 } from "@/design-system/primitives";
-import { round } from "@/lib/number";
 import { useCreateSave } from "../hooks/use-create-save";
 import { SavesDetail } from "./saves-detail";
-import { ProgressBadge } from "./progress-badge";
+import { SaveNameForm } from "./save-name-form";
+import { ProgressBadge } from "@/design-system/primitives";
 import { Save } from "./types";
 
 const MAX_DISPLAYED_SAVES = 3;
@@ -28,7 +27,7 @@ type SavesDropdownProps = {
   saves: Save[];
   selectedSave: Save;
   storyKey: string;
-  totalScenes: number;
+  getProgressRate?: (history: string[]) => number;
   onSelectSave: (save: Save) => void;
   onPlay: (save: Save) => void;
 };
@@ -37,49 +36,42 @@ export const SavesDropdown = ({
   saves,
   selectedSave,
   storyKey,
-  totalScenes,
+  getProgressRate,
   onSelectSave,
   onPlay,
 }: SavesDropdownProps) => {
   const [open, setOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [newSaveName, setNewSaveName] = useState<string | null>(null);
-
-  const isCreating = newSaveName !== null;
-  const otherSaves = saves.filter((s) => s.key !== selectedSave.key);
+  const [isCreating, setIsCreating] = useState(false);
+  const otherSaves = saves
+    .filter((s) => s.key !== selectedSave.key)
+    .sort((a, b) => b.lastPlayedAt.getTime() - a.lastPlayedAt.getTime());
 
   const { createSave } = useCreateSave({
     onSuccess: (createdSave) => {
       onSelectSave(createdSave);
-      setNewSaveName(null);
+      setIsCreating(false);
       setOpen(false);
     },
   });
 
-  const handleCreate = () => {
-    createSave({ storyKey, name: newSaveName?.trim() || undefined });
-  };
-
   return (
     <>
-      <div className="flex items-center">
-        <Button
-          onClick={() => onPlay(selectedSave)}
-          size="lg"
-          className="rounded-r-none"
-        >
+      <ButtonGroup>
+        <Button onClick={() => onPlay(selectedSave)} size="lg">
           <PlayIcon />
           Play
         </Button>
+        <ButtonGroupSeparator />
         <DropdownMenu
           open={open}
           onOpenChange={(v) => {
             setOpen(v);
-            if (!v) setNewSaveName(null);
+            if (!v) setIsCreating(false);
           }}
         >
           <DropdownMenuTrigger asChild>
-            <Button size="lg" className="rounded-l-none border-l px-2">
+            <Button size="lg" className="px-2">
               <ChevronDownIcon size={16} />
             </Button>
           </DropdownMenuTrigger>
@@ -91,17 +83,15 @@ export const SavesDropdown = ({
             {otherSaves.slice(0, MAX_DISPLAYED_SAVES).map((save) => (
               <DropdownMenuItem
                 key={save.key}
-                onClick={() => onPlay(save)}
+                onClick={() => onSelectSave(save)}
                 className="flex justify-between gap-4"
               >
-                <span className="truncate">
+                <span className="truncate font-medium">
                   {save.name ?? save.lastScene?.title ?? "Unknown"}
                 </span>
-                {totalScenes > 0 && (
+                {getProgressRate && (
                   <ProgressBadge
-                    percentage={round(
-                      (new Set(save.history).size / totalScenes) * 100,
-                    )}
+                    percentage={getProgressRate(save.history)}
                     className="shrink-0"
                   />
                 )}
@@ -115,41 +105,17 @@ export const SavesDropdown = ({
             )}
             <DropdownMenuSeparator />
             {isCreating ? (
-              <div
-                className="flex items-center gap-1 px-2 py-1.5"
-                onKeyDown={(e) => e.stopPropagation()}
-              >
-                <Input
-                  autoFocus
-                  placeholder="Save name"
-                  value={newSaveName}
-                  onChange={(e) => setNewSaveName(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleCreate();
-                    if (e.key === "Escape") setNewSaveName(null);
-                  }}
-                  className="h-7 text-sm"
-                />
-                <button
-                  className="hover:bg-primary flex h-7 w-7 shrink-0 items-center justify-center rounded-sm"
-                  onClick={handleCreate}
-                >
-                  <CheckIcon size={14} />
-                </button>
-                <Button
-                  variant="ghost"
-                  size="xs"
-                  className="h-7 w-7 shrink-0 p-0"
-                  onClick={() => setNewSaveName(null)}
-                >
-                  <XIcon size={14} />
-                </Button>
-              </div>
+              <SaveNameForm
+                variant="compact"
+                defaultName={`Save #${saves.length + 1}`}
+                onSubmit={(name) => createSave({ storyKey, name })}
+                onCancel={() => setIsCreating(false)}
+              />
             ) : (
               <DropdownMenuItem
                 onSelect={(e) => {
                   e.preventDefault();
-                  setNewSaveName("");
+                  setIsCreating(true);
                 }}
                 className="data-[highlighted]:bg-primary font-medium"
               >
@@ -159,23 +125,23 @@ export const SavesDropdown = ({
             )}
             <DropdownMenuItem
               onSelect={() => {
-                setNewSaveName(null);
+                setIsCreating(false);
                 setOpen(false);
                 setDrawerOpen(true);
               }}
-              className="text-muted-foreground"
+              className="data-[highlighted]:bg-primary font-medium"
             >
               <BookMarkedIcon size={14} />
               Manage saves
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      </div>
+      </ButtonGroup>
       <SavesDetail
         selectedSave={selectedSave}
         saves={saves}
         onSelectSave={onSelectSave}
-        totalScenes={totalScenes}
+        getProgressRate={getProgressRate}
         open={drawerOpen}
         setOpen={setDrawerOpen}
       />
