@@ -36,7 +36,12 @@ const NameInput = ({
 } & Omit<React.ComponentProps<typeof Input>, "name">) => (
   <FormItem>
     <FormControl>
-      <Input placeholder="Save name" {...field} className={className} {...props} />
+      <Input
+        placeholder="Save name"
+        {...field}
+        className={className}
+        {...props}
+      />
     </FormControl>
   </FormItem>
 );
