@@ -27,6 +27,7 @@ export type AnalyticsServicePort = {
     config: ChartConfig;
     rate: number;
   };
+  getProgressRate: (history: string[]) => number;
   isSceneVisited: (sceneKey: string) => boolean;
   getAllScenes: () => Scene[];
 };
@@ -50,6 +51,15 @@ export const _getAnalyticsService = async ({
   if (!progress) throw new EntityNotExistError("story-progress", progressKey);
 
   return {
+    getProgressRate: (history: string[]) =>
+      scenes.length > 0
+        ? round(
+            (scenes.filter((s) => history.includes(s.key)).length /
+              scenes.length) *
+              100,
+          )
+        : 0,
+
     getVisitedScenesChart: () => {
       const initialData = [
         { type: "visited", count: 0, fill: "var(--color-visited)" },
