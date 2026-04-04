@@ -117,9 +117,7 @@ const Content = ({
                   ) : (
                     <CardTitle className="text-base break-all">
                       <span className="font-medium">
-                        {save.name ??
-                          save.lastScene?.title ??
-                          "Unknown scene"}
+                        {save.name ?? save.lastScene?.title ?? "Unknown scene"}
                       </span>
                     </CardTitle>
                   )}
