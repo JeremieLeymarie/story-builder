@@ -18,7 +18,7 @@ export const useThemeEditorForm = ({
     defaultValues: theme,
   });
 
-  useAutoSubmitForm({
+  const { isSaving } = useAutoSubmitForm({
     form,
     onSubmit: (data) =>
       editTheme({
@@ -27,7 +27,7 @@ export const useThemeEditorForm = ({
       }),
   });
 
-  return form;
+  return { form, isSaving };
 };
 
-export type ThemeEditorForm = ReturnType<typeof useThemeEditorForm>;
+export type ThemeEditorForm = ReturnType<typeof useThemeEditorForm>["form"];

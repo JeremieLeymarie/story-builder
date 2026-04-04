@@ -1,5 +1,5 @@
 import { useDebouncer } from "@tanstack/react-pacer/debouncer";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FieldValues, UseFormReturn } from "react-hook-form";
 
 // TODO: test this
@@ -13,10 +13,24 @@ export const useAutoSubmitForm = <TFormSchema extends FieldValues>({
   options?: { debounceAfter?: number };
 }) => {
   const { debounceAfter = 300 } = options ?? {};
+  const [isSaving, setIsSaving] = useState(false);
+
+  const wrappedSubmit = useCallback(
+    async (data: TFormSchema) => {
+      setIsSaving(true);
+      const minDisplay = new Promise((r) => setTimeout(r, 500));
+      try {
+        await Promise.all([onSubmit(data), minDisplay]);
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    [onSubmit],
+  );
 
   const debouncer = useDebouncer(
     () => {
-      form.handleSubmit(onSubmit, (invalid) => console.error(invalid))();
+      form.handleSubmit(wrappedSubmit, (invalid) => console.error(invalid))();
     },
     { wait: debounceAfter },
     () => {}, // Never re-render when internal debouncer state changes
@@ -33,5 +47,5 @@ export const useAutoSubmitForm = <TFormSchema extends FieldValues>({
     return () => callback();
   }, [debouncer, form]);
 
-  return debouncer.maybeExecute;
+  return { maybeSubmit: debouncer.maybeExecute, isSaving };
 };

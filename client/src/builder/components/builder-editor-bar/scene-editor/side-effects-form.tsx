@@ -14,6 +14,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/design-system/primitives/empty";
+import { SavingIndicator } from "../../saving-indicator";
 import { useBuilderEditorStore } from "@/builder/hooks/use-builder-editor-store";
 import { FieldGroup, FieldSeparator } from "@/design-system/primitives/field";
 import { Controller } from "react-hook-form";
@@ -26,10 +27,11 @@ const SideEffectForm = ({
   scene: Scene;
   characterConfig: CharacterConfiguration;
 }) => {
-  const { form, fields, addEffect, removeEffect } = useSideEffectsForm({
-    scene,
-    characterConfig,
-  });
+  const { form, fields, addEffect, removeEffect, isSaving } =
+    useSideEffectsForm({
+      scene,
+      characterConfig,
+    });
 
   return (
     <Form {...form}>
@@ -89,6 +91,7 @@ const SideEffectForm = ({
           ) : (
             <EmptyDescription>No attribute yet</EmptyDescription>
           )}
+          <SavingIndicator isSaving={isSaving} />
         </div>
       </form>
     </Form>

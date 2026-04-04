@@ -15,6 +15,7 @@ import { WikiPlugin } from "../../wiki-lexical-plugin/wiki-lexical-plugin";
 import { WikiNode } from "@/builder/lexical-wiki-node";
 import { useBuilderActions } from "@/builder/hooks/use-builder-actions";
 import { SimpleLoader } from "@/design-system/components/simple-loader";
+import { SavingIndicator } from "../../saving-indicator";
 import { useGetScene } from "@/builder/hooks/use-get-scene";
 import { Scene } from "@/lib/storage/domain";
 import { useEditSceneContentForm } from "@/builder/hooks/use-edit-scene-content-form";
@@ -24,7 +25,7 @@ const SceneContentForm = ({ scene }: { scene: Scene }) => {
   const { setFirstScene } = useBuilderActions();
   const { story } = useBuilderContext();
   const { updateScene } = useBuilderActions();
-  const form = useEditSceneContentForm({
+  const { form, isSaving } = useEditSceneContentForm({
     values: { title: scene.title, content: scene.content },
     onSave: (payload) => updateScene({ key: scene.key, ...payload }),
   });
@@ -82,6 +83,7 @@ const SceneContentForm = ({ scene }: { scene: Scene }) => {
             </FormItem>
           )}
         />
+        <SavingIndicator isSaving={isSaving} />
       </form>
     </Form>
   );

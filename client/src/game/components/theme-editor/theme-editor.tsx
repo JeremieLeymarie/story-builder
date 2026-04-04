@@ -49,7 +49,7 @@ export const GameWithThemeEditor = ({
   storyKey: string;
 }) => {
   const oldValues = useRef(theme);
-  const form = useThemeEditorForm({ theme, storyKey });
+  const { form } = useThemeEditorForm({ theme, storyKey });
   const [formValues, setFormValues] = useState(() => form.getValues());
 
   useEffect(() => {

@@ -25,7 +25,7 @@ export const useEditSceneContentForm = ({
     values,
   });
 
-  useAutoSubmitForm({
+  const { isSaving } = useAutoSubmitForm({
     form,
     onSubmit: (values) =>
       onSave({
@@ -34,5 +34,5 @@ export const useEditSceneContentForm = ({
       }),
   });
 
-  return form;
+  return { form, isSaving };
 };
