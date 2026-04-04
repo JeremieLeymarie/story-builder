@@ -129,3 +129,7 @@ class BaseMongoRepository(ABC):
         copy = dict(record)
         del copy["_id"]
         return copy
+
+
+class TestMongoRepository(BaseMongoRepository): ...
+__test__ = False
