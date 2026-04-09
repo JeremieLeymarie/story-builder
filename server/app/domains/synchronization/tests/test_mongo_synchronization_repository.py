@@ -23,7 +23,7 @@ from utils.mongo.base_repository import (
     MongoStory,
     MongoStoryAuthor,
     MongoStoryProgress,
-    TestMongoRepository,
+    BaseTestMongoRepository,
 )
 from utils.result import Result
 from utils.lexical_content import make_simple_lexical_content
@@ -104,7 +104,7 @@ FAKE_STORY_PROGRESS_B = SynchronizationStoryProgress(
     user_key="me",
 )
 
-test_repo = TestMongoRepository()
+test_repo = BaseTestMongoRepository()
 
 
 @pytest.fixture(autouse=True)
