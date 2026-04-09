@@ -22,11 +22,7 @@ export const editStorySchema = z.object({
 
 export type EditStorySchema = z.infer<typeof editStorySchema>;
 
-export const useEditStoryForm = ({
-  values,
-}: {
-  values: EditStorySchema;
-}) => {
+export const useEditStoryForm = ({ values }: { values: EditStorySchema }) => {
   const form = useForm<EditStorySchema>({
     resolver: zodResolver(editStorySchema),
     values,
