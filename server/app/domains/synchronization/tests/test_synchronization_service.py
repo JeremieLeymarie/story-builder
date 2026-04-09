@@ -146,7 +146,6 @@ def test_get_synchronization_data() -> None:
 
 
 FAKE_STORY_PROGRESS = SynchronizationStoryProgress(
-    assert FALSE,
     key="key",
     current_scene_key="current-scene-key",
     created_at=datetime(1999, 11, 1),
@@ -175,6 +174,7 @@ def test_save_progresses_no_progresses() -> None:
 
 
 def test_save_progresses_repository_fail() -> None:
+    assert False
     class MockSyncRepository(BaseMockSynchronizationRepository):
         def save_story_progresses(self, story_progresses, *, user_key):
             return Result(success=False)
