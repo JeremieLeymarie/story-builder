@@ -34,7 +34,7 @@ const $convertImageElement = (domNode: Node): null | DOMConversionOutput => {
   return { node };
 };
 
-export type SerializedImageNode = Spread<
+type SerializedImageNode = Spread<
   {
     altText: string;
     width?: CSSProperties["width"];
