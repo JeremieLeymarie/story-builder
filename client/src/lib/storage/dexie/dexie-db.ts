@@ -14,7 +14,7 @@ import {
   CharacterConfiguration,
 } from "../domain";
 import { getLibraryService } from "@/domains/game/library-service";
-import { getImportService } from "@/services/common/import-service";
+import { getJsonService } from "@/services/common/json-service";
 import demoStoryJSON from "./the-enchanted-mountain.json";
 
 type Tables = {
@@ -168,7 +168,7 @@ export const createDb = (
     db.on("populate", async () => {
       // Add demo story to library
       try {
-        const parsed = getImportService().parseJSON(
+        const parsed = getJsonService().parseJSON(
           JSON.stringify(demoStoryJSON),
         );
         if (parsed.isOk) await getLibraryService().importStory(parsed.data);
