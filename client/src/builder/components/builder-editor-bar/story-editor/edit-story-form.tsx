@@ -21,11 +21,7 @@ import { WikiSelector } from "../../wiki-selector";
 import { useBuilderContext } from "@/builder/hooks/use-builder-context";
 import { Link } from "@tanstack/react-router";
 
-export const EditStoryForm = ({
-  form,
-}: {
-  form: EditStoryFormType;
-}) => {
+export const EditStoryForm = ({ form }: { form: EditStoryFormType }) => {
   const { story } = useBuilderContext();
   const { wikis, isLoading: isWikisLoading } = useGetAllWikis();
   const assignedWiki = wikis?.userWikis.find(
