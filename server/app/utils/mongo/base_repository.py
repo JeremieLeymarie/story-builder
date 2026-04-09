@@ -131,5 +131,4 @@ class BaseMongoRepository(ABC):
         return copy
 
 
-class TestMongoRepository(BaseMongoRepository): ...
-__test__ = False
+class BaseTestMongoRepository(BaseMongoRepository): ...
