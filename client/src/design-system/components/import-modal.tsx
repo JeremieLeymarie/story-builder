@@ -14,7 +14,11 @@ import { Badge } from "../primitives/badge";
 import { StoryGenreBadge } from "./story-genre-badge";
 import { JsonStoryData } from "@/services/common/schema";
 
-const ImportPreview = ({ storyFromImport }: { storyFromImport: JsonStoryData }) => {
+const ImportPreview = ({
+  storyFromImport,
+}: {
+  storyFromImport: JsonStoryData;
+}) => {
   return (
     <div className="flex flex-col gap-1">
       <Badge>Preview</Badge>
@@ -54,7 +58,9 @@ export const ImportModal = ({
   trigger,
 }: ImportModalProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [storyFromImport, setStoryFromImport] = useState<JsonStoryData | null>(null);
+  const [storyFromImport, setStoryFromImport] = useState<JsonStoryData | null>(
+    null,
+  );
 
   return (
     <Dialog
