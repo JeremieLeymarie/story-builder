@@ -62,5 +62,4 @@ function ProgressBadge({
   );
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
-export { ProgressBadge, progressBadgeVariants };
+export { ProgressBadge };

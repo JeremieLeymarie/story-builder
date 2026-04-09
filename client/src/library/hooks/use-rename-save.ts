@@ -17,9 +17,7 @@ export const useRenameSave = ({
     }) => {
       return getLibraryService().renameStoryProgress(progress, name);
     },
-    onSuccess() {
-      onSuccess?.();
-    },
+    onSuccess,
   });
 
   return { renameSave: mutateAsync };

@@ -4,8 +4,8 @@ import {
   Card,
   CardDescription,
   CardTitle,
-  ProgressBadge,
 } from "@/design-system/primitives";
+import { ProgressBadge } from "@/design-system/components/progress-badge";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 import { PencilIcon, PlusIcon, XIcon } from "lucide-react";
 import { SaveNameForm } from "./save-name-form";
@@ -135,8 +135,7 @@ const Content = ({
                 <div className="flex shrink-0 items-center gap-1">
                   <Button
                     variant="ghost"
-                    size="xs"
-                    className="h-6 w-6 p-0"
+                    size="icon-xs"
                     onClick={(e) => {
                       e.stopPropagation();
                       setEditingKey(save.key);
@@ -160,8 +159,7 @@ const Content = ({
                         <Button
                           disabled={isDeleting}
                           variant="destructive"
-                          size="xs"
-                          className="rounded-full"
+                          size="icon-xs"
                           title="Delete this save"
                           onClick={(e) => {
                             e.stopPropagation();
