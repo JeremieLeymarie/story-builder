@@ -174,7 +174,6 @@ def test_save_progresses_no_progresses() -> None:
 
 
 def test_save_progresses_repository_fail() -> None:
-    assert False
     class MockSyncRepository(BaseMockSynchronizationRepository):
         def save_story_progresses(self, story_progresses, *, user_key):
             return Result(success=False)
