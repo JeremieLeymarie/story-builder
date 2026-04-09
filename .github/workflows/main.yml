@@ -1,6 +1,10 @@
 name: CI
 
-on: [push]
+on:
+  push:
+    paths:
+      - '/client'
+      - '/server'
 
 jobs:
   client:
@@ -48,6 +52,7 @@ jobs:
     defaults:
       run:
         working-directory: ./server
+
 
     steps:
       - uses: actions/checkout@v6
