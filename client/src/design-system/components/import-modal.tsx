@@ -12,9 +12,9 @@ import { ANONYMOUS_AUTHOR } from "@/services/common/json-service";
 import { ReactNode, useState } from "react";
 import { Badge } from "../primitives/badge";
 import { StoryGenreBadge } from "./story-genre-badge";
-import { JsonData } from "@/services/common/schema";
+import { JsonStoryData } from "@/services/common/schema";
 
-const ImportPreview = ({ storyFromImport }: { storyFromImport: JsonData }) => {
+const ImportPreview = ({ storyFromImport }: { storyFromImport: JsonStoryData }) => {
   return (
     <div className="flex flex-col gap-1">
       <Badge>Preview</Badge>
@@ -43,8 +43,8 @@ const ImportPreview = ({ storyFromImport }: { storyFromImport: JsonData }) => {
 };
 
 type ImportModalProps = {
-  onImportStory: (story: JsonData) => Promise<void>;
-  parseFile: (content: string) => JsonData | null;
+  onImportStory: (story: JsonStoryData) => Promise<void>;
+  parseFile: (content: string) => JsonStoryData | null;
   trigger: ReactNode;
 };
 
@@ -54,7 +54,7 @@ export const ImportModal = ({
   trigger,
 }: ImportModalProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [storyFromImport, setStoryFromImport] = useState<JsonData | null>(null);
+  const [storyFromImport, setStoryFromImport] = useState<JsonStoryData | null>(null);
 
   return (
     <Dialog

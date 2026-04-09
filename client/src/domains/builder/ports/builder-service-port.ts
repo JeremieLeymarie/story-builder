@@ -8,7 +8,7 @@ import {
   SideEffect,
   Story,
 } from "@/lib/storage/domain";
-import { JsonData } from "@/services/common/schema";
+import { JsonStoryData } from "@/services/common/schema";
 import { WithoutKey } from "@/types";
 
 export type BuilderServicePort = {
@@ -83,7 +83,7 @@ export type BuilderServicePort = {
     sceneKeys: string[];
   }) => Promise<void>;
   deleteStory: (storyKey: string) => Promise<void>;
-  importStory: (storyFromImport: JsonData) => Promise<string>;
+  importStory: (storyFromImport: JsonStoryData) => Promise<string>;
   updateStory: (
     storyKey: string,
     payload: Partial<BuilderStory>,

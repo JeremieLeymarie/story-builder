@@ -134,9 +134,9 @@ export const jsonDataSchema = z.object({
   characterConfig: characterConfigurationSchema.optional(),
 });
 
-export type JsonData = z.infer<typeof jsonDataSchema>;
-export type WikiFromImport = NonNullable<JsonData["wiki"]>;
-export type ThemeFromImport = NonNullable<JsonData["theme"]>;
+export type JsonStoryData = z.infer<typeof jsonDataSchema>;
+export type WikiFromImport = NonNullable<JsonStoryData["wiki"]>;
+export type ThemeFromImport = NonNullable<JsonStoryData["theme"]>;
 export type CharacterConfigFromImport = NonNullable<
-  JsonData["characterConfig"]
+  JsonStoryData["characterConfig"]
 >;

@@ -12,7 +12,7 @@ import z from "zod";
 import { produce, WritableDraft } from "immer";
 import {
   CharacterConfigFromImport,
-  JsonData,
+  JsonStoryData,
   jsonDataSchema,
   ThemeFromImport,
   WikiFromImport,
@@ -59,14 +59,14 @@ const makeErr = (error: ImportServiceError): ImportStoryResult => ({
 });
 const makeOk = <T>(data: T): ImportStoryResult<T> => ({ data, isOk: true });
 
-export type JsonServicePort = {
-  parseJSON: (jsonData: string) => ImportStoryResult<JsonData>;
+export type ImportExportServicePort = {
+  parseJSON: (jsonData: string) => ImportStoryResult<JsonStoryData>;
   createStory: (props: {
-    story: JsonData;
+    story: JsonStoryData;
     type: Story["type"];
   }) => Promise<{ data: Story }>;
   createScenes: (props: {
-    story: JsonData;
+    story: JsonStoryData;
     newStoryKey: string;
     oldCharacterAttrToNew: Record<string, string>;
   }) => Promise<Record<string, string>>;
@@ -146,7 +146,7 @@ export const _makeBulkSceneUpdatePayload = ({
   oldScenesToNewScenes,
   oldCharacterAttrToNew,
 }: {
-  storyFromImport: JsonData;
+  storyFromImport: JsonStoryData;
   oldScenesToNewScenes: Record<string, string>;
   oldCharacterAttrToNew: Record<string, string>;
 }) => {
@@ -155,7 +155,7 @@ export const _makeBulkSceneUpdatePayload = ({
       ...acc,
       [scene.key]: scene,
     }),
-    {} as Record<string, JsonData["scenes"][number]>,
+    {} as Record<string, JsonStoryData["scenes"][number]>,
   );
 
   return storyFromImport.scenes
@@ -213,7 +213,7 @@ export const _getJsonService = ({
   wikiRepository: WikiRepositoryPort;
   themeRepository: ThemeRepositoryPort;
   characterRepository: CharacterRepositoryPort;
-}): JsonServicePort => {
+}): ImportExportServicePort => {
   const _createWikiCategories = async (
     categories: WikiFromImport["categories"],
     newWikiKey: string,

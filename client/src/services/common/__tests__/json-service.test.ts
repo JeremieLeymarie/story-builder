@@ -6,7 +6,7 @@ import { beforeEach, expect, it, vi, describe } from "vitest";
 import {
   _getJsonService,
   _makeBulkSceneUpdatePayload,
-  JsonServicePort,
+  ImportExportServicePort,
   TEMPORARY_NULL_KEY,
 } from "../json-service";
 import { BASIC_SCENE_CONTENT, BASIC_STORY } from "@/repositories/stubs/data";
@@ -15,7 +15,7 @@ import {
   getStubWikiRepository,
   MockWikiRepository,
 } from "@/domains/wiki/stubs/stub-wiki-repository";
-import { JsonData } from "../schema";
+import { JsonStoryData } from "../schema";
 import {
   getStubThemeRepository,
   MockThemeRepository,
@@ -49,7 +49,7 @@ const CHARACTER_CONFIG = {
   attributes: { [DEX_ATTRIBUTE.key]: DEX_ATTRIBUTE },
 } satisfies CharacterConfiguration;
 
-const IMPORTED_STORY: JsonData["story"] = {
+const IMPORTED_STORY: JsonStoryData["story"] = {
   key: STORY_KEY,
   title: "The Great Journey To The Green River",
   description: "A wonderful epic tale through the world of Penthetir. ",
@@ -65,7 +65,7 @@ const IMPORTED_STORY: JsonData["story"] = {
   },
 };
 
-const BASIC_SCENE: JsonData["scenes"][number] = {
+const BASIC_SCENE: JsonStoryData["scenes"][number] = {
   key: SCENE_KEY_A,
   storyKey: STORY_KEY,
   title: "Your second scene",
@@ -80,7 +80,7 @@ const BASIC_SCENE: JsonData["scenes"][number] = {
 };
 
 // TODO: add probabilities
-const SCENE_WITH_ACTIONS: JsonData["scenes"][number] = {
+const SCENE_WITH_ACTIONS: JsonStoryData["scenes"][number] = {
   key: SCENE_KEY_B,
   storyKey: STORY_KEY,
   title: "Your first scene",
@@ -155,7 +155,7 @@ const IMPORTED_THEME = DEFAULT_STORY_THEME;
 const IMPORTED_DATA = {
   story: IMPORTED_STORY,
   scenes: IMPORTED_SCENES,
-} satisfies JsonData;
+} satisfies JsonStoryData;
 
 const fileContent = JSON.stringify(IMPORTED_DATA);
 
@@ -164,7 +164,7 @@ describe("json-service", () => {
   let wikiRepository: MockWikiRepository;
   let themeRepository: MockThemeRepository;
   let characterRepository: MockCharacterRepository;
-  let jsonService: JsonServicePort;
+  let jsonService: ImportExportServicePort;
 
   beforeEach(() => {
     localRepository = getLocalRepositoryStub();
