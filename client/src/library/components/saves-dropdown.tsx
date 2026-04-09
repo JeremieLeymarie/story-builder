@@ -8,7 +8,6 @@ import {
 import {
   Button,
   ButtonGroup,
-  ButtonGroupSeparator,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -18,7 +17,7 @@ import {
 import { useCreateSave } from "../hooks/use-create-save";
 import { SavesDetail } from "./saves-detail";
 import { SaveNameForm } from "./save-name-form";
-import { ProgressBadge } from "@/design-system/primitives";
+import { ProgressBadge } from "@/design-system/components/progress-badge";
 import { Save } from "./types";
 
 const MAX_DISPLAYED_SAVES = 3;
@@ -62,7 +61,6 @@ export const SavesDropdown = ({
           <PlayIcon />
           Play
         </Button>
-        <ButtonGroupSeparator />
         <DropdownMenu
           open={open}
           onOpenChange={(v) => {

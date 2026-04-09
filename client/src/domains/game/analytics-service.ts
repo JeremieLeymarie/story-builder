@@ -50,15 +50,17 @@ export const _getAnalyticsService = async ({
 
   if (!progress) throw new EntityNotExistError("story-progress", progressKey);
 
+  const getProgressRate = (history: string[]) =>
+    scenes.length > 0
+      ? round(
+          (scenes.filter((s) => history.includes(s.key)).length /
+            scenes.length) *
+            100,
+        )
+      : 0;
+
   return {
-    getProgressRate: (history: string[]) =>
-      scenes.length > 0
-        ? round(
-            (scenes.filter((s) => history.includes(s.key)).length /
-              scenes.length) *
-              100,
-          )
-        : 0,
+    getProgressRate,
 
     getVisitedScenesChart: () => {
       const initialData = [
@@ -76,10 +78,7 @@ export const _getAnalyticsService = async ({
         return acc;
       }, initialData);
 
-      const rate =
-        scenes.length > 0
-          ? round((data[visitedIdx].count / scenes.length) * 100, 2)
-          : 0;
+      const rate = getProgressRate(progress.history);
 
       return {
         data,
