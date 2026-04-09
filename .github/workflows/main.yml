@@ -77,7 +77,7 @@ jobs:
       - name: Dead Code Detection
         run: uv run vulture app
 
-      - name: CI tests
+      - name: Back-end tests
         run: uv run pytest
         env:
           MONGO_URI: "mongodb://localhost:27017/testdb"
