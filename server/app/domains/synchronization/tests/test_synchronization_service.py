@@ -146,7 +146,7 @@ def test_get_synchronization_data() -> None:
 
 
 FAKE_STORY_PROGRESS = SynchronizationStoryProgress(
-    assert false,
+    assert FALSE,
     key="key",
     current_scene_key="current-scene-key",
     created_at=datetime(1999, 11, 1),
