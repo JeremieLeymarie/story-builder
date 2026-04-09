@@ -13,8 +13,8 @@ import { useDeleteStory } from "@/builder/hooks/use-delete-story";
 
 export const StoryEditor = () => {
   const { story } = useBuilderContext();
-  const { form, handleSubmit, isSubmitting } = useEditStoryForm({
-    defaultValues: story,
+  const { form } = useEditStoryForm({
+    values: story,
   });
   const { deleteStory } = useDeleteStory();
 
@@ -31,11 +31,7 @@ export const StoryEditor = () => {
           }
         />
       </ToolbarHeader>
-      <EditStoryForm
-        form={form}
-        onSubmit={handleSubmit}
-        isSubmitting={isSubmitting}
-      />
+      <EditStoryForm form={form} />
     </Toolbar>
   );
 };

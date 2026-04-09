@@ -4,6 +4,7 @@ import { useForm, UseFormReturn } from "react-hook-form";
 import z from "zod";
 import { useUpdateStory } from "./use-update-story";
 import { useBuilderContext } from "./use-builder-context";
+import { useAutoSubmitForm } from "@/hooks/use-auto-submit-form";
 
 export const editStorySchema = z.object({
   title: z
@@ -22,23 +23,24 @@ export const editStorySchema = z.object({
 export type EditStorySchema = z.infer<typeof editStorySchema>;
 
 export const useEditStoryForm = ({
-  defaultValues,
+  values,
 }: {
-  defaultValues: EditStorySchema;
+  values: EditStorySchema;
 }) => {
   const form = useForm<EditStorySchema>({
     resolver: zodResolver(editStorySchema),
-    defaultValues,
+    values,
   });
   const { story } = useBuilderContext();
 
   const { updateStory, isPending } = useUpdateStory();
 
-  const handleSubmit = form.handleSubmit((payload) =>
-    updateStory({ key: story.key, payload }),
-  );
+  useAutoSubmitForm({
+    form,
+    onSubmit: (payload) => updateStory({ key: story.key, payload }),
+  });
 
-  return { form, handleSubmit, isSubmitting: isPending };
+  return { form, isSubmitting: isPending };
 };
 
 export type EditStoryFormType = UseFormReturn<EditStorySchema>;
