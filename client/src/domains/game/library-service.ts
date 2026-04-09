@@ -8,10 +8,10 @@ import {
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 import {
   getJsonService,
-  JsonServicePort,
+  ImportExportServicePort,
   TEMPORARY_NULL_KEY,
 } from "@/services/common/json-service";
-import { JsonData } from "@/services/common/schema";
+import { JsonStoryData } from "@/services/common/schema";
 import { GameRepositoryPort, getDexieGameRepository } from "./game-repository";
 import {
   CharacterRepositoryPort,
@@ -26,7 +26,7 @@ export const _getLibraryService = ({
   characterRepository,
 }: {
   localRepository: LocalRepositoryPort;
-  jsonService: JsonServicePort;
+  jsonService: ImportExportServicePort;
   gameRepository: GameRepositoryPort;
   characterRepository: CharacterRepositoryPort;
 }) => {
@@ -144,7 +144,7 @@ export const _getLibraryService = ({
   };
 
   return {
-    importStory: async (importData: JsonData) => {
+    importStory: async (importData: JsonStoryData) => {
       await localRepository.unitOfWork(
         async () => {
           const story = await jsonService.createStory({

@@ -1,7 +1,7 @@
 import { Action, BuilderPosition, Scene, Story } from "@/lib/storage/domain";
 import { LocalRepositoryPort } from "@/repositories/local-repository-port";
 import { BuilderNode, BuilderEdge } from "@/builder/types";
-import { JsonServicePort } from "@/services/common/json-service";
+import { ImportExportServicePort } from "@/services/common/json-service";
 import { WithoutKey } from "@/types";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { BuilderServicePort } from "./ports/builder-service-port";
@@ -14,7 +14,7 @@ import {
   CannotDeleteFirstSceneError,
   DuplicationMissingPositionError,
 } from "./errors";
-import { JsonData } from "@/services/common/schema";
+import { JsonStoryData } from "@/services/common/schema";
 import { produce } from "immer";
 import { N } from "@/lib/number";
 import { randomInArray } from "@/lib/random";
@@ -29,7 +29,7 @@ export const _getBuilderService = ({
   sceneRepository,
 }: {
   layoutService: LayoutServicePort;
-  jsonService: JsonServicePort;
+  jsonService: ImportExportServicePort;
   localRepository: LocalRepositoryPort; // Legacy: should be removed and replaced by domain-specific repositories
   storyRepository: BuilderStoryRepositoryPort;
   sceneRepository: BuilderSceneRepositoryPort;
@@ -403,7 +403,7 @@ export const _getBuilderService = ({
         },
       );
     },
-    importStory: async (importData: JsonData) => {
+    importStory: async (importData: JsonStoryData) => {
       const storyKey = await localRepository.unitOfWork(
         async () => {
           const storyResult = await jsonService.createStory({
