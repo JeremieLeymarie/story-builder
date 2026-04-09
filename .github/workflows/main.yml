@@ -3,8 +3,8 @@ name: CI
 on:
   push:
     paths:
-      - '/client'
-      - '/server'
+      - 'client/**'
+      - 'server/**'
 
 jobs:
   client:
