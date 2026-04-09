@@ -100,12 +100,6 @@ const Content = ({
               }}
             >
               <div className="flex items-center gap-2">
-                {getProgressRate && (
-                  <ProgressBadge
-                    percentage={getProgressRate(save.history)}
-                    className="mt-0.5 shrink-0"
-                  />
-                )}
                 <div className="min-w-0 flex-1 cursor-pointer overflow-hidden">
                   {editingKey === save.key ? (
                     <SaveNameForm
@@ -116,6 +110,12 @@ const Content = ({
                     />
                   ) : (
                     <CardTitle className="text-base break-all">
+                      {getProgressRate && (
+                        <ProgressBadge
+                          percentage={getProgressRate(save.history)}
+                          className="mr-1.5 inline-flex align-text-bottom"
+                        />
+                      )}
                       <span className="font-medium">
                         {save.name ?? save.lastScene?.title ?? "Unknown scene"}
                       </span>
