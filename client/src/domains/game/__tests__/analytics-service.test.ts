@@ -7,7 +7,7 @@ import {
   getStubProgressRepository,
   MockProgressRepository,
 } from "../stubs/progress-repository-stub";
-import { _getAnalyticsService } from "../analytics-service";
+import { _getAnalyticsService, getTotalPlayTimeMs } from "../analytics-service";
 import { getTestFactory } from "@/lib/testing/factory";
 
 const factory = getTestFactory();
@@ -34,6 +34,22 @@ describe("analytics-service", () => {
       progressKey: "toto",
     });
   };
+
+  describe("getTotalPlayTimeMs", () => {
+    test("sums total play time across saves", () => {
+      const saves = [
+        factory.storyProgress({ totalPlayTimeMs: 1_000 }),
+        factory.storyProgress({ totalPlayTimeMs: 2_000 }),
+        factory.storyProgress({ totalPlayTimeMs: 3_000 }),
+      ];
+
+      expect(getTotalPlayTimeMs(saves)).toBe(6_000);
+    });
+
+    test("returns zero when there are no saves", () => {
+      expect(getTotalPlayTimeMs([])).toBe(0);
+    });
+  });
 
   describe("getVisitedScenesChart", () => {
     const _test = async ({

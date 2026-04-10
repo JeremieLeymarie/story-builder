@@ -5,7 +5,7 @@ import {
   ProgressRepositoryPort,
 } from "./progress-repository";
 import { round } from "@/lib/number";
-import { Scene } from "@/lib/storage/domain";
+import { Scene, StoryProgress } from "@/lib/storage/domain";
 import { EntityNotExistError } from "../errors";
 
 export type VisitedScenesData = [
@@ -20,6 +20,10 @@ export type VisitedScenesData = [
     fill: string;
   },
 ];
+
+export const getTotalPlayTimeMs = (
+  saves: Pick<StoryProgress, "totalPlayTimeMs">[],
+) => saves.reduce((acc, save) => acc + save.totalPlayTimeMs, 0);
 
 export type AnalyticsServicePort = {
   getVisitedScenesChart: () => {
