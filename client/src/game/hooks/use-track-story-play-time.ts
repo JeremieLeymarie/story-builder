@@ -35,19 +35,19 @@ export const useTrackStoryPlayTime = ({
     }
   });
 
+  const handleVisibilityChange = useEffectEvent(() => {
+    if (document.visibilityState === "hidden") {
+      void flushTracking();
+      return;
+    }
+
+    startTracking();
+  });
+
   useEffect(() => {
     if (!enabled) return;
 
     startTracking();
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "hidden") {
-        void flushTracking();
-        return;
-      }
-
-      startTracking();
-    };
 
     const handlePageHide = () => {
       void flushTracking();
