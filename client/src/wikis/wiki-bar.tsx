@@ -17,10 +17,12 @@ import { toast } from "sonner";
 const ArticleTitle = ({
   title,
   articleKey,
+  categoryColor,
 }: {
   title: string;
   articleKey: string;
   canDelete: boolean;
+  categoryColor?: string;
 }) => {
   const [wikiKey, refresh] = useWikiStore((state) => [
     state.wikiData.wiki.key,
@@ -42,10 +44,11 @@ const ArticleTitle = ({
       }
       className={cn(
         isSelected && "bg-accent font-semibold",
-        "hover:bg-accent group/article flex items-center justify-between rounded",
+        "hover:bg-accent group/article flex items-center justify-between rounded border-l-2 ml-2",
       )}
+      style={{ borderLeftColor: categoryColor || "#e5e5e5" }}
     >
-      <p className="text-md w-full truncate py-1 pl-6">{title}</p>
+      <p className="text-md w-full truncate py-1.5 pl-4">{title}</p>
       <ConfirmDialog
         title="Are you sure?"
         description={
@@ -101,8 +104,8 @@ const Section = ({ category, articles }: WikiSection) => {
   );
 
   return (
-    <div className="group my-2">
-      <div className="flex items-center justify-between">
+    <div className="group my-3">
+      <div className="flex items-center justify-between mb-1.5">
         <CategoryBadge color={category?.color} name={category?.name} />
         {category && (
           <CategoryActionsDropdown
@@ -112,13 +115,14 @@ const Section = ({ category, articles }: WikiSection) => {
           />
         )}
       </div>
-      <div className="mt-1">
+      <div className="space-y-1">
         {articles.map(({ key, title }) => (
           <ArticleTitle
             key={key}
             title={title}
             articleKey={key}
             canDelete={canRemoveArticle}
+            categoryColor={category?.color}
           />
         ))}
       </div>
@@ -133,7 +137,7 @@ export const WikiBar = () => {
   } = useWikiStore((state) => state.wikiData);
 
   return (
-    <Toolbar className="w-[300px] space-y-1">
+    <Toolbar className="w-[300px] space-y-1 sticky top-20 self-start">
       <div className="relative">
         <SearchIcon className="text-muted-foreground absolute top-2.5 left-2 h-4" />
         <Input placeholder="Search" className="pl-9" />
@@ -151,7 +155,7 @@ export const WikiBar = () => {
 
       {/* Apparently display grid is needed in order for the scroll area to work with a max-height instead of hard-coded height?? */}
       <div className="grid">
-        <ScrollArea className="flex max-h-[calc(100dvh-175px)]">
+        <ScrollArea className="flex max-h-[calc(100vh-250px)]">
           <Link
             to="/wikis/$wikiKey"
             params={{ wikiKey }}
