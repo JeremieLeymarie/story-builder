@@ -23,7 +23,7 @@ export const useTrackStoryPlayTime = ({
     const startedAt = startedAtRef.current;
     startedAtRef.current = null;
 
-    if (!enabled || startedAt === null) return;
+    if (startedAt === null) return;
 
     const elapsedMs = Date.now() - startedAt;
     if (elapsedMs <= 0) return;
