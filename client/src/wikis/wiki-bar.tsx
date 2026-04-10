@@ -19,10 +19,12 @@ import { getUserOS } from "@/lib/get-os";
 const ArticleTitle = ({
   title,
   articleKey,
+  categoryColor,
 }: {
   title: string;
   articleKey: string;
   canDelete: boolean;
+  categoryColor?: string;
 }) => {
   const wikiKey = useWikiStore((state) => state.wikiData.wiki.key);
   const { articleKey: selectedArticleKey } = useParams({ strict: false });
@@ -41,10 +43,11 @@ const ArticleTitle = ({
       }
       className={cn(
         isSelected && "bg-accent font-semibold",
-        "hover:bg-accent group/article flex items-center justify-between rounded",
+        "hover:bg-accent group/article ml-2 flex items-center justify-between rounded border-l-2",
       )}
+      style={{ borderLeftColor: categoryColor || "#e5e5e5" }}
     >
-      <p className="text-md w-full truncate py-1 pl-6">{title}</p>
+      <p className="text-md w-full truncate py-1.5 pl-4">{title}</p>
       <ConfirmDialog
         title="Are you sure?"
         description={
@@ -91,8 +94,8 @@ const Section = ({ category, articles }: WikiSection) => {
   );
 
   return (
-    <div className="group my-2">
-      <div className="flex items-center justify-between">
+    <div className="group my-3">
+      <div className="mb-1.5 flex items-center justify-between">
         <CategoryBadge color={category?.color} name={category?.name} />
         {category && (
           <CategoryActionsDropdown
@@ -102,13 +105,14 @@ const Section = ({ category, articles }: WikiSection) => {
           />
         )}
       </div>
-      <div className="mt-1">
+      <div className="space-y-1">
         {articles.map(({ key, title }) => (
           <ArticleTitle
             key={key}
             title={title}
             articleKey={key}
             canDelete={canRemoveArticle}
+            categoryColor={category?.color}
           />
         ))}
       </div>
