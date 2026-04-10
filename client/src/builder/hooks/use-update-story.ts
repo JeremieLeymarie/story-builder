@@ -20,7 +20,6 @@ export const useUpdateStory = () => {
     },
     onError: handleError,
     onSuccess: async (story) => {
-      toast.success("Story successfully updated!");
       setStory(story);
     },
   });
