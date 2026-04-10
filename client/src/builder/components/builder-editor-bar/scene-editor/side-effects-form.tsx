@@ -14,7 +14,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/design-system/primitives/empty";
-import { SavingIndicator } from "../../saving-indicator";
+import { SavingIndicator } from "@/design-system/components/saving-indicator";
 import { useBuilderEditorStore } from "@/builder/hooks/use-builder-editor-store";
 import { FieldGroup, FieldSeparator } from "@/design-system/primitives/field";
 import { Controller } from "react-hook-form";

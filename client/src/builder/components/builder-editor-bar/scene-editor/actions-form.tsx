@@ -4,7 +4,7 @@ import { useEditActionsForm } from "@/builder/hooks/use-edit-actions-form";
 import { useBuilderActions } from "@/builder/hooks/use-builder-actions";
 import { useGetScene } from "@/builder/hooks/use-get-scene";
 import { SimpleLoader } from "@/design-system/components/simple-loader";
-import { SavingIndicator } from "../../saving-indicator";
+import { SavingIndicator } from "@/design-system/components/saving-indicator";
 import { CharacterConfiguration, Scene } from "@/lib/storage/domain";
 import { DragEvent, useRef } from "react";
 import { useGetCharacterConfig } from "@/builder/hooks/use-get-character-config";

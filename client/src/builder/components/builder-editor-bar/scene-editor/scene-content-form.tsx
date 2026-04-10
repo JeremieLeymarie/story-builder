@@ -15,7 +15,7 @@ import { WikiPlugin } from "../../wiki-lexical-plugin/wiki-lexical-plugin";
 import { WikiNode } from "@/builder/lexical-wiki-node";
 import { useBuilderActions } from "@/builder/hooks/use-builder-actions";
 import { SimpleLoader } from "@/design-system/components/simple-loader";
-import { SavingIndicator } from "../../saving-indicator";
+import { SavingIndicator } from "@/design-system/components/saving-indicator";
 import { useGetScene } from "@/builder/hooks/use-get-scene";
 import { Scene } from "@/lib/storage/domain";
 import { useEditSceneContentForm } from "@/builder/hooks/use-edit-scene-content-form";
