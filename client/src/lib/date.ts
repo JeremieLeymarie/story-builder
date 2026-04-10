@@ -9,3 +9,14 @@ export const timeFrom = (date: ConfigType) => {
 
 export const formatDate = (date: ConfigType) =>
   dayjs(date).format("dddd, MMMM D, YYYY");
+
+export const formatDurationHHMMSS = (durationMs: number) => {
+  const totalSeconds = Math.max(0, Math.floor(durationMs / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  return [hours, minutes, seconds]
+    .map((value) => String(value).padStart(2, "0"))
+    .join(":");
+};

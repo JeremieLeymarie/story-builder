@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { StoryGenreBadge } from "@/design-system/components";
-import { timeFrom } from "@/lib/date";
+import { formatDurationHHMMSS, timeFrom } from "@/lib/date";
 import { Story } from "@/lib/storage/domain";
 import { useGetAnalyticsService } from "../hooks/use-get-analytics-service";
 import { Analytics } from "./analytics";
@@ -31,6 +31,10 @@ export const LibraryGameDetail = ({
     gameKey: story.key,
   });
   const getProgressRate = analyticsService?.getProgressRate;
+  const totalPlayTimeMs = saves.reduce(
+    (acc, save) => acc + save.totalPlayTimeMs,
+    0,
+  );
 
   const playGame = (save: Save) => {
     navigate({
@@ -56,9 +60,14 @@ export const LibraryGameDetail = ({
           </div>
           <div className="flex-1 space-y-2">
             <GameDropdown gameKey={story.key} />
-            <h1 className="text-foreground text-3xl font-bold md:text-4xl">
-              {story.title}
-            </h1>
+            <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between md:gap-4">
+              <h1 className="text-foreground text-3xl font-bold md:text-4xl">
+                {story.title}
+              </h1>
+              <p className="text-muted-foreground text-sm font-medium whitespace-nowrap tabular-nums md:text-base">
+                Total play time: {formatDurationHHMMSS(totalPlayTimeMs)}
+              </p>
+            </div>
             {story.author && (
               <p className="text-muted-foreground italic">
                 Story by&nbsp;
