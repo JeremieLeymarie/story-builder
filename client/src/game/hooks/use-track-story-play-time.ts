@@ -61,5 +61,5 @@ export const useTrackStoryPlayTime = ({
       window.removeEventListener("pagehide", handlePageHide);
       void flushTracking();
     };
-  }, [enabled, sceneKey, progressKey, flushTracking, startTracking]);
+  }, [enabled, sceneKey, progressKey]);
 };
