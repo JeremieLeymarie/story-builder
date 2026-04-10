@@ -380,6 +380,7 @@ describe("library-service", () => {
         currentSceneKey: BASIC_STORY.firstSceneKey,
         createdAt: new Date(),
         lastPlayedAt: new Date(),
+        totalPlayTimeMs: 0,
         userKey: BASIC_USER.key,
         storyKey: BASIC_STORY.key,
         name: "bidoum",

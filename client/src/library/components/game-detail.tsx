@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { StoryGenreBadge } from "@/design-system/components";
-import { formatDurationHHMMSS, timeFrom } from "@/lib/date";
-import { Story } from "@/lib/storage/domain";
-import { getTotalPlayTimeMs } from "@/domains/game/analytics-service";
-import { useGetAnalyticsService } from "../hooks/use-get-analytics-service";
-import { Analytics } from "./analytics";
 import { GameDropdown } from "./game-dropdown";
-import { SavesDropdown } from "./saves-dropdown";
+import { formatDurationHHMMSS, timeFrom } from "@/lib/date";
+import { Analytics } from "./analytics";
+import { getTotalPlayTimeMs } from "@/domains/game/analytics-service";
 import { Save } from "./types";
+import { SavesDropdown } from "./saves-dropdown";
+import { Story } from "@/lib/storage/domain";
+import { useGetAnalyticsService } from "../hooks/use-get-analytics-service";
 
 type Props = {
   story: Story;
@@ -26,13 +26,12 @@ export const LibraryGameDetail = ({
 
   const saves = [currentProgress, ...otherProgresses];
   const selectedSave =
-    saves.find((s) => s.key === selectedSaveKey) ?? currentProgress;
+    saves.find((save) => save.key === selectedSaveKey) ?? currentProgress;
+  const totalPlayTimeMs = getTotalPlayTimeMs(saves);
   const { analyticsService } = useGetAnalyticsService({
-    progressKey: selectedSaveKey,
+    progressKey: selectedSave.key,
     gameKey: story.key,
   });
-  const getProgressRate = analyticsService?.getProgressRate;
-  const totalPlayTimeMs = getTotalPlayTimeMs(saves);
 
   const playGame = (save: Save) => {
     navigate({
@@ -88,7 +87,7 @@ export const LibraryGameDetail = ({
                 saves={saves}
                 selectedSave={selectedSave}
                 storyKey={story.key}
-                getProgressRate={getProgressRate}
+                getProgressRate={analyticsService?.getProgressRate}
                 onSelectSave={(save) => setSelectedSaveKey(save.key)}
                 onPlay={playGame}
               />
