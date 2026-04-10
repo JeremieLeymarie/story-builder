@@ -3,6 +3,11 @@ import { useForm } from "react-hook-form";
 import { useArticleActions } from "./hooks/use-article-actions";
 import {
   Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
   Form,
   FormControl,
   FormField,
@@ -11,7 +16,8 @@ import {
   FormMessage,
   Input,
 } from "@/design-system/primitives";
-import { CornerDownLeft } from "lucide-react";
+import { Separator } from "@/design-system/primitives/separator";
+import { CornerDownLeft, FileText, Image, FolderTree } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useWikiStore } from "./hooks/use-wiki-store";
 import { ArticleSchema, articleSchema } from "./schemas";
@@ -62,34 +68,52 @@ export const ArticleEditor = ({
   };
 
   return (
-    <div className="flex flex-col gap-3">
-      {mode === "update" ? (
-        <Link to="/wikis/$wikiKey/$articleKey" params={{ wikiKey, articleKey }}>
-          <Button variant="outline" className="w-max items-center">
-            <CornerDownLeft size={20} /> Back to article
-          </Button>
-        </Link>
+    <div className="flex min-h-screen w-full items-start justify-center bg-background p-6">
+      <div className="w-full max-w-4xl space-y-6">
+        <div className="flex items-center justify-start">
+          {mode === "update" ? (
+            <Link to="/wikis/$wikiKey/$articleKey" params={{ wikiKey, articleKey }}>
+              <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
+                <CornerDownLeft size={16} /> Back to article
+              </Button>
+            </Link>
       ) : (
         <Link to="/wikis/$wikiKey" params={{ wikiKey }}>
-          <Button variant="outline" className="w-max items-center">
-            <CornerDownLeft size={20} /> Back to home
+          <Button variant="ghost" className="w-max items-center">
+            <CornerDownLeft size={16} /> Back to home
           </Button>
         </Link>
-      )}
+          )}
+          </div>
+          <Card className="shadow-lg">
+            <CardHeader className="text-center">
+            <CardTitle className="text-2xl">
+              {mode === "update" ? "Edit Article" : "Create New Article"}
+            </CardTitle>
+            <CardDescription>
+              {mode === "update"
+                ? "Update your article information and content"
+                : "Fill in the details to create a new wiki article"}
+            </CardDescription>
+          </CardHeader>
+      <CardContent>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
-          className="w-full space-y-4"
+          className="w-full space-y-6"
         >
           <FormField
             control={form.control}
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title</FormLabel>
+                <FormLabel className="flex items-center gap-2 text-base">
+                  <FileText size={18} />
+                  Title
+                </FormLabel>
                 <FormControl>
                   <Input
-                    className="w-6/12"
+                    className="text-base"
                     placeholder="My article title"
                     {...field}
                   />
@@ -97,13 +121,17 @@ export const ArticleEditor = ({
                 <FormMessage />
               </FormItem>
             )}
-          />
+              />
+          <Separator />
           <FormField
             control={form.control}
             name="categoryKey"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Category</FormLabel>
+                <FormLabel className="flex items-center gap-2 text-base">
+                      <FolderTree size={18} />
+                      Category
+                </FormLabel>
                 <FormControl>
                   <CategoryPicker
                     categories={categories}
@@ -115,16 +143,19 @@ export const ArticleEditor = ({
               </FormItem>
             )}
           />
-
+          <Separator />
           <FormField
             control={form.control}
             name="image"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Preview image</FormLabel>
+                <FormLabel className="flex items-center gap-2 text-base">
+                  <Image size={18} />
+                    Preview image
+                </FormLabel>
                 <FormControl>
                   <Input
-                    className="w-6/12"
+                    className="text-base"
                     placeholder="http://your-image-url.com"
                     {...field}
                   />
@@ -133,12 +164,13 @@ export const ArticleEditor = ({
               </FormItem>
             )}
           />
+          <Separator />
           <FormField
             control={form.control}
             name="content"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Content</FormLabel>
+                <FormLabel className="text-base">Content</FormLabel>
                 <FormControl>
                   <EditorContextProvider
                     entityType="wiki-article"
@@ -155,10 +187,17 @@ export const ArticleEditor = ({
                 <FormMessage />
               </FormItem>
             )}
-          />
-          <Button type="submit">Save</Button>
+              />
+            <div className="flex justify-center pt-4">
+                <Button size="lg" className="min-w-32" type="submit">
+                  {mode === "update" ? "Update Article" : "Create Article"}
+              </Button>
+            </div>
         </form>
-      </Form>
+            </Form>
+          </CardContent>
+        </Card>
+        </div>
     </div>
   );
 };
