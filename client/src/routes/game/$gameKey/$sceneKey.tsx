@@ -7,6 +7,7 @@ import { zodSearchValidator } from "@tanstack/router-zod-adapter";
 import { getGameService } from "@/domains/game/game-service";
 import { useGetGameSceneData } from "@/game/hooks/use-get-game-scene-data";
 import { Scene } from "@/lib/storage/domain";
+import { useTrackStoryPlayTime } from "@/game/hooks/use-track-story-play-time";
 
 // TODO: test life cycle
 const useGetUpdatedStoryProgress = ({ scene }: { scene?: Scene | null }) => {
@@ -37,6 +38,7 @@ const useGetUpdatedStoryProgress = ({ scene }: { scene?: Scene | null }) => {
 
 const Component = () => {
   const { sceneKey, gameKey } = Route.useParams();
+  const { storyProgressKey } = Route.useSearch();
   const { scene, theme, isLoading } = useGetGameSceneData({
     storyKey: gameKey,
     sceneKey,
@@ -46,6 +48,12 @@ const Component = () => {
     useGetUpdatedStoryProgress({
       scene,
     });
+
+  useTrackStoryPlayTime({
+    enabled: !!scene && !!progressResult?.updatedProgress,
+    progressKey: storyProgressKey,
+    sceneKey,
+  });
 
   if (
     isLoading ||

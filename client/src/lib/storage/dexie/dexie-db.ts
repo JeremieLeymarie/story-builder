@@ -41,7 +41,7 @@ const tables: Record<keyof Tables, string> = {
   storyThemes: "&key, &storyKey",
   characterConfigurations: "&key, &storyKey",
   storyProgresses:
-    "&key, storyKey, userKey, currentSceneKey, character, inventory, history, lastPlayedAt, createdAt",
+    "&key, storyKey, userKey, currentSceneKey, character, inventory, history, lastPlayedAt, createdAt, totalPlayTimeMs",
   wikis: "&key, userKey",
   wikiArticles: "&key, wikiKey, categoryKey, title",
   wikiCategories: "&key, wikiKey, name",
@@ -134,6 +134,27 @@ export const createDb = (
           bulkPayload.push({
             key: progress.key,
             changes: { createdAt: progress.lastPlayedAt ?? new Date() },
+          });
+        }
+      });
+
+      if (bulkPayload.length) {
+        await db.storyProgresses.bulkUpdate(bulkPayload);
+      }
+    });
+
+  // Migration: add total play time to story progresses
+  db.version(11)
+    .stores(tables)
+    .upgrade(async () => {
+      const bulkPayload: { key: string; changes: Partial<StoryProgress> }[] =
+        [];
+
+      await db.storyProgresses.each((progress) => {
+        if (typeof progress.totalPlayTimeMs !== "number") {
+          bulkPayload.push({
+            key: progress.key,
+            changes: { totalPlayTimeMs: 0 },
           });
         }
       });

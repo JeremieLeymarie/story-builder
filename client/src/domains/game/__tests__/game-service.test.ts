@@ -287,6 +287,44 @@ describe("game-service", () => {
   });
   it("should not trigger side effects when revisiting the same scene consecutively", () => {});
 
+  describe("addPlayTime", () => {
+    it("should accumulate elapsed play time on the progress", async () => {
+      progressRepo.get.mockResolvedValueOnce(BASIC_STORY_PROGRESS);
+
+      const updated = await gameService.addPlayTime(
+        BASIC_STORY_PROGRESS.key,
+        4_000,
+      );
+
+      expect(progressRepo.get).toHaveBeenCalledWith(BASIC_STORY_PROGRESS.key);
+      expect(progressRepo.update).toHaveBeenCalledWith(
+        BASIC_STORY_PROGRESS.key,
+        {
+          totalPlayTimeMs: 4_000,
+        },
+      );
+      expect(updated.totalPlayTimeMs).toBe(4_000);
+    });
+
+    it("should preserve the current value before accumulating elapsed play time", async () => {
+      progressRepo.get.mockResolvedValueOnce(
+        factory.storyProgress({
+          key: BASIC_STORY_PROGRESS.key,
+          totalPlayTimeMs: 12_000,
+        }),
+      );
+
+      await gameService.addPlayTime(BASIC_STORY_PROGRESS.key, 3_000);
+
+      expect(progressRepo.update).toHaveBeenCalledWith(
+        BASIC_STORY_PROGRESS.key,
+        {
+          totalPlayTimeMs: 15_000,
+        },
+      );
+    });
+  });
+
   describe("getActionVisibility", () => {
     test("simple actions are always visible", () => {
       const isVisible = gameService.getActionVisibility({

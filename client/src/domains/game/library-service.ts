@@ -74,6 +74,7 @@ export const _getLibraryService = ({
       currentSceneKey: story.firstSceneKey,
       lastPlayedAt: new Date(),
       createdAt: new Date(),
+      totalPlayTimeMs: 0,
       userKey: user?.key ?? undefined,
       ...(characterConfig
         ? { character: _createInitialCharacter(characterConfig) }

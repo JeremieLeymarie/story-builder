@@ -166,6 +166,7 @@ def make_mongo_story_progress(
         currentSceneKey=domain.current_scene_key,
         createdAt=domain.created_at,
         lastPlayedAt=domain.last_played_at,
+        totalPlayTimeMs=domain.total_play_time_ms,
         finished=domain.finished,
         storyKey=domain.story_key,
         lastSyncAt=domain.last_sync_at,
@@ -278,6 +279,7 @@ def make_synchronization_story_progress(
         current_scene_key=story_progress["currentSceneKey"],
         created_at=story_progress["lastPlayedAt"],
         last_played_at=story_progress["lastPlayedAt"],
+        total_play_time_ms=story_progress.get("totalPlayTimeMs", 0),
         finished=story_progress.get("finished"),
         last_sync_at=story_progress.get("lastSyncAt"),
     )

@@ -236,6 +236,7 @@ const _storyProgressFactory = {
   history: () => Array.from(Array(5), nanoid),
   createdAt: faker.date.anytime,
   lastPlayedAt: faker.date.anytime,
+  totalPlayTimeMs: () => faker.number.int({ min: 0 }),
   storyKey: nanoid,
   userKey: nanoid,
   finished: () => Math.random() > 0.5,

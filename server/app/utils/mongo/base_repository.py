@@ -103,6 +103,7 @@ class MongoStoryProgress(WithId):
     currentSceneKey: str
     createdAt: datetime
     lastPlayedAt: datetime
+    totalPlayTimeMs: NotRequired[int]
     finished: bool | None
     storyKey: str
     lastSyncAt: datetime | None
