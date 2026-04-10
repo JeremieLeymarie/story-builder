@@ -35,6 +35,7 @@ type BuilderErrorStore = {
     type: BuilderErrorWithoutMetadata["type"],
     id: BuilderErrorWithoutMetadata["id"],
   ) => boolean;
+  clear: () => void;
 };
 
 export const useBuilderErrorStore = createWithEqualityFn<BuilderErrorStore>(
@@ -96,6 +97,13 @@ export const useBuilderErrorStore = createWithEqualityFn<BuilderErrorStore>(
     hasError: (type, id) => {
       return get().errors[type].some((err) => err.id === id);
     },
+
+    clear: () =>
+      set({
+        errors: {
+          "invalid-action-target-percentages": [],
+        },
+      }),
   }),
   shallow,
 );

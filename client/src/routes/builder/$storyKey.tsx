@@ -4,6 +4,7 @@ import {
   useGetBuilder,
 } from "@/builder/hooks/use-get-builder";
 import { useBuilderEditorStore } from "@/builder/hooks/use-builder-editor-store";
+import { useBuilderErrorStore } from "@/builder/hooks/use-builder-error-store";
 import { BackdropLoader, ErrorMessage } from "@/design-system/components";
 import { createFileRoute } from "@tanstack/react-router";
 import { queryClient } from "../__root";
@@ -40,5 +41,6 @@ export const Route = createFileRoute("/builder/$storyKey")({
       queryKey: makeGetBuilderQueryOptions({ storyKey }).queryKey,
     });
     useBuilderEditorStore.getState().close();
+    useBuilderErrorStore.getState().clear();
   },
 });
