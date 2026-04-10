@@ -21,6 +21,10 @@ type GameServicePort = {
     updatedProgress: StoryProgress | null;
     effectsTriggered: SideEffect[];
   }>;
+  addPlayTime: (
+    storyProgressKey: string,
+    elapsedMs: number,
+  ) => Promise<StoryProgress>;
   getNextKey: (
     options: {
       sceneKey: string;
@@ -141,6 +145,25 @@ export const _getGameService = ({
         updatedProgress: { ...progress, ...updatePayload },
         effectsTriggered,
       };
+    },
+
+    addPlayTime: async (storyProgressKey, elapsedMs) => {
+      const progress = await progressRepo.get(storyProgressKey);
+
+      if (!progress)
+        throw new Error(`No progress found for story ${storyProgressKey}`);
+
+      if (elapsedMs <= 0) {
+        return progress;
+      }
+
+      const updatePayload = {
+        totalPlayTimeMs: (progress.totalPlayTimeMs ?? 0) + elapsedMs,
+      } satisfies Partial<StoryProgress>;
+
+      await progressRepo.update(progress.key, updatePayload);
+
+      return { ...progress, ...updatePayload };
     },
 
     getNextKey: (options) => {

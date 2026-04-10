@@ -195,6 +195,7 @@ export type StoryProgress = {
   inventory?: Record<string, unknown>;
   createdAt: Date;
   lastPlayedAt: Date;
+  totalPlayTimeMs: number;
   finished?: boolean;
 };
 

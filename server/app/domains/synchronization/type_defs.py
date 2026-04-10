@@ -90,6 +90,7 @@ class SynchronizationStoryProgress(BaseModel):
     current_scene_key: str
     created_at: datetime
     last_played_at: datetime
+    total_play_time_ms: int = 0
     finished: bool | None = None
     story_key: str
     last_sync_at: datetime | None = None

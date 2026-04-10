@@ -80,4 +80,5 @@ export const BASIC_STORY_PROGRESS: StoryProgress = {
   currentSceneKey: "vroum",
   createdAt: new Date(),
   lastPlayedAt: new Date(),
+  totalPlayTimeMs: 0,
 };

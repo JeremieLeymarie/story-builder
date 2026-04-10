@@ -134,6 +134,7 @@ describe("library-service", () => {
       currentSceneKey: "most-recent-vroum",
       createdAt: new Date(),
       lastPlayedAt: dayjs(new Date()).add(10, "days").toDate(),
+      totalPlayTimeMs: 0,
     };
 
     const OTHER = {
@@ -144,6 +145,7 @@ describe("library-service", () => {
       currentSceneKey: "older-vroum",
       createdAt: new Date(),
       lastPlayedAt: new Date(),
+      totalPlayTimeMs: 0,
     };
 
     const FINISHED = {
@@ -154,6 +156,7 @@ describe("library-service", () => {
       currentSceneKey: "finished-vroum",
       createdAt: new Date(),
       lastPlayedAt: new Date(),
+      totalPlayTimeMs: 0,
       finished: true,
     };
 
@@ -293,6 +296,7 @@ describe("library-service", () => {
         currentSceneKey: BASIC_STORY.firstSceneKey,
         createdAt: new Date(),
         lastPlayedAt: new Date(),
+        totalPlayTimeMs: 0,
         userKey: BASIC_USER.key,
         storyKey: BASIC_STORY.key,
       });
@@ -334,6 +338,7 @@ describe("library-service", () => {
         currentSceneKey: BASIC_STORY.firstSceneKey,
         createdAt: new Date(),
         lastPlayedAt: new Date(),
+        totalPlayTimeMs: 0,
         userKey: BASIC_USER.key,
         storyKey: BASIC_STORY.key,
         character: {

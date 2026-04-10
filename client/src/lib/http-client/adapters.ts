@@ -118,6 +118,7 @@ const fromAPIStoryProgressAdapter = (
     ...storyProgress,
     createdAt: new Date(storyProgress.createdAt),
     lastPlayedAt: new Date(storyProgress.lastPlayedAt),
+    totalPlayTimeMs: storyProgress.totalPlayTimeMs ?? 0,
     finished: !!storyProgress.finished,
   };
 };

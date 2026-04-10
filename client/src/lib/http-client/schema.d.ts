@@ -415,6 +415,11 @@ export interface components {
              * Format: date-time
              */
             lastPlayedAt: string;
+            /**
+             * Totalplaytimems
+             * @default 0
+             */
+            totalPlayTimeMs: number;
             /** Finished */
             finished?: boolean | null;
             /** Storykey */
