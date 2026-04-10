@@ -21,10 +21,6 @@ export type VisitedScenesData = [
   },
 ];
 
-export const getTotalPlayTimeMs = (
-  saves: Pick<StoryProgress, "totalPlayTimeMs">[],
-) => saves.reduce((acc, save) => acc + save.totalPlayTimeMs, 0);
-
 export type AnalyticsServicePort = {
   getVisitedScenesChart: () => {
     data: VisitedScenesData;
@@ -32,6 +28,9 @@ export type AnalyticsServicePort = {
     rate: number;
   };
   getProgressRate: (history: string[]) => number;
+  getTotalPlayTimeMs: (
+    saves: Array<Partial<Pick<StoryProgress, "totalPlayTimeMs">>>,
+  ) => number;
   isSceneVisited: (sceneKey: string) => boolean;
   getAllScenes: () => Scene[];
 };
@@ -66,6 +65,18 @@ export const _getAnalyticsService = async ({
   return {
     getProgressRate,
 
+    getTotalPlayTimeMs: (saves) =>
+      saves.reduce((acc, save) => {
+        const totalPlayTimeMs = save.totalPlayTimeMs;
+        const safeTotalPlayTimeMs =
+          typeof totalPlayTimeMs === "number" &&
+          Number.isFinite(totalPlayTimeMs)
+            ? totalPlayTimeMs
+            : 0;
+
+        return acc + safeTotalPlayTimeMs;
+      }, 0),
+
     getVisitedScenesChart: () => {
       const initialData = [
         { type: "visited", count: 0, fill: "var(--color-visited)" },
@@ -76,7 +87,7 @@ export const _getAnalyticsService = async ({
       const unvisitedIdx = 1;
 
       const data = scenes.reduce<VisitedScenesData>((acc, scene) => {
-        if (progress?.history.includes(scene.key)) acc[visitedIdx].count++;
+        if (progress.history.includes(scene.key)) acc[visitedIdx].count++;
         else acc[unvisitedIdx].count++;
 
         return acc;
@@ -103,7 +114,7 @@ export const _getAnalyticsService = async ({
       };
     },
 
-    isSceneVisited: (sceneKey) => progress?.history.includes(sceneKey) ?? false,
+    isSceneVisited: (sceneKey) => progress.history.includes(sceneKey),
 
     getAllScenes: () => scenes,
   };

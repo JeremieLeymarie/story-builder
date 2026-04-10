@@ -14,5 +14,9 @@ describe("date", () => {
     test("formats a duration longer than one hour", () => {
       expect(formatDurationHHMMSS(3_726_000)).toBe("01:02:06");
     });
+
+    test("falls back to zero for NaN", () => {
+      expect(formatDurationHHMMSS(Number.NaN)).toBe("00:00:00");
+    });
   });
 });

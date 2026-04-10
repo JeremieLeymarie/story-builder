@@ -7,7 +7,7 @@ import {
   getStubProgressRepository,
   MockProgressRepository,
 } from "../stubs/progress-repository-stub";
-import { _getAnalyticsService, getTotalPlayTimeMs } from "../analytics-service";
+import { _getAnalyticsService } from "../analytics-service";
 import { getTestFactory } from "@/lib/testing/factory";
 
 const factory = getTestFactory();
@@ -36,18 +36,39 @@ describe("analytics-service", () => {
   };
 
   describe("getTotalPlayTimeMs", () => {
-    test("sums total play time across saves", () => {
+    test("sums total play time across saves", async () => {
+      progressRepository.get.mockResolvedValueOnce(factory.storyProgress());
+      gameRepository.getScenes.mockResolvedValueOnce([]);
+      const svc = await _getSvc();
       const saves = [
         factory.storyProgress({ totalPlayTimeMs: 1_000 }),
         factory.storyProgress({ totalPlayTimeMs: 2_000 }),
         factory.storyProgress({ totalPlayTimeMs: 3_000 }),
       ];
 
-      expect(getTotalPlayTimeMs(saves)).toBe(6_000);
+      expect(svc.getTotalPlayTimeMs(saves)).toBe(6_000);
     });
 
-    test("returns zero when there are no saves", () => {
-      expect(getTotalPlayTimeMs([])).toBe(0);
+    test("returns zero when there are no saves", async () => {
+      progressRepository.get.mockResolvedValueOnce(factory.storyProgress());
+      gameRepository.getScenes.mockResolvedValueOnce([]);
+      const svc = await _getSvc();
+
+      expect(svc.getTotalPlayTimeMs([])).toBe(0);
+    });
+
+    test("ignores invalid total play time values", async () => {
+      progressRepository.get.mockResolvedValueOnce(factory.storyProgress());
+      gameRepository.getScenes.mockResolvedValueOnce([]);
+      const svc = await _getSvc();
+      const saves = [
+        { totalPlayTimeMs: 1_000 },
+        {},
+        { totalPlayTimeMs: Number.NaN },
+        { totalPlayTimeMs: 2_000 },
+      ];
+
+      expect(svc.getTotalPlayTimeMs(saves)).toBe(3_000);
     });
   });
 
@@ -187,12 +208,14 @@ describe("analytics-service", () => {
 
   describe("getAllScenes", () => {
     test("no scenes", async () => {
+      progressRepository.get.mockResolvedValueOnce(factory.storyProgress());
       gameRepository.getScenes.mockResolvedValueOnce([]);
       const svc = await _getSvc();
       expect(svc.getAllScenes()).toStrictEqual([]);
     });
 
     test("simple", async () => {
+      progressRepository.get.mockResolvedValueOnce(factory.storyProgress());
       const scenes = _makeScenes();
       gameRepository.getScenes.mockResolvedValueOnce(scenes);
       const svc = await _getSvc();

@@ -4,7 +4,6 @@ import { StoryGenreBadge } from "@/design-system/components";
 import { GameDropdown } from "./game-dropdown";
 import { formatDurationHHMMSS, timeFrom } from "@/lib/date";
 import { Analytics } from "./analytics";
-import { getTotalPlayTimeMs } from "@/domains/game/analytics-service";
 import { Save } from "./types";
 import { SavesDropdown } from "./saves-dropdown";
 import { Story } from "@/lib/storage/domain";
@@ -27,11 +26,11 @@ export const LibraryGameDetail = ({
   const saves = [currentProgress, ...otherProgresses];
   const selectedSave =
     saves.find((save) => save.key === selectedSaveKey) ?? currentProgress;
-  const totalPlayTimeMs = getTotalPlayTimeMs(saves);
   const { analyticsService } = useGetAnalyticsService({
     progressKey: selectedSave.key,
     gameKey: story.key,
   });
+  const totalPlayTimeMs = analyticsService?.getTotalPlayTimeMs(saves) ?? 0;
 
   const playGame = (save: Save) => {
     navigate({
