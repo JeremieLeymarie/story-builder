@@ -3,6 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { StoryGenreBadge } from "@/design-system/components";
 import { formatDurationHHMMSS, timeFrom } from "@/lib/date";
 import { Story } from "@/lib/storage/domain";
+import { getTotalPlayTimeMs } from "@/domains/game/analytics-service";
 import { useGetAnalyticsService } from "../hooks/use-get-analytics-service";
 import { Analytics } from "./analytics";
 import { GameDropdown } from "./game-dropdown";
@@ -31,10 +32,7 @@ export const LibraryGameDetail = ({
     gameKey: story.key,
   });
   const getProgressRate = analyticsService?.getProgressRate;
-  const totalPlayTimeMs = saves.reduce(
-    (acc, save) => acc + save.totalPlayTimeMs,
-    0,
-  );
+  const totalPlayTimeMs = getTotalPlayTimeMs(saves);
 
   const playGame = (save: Save) => {
     navigate({
