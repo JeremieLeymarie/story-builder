@@ -66,6 +66,7 @@ def test_save_progresses(api_test_infra_authenticated) -> None:
                 "lastSyncAt": datetime(1999, 12, 8).isoformat(),
                 "storyKey": "story-key",
                 "userKey": "me",
+                "totalPlayTimeMs" : 1_000,
             },
             {
                 "key": "another-key",
@@ -97,6 +98,7 @@ def test_save_progresses(api_test_infra_authenticated) -> None:
             lastSyncAt=datetime(1999, 12, 8),
             storyKey="story-key",
             userKey="me",
+            totalPlayTimeMs=1_000
         ),
         MongoStoryProgress(
             _id=ANY,
@@ -109,5 +111,6 @@ def test_save_progresses(api_test_infra_authenticated) -> None:
             lastSyncAt=datetime(1999, 12, 8),
             storyKey="some-story-key",
             userKey="me",
+            totalPlayTimeMs=0
         ),
     ]
