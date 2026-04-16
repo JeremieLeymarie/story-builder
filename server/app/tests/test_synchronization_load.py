@@ -123,7 +123,6 @@ def test_load(api_test_infra_authenticated) -> None:
                 lastSyncAt=datetime(1999, 12, 8),
                 storyKey="some-story-key",
                 userKey="not-me",
-                totalPlayTimeMs=1_000
             ),
         ]
     )
@@ -195,8 +194,6 @@ def test_load(api_test_infra_authenticated) -> None:
                 "totalPlayTimeMs": 0,
                 "lastSyncAt": datetime(1999, 12, 8).isoformat(),
                 "storyKey": "story-key",
-                "userKey": "me",
-                "totalPlayTimeMs" : 0,
             }
         ],
     }

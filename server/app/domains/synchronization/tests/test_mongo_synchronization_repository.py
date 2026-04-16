@@ -160,7 +160,6 @@ def _assert_fake_story_progresses_match(sp: list[MongoStoryProgress]) -> None:
             lastSyncAt=datetime(1999, 12, 8),
             storyKey="story-key",
             userKey="me",
-            totalPlayTimeMs=0
         ),
         MongoStoryProgress(
             _id=ANY,
@@ -174,7 +173,6 @@ def _assert_fake_story_progresses_match(sp: list[MongoStoryProgress]) -> None:
             lastSyncAt=datetime(1999, 12, 8),
             storyKey="another-story-key",
             userKey="me",
-            totalPlayTimeMs=1_000
         ),
     ]
 
