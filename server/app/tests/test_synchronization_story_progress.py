@@ -68,6 +68,7 @@ def test_save_progresses(api_test_infra_authenticated) -> None:
                 "totalPlayTimeMs": 0,
                 "lastSyncAt": datetime(1999, 12, 8).isoformat(),
                 "storyKey": "story-key",
+                "userKey": "me",
             },
             {
                 "key": "another-key",
