@@ -384,7 +384,6 @@ describe("library-service", () => {
         userKey: BASIC_USER.key,
         storyKey: BASIC_STORY.key,
         name: "bidoum",
-        totalPlayTimeMs: 0,
       });
     });
   });
