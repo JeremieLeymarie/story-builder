@@ -9,11 +9,12 @@ import {
 import { Trash2Icon } from "lucide-react";
 import { Button } from "@/design-system/primitives";
 import { DeleteStoryModal } from "../../delete-story-modal";
+import { SavingIndicator } from "@/design-system/components/saving-indicator";
 import { useDeleteStory } from "@/builder/hooks/use-delete-story";
 
 export const StoryEditor = () => {
   const { story } = useBuilderContext();
-  const { form } = useEditStoryForm({
+  const { form, isSaving } = useEditStoryForm({
     values: story,
   });
   const { deleteStory } = useDeleteStory();
@@ -32,6 +33,7 @@ export const StoryEditor = () => {
         />
       </ToolbarHeader>
       <EditStoryForm form={form} />
+      <SavingIndicator isSaving={isSaving} />
     </Toolbar>
   );
 };

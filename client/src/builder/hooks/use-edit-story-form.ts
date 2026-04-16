@@ -44,12 +44,12 @@ export const useEditStoryForm = ({ values }: { values: EditStorySchema }) => {
 
   const { updateStory, isPending } = useUpdateStory();
 
-  useAutoSubmitForm({
+  const { isSaving } = useAutoSubmitForm({
     form,
     onSubmit: (payload) => updateStory({ key: story.key, payload }),
   });
 
-  return { form, isSubmitting: isPending };
+  return { form, isSubmitting: isPending, isSaving };
 };
 
 export type EditStoryFormType = UseFormReturn<EditStorySchema>;
