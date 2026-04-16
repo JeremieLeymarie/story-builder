@@ -2,7 +2,7 @@ import { Title } from "@/design-system/components";
 import { Button } from "@/design-system/primitives";
 import { WikiArticle } from "@/lib/storage/domain";
 import { Link } from "@tanstack/react-router";
-import { SquarePenIcon } from "lucide-react";
+import { SquarePenIcon, Quote } from "lucide-react";
 import { useWikiStore } from "./hooks/use-wiki-store";
 import { WikiDataCategory } from "@/domains/wiki/types";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
@@ -23,7 +23,7 @@ export const Article = ({
   return (
     <div className="flex flex-col items-center">
       <div className="flex w-full max-w-4xl flex-col items-center space-y-4">
-        <div className="w-full space-y-2 text-center">
+        <div className="bg-muted/20 w-full space-y-2 rounded-lg p-6 text-center">
           <div className="relative flex items-center justify-center">
             <Title variant="article" className="text-black">
               {article.title}
@@ -51,10 +51,19 @@ export const Article = ({
         </div>
         <img
           src={article.image}
-          className="border-primary mb-[7%] w-[500px] rounded border-3 shadow-lg"
+          className="mb-[7%] w-[500px] rounded-xl shadow-lg"
         />
       </div>
-      <article className="w-full max-w-4xl">
+      <article className="relative w-full max-w-4xl pt-16 pb-8">
+        <Quote
+          className="absolute opacity-40"
+          size={48}
+          style={{
+            color: category?.color || "#000",
+            top: "-1%",
+            left: "-7%",
+          }}
+        />
         <EditorContextProvider
           entityType="wiki-article"
           entityKey={article.key}
@@ -65,6 +74,15 @@ export const Article = ({
             textDisplayMode="full"
           />
         </EditorContextProvider>
+        <Quote
+          className="absolute rotate-180 opacity-40"
+          size={48}
+          style={{
+            color: category?.color || "#000",
+            top: "95%",
+            left: "101%",
+          }}
+        />
       </article>
     </div>
   );
