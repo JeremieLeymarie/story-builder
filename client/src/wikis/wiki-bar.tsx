@@ -44,7 +44,7 @@ const ArticleTitle = ({
       }
       className={cn(
         isSelected && "bg-accent font-semibold",
-        "hover:bg-accent group/article flex items-center justify-between rounded border-l-2 ml-2",
+        "hover:bg-accent group/article ml-2 flex items-center justify-between rounded border-l-2",
       )}
       style={{ borderLeftColor: categoryColor || "#e5e5e5" }}
     >
@@ -105,7 +105,7 @@ const Section = ({ category, articles }: WikiSection) => {
 
   return (
     <div className="group my-3">
-      <div className="flex items-center justify-between mb-1.5">
+      <div className="mb-1.5 flex items-center justify-between">
         <CategoryBadge color={category?.color} name={category?.name} />
         {category && (
           <CategoryActionsDropdown
@@ -137,7 +137,7 @@ export const WikiBar = () => {
   } = useWikiStore((state) => state.wikiData);
 
   return (
-    <Toolbar className="w-[300px] space-y-1 sticky top-20 self-start">
+    <Toolbar className="sticky top-20 w-[300px] space-y-1 self-start">
       <div className="relative">
         <SearchIcon className="text-muted-foreground absolute top-2.5 left-2 h-4" />
         <Input placeholder="Search" className="pl-9" />

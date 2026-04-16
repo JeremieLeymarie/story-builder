@@ -68,25 +68,31 @@ export const ArticleEditor = ({
   };
 
   return (
-    <div className="flex min-h-screen w-full items-start justify-center bg-background p-6">
+    <div className="bg-background flex min-h-screen w-full items-start justify-center p-6">
       <div className="w-full max-w-4xl space-y-6">
         <div className="flex items-center justify-start">
           {mode === "update" ? (
-            <Link to="/wikis/$wikiKey/$articleKey" params={{ wikiKey, articleKey }}>
-              <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
+            <Link
+              to="/wikis/$wikiKey/$articleKey"
+              params={{ wikiKey, articleKey }}
+            >
+              <Button
+                variant="ghost"
+                className="text-muted-foreground hover:text-foreground gap-2"
+              >
                 <CornerDownLeft size={16} /> Back to article
               </Button>
             </Link>
-      ) : (
-        <Link to="/wikis/$wikiKey" params={{ wikiKey }}>
-          <Button variant="ghost" className="w-max items-center">
-            <CornerDownLeft size={16} /> Back to home
-          </Button>
-        </Link>
+          ) : (
+            <Link to="/wikis/$wikiKey" params={{ wikiKey }}>
+              <Button variant="ghost" className="w-max items-center">
+                <CornerDownLeft size={16} /> Back to home
+              </Button>
+            </Link>
           )}
-          </div>
-          <Card className="shadow-lg">
-            <CardHeader className="text-center">
+        </div>
+        <Card className="shadow-lg">
+          <CardHeader className="text-center">
             <CardTitle className="text-2xl">
               {mode === "update" ? "Edit Article" : "Create New Article"}
             </CardTitle>
@@ -96,108 +102,108 @@ export const ArticleEditor = ({
                 : "Fill in the details to create a new wiki article"}
             </CardDescription>
           </CardHeader>
-      <CardContent>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(handleSubmit)}
-          className="w-full space-y-6"
-        >
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-center gap-2 text-base">
-                  <FileText size={18} />
-                  Title
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    className="text-base"
-                    placeholder="My article title"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-              />
-          <Separator />
-          <FormField
-            control={form.control}
-            name="categoryKey"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-center gap-2 text-base">
-                      <FolderTree size={18} />
-                      Category
-                </FormLabel>
-                <FormControl>
-                  <CategoryPicker
-                    categories={categories}
-                    onChange={field.onChange}
-                    value={field.value}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Separator />
-          <FormField
-            control={form.control}
-            name="image"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-center gap-2 text-base">
-                  <Image size={18} />
-                    Preview image
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    className="text-base"
-                    placeholder="http://your-image-url.com"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Separator />
-          <FormField
-            control={form.control}
-            name="content"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-base">Content</FormLabel>
-                <FormControl>
-                  <EditorContextProvider
-                    entityType="wiki-article"
-                    entityKey={articleKey}
-                  >
-                    <RichText
-                      editable
-                      onSerializedChange={field.onChange}
-                      initialState={defaultValues?.content}
-                      textDisplayMode="scroll"
-                    />
-                  </EditorContextProvider>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-              />
-            <div className="flex justify-center pt-4">
-                <Button size="lg" className="min-w-32" type="submit">
-                  {mode === "update" ? "Update Article" : "Create Article"}
-              </Button>
-            </div>
-        </form>
+          <CardContent>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(handleSubmit)}
+                className="w-full space-y-6"
+              >
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2 text-base">
+                        <FileText size={18} />
+                        Title
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          className="text-base"
+                          placeholder="My article title"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Separator />
+                <FormField
+                  control={form.control}
+                  name="categoryKey"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2 text-base">
+                        <FolderTree size={18} />
+                        Category
+                      </FormLabel>
+                      <FormControl>
+                        <CategoryPicker
+                          categories={categories}
+                          onChange={field.onChange}
+                          value={field.value}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Separator />
+                <FormField
+                  control={form.control}
+                  name="image"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2 text-base">
+                        <Image size={18} />
+                        Preview image
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          className="text-base"
+                          placeholder="http://your-image-url.com"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Separator />
+                <FormField
+                  control={form.control}
+                  name="content"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-base">Content</FormLabel>
+                      <FormControl>
+                        <EditorContextProvider
+                          entityType="wiki-article"
+                          entityKey={articleKey}
+                        >
+                          <RichText
+                            editable
+                            onSerializedChange={field.onChange}
+                            initialState={defaultValues?.content}
+                            textDisplayMode="scroll"
+                          />
+                        </EditorContextProvider>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="flex justify-center pt-4">
+                  <Button size="lg" className="min-w-32" type="submit">
+                    {mode === "update" ? "Update Article" : "Create Article"}
+                  </Button>
+                </div>
+              </form>
             </Form>
           </CardContent>
         </Card>
-        </div>
+      </div>
     </div>
   );
 };
