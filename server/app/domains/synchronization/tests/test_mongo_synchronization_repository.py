@@ -81,7 +81,6 @@ FAKE_STORY_PROGRESS_B = SynchronizationStoryProgress(
     last_sync_at=datetime(1999, 12, 8),
     story_key="another-story-key",
     user_key="me",
-    total_play_time_ms=1_000
 )
 
 test_repo = BaseTestMongoRepository()
