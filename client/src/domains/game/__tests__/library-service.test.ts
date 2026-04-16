@@ -368,7 +368,7 @@ describe("library-service", () => {
 
     test("with name", async () => {
       localRepository.getStoryProgress.mockResolvedValueOnce(null);
-      characterRepository.get.mockResolvedValueOnce(null);
+      characterRepository.getConfig.mockResolvedValueOnce(null);
 
       await libraryService.createBlankStoryProgress({
         storyKey: BASIC_STORY.key,
