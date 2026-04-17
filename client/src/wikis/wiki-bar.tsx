@@ -17,12 +17,10 @@ import { toast } from "sonner";
 const ArticleTitle = ({
   title,
   articleKey,
-  categoryColor,
 }: {
   title: string;
   articleKey: string;
   canDelete: boolean;
-  categoryColor?: string;
 }) => {
   const [wikiKey, refresh] = useWikiStore((state) => [
     state.wikiData.wiki.key,
@@ -44,11 +42,10 @@ const ArticleTitle = ({
       }
       className={cn(
         isSelected && "bg-accent font-semibold",
-        "hover:bg-accent group/article ml-2 flex items-center justify-between rounded border-l-2",
+        "hover:bg-accent group/article ml-6 flex items-center justify-between rounded",
       )}
-      style={{ borderLeftColor: categoryColor || "#e5e5e5" }}
     >
-      <p className="text-md w-full truncate py-1.5 pl-4">{title}</p>
+      <p className="text-md w-full truncate py-1.5 pl-2">{title}</p>
       <ConfirmDialog
         title="Are you sure?"
         description={
@@ -122,7 +119,6 @@ const Section = ({ category, articles }: WikiSection) => {
             title={title}
             articleKey={key}
             canDelete={canRemoveArticle}
-            categoryColor={category?.color}
           />
         ))}
       </div>
