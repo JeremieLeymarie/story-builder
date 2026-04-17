@@ -5,7 +5,6 @@ export const useSceneEditorTutorial = (tutorial: TutorialSection) => {
   const { start } = useTutorial();
 
   useEffect(() => {
-    console.log(tutorial);
     start(tutorial);
   }, [start, tutorial]);
 };
