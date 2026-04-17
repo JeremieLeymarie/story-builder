@@ -203,7 +203,7 @@ export const _makeBulkSceneUpdatePayload = ({
     .filter((scene) => !!scene);
 };
 
-export const _getJsonService = ({
+export const _getImportExportService = ({
   localRepository,
   wikiRepository,
   themeRepository,
@@ -483,8 +483,8 @@ export const _getJsonService = ({
   };
 };
 
-export const getJsonService = () =>
-  _getJsonService({
+export const getImportExportService = () =>
+  _getImportExportService({
     localRepository: getLocalRepository(),
     wikiRepository: getDexieWikiRepository(),
     themeRepository: getDexieThemeRepository(),

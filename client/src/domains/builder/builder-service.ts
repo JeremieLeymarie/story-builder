@@ -1,7 +1,7 @@
 import { Action, BuilderPosition, Scene, Story } from "@/lib/storage/domain";
 import { LocalRepositoryPort } from "@/repositories/local-repository-port";
 import { BuilderNode, BuilderEdge } from "@/builder/types";
-import { ImportExportServicePort } from "@/services/common/json-service";
+import { ImportExportServicePort } from "@/services/common/import-export-service";
 import { WithoutKey } from "@/types";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { BuilderServicePort } from "./ports/builder-service-port";
@@ -24,12 +24,12 @@ import { BuilderSceneRepositoryPort } from "./builder-scene-repository";
 export const _getBuilderService = ({
   localRepository,
   layoutService,
-  jsonService,
+  importExportService,
   storyRepository,
   sceneRepository,
 }: {
   layoutService: LayoutServicePort;
-  jsonService: ImportExportServicePort;
+  importExportService: ImportExportServicePort;
   localRepository: LocalRepositoryPort; // Legacy: should be removed and replaced by domain-specific repositories
   storyRepository: BuilderStoryRepositoryPort;
   sceneRepository: BuilderSceneRepositoryPort;
@@ -406,32 +406,32 @@ export const _getBuilderService = ({
     importStory: async (importData: JsonStoryData) => {
       const storyKey = await localRepository.unitOfWork(
         async () => {
-          const storyResult = await jsonService.createStory({
+          const storyResult = await importExportService.createStory({
             story: importData,
             type: "builder",
           });
 
           let oldCharacterAttrToNew: Record<string, string> = {};
           if (importData.characterConfig)
-            oldCharacterAttrToNew = await jsonService.createCharacterConfig({
+            oldCharacterAttrToNew = await importExportService.createCharacterConfig({
               newStoryKey: storyResult.data.key,
               characterConfig: importData.characterConfig,
             });
 
-          const oldScenesToNew = await jsonService.createScenes({
+          const oldScenesToNew = await importExportService.createScenes({
             story: importData,
             newStoryKey: storyResult.data.key,
             oldCharacterAttrToNew,
           });
 
           if (importData.theme)
-            await jsonService.createTheme({
+            await importExportService.createTheme({
               newStoryKey: storyResult.data.key,
               theme: importData.theme,
             });
 
           if (importData.wiki)
-            await jsonService.createWiki({
+            await importExportService.createWiki({
               oldScenesToNew,
               type: "created",
               wikiData: importData.wiki,

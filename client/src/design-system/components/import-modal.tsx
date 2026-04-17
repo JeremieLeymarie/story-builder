@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/design-system/primitives";
-import { ANONYMOUS_AUTHOR } from "@/services/common/json-service";
+import { ANONYMOUS_AUTHOR } from "@/services/common/import-export-service";
 import { ReactNode, useState } from "react";
 import { Badge } from "../primitives/badge";
 import { StoryGenreBadge } from "./story-genre-badge";
