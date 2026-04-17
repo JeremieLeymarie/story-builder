@@ -413,10 +413,11 @@ export const _getBuilderService = ({
 
           let oldCharacterAttrToNew: Record<string, string> = {};
           if (importData.characterConfig)
-            oldCharacterAttrToNew = await importExportService.createCharacterConfig({
-              newStoryKey: storyResult.data.key,
-              characterConfig: importData.characterConfig,
-            });
+            oldCharacterAttrToNew =
+              await importExportService.createCharacterConfig({
+                newStoryKey: storyResult.data.key,
+                characterConfig: importData.characterConfig,
+              });
 
           const oldScenesToNew = await importExportService.createScenes({
             story: importData,
