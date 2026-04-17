@@ -19,7 +19,7 @@ export const useTutorialStore = create<ExportModalStore>((set) => ({
 const TUTORIAL_LS_KEY = "tutorial-progress";
 
 const tutorialSchema = z.object({
-  initial: z.boolean().catch(false),
+  introduction: z.boolean().catch(false),
   sceneContentEdition: z.boolean().catch(false),
   sceneActionsEdition: z.boolean().catch(false),
 });
@@ -46,7 +46,7 @@ const useTutorialSections = () => {
   const { setIsActive } = useTutorialStore();
   const { setTutorialCompleted } = useTutorialProgress();
 
-  const initialTutorial = {
+  const introductionTutorial = {
     showProgress: true,
     disableActiveInteraction: true,
     stagePadding: 15,
@@ -101,7 +101,7 @@ const useTutorialSections = () => {
     ],
     onDestroyed: () => {
       setIsActive(false);
-      setTutorialCompleted("initial");
+      setTutorialCompleted("introduction");
     },
   } satisfies DriverConfig;
 
@@ -199,7 +199,7 @@ const useTutorialSections = () => {
   } satisfies DriverConfig;
 
   return {
-    initialTutorial,
+    introductionTutorial,
     sceneContentEditionTutorial,
     sceneActionsEditionTutorial,
   };
@@ -215,7 +215,7 @@ export const useTutorial = () => {
     if (isActive || isTutorialCompleted(section)) return;
 
     const activeTutorial = match(section)
-      .with("initial", () => tutorialSections.initialTutorial)
+      .with("introduction", () => tutorialSections.introductionTutorial)
       .with(
         "sceneContentEdition",
         () => tutorialSections.sceneContentEditionTutorial,
