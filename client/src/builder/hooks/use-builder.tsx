@@ -54,7 +54,7 @@ export const useBuilder = () => {
     if (initialNodes.length > 1) return;
     // We need to wait for nodes to be rendered and `fitView` to have focused on the main node
     setTimeout(() => {
-      startTutorial("initial");
+      startTutorial("introduction");
     }, 500);
   };
 
