@@ -15,7 +15,7 @@ import { SideEffectsFormContainer } from "./side-effects-form";
 
 export const SceneEditor = ({ sceneKey }: { sceneKey: string }) => {
   return (
-    <Toolbar className="w-125">
+    <Toolbar className="w-125" id="scene-editor">
       <ToolbarHeader>
         <ToolbarTitle>Edit scene</ToolbarTitle>
       </ToolbarHeader>

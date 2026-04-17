@@ -8,6 +8,7 @@ import { CharacterConfiguration, Scene } from "@/lib/storage/domain";
 import { DragEvent, useRef } from "react";
 import { useGetCharacterConfig } from "@/builder/hooks/use-get-character-config";
 import { ActionItem, DragHandlers } from "./action-item";
+import { useSceneEditorTutorial } from "./hooks/use-scene-editor-tutorial";
 
 const useActionDrag = (move: (from: number, to: number) => void) => {
   const dragIndexRef = useRef<number | null>(null);
@@ -64,6 +65,8 @@ const ActionsFormContent = ({
   };
 
   const { getDragHandlers } = useActionDrag(move);
+
+  useSceneEditorTutorial("sceneActionsEdition");
 
   return (
     <Form {...form}>
