@@ -1,5 +1,6 @@
 import { useSafeLocalStorage } from "@/hooks/use-safe-local-storage";
-import { driver } from "driver.js";
+import { driver, Config as DriverConfig } from "driver.js";
+import { match } from "ts-pattern";
 import z from "zod";
 import { create } from "zustand";
 
@@ -19,11 +20,12 @@ const TUTORIAL_LS_KEY = "tutorial-progress";
 
 const tutorialSchema = z.object({
   initial: z.boolean().catch(false),
-  sceneCreation: z.boolean().catch(false),
+  sceneContentEdition: z.boolean().catch(false),
+  sceneActionsEdition: z.boolean().catch(false),
 });
 
 type TutorialProgress = z.output<typeof tutorialSchema>;
-type TutorialSection = keyof TutorialProgress;
+export type TutorialSection = keyof TutorialProgress;
 
 const useTutorialProgress = () => {
   const [progress, setProgress] = useSafeLocalStorage(
@@ -40,14 +42,15 @@ const useTutorialProgress = () => {
   return { setTutorialCompleted, isTutorialCompleted };
 };
 
-export const useTutorial = () => {
-  const { isActive, setIsActive } = useTutorialStore();
-  const { isTutorialCompleted, setTutorialCompleted } = useTutorialProgress();
+const useTutorialSections = () => {
+  const { setIsActive } = useTutorialStore();
+  const { setTutorialCompleted } = useTutorialProgress();
 
-  const tutorial = driver({
+  const initialTutorial = {
     showProgress: true,
     disableActiveInteraction: true,
     stagePadding: 15,
+    allowClose: false,
 
     steps: [
       {
@@ -90,9 +93,9 @@ export const useTutorial = () => {
         popover: {
           title: "Link your first action",
           description:
-            "Try to link your first action to a new scene by dragging a connection from the handle.",
+            "You can link your first action to a new scene by dragging a connection from the handle.",
           side: "right",
-          nextBtnText: "Exit tutorial",
+          nextBtnText: "Exit tutorial and try it out!",
         },
       },
     ],
@@ -100,12 +103,130 @@ export const useTutorial = () => {
       setIsActive(false);
       setTutorialCompleted("initial");
     },
-  });
+  } satisfies DriverConfig;
+
+  const sceneContentEditionTutorial = {
+    showProgress: true,
+    disableActiveInteraction: true,
+    allowClose: false,
+
+    steps: [
+      {
+        element: "#scene-editor",
+        popover: {
+          title: "The scene editor",
+          description:
+            "This is where you can edit your scenes. All changes are automatically saved.",
+        },
+      },
+      {
+        element: `#scene-editor [data-slot="form-control"]`,
+        popover: {
+          title: "Scene title",
+          description: "You can set the title here",
+        },
+      },
+      {
+        element: `#rich-text-editor`,
+        popover: {
+          title: "Scene content",
+          description:
+            "The content of the page is the heart of the story. This is what the player reads on every scene. You can use rich text features as you wish (text formatting, images...)",
+        },
+      },
+      {
+        element: `[role="tab"]:nth-child(2)`,
+        popover: {
+          title: "Actions",
+          description:
+            "Time to edit the choices of your player. Let's head to the action tab",
+        },
+      },
+    ],
+    onDestroyed: () => {
+      setIsActive(false);
+      setTutorialCompleted("sceneContentEdition");
+    },
+  } satisfies DriverConfig;
+
+  const sceneActionsEditionTutorial = {
+    showProgress: true,
+    disableActiveInteraction: true,
+    allowClose: false,
+
+    steps: [
+      {
+        element: "#scene-editor",
+        popover: {
+          title: "The action tab",
+          description:
+            "Actions are the choices available to the player in the story.",
+        },
+      },
+      {
+        element: `#scene-editor [data-slot="button"]`,
+        popover: {
+          title: "Adding an action",
+          description: "You can add an action using this button.",
+        },
+      },
+      {
+        element: "#scene-editor input:nth-child(1)",
+        popover: {
+          title: "Editing an action",
+          description: "You can change the text of an action here.",
+        },
+      },
+      {
+        element: `#scene-editor [data-slot="button"]:nth-child(4)`,
+        popover: {
+          title: "Deleting an action",
+          description: "You can delete an action using this button.",
+        },
+      },
+      {
+        element: `#scene-editor [data-slot="button"]:nth-child(3)`,
+        popover: {
+          title: "Advanced settings",
+          description: `By default, all actions are shown in the game, but you can achieve a higher level of customization by using conditional action. For example, an action can be visible only if the player already visited another scene. Go check out the docs to learn more about it: ${import.meta.env.VITE_DOCS_URL}`,
+        },
+      },
+    ],
+    onDestroyed: () => {
+      setIsActive(false);
+      setTutorialCompleted("sceneActionsEdition");
+    },
+  } satisfies DriverConfig;
+
+  return {
+    initialTutorial,
+    sceneContentEditionTutorial,
+    sceneActionsEditionTutorial,
+  };
+};
+
+export const useTutorial = () => {
+  const { isActive, setIsActive } = useTutorialStore();
+  const { isTutorialCompleted } = useTutorialProgress();
+
+  const tutorialSections = useTutorialSections();
 
   const start = (section: TutorialSection) => {
     if (isActive || isTutorialCompleted(section)) return;
 
-    tutorial.drive();
+    const activeTutorial = match(section)
+      .with("initial", () => tutorialSections.initialTutorial)
+      .with(
+        "sceneContentEdition",
+        () => tutorialSections.sceneContentEditionTutorial,
+      )
+      .with(
+        "sceneActionsEdition",
+        () => tutorialSections.sceneActionsEditionTutorial,
+      )
+      .exhaustive();
+
+    driver(activeTutorial).drive();
     setIsActive(true);
   };
 
