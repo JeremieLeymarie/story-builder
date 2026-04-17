@@ -24,11 +24,13 @@ const BuilderFlow = () => {
   const { reactFlowRef, initialNodes, initialEdges } = useBuilderContext();
   const closeActiveEditor = useBuilderEditorStore((state) => state.close);
   const {
+    controlsEnabled,
     onConnect,
     onConnectEnd,
     onEdgesDelete,
     onNodeDragStop,
     onBeforeNodesDelete,
+    onInit,
   } = useBuilder();
 
   return (
@@ -43,6 +45,7 @@ const BuilderFlow = () => {
       onEdgesDelete={onEdgesDelete}
       onNodeDragStop={onNodeDragStop}
       onBeforeDelete={onBeforeNodesDelete}
+      onInit={onInit}
       nodeOrigin={[0, 0.5]}
       minZoom={0.1}
       selectionMode={SelectionMode.Partial}
@@ -54,6 +57,11 @@ const BuilderFlow = () => {
       multiSelectionKeyCode={getUserOS() === "Mac" ? "Meta" : "ControlLeft"}
       fitViewOptions={{ duration: FIT_VIEW_DURATION }}
       onPaneClick={closeActiveEditor}
+      zoomOnScroll={controlsEnabled}
+      panOnScroll={controlsEnabled}
+      zoomOnPinch={controlsEnabled}
+      nodesDraggable={controlsEnabled}
+      panOnDrag={controlsEnabled}
     >
       <MiniMap
         position="bottom-left"
