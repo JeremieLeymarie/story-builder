@@ -12,7 +12,7 @@ export const EditorPlugins = ({
 }) => {
   return (
     <>
-      <div className="vertical-align-middle border-tl sticky top-0 z-10 flex gap-2 overflow-auto rounded-t-lg border-b bg-white p-1">
+      <div className="vertical-align-middle border-tl sticky top-0 z-10 flex items-center gap-1 overflow-auto rounded-t-lg border-b bg-white p-1">
         <FontFormatToolbarPlugin format="bold" />
         <FontFormatToolbarPlugin format="italic" />
         <FontFormatToolbarPlugin format="underline" />
