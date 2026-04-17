@@ -154,10 +154,11 @@ export const _getLibraryService = ({
 
           let oldCharacterAttrToNew: Record<string, string> = {};
           if (importData.characterConfig)
-            oldCharacterAttrToNew = await importExportService.createCharacterConfig({
-              newStoryKey: story.data.key,
-              characterConfig: importData.characterConfig,
-            });
+            oldCharacterAttrToNew =
+              await importExportService.createCharacterConfig({
+                newStoryKey: story.data.key,
+                characterConfig: importData.characterConfig,
+              });
 
           const oldScenesToNew = await importExportService.createScenes({
             story: importData,

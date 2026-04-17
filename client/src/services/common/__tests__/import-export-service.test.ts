@@ -194,7 +194,9 @@ describe("json-service", () => {
     });
 
     it("should not create story if format is invalid", async () => {
-      const result = importExportService.parseJSON(JSON.stringify({ plouf: ["tutu"] }));
+      const result = importExportService.parseJSON(
+        JSON.stringify({ plouf: ["tutu"] }),
+      );
 
       if (result.isOk) throw new Error("Result should be an error");
 
