@@ -8,6 +8,7 @@ import { useEffect, useEffectEvent } from "react";
 import { useBuilderEditorStore } from "./use-builder-editor-store";
 import { useAddScene } from "./use-add-scene";
 import { toast } from "sonner";
+import { useTutorialStore } from "./use-tutorial";
 
 export const isAnyInputFocused = () => {
   const isInputFocused = document.activeElement?.tagName === "INPUT";
@@ -37,6 +38,7 @@ export const useBuilderShortCuts = ({
   const { addSelectedNodes, resetSelectedElements } = useStoreApi().getState();
   const { onCopyOrCut, onPaste } = useCopyPaste();
   const closeEditor = useBuilderEditorStore((state) => state.close);
+  const isTutorialActive = useTutorialStore((state) => state.isActive);
 
   const shortcuts: Record<string, (e: KeyboardEvent) => void> = {
     ["n"]() {
@@ -64,7 +66,7 @@ export const useBuilderShortCuts = ({
       if (!e.repeat) toast.info("Changes are automatically saved!");
       return;
     }
-    if (e.isComposing || isAnyInputFocused()) return;
+    if (e.isComposing || isAnyInputFocused() || isTutorialActive) return;
     const key = e.key.toLocaleLowerCase();
     for (const binding of Object.keys(shortcuts)) {
       if (!binding.endsWith(key)) continue;

@@ -39,7 +39,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
   return (
     <Card
       className={cn(
-        `group w-[${NODE_WIDTH}px] relative`,
+        `group w-[${NODE_WIDTH}px] relative z-40`,
         isFirstScene && "bg-primary/60",
         selected && "ring-black",
       )}
@@ -50,6 +50,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
           payload: { sceneKey: scene.key, isFirstScene },
         });
       }}
+      id={isFirstScene ? "first-scene" : `scene-${scene.key}`}
     >
       <CardHeader>
         <div className="flex items-center justify-between">
@@ -99,7 +100,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
                 type="source"
                 id={action.key}
                 position={Position.Right}
-                className="h-3.75! w-3.75!"
+                className="z-50 h-3.75! w-3.75!"
               />
             </div>
           ))}
