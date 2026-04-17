@@ -10,7 +10,7 @@ import {
 import { getWikiService, WikiExportData } from "@/domains/wiki/wiki-service";
 import { getThemeService } from "@/domains/builder/theme-service";
 import { getCharacterService } from "@/domains/builder/character-service";
-import { getJsonService } from "@/services/common/json-service";
+import { getImportExportService } from "@/services/common/import-export-service";
 
 const getExportData = (data: {
   story: Story;
@@ -20,7 +20,7 @@ const getExportData = (data: {
   characterConfig?: CharacterConfiguration;
 }) => {
   const storyJson = JSON.stringify(data, null, 2);
-  const result = getJsonService().parseJSON(storyJson);
+  const result = getImportExportService().parseJSON(storyJson);
 
   if (!result.isOk) {
     toast.error("Export failed", {

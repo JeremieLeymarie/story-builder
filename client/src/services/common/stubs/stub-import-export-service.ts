@@ -1,11 +1,11 @@
 import { vi } from "vitest";
-import { ImportExportServicePort } from "../json-service";
+import { ImportExportServicePort } from "../import-export-service";
 import { MockPort } from "../../../types";
 import { BASIC_SCENE, BASIC_STORY } from "@/repositories/stubs/data";
 
-export type MockJsonService = MockPort<ImportExportServicePort>;
+export type MockImportExportService = MockPort<ImportExportServicePort>;
 
-export const getJsonServiceStub = (): MockJsonService => {
+export const getImportExportServiceStub = (): MockImportExportService => {
   return {
     createScenes: vi.fn(() => Promise.resolve({})),
     createStory: vi.fn(() =>

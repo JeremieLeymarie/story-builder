@@ -4,11 +4,11 @@ import {
 } from "@/repositories/stubs";
 import { beforeEach, expect, it, vi, describe } from "vitest";
 import {
-  _getJsonService,
+  _getImportExportService,
   _makeBulkSceneUpdatePayload,
   ImportExportServicePort,
   TEMPORARY_NULL_KEY,
-} from "../json-service";
+} from "../import-export-service";
 import { BASIC_SCENE_CONTENT, BASIC_STORY } from "@/repositories/stubs/data";
 import { nanoid } from "nanoid";
 import {
@@ -164,7 +164,7 @@ describe("json-service", () => {
   let wikiRepository: MockWikiRepository;
   let themeRepository: MockThemeRepository;
   let characterRepository: MockCharacterRepository;
-  let jsonService: ImportExportServicePort;
+  let importExportService: ImportExportServicePort;
 
   beforeEach(() => {
     localRepository = getLocalRepositoryStub();
@@ -172,7 +172,7 @@ describe("json-service", () => {
     themeRepository = getStubThemeRepository();
     characterRepository = getStubCharacterRepository();
 
-    jsonService = _getJsonService({
+    importExportService = _getImportExportService({
       localRepository,
       wikiRepository,
       themeRepository,
@@ -184,7 +184,7 @@ describe("json-service", () => {
 
   describe("parseJSON", () => {
     it("should not create story if JSON is malformed", async () => {
-      const result = jsonService.parseJSON(`tutu${fileContent}`);
+      const result = importExportService.parseJSON(`tutu${fileContent}`);
 
       expect(result).toStrictEqual({
         error: "Invalid JSON format",
@@ -194,7 +194,7 @@ describe("json-service", () => {
     });
 
     it("should not create story if format is invalid", async () => {
-      const result = jsonService.parseJSON(JSON.stringify({ plouf: ["tutu"] }));
+      const result = importExportService.parseJSON(JSON.stringify({ plouf: ["tutu"] }));
 
       if (result.isOk) throw new Error("Result should be an error");
 
@@ -204,7 +204,7 @@ describe("json-service", () => {
     });
 
     it("should parse JSON", () => {
-      const result = jsonService.parseJSON(fileContent);
+      const result = importExportService.parseJSON(fileContent);
 
       expect(result).toStrictEqual({
         isOk: true,
@@ -216,7 +216,7 @@ describe("json-service", () => {
 
   describe("createStory", () => {
     it("should create story (imported)", async () => {
-      const result = await jsonService.createStory({
+      const result = await importExportService.createStory({
         story: { story: IMPORTED_DATA.story, scenes: IMPORTED_DATA.scenes },
         type: "imported",
       });
@@ -243,7 +243,7 @@ describe("json-service", () => {
     });
 
     it("should create story with anonymous author", async () => {
-      const result = await jsonService.createStory({
+      const result = await importExportService.createStory({
         story: {
           story: { ...IMPORTED_DATA.story, author: undefined },
           scenes: IMPORTED_DATA.scenes,
@@ -281,7 +281,7 @@ describe("json-service", () => {
         }),
       );
 
-      const result = await jsonService.createStory({
+      const result = await importExportService.createStory({
         story: { story: IMPORTED_DATA.story, scenes: IMPORTED_DATA.scenes },
         type: "builder",
       });
@@ -368,7 +368,7 @@ describe("json-service", () => {
         });
       });
 
-      const result = await jsonService.createScenes({
+      const result = await importExportService.createScenes({
         story: { story: IMPORTED_DATA.story, scenes: IMPORTED_DATA.scenes },
         newStoryKey: "new-story-key",
         oldCharacterAttrToNew: { [DEX_ATTRIBUTE.key]: "new-dex-key" },
@@ -415,7 +415,7 @@ describe("json-service", () => {
 
   describe("createTheme", () => {
     it("should import theme with new story key", async () => {
-      await jsonService.createTheme({
+      await importExportService.createTheme({
         newStoryKey: "new-story-key",
         theme: IMPORTED_THEME,
       });
@@ -440,7 +440,7 @@ describe("json-service", () => {
         return Promise.resolve("new-key");
       });
 
-      await jsonService.createCharacterConfig({
+      await importExportService.createCharacterConfig({
         newStoryKey: "new-story-key",
         characterConfig: CHARACTER_CONFIG,
       });

@@ -13,7 +13,7 @@ import { Story } from "@/lib/storage/domain";
 import { ImportModal } from "@/design-system/components/import-modal";
 import { toast } from "sonner";
 import { getLibraryService } from "@/domains/game/library-service";
-import { getJsonService } from "@/services/common/json-service";
+import { getImportExportService } from "@/services/common/import-export-service";
 import { JsonStoryData } from "@/services/common/schema";
 
 type Library = {
@@ -29,7 +29,7 @@ export const Library = ({ stories }: Library) => {
   const navigate = useNavigate();
 
   const parseFile = (content: string) => {
-    const result = getJsonService().parseJSON(content);
+    const result = getImportExportService().parseJSON(content);
 
     if (!result.isOk) {
       toast.error("Import failed", {

@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { getJsonService } from "@/services/common/json-service";
+import { getImportExportService } from "@/services/common/import-export-service";
 import { Story } from "@/lib/storage/domain";
 import { WithoutKey } from "@/types";
 import { JsonStoryData } from "@/services/common/schema";
@@ -50,7 +50,7 @@ export const useBuilderStories = () => {
   };
 
   const parseFile = (content: string) => {
-    const result = getJsonService().parseJSON(content);
+    const result = getImportExportService().parseJSON(content);
 
     if (!result.isOk) {
       toast.error("Import failed", {
