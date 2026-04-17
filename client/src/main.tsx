@@ -3,7 +3,8 @@ import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import "@xyflow/react/dist/style.css";
-import "./driver-js.css";
+import "driver.js/dist/driver.css";
+// globals.css import must occur AFTER driver.js's in order to override some of its rules
 import "./globals.css";
 
 // Import the generated route tree

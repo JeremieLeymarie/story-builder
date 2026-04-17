@@ -186,3 +186,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+/** This is a hack for the driver.js in-app tutorial:
+The default style of the lib set overflow to hidden, which causes the scene handles in the builder to be
+partially hidden during the tutorial, so we disable it here.
+*/
+:not(body):has(> .driver-active-element) {
+  overflow: unset !important;
+}
