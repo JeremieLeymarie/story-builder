@@ -159,7 +159,7 @@ const IMPORTED_DATA = {
 
 const fileContent = JSON.stringify(IMPORTED_DATA);
 
-describe("json-service", () => {
+describe("import-export-service", () => {
   let localRepository: MockLocalRepository;
   let wikiRepository: MockWikiRepository;
   let themeRepository: MockThemeRepository;
