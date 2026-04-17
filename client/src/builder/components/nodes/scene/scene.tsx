@@ -39,7 +39,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
   return (
     <Card
       className={cn(
-        `group w-[${NODE_WIDTH}px] relative z-40`,
+        `group w-[${NODE_WIDTH}px] relative`,
         isFirstScene && "bg-primary/60",
         selected && "ring-black",
       )}
@@ -100,7 +100,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
                 type="source"
                 id={action.key}
                 position={Position.Right}
-                className="z-50 h-3.75! w-3.75!"
+                className="h-3.75! w-3.75!"
               />
             </div>
           ))}
