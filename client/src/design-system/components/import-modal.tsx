@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Input,
 } from "@/design-system/primitives";
 import { ANONYMOUS_AUTHOR } from "@/services/common/import-export-service";
 import { ReactNode, useState } from "react";
@@ -16,8 +17,12 @@ import { JsonStoryData } from "@/services/common/schema";
 
 const ImportPreview = ({
   storyFromImport,
+  title,
+  onTitleChange,
 }: {
   storyFromImport: JsonStoryData;
+  title: string;
+  onTitleChange: (title: string) => void;
 }) => {
   return (
     <div className="flex flex-col gap-1">
@@ -27,9 +32,13 @@ const ImportPreview = ({
           src={storyFromImport.story.image}
           className="block h-20 w-20 object-cover"
         />
-        <div>
-          <p className="font-semibold">{storyFromImport.story.title}</p>
-          <p>
+        <div className="flex-1">
+          <Input
+            value={title}
+            onChange={(e) => onTitleChange(e.target.value)}
+            className="font-semibold"
+          />
+          <p className="mt-1">
             Written by{" "}
             {storyFromImport.story.author?.username ??
               ANONYMOUS_AUTHOR.username}
@@ -61,13 +70,19 @@ export const ImportModal = ({
   const [storyFromImport, setStoryFromImport] = useState<JsonStoryData | null>(
     null,
   );
+  const [title, setTitle] = useState("");
+
+  const reset = () => {
+    setStoryFromImport(null);
+    setTitle("");
+  };
 
   return (
     <Dialog
       open={isModalOpen}
       onOpenChange={(open) => {
         setIsModalOpen(open);
-        if (!open) setStoryFromImport(null);
+        if (!open) reset();
       }}
     >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -78,14 +93,22 @@ export const ImportModal = ({
           </DialogTitle>
         </DialogHeader>
         {storyFromImport ? (
-          <ImportPreview storyFromImport={storyFromImport} />
+          <ImportPreview
+            storyFromImport={storyFromImport}
+            title={title}
+            onTitleChange={setTitle}
+          />
         ) : (
           <FileDropInput
             accept="json"
             readAs="text"
             onUploadFile={(content) => {
               // TODO: test what happens when parsing fails
-              if (content) setStoryFromImport(parseFile(content));
+              if (content) {
+                const parsed = parseFile(content);
+                setStoryFromImport(parsed);
+                if (parsed) setTitle(parsed.story.title);
+              }
             }}
           />
         )}
@@ -94,17 +117,20 @@ export const ImportModal = ({
             variant="secondary"
             onClick={() => {
               setIsModalOpen(false);
-              setStoryFromImport(null);
+              reset();
             }}
           >
             Cancel
           </Button>
 
           <Button
-            disabled={!storyFromImport}
+            disabled={!storyFromImport || !title.trim()}
             onClick={() => {
               setIsModalOpen(false);
-              onImportStory(storyFromImport!);
+              onImportStory({
+                ...storyFromImport!,
+                story: { ...storyFromImport!.story, title: title.trim() },
+              });
             }}
           >
             Import
