@@ -69,7 +69,7 @@ const SceneContentForm = ({ scene }: { scene: Scene }) => {
                     onSerializedChange={field.onChange}
                     initialState={scene.content}
                     editable
-                    className="h-75 max-w-112.5"
+                    className="h-75 w-full"
                     toolbarPlugins={[
                       <WikiPlugin wikiKey={story.wikiKey ?? null} />,
                     ]}

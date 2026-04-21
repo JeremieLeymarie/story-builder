@@ -26,7 +26,7 @@ export const SceneEditor = ({ sceneKey }: { sceneKey: string }) => {
   const openDeleteConfirm = useDeleteSceneStore((state) => state.open);
 
   return (
-    <Toolbar className="w-125" id="scene-editor">
+    <Toolbar className="w-[min(500px,calc(100vw-2.5rem))]" id="scene-editor">
       <ToolbarHeader className="flex-row items-center justify-between">
         <ToolbarTitle>Edit scene</ToolbarTitle>
         {!isFirstScene && (

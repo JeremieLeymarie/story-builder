@@ -22,7 +22,7 @@ export const ContentEditable = ({
     <LexicalContentEditable
       ref={contentEditableRef}
       className={cn(
-        "relative block min-h-full py-4 focus:outline-none",
+        "relative block min-h-full py-4 break-words focus:outline-none",
         className,
       )}
       style={{ color: textColor }}

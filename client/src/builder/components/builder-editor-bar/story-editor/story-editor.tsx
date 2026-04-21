@@ -19,7 +19,7 @@ export const StoryEditor = () => {
   const { deleteStory } = useDeleteStory();
 
   return (
-    <Toolbar className="w-100">
+    <Toolbar className="w-[min(400px,calc(100vw-2.5rem))]">
       <ToolbarHeader className="flex-row items-center justify-between">
         <ToolbarTitle>Edit story</ToolbarTitle>
         <DeleteStoryModal

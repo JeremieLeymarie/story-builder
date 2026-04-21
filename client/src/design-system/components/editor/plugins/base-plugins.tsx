@@ -67,7 +67,10 @@ export const BasePlugins = ({
       contentEditable={
         <RichTextContainer
           textDisplayMode={textDisplayMode}
-          className={cn("relative my-0.5 mr-0.5", className)}
+          className={cn(
+            "relative my-0.5 mr-0.5 w-full overflow-hidden",
+            className,
+          )}
           onClick={() => {
             contentEditableRef.current?.focus();
           }}
