@@ -31,6 +31,13 @@ export type WikiExportData = {
   articleLinks: WikiArticleLink[];
 };
 
+type WikiSearchResult = {
+  key: string;
+  title: string;
+  content: Record<string, unknown>;
+  category?: { name: string; color: string };
+};
+
 export type WikiServicePort = {
   getAllWikis: () => Promise<{ userWikis: Wiki[]; importedWikis: Wiki[] }>;
   addAuthorToWikis: (userInfo: {
@@ -59,6 +66,7 @@ export type WikiServicePort = {
     entityKey: string,
   ) => Promise<WikiArticleLink | null>;
   getWikiExportData: (wikiKey: string) => Promise<WikiExportData | null>;
+  search: (wikiKey: string, value: string) => Promise<WikiSearchResult[]>;
 };
 
 export const _getWikiService = ({
@@ -216,6 +224,36 @@ export const _getWikiService = ({
       );
 
       return { wiki, articles, categories, articleLinks };
+    },
+
+    search: async (wikiKey, value) => {
+      const normalized = value.normalize();
+      const articles = await repository.getArticles(wikiKey);
+      const matchingArticles = articles.filter(
+        (a) => normalized === a.title.normalize(),
+      );
+      const categoryKeys = matchingArticles.map(
+        ({ categoryKey }) => categoryKey,
+      );
+
+      const categories = await repository.getCategories(wikiKey);
+      const categoriesByKey = Object.fromEntries(
+        categories
+          .filter((c) => categoryKeys.includes(c.key))
+          .map((c) => [c.key, c]),
+      );
+
+      return matchingArticles.map((a) => {
+        const category = a.categoryKey ? categoriesByKey[a.categoryKey]! : null;
+        return {
+          key: a.key,
+          title: a.title,
+          content: a.content,
+          ...(category
+            ? { category: { color: category.color, name: category.name } }
+            : {}),
+        };
+      });
     },
   };
 };
