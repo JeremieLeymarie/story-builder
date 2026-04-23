@@ -41,11 +41,11 @@ const ArticleTitle = ({
         })
       }
       className={cn(
-        isSelected && "bg-accent font-semibold",
-        "hover:bg-accent group/article ml-6 flex items-center justify-between rounded",
+        isSelected && "bg-accent/80 font-semibold shadow-sm",
+        "hover:bg-accent/50 group/article ml-6 flex cursor-pointer items-center justify-between rounded-md py-2 px-3 transition-all duration-200",
       )}
     >
-      <p className="text-md w-full truncate py-1.5 pl-2">{title}</p>
+      <p className="text-md w-full truncate">{title}</p>
       <ConfirmDialog
         title="Are you sure?"
         description={
@@ -101,8 +101,8 @@ const Section = ({ category, articles }: WikiSection) => {
   );
 
   return (
-    <div className="group my-3">
-      <div className="mb-1.5 flex items-center justify-between">
+    <div className="group mb-6">
+      <div className="mb-2 flex items-center justify-between">
         <CategoryBadge color={category?.color} name={category?.name} />
         {category && (
           <CategoryActionsDropdown
@@ -112,7 +112,7 @@ const Section = ({ category, articles }: WikiSection) => {
           />
         )}
       </div>
-      <div className="space-y-1">
+      <div className="space-y-0.5">
         {articles.map(({ key, title }) => (
           <ArticleTitle
             key={key}
@@ -133,42 +133,46 @@ export const WikiBar = () => {
   } = useWikiStore((state) => state.wikiData);
 
   return (
-    <Toolbar className="sticky top-20 w-[300px] space-y-1 self-start">
-      <div className="relative">
-        <SearchIcon className="text-muted-foreground absolute top-2.5 left-2 h-4" />
-        <Input placeholder="Search" className="pl-9" />
+    <Toolbar className="sticky top-20 w-[300px] space-y-4 self-start">
+      <div className="space-y-3">
+        <div className="relative">
+          <SearchIcon className="text-muted-foreground absolute top-2.5 left-2 h-4" />
+          <Input placeholder="Search articles..." className="pl-9" />
+        </div>
         <AddCategoryPopover
           trigger={
             <Button
               variant="ghost"
-              className="text-muted-foreground mt-1 flex items-center gap-2 text-xs"
+              className="text-muted-foreground hover:text-foreground w-full justify-start gap-2 text-sm"
             >
-              New category <PlusIcon className="cursor-pointer" size={14} />
+              <PlusIcon size={16} />
+              New category
             </Button>
           }
         />
       </div>
 
-      {/* Apparently display grid is needed in order for the scroll area to work with a max-height instead of hard-coded height?? */}
-      <div className="grid">
-        <ScrollArea className="flex max-h-[calc(100vh-250px)]">
-          <Link
-            to="/wikis/$wikiKey"
-            params={{ wikiKey }}
-            className="my-2 block"
-          >
-            <div className="flex w-max items-center gap-1 rounded-lg py-0.5">
-              <HomeIcon size={18} /> Home
+      <div className="border-t pt-4">
+        <Link to="/wikis/$wikiKey" params={{ wikiKey }} className="block mb-4">
+          <div className="hover:bg-accent flex items-center gap-2 rounded-md px-3 py-2 font-medium transition-colors">
+            <HomeIcon size={18} />
+            Home
+          </div>
+        </Link>
+
+        <div className="grid">
+          <ScrollArea className="flex max-h-[calc(100vh-320px)]">
+            <div className="space-y-2">
+              {sections.map(({ category, articles }) => (
+                <Section
+                  key={category?.key ?? "other"}
+                  category={category}
+                  articles={articles}
+                />
+              ))}
             </div>
-          </Link>
-          {sections.map(({ category, articles }) => (
-            <Section
-              key={category?.key ?? "other"}
-              category={category}
-              articles={articles}
-            />
-          ))}
-        </ScrollArea>
+          </ScrollArea>
+        </div>
       </div>
     </Toolbar>
   );
