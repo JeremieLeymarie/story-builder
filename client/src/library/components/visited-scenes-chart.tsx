@@ -42,10 +42,6 @@ export const VisitedScenesChart = ({
               outerRadius={index === 0 ? outerRadius + 10 : outerRadius}
             />
           )}
-          // activeIndex={0}
-          // activeShape={({ outerRadius = 0, ...props }: PieSectorDataItem) => (
-          //   <Sector {...props} outerRadius={outerRadius + 10} />
-          // )}
         >
           <Label
             content={({ viewBox }) => {
