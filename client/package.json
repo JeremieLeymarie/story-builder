@@ -49,7 +49,7 @@
     "dexie-react-hooks": "^4.4.0",
     "driver.js": "^1.4.0",
     "elkjs": "^0.11.1",
-    "immer": "^10.2.0",
+    "immer": "^11.1.4",
     "lexical": "^0.43.0",
     "lucide-react": "^0.563.0",
     "nanoid": "^5.1.9",
