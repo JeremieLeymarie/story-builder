@@ -16,6 +16,7 @@ import { EditorBar } from "./builder-editor-bar/editor-bar";
 import { BuilderToolbar } from "./builder-toolbar";
 import CustomEdge from "./edges/custom-edge";
 import { BuilderErrorsToolbar } from "./builder-errors-toolbar";
+import { DeleteSceneModal } from "./delete-scenes-modal";
 
 const nodeTypes = { scene: SceneNode } as const;
 const edgeTypes = { edge: CustomEdge } as const;
@@ -75,6 +76,7 @@ const BuilderFlow = () => {
 
 export const Builder = () => (
   <div className="relative flex h-full w-full border">
+    <DeleteSceneModal />
     <div className="absolute top-5 left-5 flex max-w-67.5 flex-col gap-4">
       <BuilderToolbar />
       <ActionsBar />
