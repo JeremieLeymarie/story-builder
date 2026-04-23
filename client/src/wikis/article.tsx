@@ -1,8 +1,7 @@
-import { Title } from "@/design-system/components";
-import { Button } from "@/design-system/primitives";
+import { Button, Card } from "@/design-system/primitives";
 import { WikiArticle } from "@/lib/storage/domain";
 import { Link } from "@tanstack/react-router";
-import { SquarePenIcon, Quote } from "lucide-react";
+import { PencilIcon } from "lucide-react";
 import { useWikiStore } from "./hooks/use-wiki-store";
 import { WikiDataCategory } from "@/domains/wiki/types";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
@@ -21,69 +20,66 @@ export const Article = ({
   );
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="flex w-full max-w-4xl flex-col items-center space-y-4">
-        <div className="bg-muted/20 w-full space-y-2 rounded-lg p-6 text-center">
-          <div className="relative flex items-center justify-center">
-            <Title variant="article" className="text-black">
+    <div className="min-h-screen w-full">
+      {/* Hero Section */}
+      <div className="from-muted/30 to-background border-b bg-linear-to-b">
+        <div className="mx-auto max-w-5xl px-8 py-12">
+          <div className="relative mb-6">
+            <h1 className="text-5xl font-bold tracking-tight">
               {article.title}
-            </Title>
+            </h1>
             {canEdit && (
               <Link
                 to="/wikis/$wikiKey/$articleKey/edit"
                 params={{ articleKey: article.key, wikiKey: article.wikiKey }}
-                className="absolute right-0"
+                className="absolute top-0 right-0"
               >
-                <Button className="gap-2">
-                  <SquarePenIcon />
+                <Button variant="outline" className="gap-2">
+                  <PencilIcon size={16} />
                   Edit
                 </Button>
               </Link>
             )}
           </div>
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center gap-4">
             <CategoryBadge color={category?.color} name={category?.name} />
+            <span className="text-muted-foreground">·</span>
             <p className="text-muted-foreground text-sm">
-              Last edited on {article.updatedAt.toLocaleDateString()}, at{" "}
-              {article.updatedAt.toLocaleTimeString()}
+              Last edited {article.updatedAt.toLocaleDateString()}
             </p>
           </div>
         </div>
-        <img
-          src={article.image}
-          className="mb-[7%] w-[500px] rounded-xl shadow-lg"
-        />
       </div>
-      <article className="relative w-full max-w-4xl pt-16 pb-8">
-        <Quote
-          className="absolute opacity-40"
-          size={48}
-          style={{
-            color: category?.color || "#000",
-            top: "-1%",
-            left: "-7%",
-          }}
-        />
-        <EditorContextProvider
-          entityType="wiki-article"
-          entityKey={article.key}
-        >
-          <RichText
-            initialState={article.content}
-            editable={false}
-            textDisplayMode="full"
-          />
-        </EditorContextProvider>
-        <Quote
-          className="absolute rotate-180 opacity-40"
-          size={48}
-          style={{
-            color: category?.color || "#000",
-            top: "95%",
-            left: "101%",
-          }}
-        />
-      </article>
+
+      {/* Main Content */}
+      <div className="mx-auto max-w-5xl px-8 py-12">
+        <div className="space-y-12">
+          {/* Image Section */}
+          {article.image && (
+            <Card className="overflow-hidden border-0 shadow-xl">
+              <img
+                src={article.image}
+                alt={article.title}
+                className="h-auto w-full object-cover transition-transform duration-300 hover:scale-105"
+              />
+            </Card>
+          )}
+
+          {/* Content Section */}
+          <article className="prose prose-lg mx-auto max-w-[65ch]">
+            <EditorContextProvider
+              entityType="wiki-article"
+              entityKey={article.key}
+            >
+              <RichText
+                initialState={article.content}
+                editable={false}
+                textDisplayMode="full"
+              />
+            </EditorContextProvider>
+          </article>
+        </div>
+      </div>
     </div>
   );
 };

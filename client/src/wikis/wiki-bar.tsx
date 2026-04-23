@@ -40,11 +40,11 @@ const ArticleTitle = ({
         })
       }
       className={cn(
-        isSelected && "bg-accent font-semibold",
-        "hover:bg-accent group/article ml-6 flex items-center justify-between rounded",
+        isSelected && "bg-accent/80 font-semibold shadow-sm",
+        "hover:bg-accent/50 group/article ml-6 flex cursor-pointer items-center justify-between rounded-md px-3 py-2 transition-all duration-200",
       )}
     >
-      <p className="text-md w-full truncate py-1.5 pl-2">{title}</p>
+      <p className="text-md w-full truncate">{title}</p>
       <ConfirmDialog
         title="Are you sure?"
         description={
@@ -91,8 +91,8 @@ const Section = ({ category, articles }: WikiSection) => {
   );
 
   return (
-    <div className="group my-3">
-      <div className="mb-1.5 flex items-center justify-between">
+    <div className="group mb-6">
+      <div className="mb-2 flex items-center justify-between">
         <CategoryBadge color={category?.color} name={category?.name} />
         {category && (
           <CategoryActionsDropdown
@@ -102,7 +102,7 @@ const Section = ({ category, articles }: WikiSection) => {
           />
         )}
       </div>
-      <div className="space-y-1">
+      <div className="space-y-0.5">
         {articles.map(({ key, title }) => (
           <ArticleTitle
             key={key}
@@ -144,13 +144,31 @@ export const WikiBar = () => {
         </Button>
         <AddCategoryPopover
           trigger={
-            <Button variant="secondary" size="sm">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="text-muted-foreground hover:text-foreground w-full justify-start gap-2 text-sm"
+            >
               New category <PlusIcon className="cursor-pointer" size={14} />
             </Button>
           }
         />
+        <Separator />
+
+        <div className="border-t pt-4">
+          <Link
+            to="/wikis/$wikiKey"
+            params={{ wikiKey }}
+            className="mb-4 block"
+          >
+            <div className="hover:bg-accent flex items-center gap-2 rounded-md px-3 py-2 font-medium transition-colors">
+              <HomeIcon size={18} />
+              Home
+            </div>
+          </Link>
+        </div>
       </div>
-      <Separator />
+
       <ScrollArea>
         <div className="max-h-[calc(100dvh-175px)]">
           <Link
