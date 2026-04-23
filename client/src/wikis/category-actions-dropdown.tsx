@@ -3,6 +3,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/design-system/primitives";
@@ -30,25 +31,25 @@ export const CategoryActionsDropdown = ({
   };
 
   return (
-    <>
-      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="invisible h-6 w-6 cursor-pointer transition-transform ease-in-out group-hover:visible hover:scale-105"
-          >
-            <EllipsisVertical size={18} />
-          </Button>
-        </DropdownMenuTrigger>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="invisible h-6 w-6 cursor-pointer transition-transform ease-in-out group-hover:visible hover:scale-105"
+        >
+          <EllipsisVertical size={18} />
+        </Button>
+      </DropdownMenuTrigger>
 
-        <DropdownMenuContent align="end">
+      <DropdownMenuPortal>
+        <DropdownMenuContent align="start" className="w-max">
           <DropdownMenuItem asChild>
             <Link
               to="/wikis/$wikiKey/new"
               params={{ wikiKey }}
               search={{ categoryKey: category.key }}
-              className="flex cursor-pointer items-center gap-2"
+              className="flex w-max cursor-pointer items-center gap-2"
             >
               <PlusIcon size={16} />
               <span>Create an article</span>
@@ -66,7 +67,7 @@ export const CategoryActionsDropdown = ({
                 trigger={
                   <DropdownMenuItem
                     onSelect={(e) => e.preventDefault()}
-                    className="text-destructive focus:text-destructive flex cursor-pointer items-center gap-2"
+                    className="text-destructive focus:text-destructive flex w-max cursor-pointer items-center gap-2"
                   >
                     <Trash2Icon size={16} />
                     <span>Delete category</span>
@@ -76,7 +77,7 @@ export const CategoryActionsDropdown = ({
             </>
           )}
         </DropdownMenuContent>
-      </DropdownMenu>
-    </>
+      </DropdownMenuPortal>
+    </DropdownMenu>
   );
 };
