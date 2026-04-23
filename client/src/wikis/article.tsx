@@ -56,7 +56,7 @@ export const Article = ({
         <div className="space-y-12">
           {/* Image Section */}
           {article.image && (
-            <Card className="overflow-hidden border-0 shadow-xl">
+            <Card className="mx-auto max-w-xl overflow-hidden border-0 shadow-xl">
               <img
                 src={article.image}
                 alt={article.title}
