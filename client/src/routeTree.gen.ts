@@ -104,15 +104,15 @@ export interface FileRoutesByFullPath {
   '/builder/$storyKey': typeof BuilderStoryKeyRoute
   '/builder/stories': typeof BuilderStoriesRoute
   '/library/$storyKey': typeof LibraryStoryKeyRoute
-  '/library': typeof LibraryIndexRoute
-  '/wikis': typeof WikisIndexRoute
+  '/library/': typeof LibraryIndexRoute
+  '/wikis/': typeof WikisIndexRoute
   '/game/$gameKey/$sceneKey': typeof GameGameKeySceneKeyRoute
   '/wikis/$wikiKey/new': typeof WikisWikiKeyNewRoute
-  '/wikis/$wikiKey': typeof WikisWikiKeyIndexRoute
+  '/wikis/$wikiKey/': typeof WikisWikiKeyIndexRoute
   '/game/test/$gameKey/$sceneKey': typeof GameTestGameKeySceneKeyRoute
   '/game/theme-editor/$gameKey/$sceneKey': typeof GameThemeEditorGameKeySceneKeyRoute
   '/wikis/$wikiKey/$articleKey/edit': typeof WikisWikiKeyArticleKeyEditRoute
-  '/wikis/$wikiKey/$articleKey': typeof WikisWikiKeyArticleKeyIndexRoute
+  '/wikis/$wikiKey/$articleKey/': typeof WikisWikiKeyArticleKeyIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -155,15 +155,15 @@ export interface FileRouteTypes {
     | '/builder/$storyKey'
     | '/builder/stories'
     | '/library/$storyKey'
-    | '/library'
-    | '/wikis'
+    | '/library/'
+    | '/wikis/'
     | '/game/$gameKey/$sceneKey'
     | '/wikis/$wikiKey/new'
-    | '/wikis/$wikiKey'
+    | '/wikis/$wikiKey/'
     | '/game/test/$gameKey/$sceneKey'
     | '/game/theme-editor/$gameKey/$sceneKey'
     | '/wikis/$wikiKey/$articleKey/edit'
-    | '/wikis/$wikiKey/$articleKey'
+    | '/wikis/$wikiKey/$articleKey/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -234,14 +234,14 @@ declare module '@tanstack/react-router' {
     '/wikis/': {
       id: '/wikis/'
       path: '/wikis'
-      fullPath: '/wikis'
+      fullPath: '/wikis/'
       preLoaderRoute: typeof WikisIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/library/': {
       id: '/library/'
       path: '/library'
-      fullPath: '/library'
+      fullPath: '/library/'
       preLoaderRoute: typeof LibraryIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -269,7 +269,7 @@ declare module '@tanstack/react-router' {
     '/wikis/$wikiKey/': {
       id: '/wikis/$wikiKey/'
       path: '/wikis/$wikiKey'
-      fullPath: '/wikis/$wikiKey'
+      fullPath: '/wikis/$wikiKey/'
       preLoaderRoute: typeof WikisWikiKeyIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -290,7 +290,7 @@ declare module '@tanstack/react-router' {
     '/wikis/$wikiKey/$articleKey/': {
       id: '/wikis/$wikiKey/$articleKey/'
       path: '/wikis/$wikiKey/$articleKey'
-      fullPath: '/wikis/$wikiKey/$articleKey'
+      fullPath: '/wikis/$wikiKey/$articleKey/'
       preLoaderRoute: typeof WikisWikiKeyArticleKeyIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
