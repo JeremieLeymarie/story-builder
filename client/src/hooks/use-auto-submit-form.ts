@@ -12,7 +12,7 @@ export const useAutoSubmitForm = <TFormSchema extends FieldValues>({
   onSubmit: (data: TFormSchema) => void;
   options?: { debounceAfter?: number };
 }) => {
-  const { debounceAfter = 500 } = options ?? {};
+  const { debounceAfter = 300 } = options ?? {};
 
   const debouncer = useDebouncer(
     () => {
