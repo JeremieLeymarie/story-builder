@@ -25,7 +25,6 @@
     "types": ["vite-plugin-pwa/react", "node", "@testing-library/jest-dom"],
 
     /* ShadCn UI options*/
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
