@@ -11,8 +11,7 @@ import { CategoryBadge } from "./category-badge";
 import { CategoryActionsDropdown } from "./category-actions-dropdown";
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "@tanstack/react-router";
-import { getWikiService } from "@/domains/wiki/wiki-service";
-import { toast } from "sonner";
+import { useDeleteArticle } from "./hooks/use-delete-article";
 
 const ArticleTitle = ({
   title,
@@ -22,15 +21,12 @@ const ArticleTitle = ({
   articleKey: string;
   canDelete: boolean;
 }) => {
-  const [wikiKey, refresh] = useWikiStore((state) => [
-    state.wikiData.wiki.key,
-    state.refresh,
-  ]);
+  const wikiKey = useWikiStore((state) => state.wikiData.wiki.key);
   const { articleKey: selectedArticleKey } = useParams({ strict: false });
   const isSelected = selectedArticleKey === articleKey;
-  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const wikiService = getWikiService();
+  const navigate = useNavigate();
+  const { deleteArticle } = useDeleteArticle();
 
   return (
     <div
@@ -58,16 +54,7 @@ const ArticleTitle = ({
         confirmLabel="Delete"
         onConfirm={async (e) => {
           e.stopPropagation();
-          try {
-            await wikiService.removeArticle(articleKey);
-            toast.success("Article deleted successfully.");
-            navigate({ to: "/wikis/$wikiKey", params: { wikiKey } });
-          } catch (error) {
-            toast.error("Could not delete the article.");
-            console.error(error);
-          } finally {
-            refresh();
-          }
+          deleteArticle(articleKey);
         }}
         onCancel={(e) => {
           e.stopPropagation();
@@ -133,7 +120,7 @@ export const WikiBar = () => {
   } = useWikiStore((state) => state.wikiData);
 
   return (
-    <Toolbar className="w-[300px] space-y-1">
+    <Toolbar className="w-75 space-y-1">
       <div className="relative">
         <SearchIcon className="text-muted-foreground absolute top-2.5 left-2 h-4" />
         <Input placeholder="Search" className="pl-9" />
