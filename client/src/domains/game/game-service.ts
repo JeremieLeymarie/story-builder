@@ -113,7 +113,7 @@ export const _getGameService = ({
 
       const isImmediateDuplicate = progress.history.at(-1) === currentScene.key;
 
-      let updatePayload: Partial<StoryProgress> = {};
+      let updatePayload: Partial<StoryProgress>;
       const effectsTriggered: SideEffect[] = [];
 
       if (isImmediateDuplicate) {
