@@ -12,6 +12,8 @@ import type {
 import { $applyNodeReplacement, DecoratorNode } from "lexical";
 import React from "react";
 
+// No component is actually exported from this file
+// eslint-disable-next-line react-refresh/only-export-components
 const ImageComponent = React.lazy(
   () => import("../components/image-component"),
 );
