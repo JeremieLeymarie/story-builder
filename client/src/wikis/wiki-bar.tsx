@@ -120,7 +120,7 @@ export const WikiBar = () => {
   } = useWikiStore((state) => state.wikiData);
 
   return (
-    <Toolbar className="w-75 space-y-1">
+    <Toolbar className="h-max w-75 space-y-1">
       <div className="relative">
         <SearchIcon className="text-muted-foreground absolute top-2.5 left-2 h-4" />
         <Input placeholder="Search" className="pl-9" />
@@ -136,9 +136,8 @@ export const WikiBar = () => {
         />
       </div>
 
-      {/* Apparently display grid is needed in order for the scroll area to work with a max-height instead of hard-coded height?? */}
-      <div className="grid">
-        <ScrollArea className="flex max-h-[calc(100dvh-175px)]">
+      <ScrollArea>
+        <div className="max-h-[calc(100dvh-175px)]">
           <Link
             to="/wikis/$wikiKey"
             params={{ wikiKey }}
@@ -155,8 +154,8 @@ export const WikiBar = () => {
               articles={articles}
             />
           ))}
-        </ScrollArea>
-      </div>
+        </div>
+      </ScrollArea>
     </Toolbar>
   );
 };
