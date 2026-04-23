@@ -22,7 +22,7 @@ export const Article = ({
   return (
     <div className="min-h-screen w-full">
       {/* Hero Section */}
-      <div className="bg-gradient-to-b from-muted/30 to-background border-b">
+      <div className="from-muted/30 to-background border-b bg-gradient-to-b">
         <div className="mx-auto max-w-5xl px-8 py-12">
           <div className="relative mb-6">
             <h1 className="text-5xl font-bold tracking-tight">
@@ -32,7 +32,7 @@ export const Article = ({
               <Link
                 to="/wikis/$wikiKey/$articleKey/edit"
                 params={{ articleKey: article.key, wikiKey: article.wikiKey }}
-                className="absolute right-0 top-0"
+                className="absolute top-0 right-0"
               >
                 <Button variant="outline" className="gap-2">
                   <PencilIcon size={16} />

@@ -42,7 +42,7 @@ const ArticleTitle = ({
       }
       className={cn(
         isSelected && "bg-accent/80 font-semibold shadow-sm",
-        "hover:bg-accent/50 group/article ml-6 flex cursor-pointer items-center justify-between rounded-md py-2 px-3 transition-all duration-200",
+        "hover:bg-accent/50 group/article ml-6 flex cursor-pointer items-center justify-between rounded-md px-3 py-2 transition-all duration-200",
       )}
     >
       <p className="text-md w-full truncate">{title}</p>
@@ -153,7 +153,7 @@ export const WikiBar = () => {
       </div>
 
       <div className="border-t pt-4">
-        <Link to="/wikis/$wikiKey" params={{ wikiKey }} className="block mb-4">
+        <Link to="/wikis/$wikiKey" params={{ wikiKey }} className="mb-4 block">
           <div className="hover:bg-accent flex items-center gap-2 rounded-md px-3 py-2 font-medium transition-colors">
             <HomeIcon size={18} />
             Home
