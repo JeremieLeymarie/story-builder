@@ -18,7 +18,7 @@ import { useDebouncer } from "@tanstack/react-pacer/debouncer";
 import { useNavigate } from "@tanstack/react-router";
 
 export const WikiSearch = () => {
-  const [wikiKey, isOpen, open, close] = useWikiStore((state) => [
+  const [wikiKey, isOpen, open, close_] = useWikiStore((state) => [
     state.wikiData.wiki.key,
     state.isSearchOpen,
     state.openSearch,
@@ -34,6 +34,11 @@ export const WikiSearch = () => {
     },
     { wait: 400 },
   );
+
+  const close = () => {
+    setSearchValue("");
+    close_();
+  };
 
   return (
     <CommandDialog
