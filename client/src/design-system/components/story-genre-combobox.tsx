@@ -56,7 +56,7 @@ export const StoryGenreCombobox = ({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-[250px] justify-between"
+            className="w-62.5 justify-between"
           >
             {values.length
               ? `${values.length} genres selected...`
@@ -69,7 +69,7 @@ export const StoryGenreCombobox = ({
           <Command>
             <CommandInput placeholder="Search genre..." />
             <CommandList>
-              <ScrollArea className="h-[300px]">
+              <ScrollArea className="h-75">
                 <CommandEmpty>No genre found.</CommandEmpty>
                 <CommandGroup>
                   {STORY_GENRES.map((genre) => (

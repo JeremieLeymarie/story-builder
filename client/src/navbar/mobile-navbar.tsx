@@ -160,7 +160,7 @@ export const MobileNavbar = (_props: {
 
   return (
     <Sheet>
-      <header className="border-b-primary sticky top-0 z-50 flex h-12.5 items-center justify-between border-b-4 bg-white/85 px-4 py-6 backdrop-blur-sm">
+      <header className="border-b-primary sticky top-0 z-50 flex h-(--navbar-height) items-center justify-between border-b-4 bg-white/85 px-4 py-6 backdrop-blur-sm">
         <SheetTrigger asChild>
           <Button size="icon" variant="ghost">
             <MenuIcon />
