@@ -9,7 +9,7 @@ export const useAutoSubmitForm = <TFormSchema extends FieldValues>({
   options,
 }: {
   form: UseFormReturn<TFormSchema>;
-  onSubmit: (data: TFormSchema) => void;
+  onSubmit: (data: TFormSchema) => unknown | Promise<unknown>;
   options?: { debounceAfter?: number };
 }) => {
   const { debounceAfter = 300 } = options ?? {};
@@ -18,7 +18,7 @@ export const useAutoSubmitForm = <TFormSchema extends FieldValues>({
   const wrappedSubmit = useCallback(
     async (data: TFormSchema) => {
       setIsSaving(true);
-      const minDisplay = new Promise((r) => setTimeout(r, 500));
+      const minDisplay = new Promise((r) => setTimeout(r, 200));
       try {
         await Promise.all([onSubmit(data), minDisplay]);
       } finally {
