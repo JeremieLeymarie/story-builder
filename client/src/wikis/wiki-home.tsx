@@ -14,9 +14,9 @@ export const WikiHome = () => {
   );
 
   return (
-    <div className="flex h-full w-full items-center justify-center">
-      <div className="flex w-8/12 flex-col items-center justify-center space-y-2 lg:w-6/12">
-        <img src={wikiData.wiki.image} className="w-full rounded shadow" />
+    <div className="mt-8 flex h-full w-full justify-center">
+      <div className="flex w-8/12 flex-col items-center space-y-2 lg:w-6/12">
+        <img src={wikiData.wiki.image} className="w-full rounded-xl shadow" />
         <Title variant="primary" className="bg-transparent">
           Welcome to <span className="text-primary">{wikiData.wiki.name}</span>
         </Title>

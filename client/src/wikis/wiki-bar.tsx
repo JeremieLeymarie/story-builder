@@ -1,6 +1,6 @@
 import { Toolbar } from "@/design-system/components/toolbar";
 import { ConfirmDialog } from "@/design-system/components";
-import { Button, Input } from "@/design-system/primitives";
+import { Button } from "@/design-system/primitives";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
 import { HomeIcon, PlusIcon, SearchIcon, Trash2Icon } from "lucide-react";
 import { useWikiStore } from "./hooks/use-wiki-store";
@@ -12,6 +12,7 @@ import { CategoryActionsDropdown } from "./category-actions-dropdown";
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useDeleteArticle } from "./hooks/use-delete-article";
+import { Separator } from "@/design-system/primitives/separator";
 
 const ArticleTitle = ({
   title,
@@ -120,22 +121,21 @@ export const WikiBar = () => {
   } = useWikiStore((state) => state.wikiData);
 
   return (
-    <Toolbar className="h-max w-75 space-y-1">
-      <div className="relative">
-        <SearchIcon className="text-muted-foreground absolute top-2.5 left-2 h-4" />
-        <Input placeholder="Search" className="pl-9" />
+    <Toolbar className="sticky top-[calc(var(--spacing)*4+var(--navbar-height)+2px)] h-max w-75 space-y-1">
+      <div className="relative flex flex-col items-start">
+        <Button variant="ghost">
+          <SearchIcon />
+          <span>Search</span>
+        </Button>
         <AddCategoryPopover
           trigger={
-            <Button
-              variant="ghost"
-              className="text-muted-foreground mt-1 flex items-center gap-2 text-xs"
-            >
+            <Button variant="ghost" size="sm">
               New category <PlusIcon className="cursor-pointer" size={14} />
             </Button>
           }
         />
       </div>
-
+      <Separator />
       <ScrollArea>
         <div className="max-h-[calc(100dvh-175px)]">
           <Link
