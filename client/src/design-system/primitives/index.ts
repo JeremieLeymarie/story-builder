@@ -10,6 +10,5 @@ export * from "./input";
 export * from "./label";
 export * from "./popover";
 export * from "./sheet";
-export * from "./spinner";
 export * from "./switch";
 export * from "./textarea";
