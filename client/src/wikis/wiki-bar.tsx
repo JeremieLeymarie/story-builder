@@ -13,6 +13,8 @@ import { useState } from "react";
 import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useDeleteArticle } from "./hooks/use-delete-article";
 import { Separator } from "@/design-system/primitives/separator";
+import { Kbd } from "@/design-system/primitives/kbd";
+import { getUserOS } from "@/lib/get-os";
 
 const ArticleTitle = ({
   title,
@@ -29,7 +31,6 @@ const ArticleTitle = ({
   const navigate = useNavigate();
   const { deleteArticle } = useDeleteArticle();
 
-  // TODO: search hotkey
   return (
     <div
       onClick={() =>
@@ -125,16 +126,25 @@ export const WikiBar = () => {
     wiki: { key: wikiKey },
   } = wikiData;
 
+  const os = getUserOS();
+
   return (
     <Toolbar className="sticky top-[calc(var(--spacing)*4+var(--navbar-height)+2px)] h-max w-75 space-y-1">
-      <div className="relative flex flex-col items-start">
-        <Button variant="ghost" onClick={openSearch}>
-          <SearchIcon />
-          <span>Search</span>
+      <div className="relative flex flex-col items-start gap-1">
+        <Button
+          variant="outline"
+          className="w-full justify-between"
+          onClick={openSearch}
+        >
+          <div className="flex items-center gap-2">
+            <SearchIcon />
+            <span>Search</span>
+          </div>
+          <Kbd>{os === "Mac" ? "⌘" : "Ctrl"} + K</Kbd>
         </Button>
         <AddCategoryPopover
           trigger={
-            <Button variant="ghost" size="sm">
+            <Button variant="secondary" size="sm">
               New category <PlusIcon className="cursor-pointer" size={14} />
             </Button>
           }
