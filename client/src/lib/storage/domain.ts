@@ -243,18 +243,14 @@ export type WikiArticleLink = {
   entityKey: string;
 };
 
-/* ALL ENTITIES */
-
-export const ENTITIES = [
-  "story",
-  "scene",
-  "story-theme",
-  "character-configuration",
-  "user",
-  "story-progress",
-  "wiki",
-  "wiki-article",
-  "wiki-category",
-  "wiki-article-link",
-] as const;
-export type Entity = (typeof ENTITIES)[number];
+export type Entity =
+  | "story"
+  | "scene"
+  | "story-theme"
+  | "character-configuration"
+  | "user"
+  | "story-progress"
+  | "wiki"
+  | "wiki-article"
+  | "wiki-category"
+  | "wiki-article-link";
