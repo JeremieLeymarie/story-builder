@@ -45,18 +45,20 @@ export const StoryGenreCombobox = ({
 
   return (
     <>
-      <div className="flex flex-wrap gap-2">
-        {values.map((genre) => (
-          <StoryGenreBadge key={`${genre}-badge`} variant={genre} />
-        ))}
-      </div>
-      <Popover open={open} onOpenChange={setOpen} modal={true}>
+      {values.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {values.map((genre) => (
+            <StoryGenreBadge key={`${genre}-badge`} variant={genre} />
+          ))}
+        </div>
+      )}
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-62.5 justify-between"
+            className="text-muted-foreground w-62.5 justify-between font-normal"
           >
             {values.length
               ? `${values.length} genres selected...`
