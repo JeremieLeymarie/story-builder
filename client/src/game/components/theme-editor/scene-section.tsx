@@ -69,7 +69,7 @@ export const SceneSection = ({ form }: { form: ThemeEditorForm }) => {
               <div className="flex flex-col items-center">
                 <Input
                   type="url"
-                  placeholder="https://example.com"
+                  placeholder="https://your-image.org"
                   onChange={(v) => field.onChange(v.target.value || null)}
                   value={field.value || ""}
                 />

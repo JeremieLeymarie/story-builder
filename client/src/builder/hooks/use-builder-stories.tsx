@@ -1,39 +1,41 @@
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { getImportExportService } from "@/services/common/import-export-service";
-import { Story } from "@/lib/storage/domain";
-import { WithoutKey } from "@/types";
 import { JsonStoryData } from "@/services/common/schema";
 import { getBuilderService } from "@/get-builder-service";
-
-export type CreateStoryPayload = Omit<
-  WithoutKey<Story>,
-  "firstSceneKey" | "author" | "type" | "publicationDate" | "creationDate"
-> & { firstSceneKey?: string };
+import { CreateStorySchemaOutput } from "./use-create-story-form";
+import { DEFAULT_STORY_IMAGE_URL } from "../constants";
+import { useMutation } from "@tanstack/react-query";
 
 export const useBuilderStories = () => {
   const navigate = useNavigate();
   const builderService = getBuilderService();
 
-  const createStory = async (storyData: CreateStoryPayload) => {
-    const result = await builderService.createStoryWithFirstScene(storyData);
+  const { mutateAsync: createStory, isPending: isCreatingStory } = useMutation({
+    mutationFn: async (storyData: CreateStorySchemaOutput) => {
+      return builderService.createStoryWithFirstScene({
+        title: storyData.title,
+        genres: storyData.genres ?? [],
+        description: storyData.description ?? "",
+        image: storyData.image ?? DEFAULT_STORY_IMAGE_URL,
+      });
+    },
+    onSuccess: (result) => {
+      if (!result)
+        return toast.error(
+          "Could not create a new story. Please try again later",
+        );
 
-    if (!result) {
-      return toast.error(
-        "Could not create a new story. Please try again later",
-      );
-    }
-
-    navigate({
-      to: "/builder/$storyKey",
-      params: { storyKey: result.story.key },
-    });
-  };
+      navigate({
+        to: "/builder/$storyKey",
+        params: { storyKey: result.story.key },
+      });
+    },
+  });
 
   const handleImportFromJSON = async (storyFromImport: JsonStoryData) => {
     try {
       const storyKey = await builderService.importStory(storyFromImport);
-      if (!storyKey) throw new Error("Data should be defined");
       navigate({
         to: "/builder/$storyKey",
         params: { storyKey },
@@ -62,5 +64,5 @@ export const useBuilderStories = () => {
     return result.data;
   };
 
-  return { createStory, parseFile, handleImportFromJSON };
+  return { createStory, isCreatingStory, parseFile, handleImportFromJSON };
 };

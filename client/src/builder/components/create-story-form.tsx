@@ -1,6 +1,5 @@
 import { StoryGenreCombobox } from "@/design-system/components/story-genre-combobox";
 import {
-  Button,
   Form,
   FormControl,
   FormDescription,
@@ -11,95 +10,118 @@ import {
   Input,
   Textarea,
 } from "@/design-system/primitives";
-import {
-  CreateStorySchema,
-  StoryFormType,
-} from "../hooks/use-create-story-form";
+import { StoryFormType } from "../hooks/use-create-story-form";
+import { Separator } from "@/design-system/primitives/separator";
+import { useIsMobile } from "@/hooks/use-is-mobile";
+import { FileDropInput } from "@/design-system/components/file-input";
+
+const RequiredSymbol = () => <span className="text-destructive">*</span>;
 
 export const CreateStoryForm = ({
   onSubmit,
   form,
-  isSubmitting = false,
 }: {
-  onSubmit: (data: CreateStorySchema) => void;
-  isSubmitting?: boolean;
+  onSubmit: () => void;
   form: StoryFormType;
 }) => {
+  const isMobile = useIsMobile();
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="max-h-120 space-y-3"
+      >
         <FormField
           control={form.control}
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel className="gap-0.75">
+                Title
+                <RequiredSymbol />
+              </FormLabel>
               <FormControl>
                 <Input
                   placeholder="The Great Journey To The Green River"
                   {...field}
+                  className="text-sm"
                 />
               </FormControl>
-              <FormDescription>
-                The displayed title of your story
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="genres"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Genre</FormLabel>
-              <FormControl>
-                <StoryGenreCombobox
-                  onChange={field.onChange}
-                  values={field.value}
-                />
-              </FormControl>
-              <FormDescription>The genre(s) of your story</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="A wonderful epic tale through the world of Penthetir. "
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                A short description of your story
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="image"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Image</FormLabel>
-              <FormControl>
-                <Input placeholder="http://your-image-url.com" {...field} />
-              </FormControl>
-              <FormDescription>The cover image for your story</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit" disabled={isSubmitting}>
-          Save
-        </Button>
+        {!isMobile && (
+          <>
+            <Separator />
+            <FormField
+              control={form.control}
+              name="genres"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="gap-0.75">Genre</FormLabel>
+                  <FormControl>
+                    <StoryGenreCombobox
+                      onChange={field.onChange}
+                      values={field.value ?? []}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="A wonderful epic tale through the world of Penthetir. "
+                      {...field}
+                      className="resize-none text-sm"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="image"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Image</FormLabel>
+                  <FormDescription>
+                    The cover image for your story
+                  </FormDescription>
+                  <FormControl>
+                    <div className="flex flex-col items-center gap-1">
+                      <Input
+                        type="url"
+                        placeholder="https://your-image.org"
+                        onChange={(v) => field.onChange(v.target.value || null)}
+                        value={field.value || ""}
+                      />
+                      <p className="text-muted-foreground">--- OR ---</p>
+                      <FileDropInput
+                        onUploadFile={(v) => field.onChange(v || null)}
+                        accept="image"
+                        readAs="dataURL"
+                        size="sm"
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </>
+        )}
+        {/* This is a hack to allow automatic form submit when pressing the Enter key */}
+        <input type="submit" className="hidden" />
       </form>
     </Form>
   );
