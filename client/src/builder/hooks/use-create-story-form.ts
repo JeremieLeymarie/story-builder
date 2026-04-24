@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, UseFormReturn } from "react-hook-form";
 import z from "zod";
 
-export const createStorySchema = z.object({
+const createStorySchema = z.object({
   title: z
     .string()
     .min(2, { message: "Title must be at least 2 characters long" }),
