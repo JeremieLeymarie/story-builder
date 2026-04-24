@@ -71,7 +71,7 @@ const ControlledCreateStoryFormDialog = ({
             <Button variant="secondary">Cancel</Button>
           </DialogClose>
           <DialogClose onClick={() => submit()} asChild>
-            <Button disabled={isLoading}>Save</Button>
+            <Button disabled={isLoading}>Create</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>
