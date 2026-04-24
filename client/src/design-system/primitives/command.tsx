@@ -4,6 +4,9 @@ import * as React from "react";
 import { Command as CommandPrimitive } from "cmdk";
 import { CheckIcon, SearchIcon } from "lucide-react";
 
+// Modified to fix data-selected styles in CommandItem
+// Modified to allow passing groupClassName in CommandInput
+
 import {
   Dialog,
   DialogContent,
@@ -14,7 +17,6 @@ import {
 import { InputGroup, InputGroupAddon } from "./input-group";
 import { cn } from "@/lib/style";
 
-// TODO: check component in conditional actions
 function Command({
   className,
   ...props
@@ -65,11 +67,19 @@ function CommandDialog({
 
 function CommandInput({
   className,
+  groupClassName,
   ...props
-}: React.ComponentProps<typeof CommandPrimitive.Input>) {
+}: React.ComponentProps<typeof CommandPrimitive.Input> & {
+  groupClassName?: string;
+}) {
   return (
     <div data-slot="command-input-wrapper" className="p-1 pb-0">
-      <InputGroup className="border-input/30 bg-input/30 h-8! rounded-lg! shadow-none! *:data-[slot=input-group-addon]:pl-2!">
+      <InputGroup
+        className={cn(
+          "border-input/30 bg-input/30 h-8! rounded-lg! shadow-none! *:data-[slot=input-group-addon]:pl-2!",
+          groupClassName,
+        )}
+      >
         <CommandPrimitive.Input
           data-slot="command-input"
           className={cn(
