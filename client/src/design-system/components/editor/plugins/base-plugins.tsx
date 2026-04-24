@@ -19,7 +19,6 @@ const RichTextContainer = ({
   className?: string;
   onClick: () => void;
 }) => {
-  console.log({ className });
   return match(textDisplayMode)
     .with("full", () => (
       <div {...props} className={className}>

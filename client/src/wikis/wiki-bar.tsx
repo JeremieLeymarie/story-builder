@@ -29,6 +29,7 @@ const ArticleTitle = ({
   const navigate = useNavigate();
   const { deleteArticle } = useDeleteArticle();
 
+  // TODO: search hotkey
   return (
     <div
       onClick={() =>
