@@ -47,15 +47,19 @@ export const SceneSelector = ({
         </PopoverTrigger>
         <PopoverContent
           className="w-full p-0 text-xs"
-          align="start"
+          align="center"
           side="bottom"
         >
           <Command>
-            <CommandInput placeholder="Search scenes..." />
+            <CommandInput
+              placeholder="Search scenes..."
+              className="text-xs"
+              groupClassName="h-6!"
+            />
             <CommandList>
-              <ScrollArea className="h-37.5">
+              <ScrollArea className="max-h-75">
                 <CommandEmpty className="text-xs">No scene found.</CommandEmpty>
-                <CommandGroup>
+                <CommandGroup heading="Scenes">
                   {scenes && !isLoading ? (
                     scenes.map((scene) => (
                       <CommandItem
