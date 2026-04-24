@@ -227,23 +227,30 @@ export const _getWikiService = ({
     },
 
     search: async (wikiKey, value) => {
-      const normalized = value.normalize();
+      const normalize = (v: string) => v.trim().toLocaleLowerCase().trim();
+      const normalized = normalize(value);
       const articles = await repository.getArticles(wikiKey);
-      const matchingArticles = articles.filter((a) =>
-        a.title.normalize().includes(normalized),
-      );
+
+      const matchingArticles = articles
+        .filter((a) => normalize(a.title).includes(normalized))
+        .sort((a, b) => {
+          // Exact matches are placed first
+          if (normalize(a.title) === normalized) return -1;
+          if (normalize(b.title) === normalized) return 1;
+
+          // Otherwise, sort by most recent update
+          return b.updatedAt.getTime() - a.updatedAt.getTime();
+        });
+
       const categoryKeys = matchingArticles.map(
         ({ categoryKey }) => categoryKey,
       );
-
       const categories = await repository.getCategories(wikiKey);
       const categoriesByKey = Object.fromEntries(
         categories
           .filter((c) => categoryKeys.includes(c.key))
           .map((c) => [c.key, c]),
       );
-
-      console.log(matchingArticles);
 
       return matchingArticles.map((a) => {
         const category = a.categoryKey ? categoriesByKey[a.categoryKey]! : null;
