@@ -1,11 +1,15 @@
 import { WikiBar } from "./wiki-bar";
 import { ReactNode } from "react";
+import { WikiSearch } from "./wiki-search";
 
 export const WikiContainer = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="relative flex h-full gap-4 p-4">
-      <WikiBar />
-      <div className="w-full">{children}</div>
-    </div>
+    <>
+      <div className="relative flex h-full gap-4 p-4">
+        <WikiBar />
+        <div className="w-full">{children}</div>
+      </div>
+      <WikiSearch />
+    </>
   );
 };

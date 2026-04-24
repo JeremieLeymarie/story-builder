@@ -229,8 +229,8 @@ export const _getWikiService = ({
     search: async (wikiKey, value) => {
       const normalized = value.normalize();
       const articles = await repository.getArticles(wikiKey);
-      const matchingArticles = articles.filter(
-        (a) => normalized === a.title.normalize(),
+      const matchingArticles = articles.filter((a) =>
+        a.title.normalize().includes(normalized),
       );
       const categoryKeys = matchingArticles.map(
         ({ categoryKey }) => categoryKey,
@@ -242,6 +242,8 @@ export const _getWikiService = ({
           .filter((c) => categoryKeys.includes(c.key))
           .map((c) => [c.key, c]),
       );
+
+      console.log(matchingArticles);
 
       return matchingArticles.map((a) => {
         const category = a.categoryKey ? categoriesByKey[a.categoryKey]! : null;

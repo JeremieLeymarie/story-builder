@@ -115,15 +115,19 @@ const Section = ({ category, articles }: WikiSection) => {
 };
 
 export const WikiBar = () => {
+  const [wikiData, openSearch] = useWikiStore((state) => [
+    state.wikiData,
+    state.openSearch,
+  ]);
   const {
     sections,
     wiki: { key: wikiKey },
-  } = useWikiStore((state) => state.wikiData);
+  } = wikiData;
 
   return (
     <Toolbar className="sticky top-[calc(var(--spacing)*4+var(--navbar-height)+2px)] h-max w-75 space-y-1">
       <div className="relative flex flex-col items-start">
-        <Button variant="ghost">
+        <Button variant="ghost" onClick={openSearch}>
           <SearchIcon />
           <span>Search</span>
         </Button>
