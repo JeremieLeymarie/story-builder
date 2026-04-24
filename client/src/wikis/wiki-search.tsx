@@ -1,3 +1,79 @@
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/design-system/primitives";
+
+import { useWikiStore } from "./hooks/use-wiki-store";
+import { useWikiSearch } from "./hooks/use-wiki-search";
+import { useState } from "react";
+import { RichText } from "@/design-system/components/editor/components/rich-text-editor";
+import { EditorContextProvider } from "@/design-system/components/editor/hooks/use-editor-context";
+import { WikiNode } from "@/builder/lexical-wiki-node";
+
 export const WikiSearch = () => {
-  return;
+  const [isOpen, open, close] = useWikiStore((state) => [
+    state.isSearchOpen,
+    state.openSearch,
+    state.closeSearch,
+  ]);
+  const [searchValue, setSearchValue] = useState("");
+  const { searchResults, isLoading } = useWikiSearch(searchValue);
+
+  console.log(searchResults);
+
+  // TODO: debounce
+
+  return (
+    <CommandDialog
+      open={isOpen}
+      onOpenChange={(shouldOpen) => (shouldOpen ? open() : close())}
+    >
+      <Command className="max-w-sm rounded-lg border" shouldFilter={false}>
+        <CommandInput
+          placeholder="Search..."
+          value={searchValue}
+          onValueChange={setSearchValue}
+        />
+        <CommandList>
+          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup heading="Results">
+            {searchResults?.map((article) => (
+              <CommandItem key={article.key} className="w-full justify-between">
+                <div>
+                  <div>
+                    {article.category && (
+                      <>
+                        <span style={{ color: article.category.color }}>
+                          {article.category.name}
+                        </span>
+                        <span>&nbsp;&gt;&nbsp;</span>
+                      </>
+                    )}
+                    <span className="font-semibold">{article.title}</span>
+                  </div>
+                  <EditorContextProvider
+                    entityType="wiki-article"
+                    entityKey={article.key}
+                  >
+                    <RichText
+                      editable={false}
+                      initialState={article.content}
+                      editorNodes={[WikiNode]}
+                      textDisplayMode="summary"
+                      className="text-muted-foreground text-xs"
+                    />
+                  </EditorContextProvider>
+                </div>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
+      </Command>
+    </CommandDialog>
+  );
 };
