@@ -2,7 +2,6 @@ import z from "zod/v4";
 import { useReactFlow } from "@xyflow/react";
 import { BuilderNode, SceneProps } from "../types";
 import { nodeToSceneAdapter } from "../adapters";
-import { isAnyInputFocused } from "./use-builder-shortcuts";
 import { useDuplicateScenes } from "./use-duplicate-scenes";
 import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
 import {
@@ -13,6 +12,7 @@ import { useErrorToast } from "./use-error-toast";
 import { MouseEvent as ReactMouseEvent } from "react";
 import { useBuilderContext } from "./use-builder-context";
 import { actionSchema } from "@/lib/action-schema";
+import { isAnyInputFocused } from "@/lib/shortcuts";
 
 const clipboardScenesSchema = z.array(
   z.object({
