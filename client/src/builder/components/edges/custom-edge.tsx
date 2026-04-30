@@ -9,6 +9,57 @@ import {
   BaseEdge,
   type EdgeProps,
 } from "@xyflow/react";
+import { RefCallback, FocusEvent } from "react";
+
+const EdgeProbabilityLabel = ({
+  inputRef,
+  hasError,
+  labelX,
+  labelY,
+  isFocused,
+  setIsFocused,
+  onChange,
+  value,
+}: {
+  inputRef: RefCallback<HTMLElement>;
+  hasError: boolean;
+  labelX: number;
+  labelY: number;
+  isFocused: boolean;
+  setIsFocused: (focused: boolean) => void;
+  onChange: (e: FocusEvent) => void;
+  value: number;
+}) => {
+  return (
+    <div className="nodrag nopan absolute z-10">
+      <div
+        style={{
+          transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+          pointerEvents: "all", // does not exist in tailwind
+        }}
+        onClick={() => {
+          setIsFocused(true);
+        }}
+        className={cn(
+          "relative flex h-8 w-14 origin-center cursor-pointer items-center justify-center rounded-lg border bg-white text-sm",
+          hasError && "border-destructive text-destructive",
+        )}
+      >
+        {isFocused ? (
+          <Input
+            autoFocus
+            defaultValue={`${value}%`}
+            className={cn("h-full border-none px-1 text-center")}
+            onBlur={onChange}
+            ref={inputRef}
+          />
+        ) : (
+          <span>{value}%</span>
+        )}
+      </div>
+    </div>
+  );
+};
 
 const InnerEdge = ({
   id,
@@ -52,42 +103,32 @@ const InnerEdge = ({
         markerEnd={markerEnd}
         className={cn(hasError && "stroke-destructive!")}
       />
-      {data?.hasSiblings && (
-        <EdgeLabelRenderer>
-          <div className="nodrag nopan absolute z-10">
-            <div
-              style={{
-                transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-                pointerEvents: "all", // does not exist in tailwind
-              }}
-              onClick={() => {
-                setIsFocused(true);
-              }}
-              className={cn(
-                "relative flex h-8 w-14 origin-center cursor-pointer items-center justify-center rounded-lg border bg-white text-sm",
-                hasError && "border-destructive text-destructive",
-              )}
-            >
-              {isFocused ? (
-                <Input
-                  autoFocus
-                  defaultValue={`${value}%`}
-                  className={cn("h-full border-none px-1 text-center")}
-                  onBlur={onChange}
-                  ref={inputRef}
-                />
-              ) : (
-                <span>{value}%</span>
-              )}
-              {debug && (
-                <span className="text-muted-foreground absolute top-10 text-xs">
-                  {id}
-                </span>
-              )}
-            </div>
+      <EdgeLabelRenderer>
+        {data?.hasSiblings && (
+          <EdgeProbabilityLabel
+            labelX={labelX}
+            labelY={labelY}
+            hasError={hasError}
+            inputRef={inputRef}
+            isFocused={isFocused}
+            setIsFocused={setIsFocused}
+            onChange={onChange}
+            value={value}
+          />
+        )}
+        {debug && (
+          <div
+            style={{
+              transform: `translate(-15%, -50%) translate(${labelX}px,${labelY}px)`,
+            }}
+            className="nodrag nopan"
+          >
+            <span className="text-muted-foreground absolute top-10 text-xs">
+              {id}
+            </span>
           </div>
-        </EdgeLabelRenderer>
-      )}
+        )}
+      </EdgeLabelRenderer>
     </>
   );
 };
