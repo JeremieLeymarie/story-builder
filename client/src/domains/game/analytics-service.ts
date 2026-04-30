@@ -32,6 +32,10 @@ export type AnalyticsServicePort = {
     saves: Array<Partial<Pick<StoryProgress, "totalPlayTimeMs">>>,
   ) => number;
   isSceneVisited: (sceneKey: string) => boolean;
+  isConnectionVisited: (props: {
+    sourceSceneKey: string;
+    targetSceneKey: string;
+  }) => boolean;
   getAllScenes: () => Scene[];
 };
 
@@ -115,6 +119,14 @@ export const _getAnalyticsService = async ({
     },
 
     isSceneVisited: (sceneKey) => progress.history.includes(sceneKey),
+
+    isConnectionVisited: ({ sourceSceneKey, targetSceneKey }) => {
+      return progress.history.some(
+        (sceneKey, idx) =>
+          sceneKey === sourceSceneKey &&
+          progress.history?.[idx + 1] === targetSceneKey,
+      );
+    },
 
     getAllScenes: () => scenes,
   };
