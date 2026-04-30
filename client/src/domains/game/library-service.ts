@@ -328,3 +328,5 @@ export const getLibraryService = () =>
     gameRepository: getDexieGameRepository(),
     characterRepository: getDexieCharacterRepository(),
   });
+
+  //test de la mort qui tue tout
