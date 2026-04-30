@@ -84,7 +84,7 @@ export const useSideEffectsForm = ({
   const form = useForm({
     resolver: zodResolver(schema),
     mode: "all",
-    defaultValues: {
+    values: {
       effects: scene.sideEffects?.map(adaptDomainSideEffect) ?? [],
     },
   });
