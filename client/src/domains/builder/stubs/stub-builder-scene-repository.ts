@@ -12,6 +12,7 @@ export const getStubBuilderSceneRepository =
   (): MockBuilderSceneRepository => ({
     get: vi.fn(() => Promise.resolve(factory.scene())),
     getScenesByKey: vi.fn(),
+    getByStoryKey: vi.fn(() => Promise.resolve([])),
     bulkAdd: vi.fn(() => Promise.resolve([nanoid()])),
     update: vi.fn(),
   });

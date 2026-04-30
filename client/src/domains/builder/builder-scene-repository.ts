@@ -5,6 +5,7 @@ import { WithoutKey } from "@/types";
 export type BuilderSceneRepositoryPort = {
   get: (key: string) => Promise<Scene | null>;
   getScenesByKey: (keys: string[]) => Promise<Record<string, Scene>>;
+  getByStoryKey: (storyKey: string) => Promise<Scene[]>;
   bulkAdd: (payload: WithoutKey<Scene>[] | Scene[]) => Promise<string[]>;
   update: (key: string, payload: Scene) => Promise<void>;
 };
@@ -28,6 +29,9 @@ export const _getDexieBuilderSceneRepository = (
       );
 
       return scenesByKey;
+    },
+    getByStoryKey: async (storyKey) => {
+      return await db.scenes.where("storyKey").equals(storyKey).toArray();
     },
     update: async (key, payload) => {
       await db.scenes.update(key, payload);
