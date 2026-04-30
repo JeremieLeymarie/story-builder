@@ -1,11 +1,17 @@
 import {
   CharacterConfiguration,
   CharacterAttribute,
+  Action,
+  isSceneVisitCondition,
 } from "@/lib/storage/domain";
 import {
   CharacterRepositoryPort,
   getDexieCharacterRepository,
 } from "./character-repository";
+import {
+  BuilderSceneRepositoryPort,
+  getDexieBuilderSceneRepository,
+} from "./builder-scene-repository";
 import { EntityNotExistError } from "../errors";
 import {
   CharacterAttributeNotExistError,
@@ -40,8 +46,10 @@ export type CharacterServicePort = {
 
 export const _getCharacterService = ({
   repository,
+  sceneRepository,
 }: {
   repository: CharacterRepositoryPort;
+  sceneRepository: BuilderSceneRepositoryPort;
 }): CharacterServicePort => {
   return {
     getCharacter: async (storyKey) => {
@@ -141,6 +149,48 @@ export const _getCharacterService = ({
       } satisfies CharacterConfiguration;
 
       await repository.update(storyKey, updatedConfig);
+
+      // Cascade cleanup: remove side effects using this attribute, and convert
+      // conditional actions referencing it to simple actions.
+      const scenes = await sceneRepository.getByStoryKey(storyKey);
+      await Promise.all(
+        scenes.map(async (scene) => {
+          const cleanedSideEffects = scene.sideEffects?.filter(
+            (sideEffect) => sideEffect.effect.attributeKey !== attributeKey,
+          );
+          const cleanedActions = scene.actions.map<Action>((action) => {
+            if (
+              action.type === "conditional" &&
+              !isSceneVisitCondition(action.condition) &&
+              action.condition.attributeKey === attributeKey
+            ) {
+              return {
+                key: action.key,
+                text: action.text,
+                targets: action.targets,
+                type: "simple",
+              };
+            }
+            return action;
+          });
+
+          const sideEffectsChanged =
+            (scene.sideEffects?.length ?? 0) !==
+            (cleanedSideEffects?.length ?? 0);
+          const actionsChanged = scene.actions.some(
+            (a, i) => a !== cleanedActions[i],
+          );
+
+          if (!sideEffectsChanged && !actionsChanged) return;
+
+          await sceneRepository.update(scene.key, {
+            ...scene,
+            sideEffects: cleanedSideEffects,
+            actions: cleanedActions,
+          });
+        }),
+      );
+
       return updatedConfig;
     },
 
@@ -151,4 +201,7 @@ export const _getCharacterService = ({
 };
 
 export const getCharacterService = () =>
-  _getCharacterService({ repository: getDexieCharacterRepository() });
+  _getCharacterService({
+    repository: getDexieCharacterRepository(),
+    sceneRepository: getDexieBuilderSceneRepository(),
+  });

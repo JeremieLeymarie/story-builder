@@ -4,6 +4,10 @@ import {
   MockCharacterRepository,
 } from "../stubs/stub-character-repository";
 import {
+  getStubBuilderSceneRepository,
+  MockBuilderSceneRepository,
+} from "../stubs/stub-builder-scene-repository";
+import {
   _getCharacterService,
   CharacterServicePort,
 } from "../character-service";
@@ -23,11 +27,13 @@ vi.mock("nanoid", () => ({
 
 describe("character-service", () => {
   let repository: MockCharacterRepository;
+  let sceneRepository: MockBuilderSceneRepository;
   let svc: CharacterServicePort;
 
   beforeEach(() => {
     repository = getStubCharacterRepository();
-    svc = _getCharacterService({ repository });
+    sceneRepository = getStubBuilderSceneRepository();
+    svc = _getCharacterService({ repository, sceneRepository });
   });
 
   describe("getCharacter", () => {
