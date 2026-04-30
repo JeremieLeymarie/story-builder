@@ -52,7 +52,7 @@ const ActionButton = ({
   return (
     <Button
       className={cn(
-        "h-auto cursor-pointer text-left text-wrap whitespace-normal select-none",
+        "h-max w-fit cursor-pointer text-left text-pretty wrap-anywhere whitespace-normal select-none",
         className,
       )}
       style={{
