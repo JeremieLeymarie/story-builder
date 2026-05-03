@@ -36,7 +36,7 @@ export const db = new Dexie("story-builder") as DexieDatabase;
 const tables: Record<keyof Tables, string> = {
   user: "&key, &username, email",
   stories:
-    "&key, firstSceneKey, title, description, image, status, genres, publicationDate, creationDate, author, finished",
+    "&key, firstSceneKey, title, description, image, status, genres, publicationDate, creationDate, updatedAt, author, finished",
   scenes: "&key, storyKey, title, content, actions, builderParams",
   storyThemes: "&key, &storyKey",
   characterConfigurations: "&key, &storyKey",
@@ -161,6 +161,26 @@ export const createDb = (
 
       if (bulkPayload.length) {
         await db.storyProgresses.bulkUpdate(bulkPayload);
+      }
+    });
+
+  // Migration: add last update time to stories
+  db.version(12)
+    .stores(tables)
+    .upgrade(async () => {
+      const bulkPayload: { key: string; changes: Partial<Story> }[] = [];
+
+      await db.stories.each((story) => {
+        if (!(story.updatedAt instanceof Date)) {
+          bulkPayload.push({
+            key: story.key,
+            changes: { updatedAt: story.creationDate },
+          });
+        }
+      });
+
+      if (bulkPayload.length) {
+        await db.stories.bulkUpdate(bulkPayload);
       }
     });
 

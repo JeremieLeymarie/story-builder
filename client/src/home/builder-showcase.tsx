@@ -113,6 +113,7 @@ const EDGES: BuilderEdge[] = [
 const MOCK_STORY: Story = {
   type: "builder",
   creationDate: new Date(),
+  updatedAt: new Date(),
   description: "",
   firstSceneKey: "",
   genres: [],

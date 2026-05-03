@@ -360,6 +360,10 @@ export const _getImportExportService = ({
           type,
           originalStoryKey: importedStoryKey,
           firstSceneKey: TEMPORARY_NULL_KEY,
+          updatedAt:
+            importedStory.updatedAt instanceof Date
+              ? importedStory.updatedAt
+              : importedStory.creationDate,
           ...(storyFromImport.story.wikiKey
             ? { wikiKey: TEMPORARY_NULL_KEY }
             : {}),

@@ -12,6 +12,7 @@ import {
   CharacterAttributeNameAlreadyExistError,
 } from "./errors";
 import { nanoid } from "nanoid";
+import { getLocalRepository } from "@/repositories";
 
 export type CharacterServicePort = {
   getCharacter: (storyKey: string) => Promise<CharacterConfiguration | null>;
@@ -40,8 +41,10 @@ export type CharacterServicePort = {
 
 export const _getCharacterService = ({
   repository,
+  touchStory,
 }: {
   repository: CharacterRepositoryPort;
+  touchStory: (storyKey: string) => Promise<void>;
 }): CharacterServicePort => {
   return {
     getCharacter: async (storyKey) => {
@@ -50,6 +53,7 @@ export const _getCharacterService = ({
 
     createCharacter: async (storyKey) => {
       const key = await repository.create({ storyKey, attributes: {} });
+      await touchStory(storyKey);
       return { key, storyKey, attributes: {} };
     },
 
@@ -78,6 +82,7 @@ export const _getCharacterService = ({
       } satisfies CharacterConfiguration;
 
       await repository.update(storyKey, updatedConfig);
+      await touchStory(storyKey);
       return updatedConfig;
     },
 
@@ -119,6 +124,7 @@ export const _getCharacterService = ({
       } satisfies CharacterConfiguration;
 
       await repository.update(storyKey, updatedConfig);
+      await touchStory(storyKey);
       return updatedConfig;
     },
 
@@ -141,14 +147,20 @@ export const _getCharacterService = ({
       } satisfies CharacterConfiguration;
 
       await repository.update(storyKey, updatedConfig);
+      await touchStory(storyKey);
       return updatedConfig;
     },
 
     deleteCharacter: async (storyKey) => {
       await repository.delete(storyKey);
+      await touchStory(storyKey);
     },
   };
 };
 
 export const getCharacterService = () =>
-  _getCharacterService({ repository: getDexieCharacterRepository() });
+  _getCharacterService({
+    repository: getDexieCharacterRepository(),
+    touchStory: (storyKey) =>
+      getLocalRepository().updateStory({ key: storyKey, updatedAt: new Date() }),
+  });

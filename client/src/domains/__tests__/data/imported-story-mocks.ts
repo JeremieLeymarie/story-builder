@@ -10,6 +10,7 @@ export const MOCK_IMPORTED_STORY = {
   type: "builder" as const,
   genres: ["adventure" as const, "fantasy" as const],
   creationDate: new Date(),
+  updatedAt: new Date(),
   firstSceneKey: "skibidi",
   author: {
     username: "author",

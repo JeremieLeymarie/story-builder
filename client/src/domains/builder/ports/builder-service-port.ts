@@ -45,7 +45,7 @@ export type BuilderServicePort = {
   createStoryWithFirstScene: (
     storyData: Omit<
       WithoutKey<Story>,
-      "type" | "creationDate" | "user" | "firstSceneKey"
+      "type" | "creationDate" | "updatedAt" | "user" | "firstSceneKey"
     >,
   ) => Promise<{ story: Story; scene: Scene } | null>;
   addScene: (scene: WithoutKey<Scene>) => Promise<Scene>;

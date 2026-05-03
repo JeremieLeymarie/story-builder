@@ -57,6 +57,10 @@ export const jsonDataSchema = z.object({
       creationDate: z
         .string({ message: "creationDate is required" })
         .transform((val) => new Date(val)),
+      updatedAt: z
+        .string()
+        .transform((val) => new Date(val))
+        .optional(),
       publicationDate: z
         .string({ message: "publicationDate is required" })
         .transform((val) => new Date(val))

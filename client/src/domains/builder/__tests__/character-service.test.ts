@@ -24,10 +24,12 @@ vi.mock("nanoid", () => ({
 describe("character-service", () => {
   let repository: MockCharacterRepository;
   let svc: CharacterServicePort;
+  let touchStory: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     repository = getStubCharacterRepository();
-    svc = _getCharacterService({ repository });
+    touchStory = vi.fn(() => Promise.resolve());
+    svc = _getCharacterService({ repository, touchStory });
   });
 
   describe("getCharacter", () => {
@@ -57,6 +59,7 @@ describe("character-service", () => {
         storyKey: "plouf",
         attributes: {},
       });
+      expect(touchStory).toHaveBeenCalledWith("plouf");
       expect(result).toStrictEqual({
         key: expect.any(String),
         storyKey: "plouf",
@@ -114,6 +117,7 @@ describe("character-service", () => {
         storyKey: "plouf",
         attributes: { "attr-key": { ...attr, key: "attr-key" } },
       });
+      expect(touchStory).toHaveBeenCalledWith("plouf");
       expect(Object.values(result.attributes)).toStrictEqual([
         {
           ...attr,
@@ -153,6 +157,7 @@ describe("character-service", () => {
         storyKey: "plouf",
         attributes: expectedAttrs,
       });
+      expect(touchStory).toHaveBeenCalledWith("plouf");
       expect(result.attributes).toStrictEqual(expectedAttrs);
     });
   });
@@ -223,6 +228,7 @@ describe("character-service", () => {
         storyKey: "plouf",
         attributes: expectedAttrs,
       });
+      expect(touchStory).toHaveBeenCalledWith("plouf");
       expect(result.attributes).toStrictEqual(expectedAttrs);
     });
 
@@ -254,6 +260,7 @@ describe("character-service", () => {
         storyKey: "plouf",
         attributes: expectedAttrs,
       });
+      expect(touchStory).toHaveBeenCalledWith("plouf");
       expect(result.attributes).toStrictEqual(expectedAttrs);
     });
   });
@@ -298,6 +305,7 @@ describe("character-service", () => {
         storyKey: "plouf",
         attributes: {},
       });
+      expect(touchStory).toHaveBeenCalledWith("plouf");
       expect(result.attributes).toStrictEqual({});
     });
 
@@ -325,6 +333,7 @@ describe("character-service", () => {
         storyKey: "plouf",
         attributes: expectedAttrs,
       });
+      expect(touchStory).toHaveBeenCalledWith("plouf");
       expect(result.attributes).toStrictEqual(expectedAttrs);
     });
   });
@@ -334,6 +343,7 @@ describe("character-service", () => {
       await svc.deleteCharacter("plouf");
 
       expect(repository.delete).toHaveBeenCalledWith("plouf");
+      expect(touchStory).toHaveBeenCalledWith("plouf");
     });
   });
 });

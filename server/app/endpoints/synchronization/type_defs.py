@@ -198,6 +198,10 @@ class Story(BaseAPIModel):
     creation_date: datetime = Field(
         description="The date at which the story was created"
     )
+    updated_at: datetime | None = Field(
+        description="The date at which the story was last updated",
+        default=None,
+    )
     first_scene_key: str = Field(description="The first scene of the story")
 
     original_story_key: str | None = Field(
@@ -227,6 +231,7 @@ class FullStory(Story):
             image=domain.image,
             genres=domain.genres,
             creation_date=domain.creation_date,
+            updated_at=domain.updated_at,
             first_scene_key=domain.first_scene_key,
             original_story_key=domain.original_story_key,
             publication_date=domain.publication_date,
@@ -245,6 +250,7 @@ class FullStory(Story):
             image=story.image,
             genres=story.genres,
             creation_date=story.creation_date,
+            updated_at=story.updated_at,
             first_scene_key=story.first_scene_key,
             original_story_key=story.original_story_key,
             publication_date=story.publication_date,
@@ -268,6 +274,7 @@ class FullStory(Story):
             image=self.image,
             genres=self.genres,
             creation_date=self.creation_date,
+            updated_at=self.updated_at or self.creation_date,
             first_scene_key=self.first_scene_key,
             original_story_key=self.original_story_key,
             publication_date=self.publication_date,

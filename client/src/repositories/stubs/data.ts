@@ -64,6 +64,7 @@ export const BASIC_STORY: Story = {
   firstSceneKey: "zut",
   genres: ["adventure", "children"],
   creationDate: new Date(),
+  updatedAt: new Date(),
 };
 
 export const BASIC_USER: User = {

@@ -88,6 +88,7 @@ class MongoStory(WithId):
     image: str
     genres: list[str]
     creationDate: datetime
+    updatedAt: NotRequired[datetime]
     firstSceneKey: str
 
     originalStoryKey: str | None

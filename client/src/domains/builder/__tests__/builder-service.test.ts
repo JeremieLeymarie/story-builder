@@ -631,6 +631,7 @@ describe("builder-service", () => {
           image: "http://image.com",
           genres: ["adventure", "children"],
           creationDate: new Date(),
+          updatedAt: new Date(),
           type: "builder",
         },
         firstScene: {
@@ -673,6 +674,7 @@ describe("builder-service", () => {
           image: "http://image.com",
           genres: ["adventure", "children"],
           creationDate: new Date(),
+          updatedAt: new Date(),
           type: "builder",
           author: { username: BASIC_USER.username, key: BASIC_USER.key },
         },
@@ -819,27 +821,36 @@ describe("builder-service", () => {
 
   describe("getUserBuilderStories", () => {
     test("should retrieve stories created by logged in user", async () => {
+      const newestStory = factory.story.builder({
+        key: "newest-story",
+        updatedAt: new Date("2025-06-01"),
+      });
+      const oldestStory = factory.story.builder({
+        key: "oldest-story",
+        updatedAt: new Date("2025-01-01"),
+      });
+
+      localRepository.getStoriesByAuthor.mockResolvedValueOnce([
+        oldestStory,
+        { ...BASIC_STORY, type: "imported" },
+        newestStory,
+      ]);
+      localRepository.getStoriesByAuthor.mockResolvedValueOnce([
+        BASIC_STORY,
+        { ...BASIC_STORY, type: "imported" },
+      ]);
+
       const stories = await builderService.getUserBuilderStories();
 
       expect(localRepository.getUser).toHaveBeenCalled();
       expect(localRepository.getStoriesByAuthor).toHaveBeenCalledTimes(2);
-      localRepository.getStoriesByAuthor.mockResolvedValueOnce([
-        BASIC_STORY,
-        { ...BASIC_STORY, type: "imported" },
-        { ...BASIC_STORY, type: "builder" },
-      ]);
       expect(localRepository.getStoriesByAuthor).toHaveBeenCalledWith(
         BASIC_USER.key,
       );
-      localRepository.getStoriesByAuthor.mockResolvedValueOnce([
-        BASIC_STORY,
-        { ...BASIC_STORY, type: "imported" },
-        { ...BASIC_STORY, type: "builder" },
-      ]);
       expect(localRepository.getStoriesByAuthor).toHaveBeenCalledWith(
         undefined,
       );
-      expect(stories).toStrictEqual([BASIC_STORY, BASIC_STORY]);
+      expect(stories).toStrictEqual([BASIC_STORY, newestStory, oldestStory]);
     });
   });
 
@@ -1016,6 +1027,7 @@ describe("builder-service", () => {
 
       localRepository.getStory.mockResolvedValueOnce({
         creationDate: new Date(),
+        updatedAt: new Date(),
         description: "description",
         firstSceneKey: "first-fake-scene-key",
         genres: [],
@@ -1219,6 +1231,7 @@ describe("builder-service", () => {
         {
           author: { key: "key", username: "bob_bidou" },
           title: "A new title",
+          updatedAt: expect.any(Date),
         },
       );
 
