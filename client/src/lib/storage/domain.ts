@@ -64,6 +64,7 @@ export type StoryBase = {
   firstSceneKey: string; // FIXME: the first scene can be deleted (#273)
   genres: StoryGenre[];
   creationDate: Date;
+  updatedAt: Date;
   wikiKey?: string;
 };
 

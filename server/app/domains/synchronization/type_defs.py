@@ -75,6 +75,7 @@ class SynchronizationStory(BaseModel):
     image: str
     genres: list[StoryGenre]
     creation_date: datetime
+    updated_at: datetime | None = None
     first_scene_key: str
 
     original_story_key: str | None

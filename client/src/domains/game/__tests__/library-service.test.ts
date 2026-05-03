@@ -235,6 +235,7 @@ describe("library-service", () => {
       firstSceneKey: "zut",
       genres: ["adventure" as const, "children" as const],
       creationDate: new Date(),
+      updatedAt: new Date(),
     };
 
     beforeEach(() => {

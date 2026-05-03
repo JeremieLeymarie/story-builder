@@ -58,6 +58,7 @@ const IMPORTED_STORY: JsonStoryData["story"] = {
   type: "builder" as const,
   genres: ["adventure" as const, "fantasy" as const],
   creationDate: new Date(),
+  updatedAt: new Date(),
   firstSceneKey: SCENE_KEY_B,
   author: {
     username: "author",
@@ -232,6 +233,7 @@ describe("import-export-service", () => {
           "https://b2-backblaze-stackpath.b-cdn.net/2178699/c5jpvq_12e7c09178a6a75a5979d117f779bb07ff07f8f9.jpg",
         genres: ["adventure" as const, "fantasy" as const],
         creationDate: IMPORTED_STORY.creationDate,
+        updatedAt: IMPORTED_STORY.updatedAt,
         firstSceneKey: TEMPORARY_NULL_KEY,
         author: {
           username: "author",
@@ -262,6 +264,7 @@ describe("import-export-service", () => {
           "https://b2-backblaze-stackpath.b-cdn.net/2178699/c5jpvq_12e7c09178a6a75a5979d117f779bb07ff07f8f9.jpg",
         genres: ["adventure" as const, "fantasy" as const],
         creationDate: IMPORTED_STORY.creationDate,
+        updatedAt: IMPORTED_STORY.updatedAt,
         firstSceneKey: TEMPORARY_NULL_KEY,
         author: {
           username: "Anonymous Author",
@@ -297,6 +300,7 @@ describe("import-export-service", () => {
           "https://b2-backblaze-stackpath.b-cdn.net/2178699/c5jpvq_12e7c09178a6a75a5979d117f779bb07ff07f8f9.jpg",
         genres: ["adventure" as const, "fantasy" as const],
         creationDate: IMPORTED_STORY.creationDate,
+        updatedAt: IMPORTED_STORY.updatedAt,
         firstSceneKey: TEMPORARY_NULL_KEY,
         author: {
           username: "bob-bidou",

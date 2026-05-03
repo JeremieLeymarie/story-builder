@@ -37,6 +37,10 @@ export const _getBuilderService = ({
   storyRepository: BuilderStoryRepositoryPort;
   sceneRepository: BuilderSceneRepositoryPort;
 }): BuilderServicePort => {
+  const touchStory = async (storyKey: string, date = new Date()) => {
+    await storyRepository.update(storyKey, { updatedAt: date });
+  };
+
   const getUserBuilderStories = async () => {
     const user = await localRepository.getUser();
 
@@ -50,7 +54,9 @@ export const _getBuilderService = ({
     return [
       ...(storiesWithAuthor ?? []),
       ...(storiesWithoutAuthor ?? []),
-    ].filter((story) => story.type === "builder");
+    ]
+      .filter((story) => story.type === "builder")
+      .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
   };
 
   const getBuilderStoryData = async (storyKey: string) => {
@@ -136,8 +142,9 @@ export const _getBuilderService = ({
       },
     );
 
-    // Update all scenes concurrently
-    await Promise.all(updateOperations);
+      // Update all scenes concurrently
+      await Promise.all(updateOperations);
+      await Promise.all(sourceSceneKeys.map((sceneKey) => touchStory(sourceScenesByKey[sceneKey]!.storyKey)));
 
     return updatedScenesByKey;
   };
@@ -147,9 +154,13 @@ export const _getBuilderService = ({
       sceneKey: string,
       position: BuilderPosition,
     ) => {
+      const scene = await sceneRepository.get(sceneKey);
+      if (!scene) throw new EntityNotExistError("scene", sceneKey);
+
       await localRepository.updatePartialScene(sceneKey, {
         builderParams: { position },
       });
+      await touchStory(scene.storyKey);
     },
 
     addSceneConnection: async ({
@@ -231,6 +242,7 @@ export const _getBuilderService = ({
         });
       }
       await localRepository.updatePartialScene(sourceScene.key, { actions });
+      await touchStory(sourceScene.storyKey);
 
       return { ...sourceScene, actions };
     },
@@ -250,16 +262,18 @@ export const _getBuilderService = ({
     createStoryWithFirstScene: async (
       storyData: Omit<
         WithoutKey<Story>,
-        "type" | "creationDate" | "user" | "firstSceneKey"
+        "type" | "creationDate" | "updatedAt" | "user" | "firstSceneKey"
       >,
     ) => {
       const user = await localRepository.getUser();
+      const now = new Date();
 
       const result = await localRepository.createStoryWithFirstScene({
         story: {
           ...storyData,
           type: "builder",
-          creationDate: new Date(),
+          creationDate: now,
+          updatedAt: now,
           ...(user && { author: { username: user.username, key: user.key } }),
         },
         firstScene: {
@@ -289,11 +303,17 @@ export const _getBuilderService = ({
     },
 
     addScene: async (scene: WithoutKey<Scene>) => {
-      return await localRepository.createScene(scene);
+      const createdScene = await localRepository.createScene(scene);
+      await touchStory(scene.storyKey);
+      return createdScene;
     },
 
     updateScene: async ({ key, ...scene }) => {
+      const currentScene = await sceneRepository.get(key);
+      if (!currentScene) throw new EntityNotExistError("scene", key);
+
       await localRepository.updatePartialScene(key, scene);
+      await touchStory(currentScene.storyKey);
       return await sceneRepository.get(key);
     },
 
@@ -303,6 +323,7 @@ export const _getBuilderService = ({
 
       const newScene = { ...scene, sideEffects };
       await sceneRepository.update(scene.key, newScene);
+      await touchStory(scene.storyKey);
 
       return newScene;
     },
@@ -344,6 +365,8 @@ export const _getBuilderService = ({
 
     bulkUpdateScenes: async ({ scenes }: { scenes: Scene[] }) => {
       await localRepository.updateOrCreateScenes(scenes);
+      const storyKeys = [...new Set(scenes.map((scene) => scene.storyKey))];
+      await Promise.all(storyKeys.map((storyKey) => touchStory(storyKey)));
     },
 
     changeFirstScene: async (storyKey: string, newFirstSceneKey: string) => {
@@ -351,6 +374,7 @@ export const _getBuilderService = ({
 
       if (isSceneKeyValid) {
         await localRepository.updateFirstScene(storyKey, newFirstSceneKey);
+        await touchStory(storyKey);
         return true;
       }
 
@@ -428,6 +452,7 @@ export const _getBuilderService = ({
 
       const updatedScenes = await removeSceneConnections(connectionsToDelete);
       await localRepository.deleteScenes(sceneKeys);
+      await touchStory(storyKey);
 
       return {
         deletedConnections: connectionsToDelete,
@@ -510,7 +535,7 @@ export const _getBuilderService = ({
     },
 
     updateStory: async (key, payload) => {
-      return storyRepository.update(key, payload);
+      return storyRepository.update(key, { ...payload, updatedAt: new Date() });
     },
 
     duplicateScenes: async ({ originalScenes, newPositions, storyKey }) => {
@@ -560,6 +585,7 @@ export const _getBuilderService = ({
       });
 
       await sceneRepository.bulkAdd(payload);
+      await touchStory(storyKey);
       return payload;
     },
     makeEmptyActionPayload: () => {

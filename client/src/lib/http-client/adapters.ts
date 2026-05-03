@@ -43,6 +43,7 @@ const baseStorySchemaFields = {
   firstSceneKey: z.string(),
   genres: z.array(z.enum(STORY_GENRES)),
   creationDate: z.string().transform((val) => new Date(val)),
+  updatedAt: z.string().transform((val) => new Date(val)).optional(),
 };
 
 const storySchema = z.discriminatedUnion("type", [
@@ -58,7 +59,11 @@ const storySchema = z.discriminatedUnion("type", [
 ]);
 
 const fromAPIStoryAdapter = (story: components["schemas"]["Story"]): Story => {
-  return storySchema.parse(story);
+  const parsed = storySchema.parse(story);
+  return {
+    ...parsed,
+    updatedAt: parsed.updatedAt ?? parsed.creationDate,
+  };
 };
 
 const fromAPIStoriesAdapter = (
@@ -140,6 +145,7 @@ const fromClientStoryAdapter = (
     userKey,
     author: story.author ?? null,
     creationDate: _toAPIDate(story.creationDate),
+    updatedAt: _toAPIDate(story.updatedAt),
   };
 };
 

@@ -90,6 +90,7 @@ type StoryBaseFactory = _BaseFactory<StoryBase>;
 const _baseStoryFactory = {
   key: nanoid,
   creationDate: faker.date.anytime,
+  updatedAt: faker.date.anytime,
   title: faker.book.title,
   description: faker.word.sample,
   firstSceneKey: nanoid,

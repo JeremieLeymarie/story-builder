@@ -232,6 +232,11 @@ export interface components {
              */
             creationDate: string;
             /**
+             * Updatedat
+             * @description The date at which the story was last updated
+             */
+            updatedAt?: string | null;
+            /**
              * Firstscenekey
              * @description The first scene of the story
              */
@@ -367,6 +372,11 @@ export interface components {
              * @description The date at which the story was created
              */
             creationDate: string;
+            /**
+             * Updatedat
+             * @description The date at which the story was last updated
+             */
+            updatedAt?: string | null;
             /**
              * Firstscenekey
              * @description The first scene of the story

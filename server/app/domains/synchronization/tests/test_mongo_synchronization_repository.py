@@ -454,6 +454,7 @@ def test_get_stories() -> None:
         SynchronizationStory(
             author=SynchronizationStoryAuthor(key="author-key", username="username"),
             creation_date=datetime(2025, 6, 2),
+            updated_at=datetime(2025, 6, 2),
             description="something-else",
             first_scene_key="first-scene-key",
             genres=[StoryGenre.ADVENTURE, StoryGenre.ROMANCE],

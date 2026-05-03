@@ -29,7 +29,7 @@ from utils.mongo.base_repository import (
     MongoStoryProgress,
 )
 from utils.type_defs import StoryGenre, StoryType
-from typing import assert_never
+from typing import assert_never, cast
 
 # From domain to mongo
 
@@ -139,21 +139,23 @@ def make_story_genre(genre: str) -> StoryGenre:
 
 
 def make_mongo_story(domain: SynchronizationStory) -> MongoStory:
-    return MongoStory(
-        key=domain.key,
-        userKey=domain.user_key,
-        type=domain.type,
-        author=make_mongo_author(domain.author) if domain.author else None,
-        title=domain.title,
-        description=domain.description,
-        image=domain.image,
-        genres=[genre.value for genre in domain.genres],
-        creationDate=domain.creation_date,
-        firstSceneKey=domain.first_scene_key,
-        originalStoryKey=domain.original_story_key,
-        publicationDate=domain.publication_date,
-        scenes=[make_mongo_scene(scene) for scene in domain.scenes],
-    )
+    mongo_story = {
+        "key": domain.key,
+        "userKey": domain.user_key,
+        "type": domain.type,
+        "author": make_mongo_author(domain.author) if domain.author else None,
+        "title": domain.title,
+        "description": domain.description,
+        "image": domain.image,
+        "genres": [genre.value for genre in domain.genres],
+        "creationDate": domain.creation_date,
+        "firstSceneKey": domain.first_scene_key,
+        "originalStoryKey": domain.original_story_key,
+        "publicationDate": domain.publication_date,
+        "scenes": [make_mongo_scene(scene) for scene in domain.scenes],
+        **({"updatedAt": domain.updated_at} if domain.updated_at else {}),
+    }
+    return cast(MongoStory, mongo_story)
 
 
 def make_mongo_story_progress(
@@ -259,6 +261,7 @@ def make_synchronization_story(story: MongoStory) -> SynchronizationStory:
         image=story["image"],
         genres=[make_story_genre(genre) for genre in story["genres"]],
         creation_date=story["creationDate"],
+        updated_at=story.get("updatedAt", story["creationDate"]),
         first_scene_key=story["firstSceneKey"],
         original_story_key=story.get("originalStoryKey"),
         publication_date=story.get("publicationDate"),
