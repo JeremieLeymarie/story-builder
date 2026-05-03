@@ -24,11 +24,13 @@ vi.mock("nanoid", () => ({
 describe("character-service", () => {
   let repository: MockCharacterRepository;
   let svc: CharacterServicePort;
-  let touchStory: ReturnType<typeof vi.fn>;
+  let touchStory: (storyKey: string) => Promise<void>;
 
   beforeEach(() => {
     repository = getStubCharacterRepository();
-    touchStory = vi.fn(() => Promise.resolve());
+    touchStory = vi.fn<(storyKey: string) => Promise<void>>(() =>
+      Promise.resolve(),
+    );
     svc = _getCharacterService({ repository, touchStory });
   });
 

@@ -162,5 +162,8 @@ export const getCharacterService = () =>
   _getCharacterService({
     repository: getDexieCharacterRepository(),
     touchStory: (storyKey) =>
-      getLocalRepository().updateStory({ key: storyKey, updatedAt: new Date() }),
+      getLocalRepository().updateStory({
+        key: storyKey,
+        updatedAt: new Date(),
+      }),
   });

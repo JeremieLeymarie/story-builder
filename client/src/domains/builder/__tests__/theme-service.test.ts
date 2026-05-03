@@ -12,11 +12,13 @@ const factory = getTestFactory();
 describe("theme-service", () => {
   let repository: MockThemeRepository;
   let svc: ThemeServicePort;
-  let touchStory: ReturnType<typeof vi.fn>;
+  let touchStory: (storyKey: string) => Promise<void>;
 
   beforeEach(() => {
     repository = getStubThemeRepository();
-    touchStory = vi.fn(() => Promise.resolve());
+    touchStory = vi.fn<(storyKey: string) => Promise<void>>(() =>
+      Promise.resolve(),
+    );
     svc = _getThemeService({ repository, touchStory });
   });
 

@@ -51,10 +51,7 @@ export const _getBuilderService = ({
     const storiesWithoutAuthor =
       await localRepository.getStoriesByAuthor(undefined);
 
-    return [
-      ...(storiesWithAuthor ?? []),
-      ...(storiesWithoutAuthor ?? []),
-    ]
+    return [...(storiesWithAuthor ?? []), ...(storiesWithoutAuthor ?? [])]
       .filter((story) => story.type === "builder")
       .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
   };
@@ -144,7 +141,11 @@ export const _getBuilderService = ({
 
       // Update all scenes concurrently
       await Promise.all(updateOperations);
-      await Promise.all(sourceSceneKeys.map((sceneKey) => touchStory(sourceScenesByKey[sceneKey]!.storyKey)));
+      await Promise.all(
+        sourceSceneKeys.map((sceneKey) =>
+          touchStory(sourceScenesByKey[sceneKey]!.storyKey),
+        ),
+      );
 
     return updatedScenesByKey;
   };
