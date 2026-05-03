@@ -48,5 +48,8 @@ export const getThemeService = () =>
   _getThemeService({
     repository: getDexieThemeRepository(),
     touchStory: (storyKey) =>
-      getLocalRepository().updateStory({ key: storyKey, updatedAt: new Date() }),
+      getLocalRepository().updateStory({
+        key: storyKey,
+        updatedAt: new Date(),
+      }),
   });

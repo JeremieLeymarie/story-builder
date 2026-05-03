@@ -43,7 +43,10 @@ const baseStorySchemaFields = {
   firstSceneKey: z.string(),
   genres: z.array(z.enum(STORY_GENRES)),
   creationDate: z.string().transform((val) => new Date(val)),
-  updatedAt: z.string().transform((val) => new Date(val)).optional(),
+  updatedAt: z
+    .string()
+    .transform((val) => new Date(val))
+    .optional(),
 };
 
 const storySchema = z.discriminatedUnion("type", [
