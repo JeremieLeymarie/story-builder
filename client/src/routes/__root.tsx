@@ -34,7 +34,7 @@ const Component = () => {
     <TooltipProvider>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-          <div className="relative flex h-screen w-screen flex-col overflow-x-hidden">
+          <div className="relative flex max-h-screen w-screen flex-col overflow-hidden">
             {isMobile ? (
               <MobileNavbar
                 user={user}

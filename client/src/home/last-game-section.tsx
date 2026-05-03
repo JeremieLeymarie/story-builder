@@ -7,7 +7,7 @@ import { MoveRightIcon } from "lucide-react";
 export const LastGameSection = ({ lastGame }: { lastGame: Story }) => {
   return (
     <div
-      className="flex h-[60vh] w-full flex-col items-center justify-center px-8 select-none max-md:h-[55vh]"
+      className="flex h-[46vh] w-full flex-col items-center justify-center px-8 select-none max-md:h-[55vh]"
       style={{
         background: `url('${lastGame.image}')`,
         backgroundRepeat: "no-repeat",
