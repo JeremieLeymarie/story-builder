@@ -1,5 +1,5 @@
 import { Action, Scene, Story } from "@/lib/storage/domain";
-import { BuilderEdge, SceneProps } from "../types";
+import { BuilderEdge, SceneProps } from "./types";
 import { Node } from "@xyflow/react";
 
 export const sceneToNodeAdapter = ({

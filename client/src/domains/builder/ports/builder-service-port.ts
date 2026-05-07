@@ -11,6 +11,12 @@ import {
 import { JsonStoryData } from "@/services/common/schema";
 import { WithoutKey } from "@/types";
 
+export type BuilderConnection = {
+  sourceSceneKey: string;
+  targetSceneKey: string;
+  actionKey: string;
+};
+
 export type BuilderServicePort = {
   updateSceneBuilderPosition: (
     sceneKey: string,
@@ -27,11 +33,7 @@ export type BuilderServicePort = {
    * @returns A record with the updated scenes by key
    */
   removeSceneConnections: (
-    connections: {
-      sourceSceneKey: string;
-      actionKey: string;
-      targetSceneKey: string;
-    }[],
+    connections: BuilderConnection[],
   ) => Promise<Record<string, Scene>>;
   updateTargetProbability: (props: {
     sourceSceneKey: string;
@@ -78,10 +80,11 @@ export type BuilderServicePort = {
     scenes: Scene[];
   }>;
   loadBuilderState: (stories: Story[], scenes: Scene[]) => Promise<void>;
-  deleteScenes: (params: {
-    storyKey: string;
-    sceneKeys: string[];
-  }) => Promise<void>;
+  deleteScenes: (params: { storyKey: string; sceneKeys: string[] }) => Promise<{
+    updatedScenes: Record<string, Scene>;
+    deletedConnections: BuilderConnection[];
+    deletedSceneKeys: string[];
+  }>;
   deleteStory: (storyKey: string) => Promise<void>;
   importStory: (storyFromImport: JsonStoryData) => Promise<string>;
   updateStory: (
