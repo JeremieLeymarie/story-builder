@@ -1,6 +1,7 @@
-import { BuilderNode, BuilderEdge, NODE_WIDTH } from "@/builder/types";
+import { BuilderNode, BuilderEdge } from "@/builder/types";
 import ELK from "elkjs/lib/elk.bundled.js";
 import { LayoutServicePort } from "./ports/layout-service-port";
+import { NODE_WIDTH } from "@/builder/components/nodes";
 
 // TODO: find a way to test this without ELK time out
 const _getLayoutService = (): LayoutServicePort => {
