@@ -1,5 +1,5 @@
 import { Connection, FinalConnectionState, useReactFlow } from "@xyflow/react";
-import { BuilderEdge, BuilderNode, NODE_WIDTH } from "../types";
+import { BuilderEdge, BuilderNode } from "../types";
 import { useErrorToast } from "./use-error-toast";
 import { DEFAULT_SCENE, useAddScene } from "./use-add-scene";
 import { useBuilderContext } from "./use-builder-context";
@@ -12,6 +12,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { makeGetSceneQueryOptions } from "./use-get-scene";
 import { useHandleActionTargetsError } from "./use-handle-action-targets-error";
+import { NODE_WIDTH } from "../components/nodes";
 
 // TODO: test this
 export const useBuilderEdges = () => {

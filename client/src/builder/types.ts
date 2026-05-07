@@ -8,8 +8,6 @@ export type SceneProps = Scene & {
   isEditable?: boolean;
 };
 
-export const NODE_WIDTH = 300;
-
 export type BuilderNode = Node<SceneProps, "scene">;
 
 // EDGES
