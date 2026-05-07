@@ -23,11 +23,11 @@ export const BaseCard = ({
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
-      className="group relative h-[225px] w-[275px] shadow-md"
+      className="group relative h-56.25 w-68.75 shadow-md"
       onClick={onClick}
     >
       <CardHeader>
-        <CardTitle className="max-w-[275px] overflow-hidden rounded-sm bg-gray-50/75 p-2 text-ellipsis whitespace-nowrap">
+        <CardTitle className="w-max max-w-56.25 overflow-hidden rounded-lg bg-black/50 p-2 text-ellipsis whitespace-nowrap text-white">
           {title}
         </CardTitle>
         <CardDescription
