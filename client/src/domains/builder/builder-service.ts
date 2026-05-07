@@ -160,6 +160,7 @@ export const _getBuilderService = ({
       const sourceScene = await sceneRepository.get(sourceSceneKey);
       if (!sourceScene) throw new EntityNotExistError("scene", sourceSceneKey);
 
+      let addedConnection = false;
       const actions = sourceScene.actions.map((action) => {
         if (action.key === actionKey) {
           const targetAlreadyExists = action.targets.find(
@@ -167,6 +168,7 @@ export const _getBuilderService = ({
           );
           if (targetAlreadyExists) return action;
 
+          addedConnection = true;
           return {
             ...action,
             targets: [
@@ -182,7 +184,10 @@ export const _getBuilderService = ({
       });
 
       await localRepository.updatePartialScene(sourceScene.key, { actions });
-      return { ...sourceScene, actions };
+      return {
+        updatedScene: { ...sourceScene, actions },
+        addedConnection,
+      };
     },
 
     getScenesByKey: async (sourceSceneKeys: string[]) => {

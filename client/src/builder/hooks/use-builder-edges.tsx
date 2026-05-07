@@ -42,12 +42,18 @@ export const useBuilderEdges = () => {
 
     try {
       // Persist connection
-      const scene = await builderService.addSceneConnection({
-        sourceSceneKey,
-        destinationSceneKey: targetSceneKey,
-        actionKey: sourceActionKey,
-      });
-      const action = scene.actions.find((a) => a.key === sourceActionKey)!;
+      const { updatedScene, addedConnection } =
+        await builderService.addSceneConnection({
+          sourceSceneKey,
+          destinationSceneKey: targetSceneKey,
+          actionKey: sourceActionKey,
+        });
+      // No need to update react flow if the connection already existed
+      if (!addedConnection) return;
+
+      const action = updatedScene.actions.find(
+        (a) => a.key === sourceActionKey,
+      )!;
       const target = action.targets.find((t) => t.sceneKey === targetSceneKey)!;
       const edge = targetToEdgeAdapter({
         target,
@@ -57,9 +63,9 @@ export const useBuilderEdges = () => {
 
       // Update React Flow
       addEdges([edge]);
-      _updateNodeAndEdges(scene);
+      _updateNodeAndEdges(updatedScene);
       // Handle (add or remove) errors on action targets
-      handleActionTargetsError(scene, action);
+      handleActionTargetsError(updatedScene, action);
 
       // Invalidate scene queries used in builder editor
       const queryKey = makeGetSceneQueryOptions(sourceSceneKey).queryKey;
@@ -112,6 +118,7 @@ export const useBuilderEdges = () => {
         position: { x: position.x - NODE_WIDTH - 16, y: position.y - 27.5 },
       });
       if (!scene) return;
+
       // Create the connection from the newly created scene
       onConnect({
         source: scene.key,

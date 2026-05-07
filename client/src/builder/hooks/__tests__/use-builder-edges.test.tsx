@@ -57,21 +57,24 @@ describe.skip("use-builder-edges", () => {
       });
       const targetScene = factory.scene();
       builderSvc.addSceneConnection.mockResolvedValueOnce({
-        ...sourceScene,
-        actions: [
-          {
-            key: "action-a-key",
-            type: "simple",
-            text: "Action A",
-            targets: [{ probability: 100, sceneKey: targetScene.key }],
-          },
-          {
-            key: "action-b-key",
-            type: "simple",
-            text: "Action B",
-            targets: [],
-          },
-        ],
+        updatedScene: {
+          ...sourceScene,
+          actions: [
+            {
+              key: "action-a-key",
+              type: "simple",
+              text: "Action A",
+              targets: [{ probability: 100, sceneKey: targetScene.key }],
+            },
+            {
+              key: "action-b-key",
+              type: "simple",
+              text: "Action B",
+              targets: [],
+            },
+          ],
+        },
+        addedConnection: true,
       });
 
       const { result } = renderHook(() => useTestHook(), {
