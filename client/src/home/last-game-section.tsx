@@ -18,8 +18,10 @@ export const LastGameSection = ({ lastGame }: { lastGame: Story }) => {
       <div className="flex flex-wrap items-center gap-32 max-lg:justify-center max-lg:gap-12">
         <div className="w-full space-y-4">
           <Title variant="section">Pick up where you left off:</Title>
-          <Title className="max-w-fit">{lastGame.title}</Title>
-          {lastGame.genres.length && (
+          <p className="max-w-fit rounded-xl bg-black/50 px-4 py-2 text-3xl font-bold text-white">
+            {lastGame.title}
+          </p>
+          {lastGame.genres.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {lastGame.genres.map((genre) => (
                 <StoryGenreBadge key={genre} variant={genre} />
