@@ -26,7 +26,7 @@ export type BuilderServicePort = {
     sourceSceneKey: string;
     actionKey: string;
     destinationSceneKey: string;
-  }) => Promise<Scene>;
+  }) => Promise<{ updatedScene: Scene; addedConnection: boolean }>;
   /**
    * * Delete connections to specified targets (can be multiple) on a specified action
    * @param connections An array containing information about the connections to delete : source scene key, action key and target scene key

@@ -14,4 +14,5 @@ export const getStubBuilderSceneRepository =
     getScenesByKey: vi.fn(),
     bulkAdd: vi.fn(() => Promise.resolve([nanoid()])),
     update: vi.fn(),
+    bulkUpdate: vi.fn(),
   });
