@@ -36,9 +36,10 @@ export const useBuilder = () => {
       .catch(handleError);
   };
 
-  const onBeforeNodesDelete: OnBeforeDelete<BuilderNode, BuilderEdge> = async ({
+  const onBeforeDelete: OnBeforeDelete<BuilderNode, BuilderEdge> = async ({
     nodes,
   }) => {
+    // When an edge is deleted
     if (nodes.length === 0) return true;
     if (nodes.some((n) => n.data.isFirstScene)) {
       toast.error("Cannot delete the first scene of the story");
@@ -58,7 +59,7 @@ export const useBuilder = () => {
 
   return {
     onNodeDragStop,
-    onBeforeNodesDelete,
+    onBeforeDelete,
     onConnect,
     onConnectEnd,
     onEdgesDelete,

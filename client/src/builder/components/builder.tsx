@@ -30,7 +30,7 @@ const BuilderFlow = () => {
     onConnectEnd,
     onEdgesDelete,
     onNodeDragStop,
-    onBeforeNodesDelete,
+    onBeforeDelete,
     onInit,
   } = useBuilder();
 
@@ -45,7 +45,7 @@ const BuilderFlow = () => {
       onConnectEnd={onConnectEnd}
       onEdgesDelete={onEdgesDelete}
       onNodeDragStop={onNodeDragStop}
-      onBeforeDelete={onBeforeNodesDelete}
+      onBeforeDelete={onBeforeDelete}
       onInit={onInit}
       nodeOrigin={[0, 0.5]}
       minZoom={0.1}

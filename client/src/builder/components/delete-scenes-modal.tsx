@@ -1,11 +1,9 @@
 import { ConfirmDialog } from "@/design-system/components";
 import { useDeleteSceneStore } from "../hooks/use-delete-scenes-store";
-import { useBuilderContext } from "../hooks/use-builder-context";
-import { useBuilderEditorStore } from "../hooks/use-builder-editor-store";
-import { useErrorToast } from "../hooks/use-error-toast";
 import { useReactFlow } from "@xyflow/react";
 import { BuilderNode } from "../types";
 import { isSceneVisitCondition } from "@/lib/storage/domain";
+import { useDeleteScenes } from "../hooks/use-delete-scenes";
 
 const useAffectedScenes = (deletedKeys: string[]) => {
   const { getNodes } = useReactFlow<BuilderNode>();
@@ -28,22 +26,10 @@ const useAffectedScenes = (deletedKeys: string[]) => {
 
 export const DeleteSceneModal = () => {
   const { isOpen, keys, close } = useDeleteSceneStore();
-  const { story, builderService } = useBuilderContext();
-  const { handleError } = useErrorToast();
-  const { setNodes } = useReactFlow<BuilderNode>();
-  const closeEditor = useBuilderEditorStore((state) => state.close);
+  const deleteScenes = useDeleteScenes();
 
   const affectedScenes = useAffectedScenes(keys);
   const isPlural = keys.length > 1;
-
-  const handleConfirm = () => {
-    builderService
-      .deleteScenes({ sceneKeys: keys, storyKey: story.key })
-      .catch(handleError);
-    setNodes((nodes) => nodes.filter((n) => !keys.includes(n.data.key)));
-    closeEditor();
-    close();
-  };
 
   const description =
     affectedScenes.length > 0 ? (
@@ -68,7 +54,7 @@ export const DeleteSceneModal = () => {
       setOpen={(open) => {
         if (!open) close();
       }}
-      onConfirm={handleConfirm}
+      onConfirm={() => deleteScenes(keys)}
       onCancel={close}
     />
   );
