@@ -1,6 +1,7 @@
 import { Toolbar } from "@/design-system/components/toolbar";
 import { ConfirmDialog } from "@/design-system/components";
 import { Button } from "@/design-system/primitives";
+import { Input } from "@/design-system/primitives/input";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
 import { HomeIcon, PlusIcon, SearchIcon, Trash2Icon } from "lucide-react";
 import { useWikiStore } from "./hooks/use-wiki-store";
@@ -12,9 +13,6 @@ import { CategoryActionsDropdown } from "./category-actions-dropdown";
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useDeleteArticle } from "./hooks/use-delete-article";
-import { Separator } from "@/design-system/primitives/separator";
-import { Kbd } from "@/design-system/primitives/kbd";
-import { getUserOS } from "@/lib/get-os";
 
 const ArticleTitle = ({
   title,
@@ -117,16 +115,11 @@ const Section = ({ category, articles }: WikiSection) => {
 };
 
 export const WikiBar = () => {
-  const [wikiData, openSearch] = useWikiStore((state) => [
-    state.wikiData,
-    state.openSearch,
-  ]);
+  const wikiData = useWikiStore((state) => state.wikiData);
   const {
     sections,
     wiki: { key: wikiKey },
   } = wikiData;
-
-  const os = getUserOS();
 
   return (
     <Toolbar className="sticky top-20 w-[300px] space-y-4 self-start">
