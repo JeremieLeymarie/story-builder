@@ -12,7 +12,6 @@ import {
   sceneToNodeAdapter,
 } from "../adapters";
 
-// TODO: on peut encore créer deux fois le même edge
 export const useDeleteScenes = () => {
   const closeBuilderEditor = useBuilderEditorStore((state) => state.close);
   const closeDeleteConfirmation = useDeleteSceneStore((state) => state.close);
