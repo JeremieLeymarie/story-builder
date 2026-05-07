@@ -13,19 +13,30 @@ import { ReactNode, useState } from "react";
 import { Badge } from "../primitives/badge";
 import { StoryGenreBadge } from "./story-genre-badge";
 import { JsonStoryData } from "@/services/common/schema";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 const ImportPreview = ({
   storyFromImport,
 }: {
   storyFromImport: JsonStoryData;
 }) => {
+  const isMobile = useIsMobile();
+  const numberOfGenresToShow = isMobile ? 2 : 3;
+
+  const displayedGenres = storyFromImport.story.genres.slice(
+    0,
+    numberOfGenresToShow,
+  );
+  const hiddenGenresCount =
+    storyFromImport.story.genres.length - numberOfGenresToShow;
+
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex w-full flex-col gap-2">
       <Badge>Preview</Badge>
       <div className="flex gap-2 rounded border p-2 text-sm">
         <img
           src={storyFromImport.story.image}
-          className="block h-20 w-20 object-cover"
+          className="block h-20 w-20 rounded object-cover"
         />
         <div>
           <p className="font-semibold">{storyFromImport.story.title}</p>
@@ -34,10 +45,19 @@ const ImportPreview = ({
             {storyFromImport.story.author?.username ??
               ANONYMOUS_AUTHOR.username}
           </p>
-          <div className="flex gap-2">
-            {storyFromImport.story.genres.map((genre) => (
-              <StoryGenreBadge key={genre} variant={genre} />
-            ))}
+          <div className="flex flex-wrap items-center gap-1">
+            {displayedGenres.map((genre) => (
+              <StoryGenreBadge
+                key={genre}
+                variant={genre}
+                size={isMobile ? "sm" : "md"}
+              />
+            ))}{" "}
+            {hiddenGenresCount > 0 && (
+              <span className="text-muted-foreground ml-.5 text-xs sm:text-sm">
+                + {hiddenGenresCount} others
+              </span>
+            )}
           </div>
           <p>{storyFromImport.scenes.length} scenes</p>
         </div>

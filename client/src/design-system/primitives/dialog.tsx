@@ -1,11 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { Dialog as DialogPrimitive } from "radix-ui";
-
 import { XIcon } from "lucide-react";
+import { Dialog as DialogPrimitive } from "radix-ui";
 import { cn } from "@/lib/style";
 import { Button } from "./button";
+
+// Modified to use a larger max-width in DialogContent
 
 function Dialog({
   ...props
@@ -39,7 +40,7 @@ function DialogOverlay({
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
       className={cn(
-        "data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 fixed inset-0 isolate z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs",
+        "data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0 fixed inset-0 isolate z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs",
         className,
       )}
       {...props}
@@ -61,7 +62,7 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "bg-background data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 ring-foreground/10 fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl p-4 text-sm ring-1 duration-100 outline-none sm:max-w-sm",
+          "bg-popover text-popover-foreground ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl p-4 text-sm ring-1 duration-100 outline-none md:max-w-md",
           className,
         )}
         {...props}
@@ -72,7 +73,7 @@ function DialogContent({
             <Button
               variant="ghost"
               className="absolute top-2 right-2"
-              size="xs"
+              size="icon-sm"
             >
               <XIcon />
               <span className="sr-only">Close</span>
@@ -128,7 +129,10 @@ function DialogTitle({
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn("text-base leading-none font-medium", className)}
+      className={cn(
+        "cn-font-heading text-base leading-none font-medium",
+        className,
+      )}
       {...props}
     />
   );
