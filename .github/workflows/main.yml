@@ -2,11 +2,26 @@ name: CI
 
 on:
   push:
-    paths-ignore:
-      - 'client/**'
-      - 'server/**'
+  pull_request:
 
 jobs:
+
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      client: ${{ steps.filter.outputs.client }}
+      server: ${{ steps.filter.outputs.server }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            client:
+              - 'client/**'
+            server:
+              - 'server/**'
+
   client:
     runs-on: ubuntu-latest
 
@@ -43,6 +58,7 @@ jobs:
         run: bun run knip
 
   server:
+
     runs-on: ubuntu-latest
 
     strategy:
@@ -53,6 +69,8 @@ jobs:
       run:
         working-directory: ./server
 
+    needs: changes
+    if: ${{ needs.changes.outputs.server == 'true' }}
 
     steps:
       - uses: actions/checkout@v6
