@@ -4,6 +4,7 @@ import { StoryGenreCombobox } from "@/design-system/components/story-genre-combo
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -20,6 +21,7 @@ import { CircleHelpIcon, ExternalLinkIcon } from "lucide-react";
 import { WikiSelector } from "../../wiki-selector";
 import { useBuilderContext } from "@/builder/hooks/use-builder-context";
 import { Link } from "@tanstack/react-router";
+import { FileDropInput } from "@/design-system/components/file-input";
 
 export const EditStoryForm = ({ form }: { form: EditStoryFormType }) => {
   const { story } = useBuilderContext();
@@ -56,7 +58,7 @@ export const EditStoryForm = ({ form }: { form: EditStoryFormType }) => {
               <FormControl>
                 <StoryGenreCombobox
                   onChange={field.onChange}
-                  values={field.value}
+                  values={field.value ?? []}
                 />
               </FormControl>
               <FormMessage />
@@ -85,8 +87,24 @@ export const EditStoryForm = ({ form }: { form: EditStoryFormType }) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Image</FormLabel>
+              <FormDescription>The cover image for your story</FormDescription>
               <FormControl>
-                <Input placeholder="http://your-image-url.com" {...field} />
+                <div className="flex flex-col items-center gap-1">
+                  <Input
+                    type="url"
+                    placeholder="https://your-image.org"
+                    onChange={(v) => field.onChange(v.target.value || null)}
+                    value={field.value || ""}
+                  />
+                  <p className="text-muted-foreground">--- OR ---</p>
+                  <FileDropInput
+                    onUploadFile={(v) => field.onChange(v || null)}
+                    accept="image"
+                    readAs="dataURL"
+                    size="sm"
+                    className="w-full"
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -106,7 +124,7 @@ export const EditStoryForm = ({ form }: { form: EditStoryFormType }) => {
                       className="hover:text-primary"
                     />
                   </TooltipTrigger>
-                  <TooltipContent className="max-w-[300px] text-xs font-normal">
+                  <TooltipContent className="max-w-75 text-xs font-normal">
                     You can link a story to a wiki and reference wiki articles
                     in scenes
                   </TooltipContent>

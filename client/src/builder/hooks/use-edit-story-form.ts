@@ -11,11 +11,24 @@ const editStorySchema = z.object({
     .string()
     .min(2, { message: "Title must be at least 2 characters long" }),
   description: z
-    .string()
-    .min(10, { message: "Description must be at least 10 characters long" }),
-  image: z.url({ message: "Image has to be a valid URL" }),
+    .preprocess(
+      (v: string | undefined) => (typeof v === "string" ? v.trim() : undefined),
+      z.string().optional(),
+    )
+    .optional(),
+  image: z
+    .preprocess(
+      (v: string | undefined) =>
+        typeof v === "string" ? v.trim() || undefined : undefined,
+      z.url({ message: "Image has to be a valid URL" }).optional(),
+    )
+    .optional(),
   status: z.enum(STORY_TYPE).optional(),
-  genres: z.array(z.enum(STORY_GENRES)),
+  genres: z
+    .array(z.enum(STORY_GENRES), {
+      error: "You must select at least of genre for your story",
+    })
+    .optional(),
   firstSceneKey: z.nanoid().optional(),
   wikiKey: z.nanoid().optional(),
 });

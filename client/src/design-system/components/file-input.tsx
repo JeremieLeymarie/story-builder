@@ -64,6 +64,7 @@ type FileInputProps = {
   readAs: ReadAs;
   size?: VariantProps<typeof variants>["size"];
   showNameAfterUpload?: boolean;
+  className?: string;
 };
 
 const fileTypeMapping: Record<Accept, string> = {
@@ -77,6 +78,7 @@ export const FileDropInput = ({
   readAs,
   size,
   showNameAfterUpload = false,
+  className,
 }: FileInputProps) => {
   const { readFile } = useFileUpload({
     onReadFile: onUploadFile,
@@ -134,6 +136,7 @@ export const FileDropInput = ({
         className={cn(
           variants({ size }),
           isDraggingOver && "border-primary border-2",
+          className,
         )}
         onClick={handleDropzoneClick}
       >
