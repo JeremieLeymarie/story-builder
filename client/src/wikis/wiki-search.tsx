@@ -45,7 +45,7 @@ export const WikiSearch = () => {
       open={isOpen}
       onOpenChange={(shouldOpen) => (shouldOpen ? open() : close())}
     >
-      <Command className="max-w-sm rounded-lg border" shouldFilter={false}>
+      <Command className="rounded-lg border" shouldFilter={false}>
         <CommandInput
           placeholder="Search..."
           onValueChange={(value) => debouncer.maybeExecute(value)}
