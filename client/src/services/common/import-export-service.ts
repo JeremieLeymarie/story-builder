@@ -12,8 +12,8 @@ import z from "zod";
 import { produce, WritableDraft } from "immer";
 import {
   CharacterConfigFromImport,
-  ImportData,
-  importDataSchema,
+  JsonStoryData,
+  jsonDataSchema,
   ThemeFromImport,
   WikiFromImport,
 } from "./schema";
@@ -31,6 +31,7 @@ import {
   getDexieCharacterRepository,
 } from "@/domains/builder/character-repository";
 import { match, P } from "ts-pattern";
+import { KeyNotFoundError } from "./errors";
 
 export const ANONYMOUS_AUTHOR = {
   key: "ANONYMOUS_AUTHOR_KEY",
@@ -58,14 +59,14 @@ const makeErr = (error: ImportServiceError): ImportStoryResult => ({
 });
 const makeOk = <T>(data: T): ImportStoryResult<T> => ({ data, isOk: true });
 
-export type ImportServicePort = {
-  parseJSON: (jsonData: string) => ImportStoryResult<ImportData>;
+export type ImportExportServicePort = {
+  parseJSON: (jsonData: string) => ImportStoryResult<JsonStoryData>;
   createStory: (props: {
-    story: ImportData;
+    story: JsonStoryData;
     type: Story["type"];
   }) => Promise<{ data: Story }>;
   createScenes: (props: {
-    story: ImportData;
+    story: JsonStoryData;
     newStoryKey: string;
     oldCharacterAttrToNew: Record<string, string>;
   }) => Promise<Record<string, string>>;
@@ -85,8 +86,32 @@ export type ImportServicePort = {
   }) => Promise<void>;
 };
 
+const _makeNewSideEffects = ({
+  scene,
+  oldCharacterAttrToNew,
+}: {
+  scene: Scene;
+  oldCharacterAttrToNew: Record<string, string>;
+}) => {
+  return scene.sideEffects?.map((effectConfig) =>
+    produce(effectConfig, (draft) => {
+      const oldAttrKey = draft.effect.attributeKey;
+      const newAttrKey = oldCharacterAttrToNew[oldAttrKey];
+      if (!newAttrKey)
+        throw new KeyNotFoundError(
+          "attributeKey",
+          "scene.sideEffects",
+          oldAttrKey,
+        );
+
+      draft.key = nanoid();
+      draft.effect.attributeKey = newAttrKey;
+    }),
+  );
+};
+
 // We should implement some kind of context instead of passing everything every time
-const _mutateConditionAction = ({
+const _prepareConditionActionPayload = ({
   action,
   scene,
   oldScenesToNewScenes,
@@ -103,18 +128,14 @@ const _mutateConditionAction = ({
       (condition) => {
         const newTargetSceneKey = oldScenesToNewScenes[condition.sceneKey];
         if (!newTargetSceneKey)
-          throw new Error(
-            `sceneKey not found in old scene to new scenes mapping, for scene [${scene.title}] and action [${action.text}]`,
-          );
+          throw new KeyNotFoundError("sceneKey", "scene", scene.key);
         condition.sceneKey = newTargetSceneKey;
       },
     )
     .with({ type: "character-attribute" }, (condition) => {
       const newAttrKey = oldCharacterAttrToNew[condition.attributeKey];
       if (!newAttrKey)
-        throw new Error(
-          `attributeKey not found in old character attributes to new attributes mapping, for character attribute [newAttrKey]`,
-        );
+        throw new KeyNotFoundError("attributeKey", "action", action.key);
       condition.attributeKey = newAttrKey;
     })
     .exhaustive();
@@ -125,7 +146,7 @@ export const _makeBulkSceneUpdatePayload = ({
   oldScenesToNewScenes,
   oldCharacterAttrToNew,
 }: {
-  storyFromImport: ImportData;
+  storyFromImport: JsonStoryData;
   oldScenesToNewScenes: Record<string, string>;
   oldCharacterAttrToNew: Record<string, string>;
 }) => {
@@ -134,7 +155,7 @@ export const _makeBulkSceneUpdatePayload = ({
       ...acc,
       [scene.key]: scene,
     }),
-    {} as Record<string, ImportData["scenes"][number]>,
+    {} as Record<string, JsonStoryData["scenes"][number]>,
   );
 
   return storyFromImport.scenes
@@ -142,8 +163,10 @@ export const _makeBulkSceneUpdatePayload = ({
       if (!scenesByKey[scene.key]) return null;
 
       const actions = scenesByKey[scene.key]!.actions;
-
       if (!actions.length) return null; // No need to update if the scene doesn't have any actions
+
+      const newSceneKey = oldScenesToNewScenes[scene.key];
+      if (!newSceneKey) return null;
 
       const newActions = actions?.map((action) =>
         produce(action, (draft) => {
@@ -151,8 +174,10 @@ export const _makeBulkSceneUpdatePayload = ({
           draft.targets = draft.targets.map((target) => {
             const newSceneKey = oldScenesToNewScenes[target.sceneKey];
             if (!newSceneKey) {
-              throw new Error(
-                `sceneKey not found in old scene to new scenes mapping, for scene [${scene.title}] and action [${action.text}]`,
+              throw new KeyNotFoundError(
+                "sceneKey",
+                "action.target",
+                target.sceneKey,
               );
             }
             return {
@@ -161,7 +186,7 @@ export const _makeBulkSceneUpdatePayload = ({
             };
           });
           if (draft.type === "conditional")
-            _mutateConditionAction({
+            _prepareConditionActionPayload({
               action: draft,
               scene,
               oldScenesToNewScenes,
@@ -170,18 +195,15 @@ export const _makeBulkSceneUpdatePayload = ({
         }),
       );
 
-      const newSceneKey = oldScenesToNewScenes[scene.key];
-
-      if (!newSceneKey) {
-        return null;
-      }
-
-      return { key: newSceneKey, actions: newActions };
+      return {
+        key: newSceneKey,
+        actions: newActions,
+      };
     })
     .filter((scene) => !!scene);
 };
 
-export const _getImportService = ({
+export const _getImportExportService = ({
   localRepository,
   wikiRepository,
   themeRepository,
@@ -191,7 +213,7 @@ export const _getImportService = ({
   wikiRepository: WikiRepositoryPort;
   themeRepository: ThemeRepositoryPort;
   characterRepository: CharacterRepositoryPort;
-}): ImportServicePort => {
+}): ImportExportServicePort => {
   const _createWikiCategories = async (
     categories: WikiFromImport["categories"],
     newWikiKey: string,
@@ -322,7 +344,7 @@ export const _getImportService = ({
       } catch (_) {
         return makeErr("Invalid JSON format");
       }
-      const zodParsed = importDataSchema.safeParse(parsed);
+      const zodParsed = jsonDataSchema.safeParse(parsed);
       if (!zodParsed.success)
         return makeErr(`Invalid format: ${z.prettifyError(zodParsed.error)}`);
 
@@ -371,6 +393,14 @@ export const _getImportService = ({
           ...sceneData,
           storyKey: newStoryKey,
           actions: [],
+          ...((scene?.sideEffects ?? []).length > 0
+            ? {
+                sideEffects: _makeNewSideEffects({
+                  scene,
+                  oldCharacterAttrToNew,
+                }),
+              }
+            : {}),
         });
         oldScenesToNewScenes[oldSceneKey] = key;
       }
@@ -453,8 +483,8 @@ export const _getImportService = ({
   };
 };
 
-export const getImportService = () =>
-  _getImportService({
+export const getImportExportService = () =>
+  _getImportExportService({
     localRepository: getLocalRepository(),
     wikiRepository: getDexieWikiRepository(),
     themeRepository: getDexieThemeRepository(),

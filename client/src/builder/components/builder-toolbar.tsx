@@ -10,7 +10,6 @@ import {
   NotebookTextIcon,
 } from "lucide-react";
 import { ExportModal } from "./export-modal";
-import { ButtonShortCutDoc } from "@/design-system/components/shortcut-doc";
 import { useBuilderContext } from "../hooks/use-builder-context";
 import {
   Toolbar,
@@ -26,6 +25,7 @@ import {
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
 import { cn } from "@/lib/style";
+import { Kbd } from "@/design-system/primitives/kbd";
 
 type ContentProps = {
   toggleExpanded: () => void;
@@ -34,7 +34,7 @@ type ContentProps = {
 const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
   const { story } = useBuilderContext();
   const { addScene, openBuilderEditor, testStory } = useToolbarActions();
-  const btnClassname = "flex w-full justify-start gap-4";
+  const btnClassname = "flex w-full justify-between";
 
   return (
     <>
@@ -54,30 +54,36 @@ const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
           className={btnClassname}
           onClick={() => addScene({ position: "auto" })}
         >
-          <NotebookTextIcon />
-          Add a scene
-          <ButtonShortCutDoc doc="N" />
+          <div className="flex items-center gap-4">
+            <NotebookTextIcon />
+            Add a scene
+          </div>
+          <Kbd>N </Kbd>
         </Button>
         <Button
           variant="outline"
           className={btnClassname}
           onClick={() => testStory(story.firstSceneKey)}
         >
-          <TestTubesIcon />
-          Test
-          <ButtonShortCutDoc doc="T" />
+          <div className="flex items-center gap-4">
+            <TestTubesIcon />
+            Test
+          </div>
+          <Kbd>T </Kbd>
         </Button>
         <ExportModal
           trigger={
             <Button variant="outline" className={btnClassname}>
-              <DownloadIcon />
-              Export
-              <ButtonShortCutDoc doc="E" />
+              <div className="flex items-center gap-4">
+                <DownloadIcon />
+                Export
+              </div>
+              <Kbd>E</Kbd>
             </Button>
           }
         />
         <Button
-          className={btnClassname}
+          className={cn(btnClassname, "justify-start gap-4")}
           variant="outline"
           onClick={() =>
             openBuilderEditor({ type: "story-editor", payload: null })
@@ -91,13 +97,16 @@ const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
           target="_blank"
           params={{ gameKey: story.key, sceneKey: story.firstSceneKey }} // For now, always open UI Editor with first scene
         >
-          <Button className={btnClassname} variant="outline">
+          <Button
+            className={cn(btnClassname, "justify-start gap-4")}
+            variant="outline"
+          >
             <PaletteIcon />
             Edit Game Theme
           </Button>
         </Link>
         <Button
-          className={btnClassname}
+          className={cn(btnClassname, "justify-start gap-4")}
           variant="outline"
           onClick={() => {
             openBuilderEditor({ type: "character-editor", payload: null });

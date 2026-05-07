@@ -406,10 +406,20 @@ export interface components {
             /** Currentscenekey */
             currentSceneKey: string;
             /**
+             * Createdat
+             * Format: date-time
+             */
+            createdAt: string;
+            /**
              * Lastplayedat
              * Format: date-time
              */
             lastPlayedAt: string;
+            /**
+             * Totalplaytimems
+             * @default 0
+             */
+            totalPlayTimeMs: number;
             /** Finished */
             finished?: boolean | null;
             /** Storykey */

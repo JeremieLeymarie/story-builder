@@ -35,6 +35,7 @@ import { ConfirmLoadAction } from "./components/confirm-load-action";
 import { ConfirmSaveAction } from "./components/confirm-save-action";
 import { getUserService } from "@/domains/user/user-service";
 import { useIsOnline } from "@/hooks/use-is-online";
+import { Badge } from "@/design-system/primitives/badge";
 
 const NavButton = ({
   children,
@@ -57,6 +58,8 @@ const NavButton = ({
   );
 };
 
+// @ts-expect-error Sync is temporarily disabled
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const NavbarActions = ({
   user,
   saveLocalData,
@@ -146,11 +149,7 @@ const NavbarActions = ({
   );
 };
 
-export const MobileNavbar = ({
-  user,
-  loadRemoteData,
-  saveLocalData,
-}: {
+export const MobileNavbar = (_props: {
   user?: User | null;
   loadRemoteData: () => void;
   saveLocalData: () => void;
@@ -161,7 +160,7 @@ export const MobileNavbar = ({
 
   return (
     <Sheet>
-      <header className="border-b-primary sticky top-0 z-50 flex h-[50px] items-center justify-between border-b-4 bg-white/85 px-4 py-6 backdrop-blur-sm">
+      <header className="border-b-primary sticky top-0 z-50 flex h-(--navbar-height) items-center justify-between border-b-4 bg-white/85 px-4 py-6 backdrop-blur-sm">
         <SheetTrigger asChild>
           <Button size="icon" variant="ghost">
             <MenuIcon />
@@ -217,12 +216,15 @@ export const MobileNavbar = ({
         <div className="flex flex-col items-center">
           <Divider className="w-6/12" />
         </div>
-        <div className="flex items-center gap-6">
+        {/* Sync is temporarily disabled */}
+        <div className="text-muted-foreground flex items-center gap-2 px-2 font-normal">
+          Synchronization<Badge variant="secondary">Coming soon</Badge>
+          {/*
           <NavbarActions
             user={user}
             loadRemoteData={loadRemoteData}
             saveLocalData={saveLocalData}
-          />
+          />*/}
         </div>
         <SheetFooter>
           <Button

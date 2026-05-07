@@ -2,7 +2,6 @@ import { EditStoryFormType } from "@/builder/hooks/use-edit-story-form";
 import { useGetAllWikis } from "@/builder/hooks/use-get-all-wikis";
 import { StoryGenreCombobox } from "@/design-system/components/story-genre-combobox";
 import {
-  Button,
   Form,
   FormControl,
   FormField,
@@ -18,20 +17,11 @@ import {
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
 import { CircleHelpIcon, ExternalLinkIcon } from "lucide-react";
-import { BaseSyntheticEvent } from "react";
 import { WikiSelector } from "../../wiki-selector";
 import { useBuilderContext } from "@/builder/hooks/use-builder-context";
 import { Link } from "@tanstack/react-router";
 
-export const EditStoryForm = ({
-  onSubmit,
-  form,
-  isSubmitting = false,
-}: {
-  onSubmit: (e?: BaseSyntheticEvent) => Promise<void>;
-  isSubmitting?: boolean;
-  form: EditStoryFormType;
-}) => {
+export const EditStoryForm = ({ form }: { form: EditStoryFormType }) => {
   const { story } = useBuilderContext();
   const { wikis, isLoading: isWikisLoading } = useGetAllWikis();
   const assignedWiki = wikis?.userWikis.find(
@@ -40,7 +30,7 @@ export const EditStoryForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={onSubmit} className="space-y-4">
+      <form className="space-y-4">
         <FormField
           control={form.control}
           name="title"
@@ -147,9 +137,6 @@ export const EditStoryForm = ({
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isSubmitting}>
-          Save
-        </Button>
       </form>
     </Form>
   );

@@ -1,34 +1,61 @@
-import { STORY_GENRES, STORY_TYPE } from "@/lib/storage/domain";
+import { STORY_GENRES } from "@/lib/storage/domain";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, UseFormReturn } from "react-hook-form";
 import z from "zod";
 
-export const createStorySchema = z.object({
+const createStorySchema = z.object({
   title: z
     .string()
     .min(2, { message: "Title must be at least 2 characters long" }),
   description: z
-    .string()
-    .min(10, { message: "Description must be at least 10 characters long" }),
-  image: z.url({ message: "Image has to be a valid URL" }),
-  status: z.enum(STORY_TYPE).optional(),
-  genres: z.array(z.enum(STORY_GENRES)),
-  firstSceneKey: z.nanoid().optional(),
+    .preprocess(
+      (v: string | undefined) => (typeof v === "string" ? v.trim() : undefined),
+      z.string().optional(),
+    )
+    .optional(),
+  image: z
+    .preprocess(
+      (v: string | undefined) =>
+        typeof v === "string" ? v.trim() || undefined : undefined,
+      z.url({ message: "Image has to be a valid URL" }).optional(),
+    )
+    .optional(),
+  genres: z
+    .array(z.enum(STORY_GENRES), {
+      error: "You must select at least of genre for your story",
+    })
+    .optional(),
 });
 
-export type CreateStorySchema = z.infer<typeof createStorySchema>;
+export type CreateStorySchemaInput = z.input<typeof createStorySchema>;
+export type CreateStorySchemaOutput = z.output<typeof createStorySchema>;
 
-export const useCreateStoryForm = () => {
-  const form = useForm<CreateStorySchema>({
+export const useCreateStoryForm = ({
+  onSubmit,
+}: {
+  onSubmit: (props: CreateStorySchemaOutput) => void;
+}) => {
+  const form = useForm<
+    CreateStorySchemaInput,
+    unknown,
+    CreateStorySchemaOutput
+  >({
     resolver: zodResolver(createStorySchema),
     defaultValues: {
       title: "",
       description: "",
       image: "",
+      genres: [],
     },
   });
 
-  return form;
+  const submit = form.handleSubmit(onSubmit);
+
+  return { form, submit };
 };
 
-export type StoryFormType = UseFormReturn<CreateStorySchema>;
+export type StoryFormType = UseFormReturn<
+  CreateStorySchemaInput,
+  unknown,
+  CreateStorySchemaOutput
+>;

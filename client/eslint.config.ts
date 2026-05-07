@@ -2,7 +2,7 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import globals from "globals";
 import { fixupConfigRules } from "@eslint/compat";
 import tsParser from "@typescript-eslint/parser";
-import reactRefresh from "eslint-plugin-react-refresh";
+import { reactRefresh } from "eslint-plugin-react-refresh";
 import js from "@eslint/js";
 import reactHooks from "eslint-plugin-react-hooks";
 
@@ -17,6 +17,18 @@ const compat = new FlatCompat({
 
 export default defineConfig([
   globalIgnores(["**/dist", "**/dev-dist"]),
+  reactRefresh.configs.vite({
+    // https://github.com/ArnaudBarre/eslint-plugin-react-refresh/issues/102
+    extraHOCs: [
+      "createFileRoute",
+      "createLazyFileRoute",
+      "createRootRoute",
+      "createRootRouteWithContext",
+      "createLink",
+      "createRoute",
+      "createLazyRoute",
+    ],
+  }),
   {
     languageOptions: {
       globals: {
@@ -34,18 +46,7 @@ export default defineConfig([
       ),
     ),
 
-    plugins: {
-      "react-refresh": reactRefresh,
-    },
-
     rules: {
-      "react-refresh/only-export-components": [
-        "warn",
-        {
-          allowConstantExport: true,
-        },
-      ],
-
       eqeqeq: "error",
 
       "@typescript-eslint/no-unused-vars": [

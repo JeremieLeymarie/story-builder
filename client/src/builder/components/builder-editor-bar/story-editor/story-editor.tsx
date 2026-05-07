@@ -8,13 +8,13 @@ import {
 } from "@/design-system/components/toolbar";
 import { Trash2Icon } from "lucide-react";
 import { Button } from "@/design-system/primitives";
-import { DeleteStoryModal } from "../../delete-modal";
+import { DeleteStoryModal } from "../../delete-story-modal";
 import { useDeleteStory } from "@/builder/hooks/use-delete-story";
 
 export const StoryEditor = () => {
   const { story } = useBuilderContext();
-  const { form, handleSubmit, isSubmitting } = useEditStoryForm({
-    defaultValues: story,
+  const { form } = useEditStoryForm({
+    values: story,
   });
   const { deleteStory } = useDeleteStory();
 
@@ -31,11 +31,7 @@ export const StoryEditor = () => {
           }
         />
       </ToolbarHeader>
-      <EditStoryForm
-        form={form}
-        onSubmit={handleSubmit}
-        isSubmitting={isSubmitting}
-      />
+      <EditStoryForm form={form} />
     </Toolbar>
   );
 };

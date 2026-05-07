@@ -15,13 +15,14 @@ import {
   WikiArticle,
   WikiArticleLink,
   WikiCategory,
+  ProgressCharacter,
+  SideEffect,
 } from "../storage/domain";
 import { faker } from "@faker-js/faker";
 import { nanoid } from "nanoid";
 import { makeSimpleLexicalContent } from "../lexical-content";
 
 type _EntityBase = {
-  key: string;
   [k: string]: unknown;
 };
 
@@ -148,7 +149,6 @@ const _characterConfigAttributeFactory = {
       "wisdom",
     ]),
   description: faker.word.words,
-  isEditableByPlayer: () => Math.random() > 0.5,
   visibility: () => (Math.random() > 0.5 ? "visible" : "invisible"),
   initialValue: faker.number.int,
 } satisfies CharacterConfigAttributeFactory;
@@ -167,6 +167,21 @@ const _characterConfigFactory = {
         }),
     ),
 } satisfies CharacterConfigFactory;
+
+type SideEffectFactory = _BaseFactory<SideEffect>;
+const _sideEffectFactory = {
+  key: nanoid,
+  name: faker.word.sample,
+  trigger: () => faker.helpers.arrayElement(["scene-load"]),
+  isVisible: () => Math.random() > 0.5,
+  effect: () => ({
+    type: "character-attribute",
+    increment: faker.number.int({ min: -10, max: 10 }),
+    attributeKey: nanoid(),
+    title: Math.random() > 0.8 ? faker.word.words() : undefined,
+    description: Math.random() > 0.8 ? faker.word.words() : undefined,
+  }),
+} satisfies SideEffectFactory;
 
 type SceneFactory = _BaseFactory<Scene>;
 const _sceneFactory = {
@@ -191,31 +206,43 @@ const _sceneFactory = {
   builderParams: () => ({
     position: { x: faker.number.float(), y: faker.number.float() },
   }),
+  sideEffects: () =>
+    Array(faker.number.int({ min: 0, max: 3 }))
+      .fill(null)
+      .map((_, i) =>
+        makeRandomEntity(_sideEffectFactory, {
+          name: `Side Effect #${i + 1}`,
+        } as Partial<SideEffect>),
+      ),
 } satisfies SceneFactory;
+
+type ProgressCharacterFactory = _BaseFactory<ProgressCharacter>;
+const _progressCharacterFactory = {
+  attributes: () =>
+    Object.fromEntries(
+      Array(faker.number.int({ min: 1, max: 5 }))
+        .fill(null)
+        .map(() => {
+          const attr = makeRandomEntity(_characterConfigAttributeFactory, {});
+          return [attr.key, { ...attr, value: faker.number.int() }];
+        }),
+    ),
+} satisfies ProgressCharacterFactory;
 
 type StoryProgressFactory = _BaseFactory<StoryProgress>;
 const _storyProgressFactory = {
   key: nanoid,
   currentSceneKey: nanoid,
   history: () => Array.from(Array(5), nanoid),
+  createdAt: faker.date.anytime,
   lastPlayedAt: faker.date.anytime,
+  totalPlayTimeMs: () => faker.number.int({ min: 0 }),
   storyKey: nanoid,
   userKey: nanoid,
   finished: () => Math.random() > 0.5,
   character: () => {
     const hasCharacter = Math.random() > 0.5;
-    if (hasCharacter) {
-      const config = makeRandomEntity(_characterConfigFactory, {});
-      return {
-        ...config,
-        attributes: Object.fromEntries(
-          Object.entries(config.attributes).map(([key, attributeConfig]) => [
-            key,
-            { ...attributeConfig, value: faker.number.int() },
-          ]),
-        ),
-      };
-    }
+    if (hasCharacter) return makeRandomEntity(_progressCharacterFactory, {});
     return undefined;
   },
 } satisfies StoryProgressFactory;
@@ -271,8 +298,16 @@ export const getTestFactory = () => {
       return makeRandomEntity(_sceneFactory, partial);
     },
 
+    sideEffect: (partial: Partial<SideEffect> = {}) => {
+      return makeRandomEntity(_sideEffectFactory, partial);
+    },
+
     storyProgress: (partial: Partial<StoryProgress> = {}) => {
       return makeRandomEntity(_storyProgressFactory, partial);
+    },
+
+    progressCharacter: (partial: Partial<ProgressCharacter> = {}) => {
+      return makeRandomEntity(_progressCharacterFactory, partial);
     },
 
     user: (partial: Partial<User> = {}) => {

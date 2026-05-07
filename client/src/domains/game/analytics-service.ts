@@ -5,7 +5,7 @@ import {
   ProgressRepositoryPort,
 } from "./progress-repository";
 import { round } from "@/lib/number";
-import { Scene } from "@/lib/storage/domain";
+import { Scene, StoryProgress } from "@/lib/storage/domain";
 import { EntityNotExistError } from "../errors";
 
 export type VisitedScenesData = [
@@ -27,7 +27,15 @@ export type AnalyticsServicePort = {
     config: ChartConfig;
     rate: number;
   };
+  getProgressRate: (history: string[]) => number;
+  getTotalPlayTimeMs: (
+    saves: Array<Partial<Pick<StoryProgress, "totalPlayTimeMs">>>,
+  ) => number;
   isSceneVisited: (sceneKey: string) => boolean;
+  isConnectionVisited: (props: {
+    sourceSceneKey: string;
+    targetSceneKey: string;
+  }) => boolean;
   getAllScenes: () => Scene[];
 };
 
@@ -49,7 +57,30 @@ export const _getAnalyticsService = async ({
 
   if (!progress) throw new EntityNotExistError("story-progress", progressKey);
 
+  const getProgressRate = (history: string[]) =>
+    scenes.length > 0
+      ? round(
+          (scenes.filter((s) => history.includes(s.key)).length /
+            scenes.length) *
+            100,
+        )
+      : 0;
+
   return {
+    getProgressRate,
+
+    getTotalPlayTimeMs: (saves) =>
+      saves.reduce((acc, save) => {
+        const totalPlayTimeMs = save.totalPlayTimeMs;
+        const safeTotalPlayTimeMs =
+          typeof totalPlayTimeMs === "number" &&
+          Number.isFinite(totalPlayTimeMs)
+            ? totalPlayTimeMs
+            : 0;
+
+        return acc + safeTotalPlayTimeMs;
+      }, 0),
+
     getVisitedScenesChart: () => {
       const initialData = [
         { type: "visited", count: 0, fill: "var(--color-visited)" },
@@ -60,16 +91,13 @@ export const _getAnalyticsService = async ({
       const unvisitedIdx = 1;
 
       const data = scenes.reduce<VisitedScenesData>((acc, scene) => {
-        if (progress?.history.includes(scene.key)) acc[visitedIdx].count++;
+        if (progress.history.includes(scene.key)) acc[visitedIdx].count++;
         else acc[unvisitedIdx].count++;
 
         return acc;
       }, initialData);
 
-      const rate =
-        scenes.length > 0
-          ? round((data[visitedIdx].count / scenes.length) * 100, 2)
-          : 0;
+      const rate = getProgressRate(progress.history);
 
       return {
         data,
@@ -90,7 +118,15 @@ export const _getAnalyticsService = async ({
       };
     },
 
-    isSceneVisited: (sceneKey) => progress?.history.includes(sceneKey) ?? false,
+    isSceneVisited: (sceneKey) => progress.history.includes(sceneKey),
+
+    isConnectionVisited: ({ sourceSceneKey, targetSceneKey }) => {
+      return progress.history.some(
+        (sceneKey, idx) =>
+          sceneKey === sourceSceneKey &&
+          progress.history?.[idx + 1] === targetSceneKey,
+      );
+    },
 
     getAllScenes: () => scenes,
   };

@@ -101,7 +101,9 @@ class MongoStoryProgress(WithId):
     userKey: str
     history: list[str]
     currentSceneKey: str
+    createdAt: datetime
     lastPlayedAt: datetime
+    totalPlayTimeMs: NotRequired[int]
     finished: bool | None
     storyKey: str
     lastSyncAt: datetime | None
@@ -130,4 +132,4 @@ class BaseMongoRepository(ABC):
         return copy
 
 
-class TestMongoRepository(BaseMongoRepository): ...
+class BaseTestMongoRepository(BaseMongoRepository): ...

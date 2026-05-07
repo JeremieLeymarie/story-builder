@@ -18,7 +18,6 @@ const characterConfigurationSchema = z.object({
       type: z.literal("numeric"),
       name: z.string(),
       description: z.string().optional(),
-      isEditableByPlayer: z.boolean(),
       visibility: z.union([z.literal("visible"), z.literal("invisible")]),
       initialValue: z.int(),
     }),
@@ -32,7 +31,23 @@ const authorSchema = z
   })
   .optional();
 
-export const importDataSchema = z.object({
+const characterAttrSideEffect = z.object({
+  type: z.literal("character-attribute"),
+  increment: z.int(),
+  attributeKey: z.nanoid(),
+  title: z.string().optional(),
+  description: z.string().optional(),
+});
+
+const sideEffectSchema = z.object({
+  key: z.nanoid(),
+  name: z.string(),
+  trigger: z.literal("scene-load"),
+  isVisible: z.boolean(),
+  effect: z.union([characterAttrSideEffect]),
+});
+
+export const jsonDataSchema = z.object({
   story: z.object(
     {
       key: z.nanoid({ message: "Story key is required" }),
@@ -69,6 +84,7 @@ export const importDataSchema = z.object({
           y: z.number({ message: "Y is required" }),
         }),
       }),
+      sideEffects: z.array(sideEffectSchema).optional(),
     }),
     { message: "Scenes are required" },
   ),
@@ -118,9 +134,9 @@ export const importDataSchema = z.object({
   characterConfig: characterConfigurationSchema.optional(),
 });
 
-export type ImportData = z.infer<typeof importDataSchema>;
-export type WikiFromImport = NonNullable<ImportData["wiki"]>;
-export type ThemeFromImport = NonNullable<ImportData["theme"]>;
+export type JsonStoryData = z.infer<typeof jsonDataSchema>;
+export type WikiFromImport = NonNullable<JsonStoryData["wiki"]>;
+export type ThemeFromImport = NonNullable<JsonStoryData["theme"]>;
 export type CharacterConfigFromImport = NonNullable<
-  ImportData["characterConfig"]
+  JsonStoryData["characterConfig"]
 >;

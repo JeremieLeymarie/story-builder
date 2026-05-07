@@ -1,35 +1,14 @@
 from datetime import datetime
-
-import pytest
-from domains.synchronization.repositories.synchronization_repository import (
-    MongoSynchronizationRepository,
-)
-from domains.synchronization.type_defs import (
-    SyncActionTarget,
-    SynchronizationBuilderParams,
-    SynchronizationBuilderPosition,
-    SynchronizationScene,
-    SyncSimpleAction,
-    SynchronizationStory,
-    SynchronizationStoryAuthor,
-    SynchronizationStoryProgress,
-)
-from utils.mongo.base_repository import (
-    MongoActionTarget,
-    MongoBuilderParams,
-    MongoBuilderPosition,
-    MongoScene,
-    MongoSimpleAction,
-    MongoStory,
-    MongoStoryAuthor,
-    MongoStoryProgress,
-    TestMongoRepository,
-)
-from utils.result import Result
-from utils.lexical_content import make_simple_lexical_content
-from utils.type_defs import StoryGenre, StoryType
 from unittest.mock import ANY
 
+import pytest
+
+from domains.synchronization.repositories.synchronization_repository import MongoSynchronizationRepository
+from domains.synchronization.type_defs import SyncActionTarget, SyncSimpleAction, SynchronizationBuilderParams, SynchronizationBuilderPosition, SynchronizationScene, SynchronizationStory, SynchronizationStoryAuthor, SynchronizationStoryProgress
+from utils.lexical_content import make_simple_lexical_content
+from utils.mongo.base_repository import BaseTestMongoRepository, MongoActionTarget, MongoBuilderParams, MongoBuilderPosition, MongoScene, MongoSimpleAction, MongoStory, MongoStoryAuthor, MongoStoryProgress
+from utils.result import Result
+from utils.type_defs import StoryGenre, StoryType
 
 FAKE_STORY_A = SynchronizationStory(
     author=SynchronizationStoryAuthor(key="author-key", username="username"),
@@ -51,9 +30,7 @@ FAKE_STORY_A = SynchronizationStory(
                     text="Action  Text",
                 )
             ],
-            builder_params=SynchronizationBuilderParams(
-                position=SynchronizationBuilderPosition(x=400.0, y=200.0)
-            ),
+            builder_params=SynchronizationBuilderParams(position=SynchronizationBuilderPosition(x=400.0, y=200.0)),
             content=make_simple_lexical_content("Content"),
             key="scene-1",
             story_key="key",
@@ -83,9 +60,11 @@ FAKE_STORY_B = SynchronizationStory(
 FAKE_STORY_PROGRESS_A = SynchronizationStoryProgress(
     key="key",
     current_scene_key="current-scene-key",
+    created_at=datetime(1999, 11, 1),
     finished=True,
     history=["scene-1", "scene-2"],
     last_played_at=datetime(1999, 11, 26),
+    total_play_time_ms=0,
     last_sync_at=datetime(1999, 12, 8),
     story_key="story-key",
     user_key="me",
@@ -94,15 +73,17 @@ FAKE_STORY_PROGRESS_A = SynchronizationStoryProgress(
 FAKE_STORY_PROGRESS_B = SynchronizationStoryProgress(
     key="another-key",
     current_scene_key="another-current-scene-key",
+    created_at=datetime(1999, 11, 2),
     finished=True,
     history=["another-scene-1", "another-scene-2"],
     last_played_at=datetime(1999, 11, 26),
+    total_play_time_ms=0,
     last_sync_at=datetime(1999, 12, 8),
     story_key="another-story-key",
     user_key="me",
 )
 
-test_repo = TestMongoRepository()
+test_repo = BaseTestMongoRepository()
 
 
 @pytest.fixture(autouse=True)
@@ -130,15 +111,11 @@ def _assert_fake_stories_match(stories: list[MongoStory]) -> None:
                         MongoSimpleAction(
                             key="action-key",
                             type="simple",
-                            targets=[
-                                MongoActionTarget(sceneKey="scene-1", probability=100)
-                            ],
+                            targets=[MongoActionTarget(sceneKey="scene-1", probability=100)],
                             text="Action  Text",
                         )
                     ],
-                    builderParams=MongoBuilderParams(
-                        position=MongoBuilderPosition(x=400, y=200)
-                    ),
+                    builderParams=MongoBuilderParams(position=MongoBuilderPosition(x=400, y=200)),
                     content=make_simple_lexical_content("Content"),
                     key="scene-1",
                     storyKey="key",
@@ -175,9 +152,11 @@ def _assert_fake_story_progresses_match(sp: list[MongoStoryProgress]) -> None:
             _id=ANY,
             key="key",
             currentSceneKey="current-scene-key",
+            createdAt=datetime(1999, 11, 1),
             finished=True,
             history=["scene-1", "scene-2"],
             lastPlayedAt=datetime(1999, 11, 26),
+            totalPlayTimeMs=0,
             lastSyncAt=datetime(1999, 12, 8),
             storyKey="story-key",
             userKey="me",
@@ -186,9 +165,11 @@ def _assert_fake_story_progresses_match(sp: list[MongoStoryProgress]) -> None:
             _id=ANY,
             key="another-key",
             currentSceneKey="another-current-scene-key",
+            createdAt=datetime(1999, 11, 2),
             finished=True,
             history=["another-scene-1", "another-scene-2"],
             lastPlayedAt=datetime(1999, 11, 26),
+            totalPlayTimeMs=0,
             lastSyncAt=datetime(1999, 12, 8),
             storyKey="another-story-key",
             userKey="me",
@@ -228,17 +209,11 @@ def test_save_stories_with_existing_stories() -> None:
                             MongoSimpleAction(
                                 key="action-key",
                                 type="simple",
-                                targets=[
-                                    MongoActionTarget(
-                                        sceneKey="scene-1", probability=100
-                                    )
-                                ],
+                                targets=[MongoActionTarget(sceneKey="scene-1", probability=100)],
                                 text="Action  Text",
                             )
                         ],
-                        builderParams=MongoBuilderParams(
-                            position=MongoBuilderPosition(x=400, y=200)
-                        ),
+                        builderParams=MongoBuilderParams(position=MongoBuilderPosition(x=400, y=200)),
                         content=make_simple_lexical_content("Content"),
                         key="scene-1",
                         storyKey="key",
@@ -329,9 +304,11 @@ def test_save_story_progresses_with_existing_story_progresses() -> None:
             MongoStoryProgress(
                 key="key",
                 currentSceneKey="another-current-scene-key",
+                createdAt=datetime(1999, 11, 1),
                 finished=True,
                 history=["scene-1"],
                 lastPlayedAt=datetime(1999, 11, 26),
+                totalPlayTimeMs=0,
                 lastSyncAt=datetime(1999, 12, 8),
                 storyKey="story-key",
                 userKey="me",
@@ -339,9 +316,11 @@ def test_save_story_progresses_with_existing_story_progresses() -> None:
             MongoStoryProgress(
                 key="another-key",
                 currentSceneKey="something-current-scene-key",
+                createdAt=datetime(1999, 11, 2),
                 finished=True,
                 history=["some-scene-1", "some-scene-2"],
                 lastPlayedAt=datetime(1999, 11, 26),
+                totalPlayTimeMs=0,
                 lastSyncAt=datetime(1999, 12, 8),
                 storyKey="some-story-key",
                 userKey="me",
@@ -366,9 +345,11 @@ def test_save_story_progresses_some_existing_story_progresses() -> None:
         MongoStoryProgress(
             key="key",
             currentSceneKey="some-current-scene-key",
+            createdAt=datetime(1999, 11, 1),
             finished=True,
             history=["some-scene-1", "some-scene-2"],
             lastPlayedAt=datetime(1999, 11, 26),
+            totalPlayTimeMs=0,
             lastSyncAt=datetime(1999, 12, 8),
             storyKey="story-key",
             userKey="me",
@@ -435,17 +416,11 @@ def test_get_stories() -> None:
                             MongoSimpleAction(
                                 key="action-key",
                                 type="simple",
-                                targets=[
-                                    MongoActionTarget(
-                                        sceneKey="scene-1", probability=100
-                                    )
-                                ],
+                                targets=[MongoActionTarget(sceneKey="scene-1", probability=100)],
                                 text="Action  Text",
                             )
                         ],
-                        builderParams=MongoBuilderParams(
-                            position=MongoBuilderPosition(x=400, y=200)
-                        ),
+                        builderParams=MongoBuilderParams(position=MongoBuilderPosition(x=400, y=200)),
                         content=make_simple_lexical_content("Content"),
                         key="scene-1",
                         storyKey="key",
@@ -492,15 +467,11 @@ def test_get_stories() -> None:
                         SyncSimpleAction(
                             key="action-key",
                             type="simple",
-                            targets=[
-                                SyncActionTarget(scene_key="scene-1", probability=100)
-                            ],
+                            targets=[SyncActionTarget(scene_key="scene-1", probability=100)],
                             text="Action  Text",
                         )
                     ],
-                    builder_params=SynchronizationBuilderParams(
-                        position=SynchronizationBuilderPosition(x=400, y=200)
-                    ),
+                    builder_params=SynchronizationBuilderParams(position=SynchronizationBuilderPosition(x=400, y=200)),
                     content=make_simple_lexical_content("Content"),
                     key="scene-1",
                     story_key="key",
@@ -525,9 +496,11 @@ def test_get_sp_no_sp_linked() -> None:
         MongoStoryProgress(
             key="key",
             currentSceneKey="another-current-scene-key",
+            createdAt=datetime(1999, 11, 1),
             finished=True,
             history=["scene-1"],
             lastPlayedAt=datetime(1999, 11, 26),
+            totalPlayTimeMs=0,
             lastSyncAt=datetime(1999, 12, 8),
             storyKey="story-key",
             userKey="me",
@@ -544,9 +517,11 @@ def test_get_sp() -> None:
             MongoStoryProgress(
                 key="key",
                 currentSceneKey="another-current-scene-key",
+                createdAt=datetime(1999, 11, 1),
                 finished=True,
                 history=["scene-1"],
                 lastPlayedAt=datetime(1999, 11, 26),
+                totalPlayTimeMs=0,
                 lastSyncAt=datetime(1999, 12, 8),
                 storyKey="story-key",
                 userKey="me",
@@ -554,9 +529,11 @@ def test_get_sp() -> None:
             MongoStoryProgress(
                 key="another-key",
                 currentSceneKey="something-current-scene-key",
+                createdAt=datetime(1999, 11, 2),
                 finished=True,
                 history=["some-scene-1", "some-scene-2"],
                 lastPlayedAt=datetime(1999, 11, 26),
+                totalPlayTimeMs=0,
                 lastSyncAt=datetime(1999, 12, 8),
                 storyKey="some-story-key",
                 userKey="not-me",
@@ -570,9 +547,11 @@ def test_get_sp() -> None:
         SynchronizationStoryProgress(
             key="key",
             current_scene_key="another-current-scene-key",
+            created_at=datetime(1999, 11, 1),
             finished=True,
             history=["scene-1"],
             last_played_at=datetime(1999, 11, 26),
+            total_play_time_ms=0,
             last_sync_at=datetime(1999, 12, 8),
             story_key="story-key",
             user_key="me",

@@ -6,7 +6,7 @@ import {
 } from "@/design-system/primitives/chart";
 import { Label, Pie, PieChart, Sector } from "recharts";
 import { VisitedScenesData } from "@/domains/game/analytics-service";
-import { PieSectorDataItem } from "recharts/types/polar/Pie";
+import { PieSectorShapeProps } from "recharts/types/polar/Pie";
 
 export const VisitedScenesChart = ({
   data,
@@ -32,9 +32,15 @@ export const VisitedScenesChart = ({
           dataKey="count"
           nameKey="type"
           innerRadius={60}
-          activeIndex={0}
-          activeShape={({ outerRadius = 0, ...props }: PieSectorDataItem) => (
-            <Sector {...props} outerRadius={outerRadius + 10} />
+          shape={({
+            index,
+            outerRadius = 0,
+            ...props
+          }: PieSectorShapeProps) => (
+            <Sector
+              {...props}
+              outerRadius={index === 0 ? outerRadius + 10 : outerRadius}
+            />
           )}
         >
           <Label

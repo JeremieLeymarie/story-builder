@@ -36,7 +36,6 @@ export type CharacterNumericAttribute = {
   type: "numeric";
   name: string;
   description?: string;
-  isEditableByPlayer: boolean;
   visibility: "visible" | "invisible";
   initialValue: number;
 };
@@ -116,6 +115,22 @@ export type Action = SimpleAction | ConditionalAction;
 
 export type BuilderPosition = { x: number; y: number };
 
+type CharacterAttributeSideEffect = {
+  type: "character-attribute";
+  increment: number;
+  attributeKey: string;
+  title?: string;
+  description?: string;
+};
+
+export type SideEffect = {
+  key: string;
+  name: string;
+  trigger: "scene-load"; // Determine when the effect runs. For now, only scene loads is implement, but we could extend it ("timer", ...)
+  isVisible: boolean; // Whether the side effect is visible in-game
+  effect: CharacterAttributeSideEffect;
+};
+
 export type Scene = {
   key: string;
   storyKey: string;
@@ -123,6 +138,7 @@ export type Scene = {
   content: LexicalContent;
   actions: Action[];
   builderParams: { position: BuilderPosition };
+  sideEffects?: SideEffect[];
 };
 
 export const TITLE_SIZES = ["small", "medium", "large", "huge"] as const;
@@ -165,7 +181,7 @@ type ProgressCharacterNumericAttribute = CharacterNumericAttribute & {
 // Extend this union as we add more types
 type ProgressCharacterAttribute = ProgressCharacterNumericAttribute;
 
-type ProgressCharacter = {
+export type ProgressCharacter = {
   attributes: Record<string, ProgressCharacterAttribute>;
 };
 
@@ -177,7 +193,10 @@ export type StoryProgress = {
   currentSceneKey: string;
   character?: ProgressCharacter;
   inventory?: Record<string, unknown>;
+  name?: string;
+  createdAt: Date;
   lastPlayedAt: Date;
+  totalPlayTimeMs: number;
   finished?: boolean;
 };
 
@@ -224,18 +243,14 @@ export type WikiArticleLink = {
   entityKey: string;
 };
 
-/* ALL ENTITIES */
-
-export const ENTITIES = [
-  "story",
-  "scene",
-  "story-theme",
-  "character-configuration",
-  "user",
-  "story-progress",
-  "wiki",
-  "wiki-article",
-  "wiki-category",
-  "wiki-article-link",
-] as const;
-export type Entity = (typeof ENTITIES)[number];
+export type Entity =
+  | "story"
+  | "scene"
+  | "story-theme"
+  | "character-configuration"
+  | "user"
+  | "story-progress"
+  | "wiki"
+  | "wiki-article"
+  | "wiki-category"
+  | "wiki-article-link";

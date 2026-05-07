@@ -11,5 +11,6 @@ export const getStubGameRepository = (): MockGameRepository => {
   return {
     deleteWiki: vi.fn(),
     getScenes: vi.fn(() => Promise.resolve([factory.scene(), factory.scene()])),
+    getScene: vi.fn(),
   };
 };

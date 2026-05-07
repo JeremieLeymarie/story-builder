@@ -4,18 +4,18 @@ import {
 } from "@/repositories/stubs";
 import { beforeEach, expect, it, vi, describe } from "vitest";
 import {
-  _getImportService,
+  _getImportExportService,
   _makeBulkSceneUpdatePayload,
-  ImportServicePort,
+  ImportExportServicePort,
   TEMPORARY_NULL_KEY,
-} from "../import-service";
+} from "../import-export-service";
 import { BASIC_SCENE_CONTENT, BASIC_STORY } from "@/repositories/stubs/data";
 import { nanoid } from "nanoid";
 import {
   getStubWikiRepository,
   MockWikiRepository,
 } from "@/domains/wiki/stubs/stub-wiki-repository";
-import { ImportData } from "../schema";
+import { JsonStoryData } from "../schema";
 import {
   getStubThemeRepository,
   MockThemeRepository,
@@ -39,7 +39,6 @@ const DEX_ATTRIBUTE = {
   type: "numeric" as const,
   name: "Dexterity",
   description: "Yiplaloop",
-  isEditableByPlayer: false,
   visibility: "visible",
   initialValue: 10,
 } satisfies CharacterNumericAttribute;
@@ -50,7 +49,7 @@ const CHARACTER_CONFIG = {
   attributes: { [DEX_ATTRIBUTE.key]: DEX_ATTRIBUTE },
 } satisfies CharacterConfiguration;
 
-const IMPORTED_STORY: ImportData["story"] = {
+const IMPORTED_STORY: JsonStoryData["story"] = {
   key: STORY_KEY,
   title: "The Great Journey To The Green River",
   description: "A wonderful epic tale through the world of Penthetir. ",
@@ -66,7 +65,7 @@ const IMPORTED_STORY: ImportData["story"] = {
   },
 };
 
-const BASIC_SCENE: ImportData["scenes"][number] = {
+const BASIC_SCENE: JsonStoryData["scenes"][number] = {
   key: SCENE_KEY_A,
   storyKey: STORY_KEY,
   title: "Your second scene",
@@ -81,7 +80,7 @@ const BASIC_SCENE: ImportData["scenes"][number] = {
 };
 
 // TODO: add probabilities
-const SCENE_WITH_ACTIONS: ImportData["scenes"][number] = {
+const SCENE_WITH_ACTIONS: JsonStoryData["scenes"][number] = {
   key: SCENE_KEY_B,
   storyKey: STORY_KEY,
   title: "Your first scene",
@@ -134,6 +133,19 @@ const SCENE_WITH_ACTIONS: ImportData["scenes"][number] = {
       y: 0,
     },
   },
+  sideEffects: [
+    {
+      key: nanoid(),
+      isVisible: true,
+      name: "Dexterity Level Up",
+      trigger: "scene-load",
+      effect: {
+        type: "character-attribute",
+        attributeKey: DEX_ATTRIBUTE.key,
+        increment: 3,
+      },
+    },
+  ],
 };
 
 const IMPORTED_SCENES = [BASIC_SCENE, SCENE_WITH_ACTIONS];
@@ -143,16 +155,16 @@ const IMPORTED_THEME = DEFAULT_STORY_THEME;
 const IMPORTED_DATA = {
   story: IMPORTED_STORY,
   scenes: IMPORTED_SCENES,
-} satisfies ImportData;
+} satisfies JsonStoryData;
 
 const fileContent = JSON.stringify(IMPORTED_DATA);
 
-describe("import-service", () => {
+describe("import-export-service", () => {
   let localRepository: MockLocalRepository;
   let wikiRepository: MockWikiRepository;
   let themeRepository: MockThemeRepository;
   let characterRepository: MockCharacterRepository;
-  let importService: ImportServicePort;
+  let importExportService: ImportExportServicePort;
 
   beforeEach(() => {
     localRepository = getLocalRepositoryStub();
@@ -160,7 +172,7 @@ describe("import-service", () => {
     themeRepository = getStubThemeRepository();
     characterRepository = getStubCharacterRepository();
 
-    importService = _getImportService({
+    importExportService = _getImportExportService({
       localRepository,
       wikiRepository,
       themeRepository,
@@ -172,7 +184,7 @@ describe("import-service", () => {
 
   describe("parseJSON", () => {
     it("should not create story if JSON is malformed", async () => {
-      const result = importService.parseJSON(`tutu${fileContent}`);
+      const result = importExportService.parseJSON(`tutu${fileContent}`);
 
       expect(result).toStrictEqual({
         error: "Invalid JSON format",
@@ -182,7 +194,7 @@ describe("import-service", () => {
     });
 
     it("should not create story if format is invalid", async () => {
-      const result = importService.parseJSON(
+      const result = importExportService.parseJSON(
         JSON.stringify({ plouf: ["tutu"] }),
       );
 
@@ -194,7 +206,7 @@ describe("import-service", () => {
     });
 
     it("should parse JSON", () => {
-      const result = importService.parseJSON(fileContent);
+      const result = importExportService.parseJSON(fileContent);
 
       expect(result).toStrictEqual({
         isOk: true,
@@ -206,7 +218,7 @@ describe("import-service", () => {
 
   describe("createStory", () => {
     it("should create story (imported)", async () => {
-      const result = await importService.createStory({
+      const result = await importExportService.createStory({
         story: { story: IMPORTED_DATA.story, scenes: IMPORTED_DATA.scenes },
         type: "imported",
       });
@@ -233,7 +245,7 @@ describe("import-service", () => {
     });
 
     it("should create story with anonymous author", async () => {
-      const result = await importService.createStory({
+      const result = await importExportService.createStory({
         story: {
           story: { ...IMPORTED_DATA.story, author: undefined },
           scenes: IMPORTED_DATA.scenes,
@@ -271,7 +283,7 @@ describe("import-service", () => {
         }),
       );
 
-      const result = await importService.createStory({
+      const result = await importExportService.createStory({
         story: { story: IMPORTED_DATA.story, scenes: IMPORTED_DATA.scenes },
         type: "builder",
       });
@@ -358,14 +370,14 @@ describe("import-service", () => {
         });
       });
 
-      const result = await importService.createScenes({
+      const result = await importExportService.createScenes({
         story: { story: IMPORTED_DATA.story, scenes: IMPORTED_DATA.scenes },
         newStoryKey: "new-story-key",
         oldCharacterAttrToNew: { [DEX_ATTRIBUTE.key]: "new-dex-key" },
       });
 
       // Scene is created with new story key & no actions at first
-      expect(localRepository.createScene).toHaveBeenCalledWith({
+      expect(localRepository.createScene).toHaveBeenNthCalledWith(2, {
         storyKey: "new-story-key",
         title: "Your first scene",
         content: BASIC_SCENE_CONTENT,
@@ -376,6 +388,19 @@ describe("import-service", () => {
             y: 0,
           },
         },
+        sideEffects: [
+          {
+            key: expect.any(String),
+            isVisible: true,
+            name: "Dexterity Level Up",
+            trigger: "scene-load",
+            effect: {
+              type: "character-attribute",
+              attributeKey: "new-dex-key",
+              increment: 3,
+            },
+          },
+        ],
       });
       // Scene is updated with the new keys in the action (only the ones with a sceneKey)
       expect(localRepository.updateScenes).toHaveBeenCalledOnce();
@@ -392,7 +417,7 @@ describe("import-service", () => {
 
   describe("createTheme", () => {
     it("should import theme with new story key", async () => {
-      await importService.createTheme({
+      await importExportService.createTheme({
         newStoryKey: "new-story-key",
         theme: IMPORTED_THEME,
       });
@@ -417,7 +442,7 @@ describe("import-service", () => {
         return Promise.resolve("new-key");
       });
 
-      await importService.createCharacterConfig({
+      await importExportService.createCharacterConfig({
         newStoryKey: "new-story-key",
         characterConfig: CHARACTER_CONFIG,
       });

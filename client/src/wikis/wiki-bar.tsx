@@ -1,6 +1,6 @@
 import { Toolbar } from "@/design-system/components/toolbar";
 import { ConfirmDialog } from "@/design-system/components";
-import { Button, Input } from "@/design-system/primitives";
+import { Button } from "@/design-system/primitives";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
 import { HomeIcon, PlusIcon, SearchIcon, Trash2Icon } from "lucide-react";
 import { useWikiStore } from "./hooks/use-wiki-store";
@@ -11,8 +11,10 @@ import { CategoryBadge } from "./category-badge";
 import { CategoryActionsDropdown } from "./category-actions-dropdown";
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "@tanstack/react-router";
-import { getWikiService } from "@/domains/wiki/wiki-service";
-import { toast } from "sonner";
+import { useDeleteArticle } from "./hooks/use-delete-article";
+import { Separator } from "@/design-system/primitives/separator";
+import { Kbd } from "@/design-system/primitives/kbd";
+import { getUserOS } from "@/lib/get-os";
 
 const ArticleTitle = ({
   title,
@@ -22,15 +24,12 @@ const ArticleTitle = ({
   articleKey: string;
   canDelete: boolean;
 }) => {
-  const [wikiKey, refresh] = useWikiStore((state) => [
-    state.wikiData.wiki.key,
-    state.refresh,
-  ]);
+  const wikiKey = useWikiStore((state) => state.wikiData.wiki.key);
   const { articleKey: selectedArticleKey } = useParams({ strict: false });
   const isSelected = selectedArticleKey === articleKey;
-  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const wikiService = getWikiService();
+  const navigate = useNavigate();
+  const { deleteArticle } = useDeleteArticle();
 
   return (
     <div
@@ -58,16 +57,7 @@ const ArticleTitle = ({
         confirmLabel="Delete"
         onConfirm={async (e) => {
           e.stopPropagation();
-          try {
-            await wikiService.removeArticle(articleKey);
-            toast.success("Article deleted successfully.");
-            navigate({ to: "/wikis/$wikiKey", params: { wikiKey } });
-          } catch (error) {
-            toast.error("Could not delete the article.");
-            console.error(error);
-          } finally {
-            refresh();
-          }
+          deleteArticle(articleKey);
         }}
         onCancel={(e) => {
           e.stopPropagation();
@@ -127,10 +117,16 @@ const Section = ({ category, articles }: WikiSection) => {
 };
 
 export const WikiBar = () => {
+  const [wikiData, openSearch] = useWikiStore((state) => [
+    state.wikiData,
+    state.openSearch,
+  ]);
   const {
     sections,
     wiki: { key: wikiKey },
-  } = useWikiStore((state) => state.wikiData);
+  } = wikiData;
+
+  const os = getUserOS();
 
   return (
     <Toolbar className="sticky top-20 w-[300px] space-y-4 self-start">

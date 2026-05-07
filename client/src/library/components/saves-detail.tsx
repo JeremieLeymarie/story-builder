@@ -2,12 +2,13 @@ import { ResponsiveDrawer } from "@/design-system/components/responsive-drawer";
 import {
   Button,
   Card,
-  CardContent,
   CardDescription,
   CardTitle,
 } from "@/design-system/primitives";
+import { ProgressBadge } from "@/design-system/components/progress-badge";
 import { useIsMobile } from "@/hooks/use-is-mobile";
-import { BookMarkedIcon, PlusIcon, XIcon } from "lucide-react";
+import { PencilIcon, PlusIcon, XIcon } from "lucide-react";
+import { SaveNameForm } from "./save-name-form";
 import { cn } from "@/lib/style";
 import { Save } from "./types";
 import { formatDate, timeFrom } from "@/lib/date";
@@ -16,12 +17,14 @@ import { ScrollArea, ScrollBar } from "@/design-system/primitives/scroll-area";
 import { useState } from "react";
 import { ConfirmDialog } from "@/design-system/components";
 import { useDeleteProgress } from "../hooks/use-delete-progress";
+import { useRenameSave } from "../hooks/use-rename-save";
 
 type SavesDetailProps = {
   selectedSave: Save;
   saves: Save[];
   onSelectSave: (save: Save) => void;
   setOpen: (open: boolean) => void;
+  getProgressRate?: (history: string[]) => number;
 };
 
 const Content = ({
@@ -29,28 +32,49 @@ const Content = ({
   saves,
   onSelectSave,
   setOpen,
+  getProgressRate,
 }: SavesDetailProps) => {
   const storyKey = selectedSave.storyKey; // All saves should have the same story key
+  const [isNaming, setIsNaming] = useState(false);
+  const [editingKey, setEditingKey] = useState<string | null>(null);
+
   const { createSave, isPending: isCreatingSave } = useCreateSave({
     onSuccess: (createdSave) => {
       onSelectSave(createdSave);
       setOpen(false);
     },
   });
+  const { renameSave } = useRenameSave();
   const isMobile = useIsMobile();
   const { deleteProgress, isDeleting } = useDeleteProgress(storyKey);
 
+  const handleRename = (save: Save, name?: string) => {
+    if (name) {
+      renameSave({ progress: save, name });
+    }
+    setEditingKey(null);
+  };
+
   return (
     <>
-      <div className="mb-2 flex w-full justify-end pr-4">
-        <Button
-          title="New save"
-          disabled={isCreatingSave}
-          onClick={() => createSave(storyKey)}
-        >
-          New save
-          <PlusIcon size={24} />
-        </Button>
+      <div className="mb-2 flex w-full items-center justify-end gap-2 pr-4">
+        {isNaming ? (
+          <SaveNameForm
+            defaultName={`Save #${saves.length + 1}`}
+            onSubmit={(name) => createSave({ storyKey, name })}
+            onCancel={() => setIsNaming(false)}
+            disabled={isCreatingSave}
+          />
+        ) : (
+          <Button
+            title="New save"
+            disabled={isCreatingSave}
+            onClick={() => setIsNaming(true)}
+          >
+            New save
+            <PlusIcon size={24} />
+          </Button>
+        )}
       </div>
 
       <ScrollArea>
@@ -69,57 +93,84 @@ const Content = ({
                 save.finished && "bg-accent/75 ring-accent-foreground/10",
               )}
               onClick={() => {
-                onSelectSave(save);
-                setOpen(false);
+                if (editingKey !== save.key) {
+                  onSelectSave(save);
+                  setOpen(false);
+                }
               }}
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1 cursor-pointer">
-                    <div className="flex items-start justify-between">
-                      <CardTitle className="text-base">
-                        {save.lastScene?.title || "Unknown scene"}
-                      </CardTitle>
-                    </div>
-                    <CardDescription>
-                      {timeFrom(save.lastPlayedAt)}
-                    </CardDescription>
-                    <CardContent className="pl-0">
-                      <p className="text-muted-foreground/80 text-xs">
-                        {formatDate(save.lastPlayedAt)}
-                      </p>
-                    </CardContent>
-                  </div>
+              <div className="flex items-center gap-2">
+                <div className="min-w-0 flex-1 cursor-pointer overflow-hidden">
+                  {editingKey === save.key ? (
+                    <SaveNameForm
+                      variant="inline"
+                      defaultName={save.name ?? ""}
+                      onSubmit={(name) => handleRename(save, name)}
+                      onCancel={() => setEditingKey(null)}
+                    />
+                  ) : (
+                    <CardTitle className="text-base break-all">
+                      {getProgressRate && (
+                        <ProgressBadge
+                          percentage={getProgressRate(save.history)}
+                          className="mr-1.5 inline-flex align-text-bottom"
+                        />
+                      )}
+                      <span className="font-medium">
+                        {save.name ?? save.lastScene?.title ?? "Unknown scene"}
+                      </span>
+                    </CardTitle>
+                  )}
+                  {save.name && save.lastScene && (
+                    <p className="text-muted-foreground text-sm">
+                      {save.lastScene.title}
+                    </p>
+                  )}
+                  <CardDescription>
+                    {timeFrom(save.lastPlayedAt)} ·{" "}
+                    {formatDate(save.lastPlayedAt)}
+                  </CardDescription>
                 </div>
 
-                {save.key !== selectedSave.key && (
-                  <ConfirmDialog
-                    title="Delete this save?"
-                    description="This action cannot be undone. This save will be permanently deleted."
-                    confirmLabel="Delete"
-                    onConfirm={(e) => {
+                <div className="flex shrink-0 items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon-xs"
+                    onClick={(e) => {
                       e.stopPropagation();
-                      deleteProgress(save.key);
+                      setEditingKey(save.key);
                     }}
-                    onCancel={(e) => {
-                      e.stopPropagation();
-                    }}
-                    trigger={
-                      <Button
-                        disabled={isDeleting}
-                        variant="destructive"
-                        size="xs"
-                        className="rounded-full"
-                        title="Delete this save"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        <XIcon />
-                      </Button>
-                    }
-                  />
-                )}
+                  >
+                    <PencilIcon size={12} />
+                  </Button>
+                  {save.key !== selectedSave.key && (
+                    <ConfirmDialog
+                      title="Delete this save?"
+                      description="This action cannot be undone. This save will be permanently deleted."
+                      confirmLabel="Delete"
+                      onConfirm={(e) => {
+                        e.stopPropagation();
+                        deleteProgress(save.key);
+                      }}
+                      onCancel={(e) => {
+                        e.stopPropagation();
+                      }}
+                      trigger={
+                        <Button
+                          disabled={isDeleting}
+                          variant="destructive"
+                          size="icon-xs"
+                          title="Delete this save"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          <XIcon />
+                        </Button>
+                      }
+                    />
+                  )}
+                </div>
                 {save.finished && (
                   <span className="absolute -top-2 left-2.5 z-1 rounded-full bg-green-500/75 px-1.5 py-0.5 text-xs text-white">
                     COMPLETED
@@ -141,25 +192,24 @@ export const SavesDetail = ({
   selectedSave,
   saves,
   onSelectSave,
-}: Omit<SavesDetailProps, "setOpen">) => {
-  const [open, setOpen] = useState(false);
-
+  getProgressRate,
+  open,
+  setOpen,
+}: Omit<SavesDetailProps, "setOpen"> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}) => {
   return (
     <ResponsiveDrawer
       open={open}
       setOpen={setOpen}
-      trigger={
-        <Button size="default" variant="outline">
-          <BookMarkedIcon />
-          Select another save
-        </Button>
-      }
       content={
         <Content
           setOpen={setOpen}
           selectedSave={selectedSave}
           saves={saves}
           onSelectSave={onSelectSave}
+          getProgressRate={getProgressRate}
         />
       }
       title="Your saves"
