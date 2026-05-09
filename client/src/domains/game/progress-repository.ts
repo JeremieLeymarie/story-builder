@@ -25,5 +25,4 @@ export const _getDexieProgressRepository = (
 export const getDexieProgressRepository = (): ProgressRepositoryPort =>
   _getDexieProgressRepository(db);
 
-
 // TEST DE LA CI
