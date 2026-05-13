@@ -21,7 +21,10 @@ export const _getDexieBuilderStoryRepository = (
       const story = await _getBuilderStory(key);
       if (!story) throw new EntityNotExistError("story", key);
 
-      await db.stories.update(key, partialStory);
+      await db.stories.update(key, {
+        ...partialStory,
+        updatedAt: new Date(),
+      });
 
       const updated = await _getBuilderStory(key);
       if (!updated) throw new EntityNotExistError("story", key);

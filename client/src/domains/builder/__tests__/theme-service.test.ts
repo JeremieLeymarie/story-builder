@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
 import {
   getStubThemeRepository,
   MockThemeRepository,
@@ -12,14 +12,10 @@ const factory = getTestFactory();
 describe("theme-service", () => {
   let repository: MockThemeRepository;
   let svc: ThemeServicePort;
-  let touchStory: (storyKey: string) => Promise<void>;
 
   beforeEach(() => {
     repository = getStubThemeRepository();
-    touchStory = vi.fn<(storyKey: string) => Promise<void>>(() =>
-      Promise.resolve(),
-    );
-    svc = _getThemeService({ repository, touchStory });
+    svc = _getThemeService({ repository });
   });
 
   describe("getTheme", () => {
@@ -53,7 +49,6 @@ describe("theme-service", () => {
         theme: updatePayload,
       });
       expect(repository.update).not.toHaveBeenCalled();
-      expect(touchStory).toHaveBeenCalledWith("plouf");
     });
 
     test("should update theme if exists", async () => {
@@ -67,7 +62,6 @@ describe("theme-service", () => {
         theme: updatePayload,
       });
       expect(repository.create).not.toHaveBeenCalled();
-      expect(touchStory).toHaveBeenCalledWith("plouf");
     });
   });
 });

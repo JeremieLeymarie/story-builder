@@ -14,10 +14,13 @@ const factory = getTestFactory();
 describe("story character repository", () => {
   let repo: CharacterRepositoryPort;
   let testDB: DexieDatabase;
+  let story: ReturnType<typeof factory.story.builder>;
 
   beforeEach(async () => {
     testDB = await getTestDatabase();
     repo = _getDexieCharacterRepository(testDB);
+    story = factory.story.builder({ key: "story-key", updatedAt: new Date("2025-01-01") });
+    await testDB.stories.add(story);
   });
 
   describe("get", () => {
@@ -48,13 +51,20 @@ describe("story character repository", () => {
     });
 
     test("should add to DB", async () => {
-      const character = factory.characterConfig({ key: undefined });
+      const character = factory.characterConfig({
+        key: undefined,
+        storyKey: story.key,
+      });
       await repo.create(character);
 
       expect(await repo.get(character.storyKey)).toStrictEqual({
         ...character,
         key: expect.anything(),
       });
+      const updatedStory = await testDB.stories.get(story.key);
+      expect(updatedStory?.updatedAt.getTime()).toBeGreaterThan(
+        story.updatedAt.getTime(),
+      );
     });
   });
 
@@ -71,6 +81,7 @@ describe("story character repository", () => {
 
     test("should update", async () => {
       const character1 = factory.characterConfig({
+        storyKey: story.key,
         attributes: {
           "force-key": {
             key: "force-key",

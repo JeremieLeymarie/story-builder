@@ -14,10 +14,13 @@ const factory = getTestFactory();
 describe("story theme repository", () => {
   let repo: ThemeRepositoryPort;
   let testDB: DexieDatabase;
+  let story: ReturnType<typeof factory.story.builder>;
 
   beforeEach(async () => {
     testDB = await getTestDatabase();
     repo = _getDexieThemeRepository(testDB);
+    story = factory.story.builder({ key: "story-key", updatedAt: new Date("2025-01-01") });
+    await testDB.stories.add(story);
   });
 
   describe("get", () => {
@@ -48,13 +51,17 @@ describe("story theme repository", () => {
     });
 
     test("should add to DB", async () => {
-      const theme = factory.storyTheme({ key: undefined });
+      const theme = factory.storyTheme({ key: undefined, storyKey: story.key });
       await repo.create(theme);
 
       expect(await repo.get(theme.storyKey)).toStrictEqual({
         ...theme,
         key: expect.anything(),
       });
+      const updatedStory = await testDB.stories.get(story.key);
+      expect(updatedStory?.updatedAt.getTime()).toBeGreaterThan(
+        story.updatedAt.getTime(),
+      );
     });
   });
 
@@ -70,7 +77,7 @@ describe("story theme repository", () => {
     });
 
     test("should update", async () => {
-      const theme1 = factory.storyTheme();
+      const theme1 = factory.storyTheme({ storyKey: story.key });
       const theme2 = factory.storyTheme();
       await repo.create(theme1);
       await repo.create(theme2);

@@ -11,6 +11,10 @@ export type ThemeRepositoryPort = {
 export const _getDexieThemeRepository = (
   db: DexieDatabase,
 ): ThemeRepositoryPort => {
+  const touchStory = async (storyKey: string) => {
+    await db.stories.update(storyKey, { updatedAt: new Date() });
+  };
+
   return {
     get: async (storyKey: string) => {
       const themes = await db.storyThemes
@@ -22,10 +26,12 @@ export const _getDexieThemeRepository = (
 
     create: async (payload) => {
       await db.storyThemes.add(payload);
+      await touchStory(payload.storyKey);
     },
 
     update: async (storyKey, payload) => {
       await db.storyThemes.where({ storyKey }).modify(payload);
+      await touchStory(storyKey);
     },
   };
 };
