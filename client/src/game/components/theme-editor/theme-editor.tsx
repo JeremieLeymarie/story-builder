@@ -18,7 +18,7 @@ import {
 import { ActionSection } from "./action-section";
 import { SceneSection } from "./scene-section";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
-import { InfoIcon, RotateCcwIcon } from "lucide-react";
+import { RotateCcwIcon } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -87,18 +87,10 @@ export const GameWithThemeEditor = ({
         <Toolbar className="h-[85dvh] w-[350px] p-0">
           <ScrollArea className="h-full p-4">
             <ToolbarHeader>
-              <div className="flex items-center gap-2">
-                <ToolbarTitle>Theme Editor</ToolbarTitle>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <InfoIcon size={14} />
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-62">
-                    Set up the theme of your story. It will be applied to every
-                    scene of the story.
-                  </TooltipContent>
-                </Tooltip>
-              </div>
+              <ToolbarTitle>Theme Editor</ToolbarTitle>
+              <p className="text-muted-foreground text-sm">
+                This editor applies to the whole story, not just this scene.
+              </p>
             </ToolbarHeader>
             <form className="space-y-4">
               <Accordion
