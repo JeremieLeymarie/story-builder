@@ -77,7 +77,7 @@ describe("builder-service", () => {
         y: 42,
       });
 
-      expect(localRepository.updatePartialScene).toHaveBeenCalledWith("tutu", {
+      expect(sceneRepository.update).toHaveBeenCalledWith("tutu", {
         builderParams: { position: { x: 42, y: 42 } },
       });
     });
@@ -93,12 +93,9 @@ describe("builder-service", () => {
         actionKey: "key-that-does-not-exist",
       });
 
-      expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
-        BASIC_SCENE.key,
-        {
-          actions: BASIC_SCENE.actions,
-        },
-      );
+      expect(sceneRepository.update).toHaveBeenCalledWith(BASIC_SCENE.key, {
+        actions: BASIC_SCENE.actions,
+      });
     });
 
     test("should do nothing when target already exists", async () => {
@@ -125,22 +122,19 @@ describe("builder-service", () => {
         actionKey: "action-key",
       });
 
-      expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
-        BASIC_SCENE.key,
-        {
-          actions: [
-            {
-              key: "action-key",
-              type: "simple",
-              text: "action",
-              targets: [
-                { sceneKey: "dest-key", probability: 20 },
-                { sceneKey: "other-dest-key", probability: 80 },
-              ],
-            },
-          ],
-        },
-      );
+      expect(sceneRepository.update).toHaveBeenCalledWith("vroum", {
+        actions: [
+          {
+            key: "action-key",
+            type: "simple",
+            text: "action",
+            targets: [
+              { sceneKey: "dest-key", probability: 20 },
+              { sceneKey: "other-dest-key", probability: 80 },
+            ],
+          },
+        ],
+      });
     });
 
     test("should add connection at 100% when it's the first one", async () => {
@@ -160,26 +154,23 @@ describe("builder-service", () => {
         actionKey: "action-a",
       });
 
-      expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
-        "scene-key",
-        {
-          actions: [
-            {
-              key: "action-a",
-              type: "simple",
-              text: "action A",
-              targets: [{ sceneKey: "dest", probability: 100 }],
-            },
-            {
-              key: "action-b",
+      expect(sceneRepository.update).toHaveBeenCalledWith("scene-key", {
+        actions: [
+          {
+            key: "action-a",
+            type: "simple",
+            text: "action A",
+            targets: [{ sceneKey: "dest", probability: 100 }],
+          },
+          {
+            key: "action-b",
 
-              type: "simple",
-              text: "action B",
-              targets: [],
-            },
-          ],
-        },
-      );
+            type: "simple",
+            text: "action B",
+            targets: [],
+          },
+        ],
+      });
     });
 
     test("should set probability to 0 when adding another edge", async () => {
@@ -213,32 +204,29 @@ describe("builder-service", () => {
         actionKey: "action-a",
       });
 
-      expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
-        "scene-a",
-        {
-          actions: [
-            {
-              key: "action-a",
-              type: "conditional",
-              targets: [
-                { sceneKey: "dest-a", probability: 100 },
-                { sceneKey: "dest-b", probability: 0 },
-              ],
-              text: "action-a",
-              condition: {
-                sceneKey: "plouf",
-                type: "user-did-visit",
-              },
+      expect(sceneRepository.update).toHaveBeenCalledWith("scene-a", {
+        actions: [
+          {
+            key: "action-a",
+            type: "conditional",
+            targets: [
+              { sceneKey: "dest-a", probability: 100 },
+              { sceneKey: "dest-b", probability: 0 },
+            ],
+            text: "action-a",
+            condition: {
+              sceneKey: "plouf",
+              type: "user-did-visit",
             },
-            {
-              key: "action-b",
-              type: "simple",
-              targets: [{ sceneKey: "dest-a", probability: 100 }],
-              text: "action-b",
-            },
-          ],
-        },
-      );
+          },
+          {
+            key: "action-b",
+            type: "simple",
+            targets: [{ sceneKey: "dest-a", probability: 100 }],
+            text: "action-b",
+          },
+        ],
+      });
     });
   });
 
@@ -272,7 +260,7 @@ describe("builder-service", () => {
       ]);
 
       expect(sceneRepository.getScenesByKey).toHaveBeenCalledWith(["tutu"]);
-      expect(localRepository.updatePartialScene).toHaveBeenCalledWith("tutu", {
+      expect(sceneRepository.update).toHaveBeenCalledWith("tutu", {
         actions: [
           {
             key: "action-key-a",
@@ -370,7 +358,7 @@ describe("builder-service", () => {
         "first-scene-key",
         "second-scene-key",
       ]);
-      expect(localRepository.updatePartialScene).toHaveBeenCalledTimes(2);
+      expect(sceneRepository.update).toHaveBeenCalledTimes(2);
       expect(updatedScenes[firstScene.key]?.actions).toStrictEqual([
         {
           key: "action-key-a",
@@ -466,31 +454,28 @@ describe("builder-service", () => {
         probability: 42,
       });
 
-      expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
-        "source-scene-key",
-        {
-          actions: [
-            {
-              key: "source-action-key",
-              type: "simple",
-              targets: [
-                { sceneKey: "target-scene-key", probability: 42 }, // Nothing changed but this line
-                { sceneKey: "other-target-key", probability: 100 },
-              ],
-              text: "source action",
-            },
-            {
-              key: "other-action-key",
-              type: "simple",
-              targets: [
-                { sceneKey: "target-scene-key", probability: 80 },
-                { sceneKey: "other-target-key", probability: 20 },
-              ],
-              text: "other action",
-            },
-          ],
-        },
-      );
+      expect(sceneRepository.update).toHaveBeenCalledWith("source-scene-key", {
+        actions: [
+          {
+            key: "source-action-key",
+            type: "simple",
+            targets: [
+              { sceneKey: "target-scene-key", probability: 42 }, // Nothing changed but this line
+              { sceneKey: "other-target-key", probability: 100 },
+            ],
+            text: "source action",
+          },
+          {
+            key: "other-action-key",
+            type: "simple",
+            targets: [
+              { sceneKey: "target-scene-key", probability: 80 },
+              { sceneKey: "other-target-key", probability: 20 },
+            ],
+            text: "other action",
+          },
+        ],
+      });
     });
   });
 
@@ -707,7 +692,7 @@ describe("builder-service", () => {
     test("should add scene to local database", async () => {
       await builderService.addScene(BASIC_SCENE);
 
-      expect(localRepository.createScene).toHaveBeenCalledWith(BASIC_SCENE);
+      expect(sceneRepository.create).toHaveBeenCalledWith(BASIC_SCENE);
     });
   });
 
@@ -718,12 +703,9 @@ describe("builder-service", () => {
         key: "blabla",
       });
 
-      expect(localRepository.updatePartialScene).toHaveBeenCalledWith(
-        "blabla",
-        {
-          content: makeSimpleLexicalContent("tututu"),
-        },
-      );
+      expect(sceneRepository.update).toHaveBeenCalledWith("blabla", {
+        content: makeSimpleLexicalContent("tututu"),
+      });
     });
   });
 
@@ -784,10 +766,9 @@ describe("builder-service", () => {
       const success = await builderService.changeFirstScene("CANARD", "KADOC");
 
       expect(sceneRepository.get).toHaveBeenCalledWith("KADOC");
-      expect(localRepository.updateFirstScene).toHaveBeenCalledWith(
-        "CANARD",
-        "KADOC",
-      );
+      expect(storyRepository.update).toHaveBeenCalledWith("CANARD", {
+        firstSceneKey: "KADOC",
+      });
 
       expect(success).toBeTruthy();
     });
@@ -798,7 +779,7 @@ describe("builder-service", () => {
       const success = await builderService.changeFirstScene("CANARD", "KADOC");
 
       expect(sceneRepository.get).toHaveBeenCalledWith("KADOC");
-      expect(localRepository.updateFirstScene).not.toHaveBeenCalled();
+      expect(storyRepository.update).not.toHaveBeenCalled();
 
       expect(success).toBeFalsy();
     });
@@ -890,7 +871,7 @@ describe("builder-service", () => {
           sceneKeys: ["ti", "ta", "tu"],
         }),
       ).rejects.toThrow(EntityNotExistError);
-      expect(localRepository.deleteScenes).not.toHaveBeenCalled();
+      expect(sceneRepository.delete).not.toHaveBeenCalled();
     });
 
     test("should not delete first scene", async () => {
@@ -904,7 +885,7 @@ describe("builder-service", () => {
           sceneKeys: ["ti", "ta", "tu"],
         }),
       ).rejects.toThrow(CannotDeleteFirstSceneError);
-      expect(localRepository.deleteScenes).not.toHaveBeenCalled();
+      expect(sceneRepository.delete).not.toHaveBeenCalled();
     });
 
     test("should delete scenes", async () => {
@@ -913,12 +894,12 @@ describe("builder-service", () => {
         sceneKeys: ["ti", "ta", "tu"],
       });
 
-      expect(localRepository.deleteScenes).toHaveBeenCalledWith([
+      expect(sceneRepository.delete).toHaveBeenCalledWith([
         "ti",
         "ta",
         "tu",
-      ]);
-      expect(localRepository.deleteScenes).toHaveBeenCalledOnce();
+      ], "vroum");
+      expect(sceneRepository.delete).toHaveBeenCalledOnce();
     });
   });
 
@@ -1198,10 +1179,8 @@ describe("builder-service", () => {
     test("should update or create scenes with", async () => {
       await builderService.bulkUpdateScenes({ scenes: [BASIC_SCENE] });
 
-      expect(localRepository.updateOrCreateScenes).toHaveBeenCalledOnce();
-      expect(localRepository.updateOrCreateScenes).toHaveBeenCalledWith([
-        BASIC_SCENE,
-      ]);
+      expect(sceneRepository.bulkUpdate).toHaveBeenCalledOnce();
+      expect(sceneRepository.bulkUpdate).toHaveBeenCalledWith([BASIC_SCENE]);
     });
 
     describe("importFromJSON", () => {
@@ -1231,7 +1210,6 @@ describe("builder-service", () => {
         {
           author: { key: "key", username: "bob_bidou" },
           title: "A new title",
-          updatedAt: expect.any(Date),
         },
       );
 

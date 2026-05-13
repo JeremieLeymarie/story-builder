@@ -16,6 +16,10 @@ export type CharacterRepositoryPort = {
 export const _getDexieCharacterRepository = (
   db: DexieDatabase,
 ): CharacterRepositoryPort => {
+  const touchStory = async (storyKey: string) => {
+    await db.stories.update(storyKey, { updatedAt: new Date() });
+  };
+
   const get = async (storyKey: string) => {
     const characters = await db.characterConfigurations
       .filter((character) => character.storyKey === storyKey)
@@ -28,11 +32,14 @@ export const _getDexieCharacterRepository = (
     get,
 
     create: async (payload) => {
-      return await db.characterConfigurations.add(payload);
+      const key = await db.characterConfigurations.add(payload);
+      await touchStory(payload.storyKey);
+      return key;
     },
 
     update: async (storyKey, payload) => {
       await db.characterConfigurations.where({ storyKey }).modify(payload);
+      await touchStory(storyKey);
     },
 
     delete: async (storyKey) => {
@@ -40,6 +47,7 @@ export const _getDexieCharacterRepository = (
       if (!characterConfig)
         throw new EntityNotExistError("character-configuration", { storyKey });
       await db.characterConfigurations.where({ storyKey }).delete();
+      await touchStory(storyKey);
     },
   };
 };

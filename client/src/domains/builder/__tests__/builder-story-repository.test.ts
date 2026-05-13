@@ -67,6 +67,7 @@ describe("builder story repository", () => {
         ...storyB,
         author: { key: "key", username: "bob_bidou" },
         title: "A new title",
+        updatedAt: expect.any(Date),
       });
     });
   });

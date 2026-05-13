@@ -4,7 +4,6 @@ import {
   ThemeRepositoryPort,
 } from "./theme-repository";
 import { DEFAULT_STORY_THEME } from "./story-theme";
-import { getLocalRepository } from "@/repositories";
 
 export type ThemeServicePort = {
   getTheme: (storyKey: string) => Promise<StoryTheme["theme"]>;
@@ -19,10 +18,8 @@ export type ThemeServicePort = {
 
 export const _getThemeService = ({
   repository,
-  touchStory,
 }: {
   repository: ThemeRepositoryPort;
-  touchStory: (storyKey: string) => Promise<void>;
 }): ThemeServicePort => {
   return {
     getTheme: async (storyKey) => {
@@ -38,18 +35,9 @@ export const _getThemeService = ({
           storyKey,
           theme: themeConfig,
         });
-
-      await touchStory(storyKey);
     },
   };
 };
 
 export const getThemeService = () =>
-  _getThemeService({
-    repository: getDexieThemeRepository(),
-    touchStory: (storyKey) =>
-      getLocalRepository().updateStory({
-        key: storyKey,
-        updatedAt: new Date(),
-      }),
-  });
+  _getThemeService({ repository: getDexieThemeRepository() });
