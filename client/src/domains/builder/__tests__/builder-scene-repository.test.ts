@@ -19,7 +19,10 @@ describe("builder scene repository", () => {
   beforeEach(async () => {
     testDB = await getTestDatabase();
     repo = _getDexieBuilderSceneRepository(testDB);
-    story = factory.story.builder({ key: "story-key", updatedAt: new Date("2025-01-01") });
+    story = factory.story.builder({
+      key: "story-key",
+      updatedAt: new Date("2025-01-01"),
+    });
     await testDB.stories.add(story);
   });
 

@@ -19,7 +19,10 @@ describe("story character repository", () => {
   beforeEach(async () => {
     testDB = await getTestDatabase();
     repo = _getDexieCharacterRepository(testDB);
-    story = factory.story.builder({ key: "story-key", updatedAt: new Date("2025-01-01") });
+    story = factory.story.builder({
+      key: "story-key",
+      updatedAt: new Date("2025-01-01"),
+    });
     await testDB.stories.add(story);
   });
 
