@@ -19,7 +19,10 @@ describe("story theme repository", () => {
   beforeEach(async () => {
     testDB = await getTestDatabase();
     repo = _getDexieThemeRepository(testDB);
-    story = factory.story.builder({ key: "story-key", updatedAt: new Date("2025-01-01") });
+    story = factory.story.builder({
+      key: "story-key",
+      updatedAt: new Date("2025-01-01"),
+    });
     await testDB.stories.add(story);
   });
 

@@ -894,11 +894,10 @@ describe("builder-service", () => {
         sceneKeys: ["ti", "ta", "tu"],
       });
 
-      expect(sceneRepository.delete).toHaveBeenCalledWith([
-        "ti",
-        "ta",
-        "tu",
-      ], "vroum");
+      expect(sceneRepository.delete).toHaveBeenCalledWith(
+        ["ti", "ta", "tu"],
+        "vroum",
+      );
       expect(sceneRepository.delete).toHaveBeenCalledOnce();
     });
   });
