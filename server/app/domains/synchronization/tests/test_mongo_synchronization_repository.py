@@ -100,22 +100,29 @@ def _assert_fake_stories_match(stories: list[MongoStory]) -> None:
             creationDate=datetime(2025, 6, 2),
             description="description",
             firstSceneKey="first-scene-key",
-            genres=[StoryGenre.ADVENTURE, StoryGenre.ROMANCE],
+            genres=["adventure", "romance"],
             image="http://image.com",
             key="key",
             originalStoryKey="og-story-key",
             publicationDate=datetime(2025, 6, 2),
+            updatedAt=datetime(2025, 6, 2),
             scenes=[
                 MongoScene(
                     actions=[
                         MongoSimpleAction(
                             key="action-key",
                             type="simple",
-                            targets=[MongoActionTarget(sceneKey="scene-1", probability=100)],
+                            targets=[
+                                MongoActionTarget(
+                                    sceneKey="scene-1", probability=100.0
+                                )
+                            ],
                             text="Action  Text",
                         )
                     ],
-                    builderParams=MongoBuilderParams(position=MongoBuilderPosition(x=400, y=200)),
+                    builderParams=MongoBuilderParams(
+                        position=MongoBuilderPosition(x=400.0, y=200.0)
+                    ),
                     content=make_simple_lexical_content("Content"),
                     key="scene-1",
                     storyKey="key",
@@ -123,7 +130,7 @@ def _assert_fake_stories_match(stories: list[MongoStory]) -> None:
                 )
             ],
             title="Title",
-            type=StoryType.BUILDER,
+            type="builder",
             userKey="me",
         ),
         MongoStory(
@@ -137,9 +144,10 @@ def _assert_fake_stories_match(stories: list[MongoStory]) -> None:
             key="another-key",
             originalStoryKey="another-og-story-key",
             publicationDate=datetime(2024, 1, 5),
+            updatedAt=datetime(2024, 5, 1),
             scenes=[],
             title="Another Title",
-            type=StoryType.IMPORTED,
+            type="imported",
             userKey="me",
         ),
     ]
