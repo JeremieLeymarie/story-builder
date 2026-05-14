@@ -90,7 +90,7 @@ const ExpandedToolbarContent = ({ toggleExpanded }: ContentProps) => {
           }
         >
           <BookOpenTextIcon />
-          Edit story
+          Edit Story
         </Button>
         <Link
           to="/game/theme-editor/$gameKey/$sceneKey"
