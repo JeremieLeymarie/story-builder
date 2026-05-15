@@ -6,13 +6,13 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/design-system/primitives";
 import { cn } from "@/lib/style";
 import { useState } from "react";
-import { CommandList } from "cmdk";
 import { capitalize } from "@/lib/string";
 import { StoryGenreBadge } from "@/design-system/components";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
@@ -52,7 +52,7 @@ export const StoryGenreCombobox = ({
           ))}
         </div>
       )}
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover open={open} onOpenChange={setOpen} modal={true}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
@@ -70,7 +70,7 @@ export const StoryGenreCombobox = ({
         <PopoverContent className="w-full p-0" align="start" side="bottom">
           <Command>
             <CommandInput placeholder="Search genre..." />
-            <CommandList>
+            <CommandList style={{ overflow: "unset" }}>
               <ScrollArea className="h-75">
                 <CommandEmpty>No genre found.</CommandEmpty>
                 <CommandGroup>
