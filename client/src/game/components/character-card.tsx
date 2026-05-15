@@ -49,7 +49,7 @@ export const CharacterCard = ({
   character?: ProgressCharacter;
   triggeredSideEffects: SideEffect[];
 }) => {
-  const visibleAttributes = Object.values(character!.attributes).filter(
+  const visibleAttributes = Object.values(character?.attributes ?? {}).filter(
     (attr) => attr.visibility === "visible",
   );
 
