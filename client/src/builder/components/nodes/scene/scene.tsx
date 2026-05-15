@@ -10,7 +10,6 @@ import { BuilderNode } from "../../../types";
 import { cn } from "@/lib/style";
 import { Button } from "@/design-system/primitives";
 import { useBuilderEditorStore } from "@/builder/hooks/use-builder-editor-store";
-import { useCopyPaste } from "@/builder/hooks/use-copy-paste";
 import { useBuilderContext } from "@/builder/hooks/use-builder-context";
 import { Action } from "@/lib/storage/domain";
 
@@ -33,7 +32,6 @@ const DebugAction = ({ action }: { action: Action }) => {
 export const SceneNode = ({ data, selected }: SceneNodeProps) => {
   const openEditor = useBuilderEditorStore((state) => state.open);
   const { isFirstScene, builderParams, isEditable = true, ...scene } = data;
-  const { onAuxClick } = useCopyPaste();
   const { debug } = useBuilderContext();
 
   return (
@@ -43,7 +41,6 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
         isFirstScene && "bg-primary/60",
         selected && "ring-black",
       )}
-      onAuxClick={(ev) => onAuxClick(ev, data)}
       onDoubleClick={() => {
         openEditor({
           type: "scene-editor",
