@@ -61,10 +61,8 @@ const useEditWikiNodeActions = ({ node }: { node: WikiNode }) => {
   // Remove wiki and create a text node instead
   const deleteWikiNode = () => {
     editor.update(() => {
-      const nodeBefore = node.getPreviousSibling();
       const textContent = node.textContent;
-      node.remove();
-      nodeBefore?.insertAfter($createTextNode(textContent));
+      node.replace($createTextNode(textContent));
     });
   };
 
