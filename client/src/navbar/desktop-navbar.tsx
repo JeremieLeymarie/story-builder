@@ -4,6 +4,7 @@ import { NavbarActions } from "./components/navbar-actions";
 import { User } from "@/lib/storage/domain";
 import { PropsWithChildren } from "react";
 import { cn } from "@/lib/style";
+import { BookTextIcon } from "lucide-react";
 
 const NavButton = ({
   children,
@@ -60,7 +61,23 @@ export const DesktopNavbar = ({
           <NavButton isCurrentState={pathname === "/about"}>About</NavButton>
         </Link>
       </div>
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-1">
+        <div className="flex gap-px">
+          <a
+            href="https://github.com/JeremieLeymarie/story-builder"
+            target="_blank"
+          >
+            <Button variant="ghost" size="icon">
+              <img src="/github.svg" height={18} width={18} />
+            </Button>
+          </a>
+          <a href={import.meta.env.VITE_DOCS_URL} target="_blank">
+            <Button variant="ghost">
+              <BookTextIcon />
+              Docs
+            </Button>
+          </a>
+        </div>
         <NavbarActions
           user={user}
           loadRemoteData={loadRemoteData}
