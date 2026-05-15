@@ -50,13 +50,5 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-    dedupe: [
-      "lexical",
-      "@lexical/react",
-      "@lexical/rich-text",
-      "@lexical/selection",
-      "@lexical/table",
-      "@lexical/utils",
-    ],
   },
 });
