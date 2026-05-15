@@ -131,7 +131,8 @@ export const _getBuilderService = ({
 
         updatedScenesByKey[sourceScene.key] = { ...sourceScene, actions };
         return sceneRepository.update(sourceScene.key, { actions });
-      });
+      },
+    );
 
     // Update all scenes concurrently
     await Promise.all(updateOperations);
