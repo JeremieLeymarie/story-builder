@@ -16,4 +16,25 @@ Now that we have a more furnished story path we can see that the each scene has 
 you are not limited to 2.
 
 The functionnality i would like you to focus on here is linked to the little gear logo you have next to an action on the action tab of the scene creation panel.
-As you can see in the image below :
+Let's say that i want to create a conditional action in my fourth scene on the seventh action :
+
+<img src="/img/builder_conditional_actions_setting.png" alt="builder conditional actions setting" width="700" />
+
+As you can see in the image above i have configured the seventh action to be displayed to the player only if he has reached the third scene, which by the design path of the story should not be possible as you can see in the first image of this page.
+Nonetheless if we still try and play it in the library :
+
+<img src="/img/builder_conditional_actions_setting_scene1.png" alt="builder conditional actions setting scene 1" width="700" />
+<img src="/img/builder_conditional_actions_setting_scene2.png" alt="builder conditional actions setting scene 2" width="700" />
+<img src="/img/builder_conditional_actions_setting_scene4.png" alt="builder conditional actions setting scene 4" width="700" />
+
+As you can see the seventh action is hidden by questionmarks and tou can't click it because you haven't visited said third scene.
+
+On the opposite if i change the conditional action and set it as "If played did not visit" my third scene.
+
+<img src="/img/builder_conditional_actions_setting_opposite.png" alt="builder conditional actions setting opposite" width="700" />
+
+The seventh scene appears because we have in fact not visited the third scene :
+
+<img src="/img/builder_conditional_actions_setting_opposite1.png" alt="builder conditional actions setting opposite 1" width="700" />
+
+You can build a really dynamic story path by granting access or not to certains scenes which creates "conditions" for the player to further explore the story to reach hidden scenes or reach the end.
