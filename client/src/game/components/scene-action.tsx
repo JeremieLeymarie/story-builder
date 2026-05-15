@@ -18,7 +18,9 @@ const ActionTooltip = ({
 }: PropsWithChildren<{ isVisible: boolean; isTestMode: boolean }>) => {
   return (
     <Tooltip open={isVisible ? false : undefined}>
-      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipTrigger asChild>
+        <div>{children}</div>
+      </TooltipTrigger>
       <TooltipContent className="max-w-75 text-xs">
         You did not unlock this choice...
         {isTestMode && (
