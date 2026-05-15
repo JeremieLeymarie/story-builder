@@ -10,6 +10,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogFooter,
   DialogTitle,
   DialogTrigger,
   Form,
@@ -72,9 +73,11 @@ const useEditWikiNodeActions = ({ node }: { node: WikiNode }) => {
 const EditWikiNodeForm = ({
   node,
   articleKey,
+  onSubmit,
 }: {
   node: WikiNode;
   articleKey?: string;
+  onSubmit: () => void;
 }) => {
   const form = useForm<EditLinkPayload>({
     resolver: zodResolver(editLinkSchema),
@@ -98,7 +101,13 @@ const EditWikiNodeForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(editWikiNode)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit((d) => {
+          editWikiNode(d);
+          onSubmit();
+        })}
+        className="space-y-4"
+      >
         <FormField
           control={form.control}
           name="text"
@@ -177,12 +186,14 @@ const EditWikiNodeForm = ({
             </FormItem>
           )}
         />
-        <DialogClose className="flex w-full justify-end gap-2" asChild>
-          <div>
-            <Button variant="secondary">Cancel</Button>
-            <Button type="submit">Save</Button>
-          </div>
-        </DialogClose>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="secondary" type="button">
+              Cancel
+            </Button>
+          </DialogClose>
+          <Button type="submit">Save</Button>
+        </DialogFooter>
       </form>
     </Form>
   );
@@ -201,6 +212,7 @@ const ArticleInfo = ({
     enabled: !!articleKey,
   });
   const { deleteWikiNode } = useEditWikiNodeActions({ node });
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   return (
     <PopoverContent>
@@ -210,7 +222,7 @@ const ArticleInfo = ({
         </span>
         <div className="flex">
           {isLoading || !article || !articleKey ? null : (
-            <Dialog>
+            <Dialog onOpenChange={setIsEditDialogOpen} open={isEditDialogOpen}>
               <DialogTrigger asChild>
                 <Button size="xs" variant="ghost" disabled={!article}>
                   <EditIcon />
@@ -219,7 +231,13 @@ const ArticleInfo = ({
               <DialogContent>
                 <DialogTitle>Edit Article Link</DialogTitle>
                 <div className="mt-2">
-                  <EditWikiNodeForm node={node} articleKey={articleKey} />
+                  <EditWikiNodeForm
+                    node={node}
+                    articleKey={articleKey}
+                    onSubmit={() => {
+                      setIsEditDialogOpen(false);
+                    }}
+                  />
                 </div>
               </DialogContent>
             </Dialog>
