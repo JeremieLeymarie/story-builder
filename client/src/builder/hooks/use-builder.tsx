@@ -8,6 +8,7 @@ import { useDeleteSceneStore } from "./use-delete-scenes-store";
 import { toast } from "sonner";
 import { OnBeforeDelete, useReactFlow } from "@xyflow/react";
 import { useTutorial } from "./use-tutorial";
+import { useDetectBuilderErrors } from "./use-detect-builder-errors";
 
 export const useBuilder = () => {
   const { story, builderService, initialNodes } = useBuilderContext();
@@ -17,6 +18,8 @@ export const useBuilder = () => {
   const { fitView } = useReactFlow();
   const openDeleteConfirm = useDeleteSceneStore((state) => state.open);
   const { start: startTutorial, isActive: isTutorialActive } = useTutorial();
+
+  useDetectBuilderErrors();
 
   const handleWindowResize = useEffectEvent(() => {
     fitView();
