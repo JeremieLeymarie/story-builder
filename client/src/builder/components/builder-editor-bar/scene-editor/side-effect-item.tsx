@@ -143,7 +143,9 @@ const SideEffectPreview = ({
   field: SideEffectsSchema["effects"][number];
   characterConfig: CharacterConfiguration;
 }) => {
-  const attribute = characterConfig.attributes[field.effect.attributeKey]!;
+  const attribute = characterConfig.attributes[field.effect.attributeKey];
+
+  if (!attribute) return null;
   return (
     <FieldDescription className="space-y-1">
       <span className="flex items-center gap-1">
@@ -177,6 +179,10 @@ export const SideEffectItem = ({
   removeEffect: () => void;
 }) => {
   const [isEditMode, setIsEditMode] = useState(form.formState.isDirty);
+  const attribute = characterConfig.attributes[field.effect.attributeKey];
+
+  // TODO: implement proper handling of attribute deletion (https://github.com/JeremieLeymarie/story-builder/issues/567)
+  if (!attribute) return null;
 
   return (
     <div className="gap-2">
