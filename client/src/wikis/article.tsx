@@ -35,7 +35,7 @@ export const Article = ({
                 className="absolute top-0 right-0"
               >
                 <Button variant="outline" className="gap-2">
-                  <SquarePenIcon size={16} />
+                  <PencilIcon size={16} />
                   Edit
                 </Button>
               </Link>
