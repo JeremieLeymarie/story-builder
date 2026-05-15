@@ -63,6 +63,7 @@ export const Article = ({
               entityKey={article.key}
             >
               <RichText
+                key={JSON.stringify(article.content)}
                 initialState={article.content}
                 editable={false}
                 textDisplayMode="full"
