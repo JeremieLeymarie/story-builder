@@ -1,6 +1,9 @@
 import { Controller, UseFormReturn } from "react-hook-form";
 import { SideEffectsSchema } from "./hooks/use-side-effects-form";
-import { CharacterConfiguration } from "@/lib/storage/domain";
+import {
+  CharacterConfiguration,
+  CharacterNumericAttribute,
+} from "@/lib/storage/domain";
 import {
   Field,
   FieldContent,
@@ -25,10 +28,12 @@ import { capitalize } from "@/lib/string";
 import {
   EyeClosedIcon,
   EyeIcon,
+  MessageSquareWarningIcon,
   SettingsIcon,
   Trash2Icon,
   ZapIcon,
 } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 const SideEffectFormItem = ({
   characterConfig,
@@ -138,14 +143,11 @@ const SideEffectFormItem = ({
 
 const SideEffectPreview = ({
   field,
-  characterConfig,
+  attribute,
 }: {
   field: SideEffectsSchema["effects"][number];
-  characterConfig: CharacterConfiguration;
+  attribute: CharacterNumericAttribute;
 }) => {
-  const attribute = characterConfig.attributes[field.effect.attributeKey];
-
-  if (!attribute) return null;
   return (
     <FieldDescription className="space-y-1">
       <span className="flex items-center gap-1">
@@ -161,6 +163,35 @@ const SideEffectPreview = ({
         {field.effect.operation === "add" ? "increase" : "decrease"} by{" "}
         {field.effect.value} point{field.effect.value === 1 ? "" : "s"}
       </span>
+    </FieldDescription>
+  );
+};
+
+const SideEffectError = ({
+  field,
+  removeEffect,
+}: {
+  field: SideEffectsSchema["effects"][number];
+  removeEffect: () => void;
+}) => {
+  const isMobile = useIsMobile();
+
+  return (
+    <FieldDescription className="text-destructive flex justify-between">
+      <span>
+        <MessageSquareWarningIcon size={16} className="mx-1 inline" />
+        The side effect <span className="font-semibold">{field.name}</span>{" "}
+        references an attribute that no longer exists.
+      </span>
+      <Button
+        variant="destructive"
+        type="button"
+        onClick={() => removeEffect()}
+        size={isMobile ? "icon" : "default"}
+      >
+        {isMobile ? "" : "Delete effect"}
+        <Trash2Icon />
+      </Button>
     </FieldDescription>
   );
 };
@@ -181,9 +212,8 @@ export const SideEffectItem = ({
   const [isEditMode, setIsEditMode] = useState(form.formState.isDirty);
   const attribute = characterConfig.attributes[field.effect.attributeKey];
 
-  // TODO: implement proper handling of attribute deletion (https://github.com/JeremieLeymarie/story-builder/issues/567)
-  if (!attribute) return null;
-
+  if (!attribute)
+    return <SideEffectError field={field} removeEffect={removeEffect} />;
   return (
     <div className="gap-2">
       <div className="flex items-center justify-between">
@@ -214,7 +244,7 @@ export const SideEffectItem = ({
           form={form}
         />
       ) : (
-        <SideEffectPreview field={field} characterConfig={characterConfig} />
+        <SideEffectPreview field={field} attribute={attribute} />
       )}
     </div>
   );
