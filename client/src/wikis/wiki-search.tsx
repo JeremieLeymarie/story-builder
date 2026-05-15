@@ -16,6 +16,7 @@ import { EditorContextProvider } from "@/design-system/components/editor/hooks/u
 import { WikiNode } from "@/builder/lexical-wiki-node";
 import { useDebouncer } from "@tanstack/react-pacer/debouncer";
 import { useNavigate } from "@tanstack/react-router";
+import { ScrollArea } from "@/design-system/primitives/scroll-area";
 
 export const WikiSearch = () => {
   const [wikiKey, isOpen, open, close_] = useWikiStore((state) => [
@@ -50,51 +51,53 @@ export const WikiSearch = () => {
           placeholder="Search..."
           onValueChange={(value) => debouncer.maybeExecute(value)}
         />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          {searchResults?.length ? (
-            <CommandGroup heading="Results">
-              {searchResults.map((article) => (
-                <CommandItem
-                  key={article.key}
-                  className="w-full justify-between"
-                  onSelect={() => {
-                    close();
-                    navigate({
-                      to: "/wikis/$wikiKey/$articleKey",
-                      params: { articleKey: article.key, wikiKey },
-                    });
-                  }}
-                >
-                  <div>
+        <CommandList style={{ overflow: "unset" }}>
+          <ScrollArea className="h-75">
+            <CommandEmpty>No results found.</CommandEmpty>
+            {searchResults?.length ? (
+              <CommandGroup heading="Results">
+                {searchResults.map((article) => (
+                  <CommandItem
+                    key={article.key}
+                    className="w-full justify-between"
+                    onSelect={() => {
+                      close();
+                      navigate({
+                        to: "/wikis/$wikiKey/$articleKey",
+                        params: { articleKey: article.key, wikiKey },
+                      });
+                    }}
+                  >
                     <div>
-                      {article.category && (
-                        <>
-                          <span style={{ color: article.category.color }}>
-                            {article.category.name}
-                          </span>
-                          <span>&nbsp;&gt;&nbsp;</span>
-                        </>
-                      )}
-                      <span className="font-semibold">{article.title}</span>
+                      <div>
+                        {article.category && (
+                          <>
+                            <span style={{ color: article.category.color }}>
+                              {article.category.name}
+                            </span>
+                            <span>&nbsp;&gt;&nbsp;</span>
+                          </>
+                        )}
+                        <span className="font-semibold">{article.title}</span>
+                      </div>
+                      <EditorContextProvider
+                        entityType="wiki-article"
+                        entityKey={article.key}
+                      >
+                        <RichText
+                          editable={false}
+                          initialState={article.content}
+                          editorNodes={[WikiNode]}
+                          textDisplayMode="summary"
+                          className="text-muted-foreground text-xs"
+                        />
+                      </EditorContextProvider>
                     </div>
-                    <EditorContextProvider
-                      entityType="wiki-article"
-                      entityKey={article.key}
-                    >
-                      <RichText
-                        editable={false}
-                        initialState={article.content}
-                        editorNodes={[WikiNode]}
-                        textDisplayMode="summary"
-                        className="text-muted-foreground text-xs"
-                      />
-                    </EditorContextProvider>
-                  </div>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          ) : null}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            ) : null}
+          </ScrollArea>
         </CommandList>
       </Command>
     </CommandDialog>
