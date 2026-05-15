@@ -17,6 +17,7 @@ import { PropsWithChildren, ReactNode, useState } from "react";
 import { cn } from "@/lib/style";
 import {
   BookMarkedIcon,
+  BookTextIcon,
   CircleHelpIcon,
   CloudDownloadIcon,
   CloudUploadIcon,
@@ -217,7 +218,7 @@ export const MobileNavbar = (_props: {
           <Divider className="w-6/12" />
         </div>
         {/* Sync is temporarily disabled */}
-        <div className="text-muted-foreground flex items-center gap-2 px-2 font-normal">
+        <div className="ml-2 flex items-center gap-2 px-2 text-base font-normal">
           Synchronization<Badge variant="secondary">Coming soon</Badge>
           {/*
           <NavbarActions
@@ -227,12 +228,30 @@ export const MobileNavbar = (_props: {
           />*/}
         </div>
         <SheetFooter>
-          <Button
-            variant="outline"
-            className="flex w-full gap-2"
-            onClick={getUserService().logout}
-          >
-            <LogOutIcon size="16px" /> Logout
+          <div className="flex gap-2">
+            <a
+              href="https://github.com/JeremieLeymarie/story-builder"
+              target="_blank"
+              className="w-full"
+            >
+              <Button variant="outline" className="flex w-full gap-2">
+                <img src="/github.svg" height={18} width={18} />
+                Github
+              </Button>
+            </a>
+            <a
+              href={import.meta.env.VITE_DOCS_URL}
+              target="_blank"
+              className="w-full"
+            >
+              <Button variant="outline" className="w-full">
+                <BookTextIcon />
+                Docs
+              </Button>
+            </a>
+          </div>
+          <Button variant="outline" onClick={getUserService().logout}>
+            <LogOutIcon /> Logout
           </Button>
         </SheetFooter>
       </SheetContent>
