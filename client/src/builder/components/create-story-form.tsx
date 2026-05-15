@@ -81,6 +81,7 @@ export const CreateStoryForm = ({
                     <Textarea
                       placeholder="A wonderful epic tale through the world of Penthetir. "
                       {...field}
+                      value={(field.value as string | undefined) ?? ""}
                       className="resize-none text-sm"
                     />
                   </FormControl>
@@ -103,7 +104,7 @@ export const CreateStoryForm = ({
                         type="url"
                         placeholder="https://your-image.org"
                         onChange={(v) => field.onChange(v.target.value || null)}
-                        value={field.value || ""}
+                        value={(field.value as string | undefined) ?? ""}
                       />
                       <p className="text-muted-foreground">--- OR ---</p>
                       <FileDropInput
