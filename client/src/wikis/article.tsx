@@ -1,4 +1,4 @@
-import { Button, Card } from "@/design-system/primitives";
+import { Button } from "@/design-system/primitives";
 import { WikiArticle } from "@/lib/storage/domain";
 import { Link } from "@tanstack/react-router";
 import { PencilIcon } from "lucide-react";
@@ -21,10 +21,9 @@ export const Article = ({
 
   return (
     <div className="min-h-screen w-full">
-      {/* Hero Section */}
       <div className="from-muted/30 to-background border-b bg-linear-to-b">
-        <div className="mx-auto max-w-5xl px-8 py-12">
-          <div className="relative mb-6">
+        <div className="mx-auto px-8 pt-8 pb-6">
+          <div className="relative mb-3">
             <h1 className="text-5xl font-bold tracking-tight">
               {article.title}
             </h1>
@@ -43,7 +42,6 @@ export const Article = ({
           </div>
           <div className="flex items-center gap-4">
             <CategoryBadge color={category?.color} name={category?.name} />
-            <span className="text-muted-foreground">·</span>
             <p className="text-muted-foreground text-sm">
               Last edited {article.updatedAt.toLocaleDateString()}
             </p>
@@ -51,22 +49,15 @@ export const Article = ({
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="mx-auto max-w-5xl px-8 py-12">
+      <div className="mx-auto w-full max-w-3xl px-8 py-12">
         <div className="space-y-12">
-          {/* Image Section */}
-          {article.image && (
-            <Card className="mx-auto max-w-xl overflow-hidden border-0 shadow-xl">
-              <img
-                src={article.image}
-                alt={article.title}
-                className="h-auto w-full object-cover transition-transform duration-300 hover:scale-105"
-              />
-            </Card>
-          )}
+          <img
+            src={article.image}
+            alt={article.title}
+            className="mx-auto max-h-85 rounded-xl object-cover"
+          />
 
-          {/* Content Section */}
-          <article className="prose prose-lg mx-auto max-w-[65ch]">
+          <article className="prose prose-lg mx-auto">
             <EditorContextProvider
               entityType="wiki-article"
               entityKey={article.key}
