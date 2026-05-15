@@ -8,16 +8,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/design-system/primitives";
-import { ANONYMOUS_AUTHOR } from "@/services/common/import-export-service";
+import { ANONYMOUS_AUTHOR } from "@/services/common/import-service";
 import { ReactNode, useState } from "react";
 import { Badge } from "../primitives/badge";
 import { StoryGenreBadge } from "./story-genre-badge";
-import { JsonStoryData } from "@/services/common/schema";
+import { ImportData } from "@/services/common/schema";
 
 const ImportPreview = ({
   storyFromImport,
 }: {
-  storyFromImport: JsonStoryData;
+  storyFromImport: ImportData;
 }) => {
   return (
     <div className="flex flex-col gap-1">
@@ -47,8 +47,8 @@ const ImportPreview = ({
 };
 
 type ImportModalProps = {
-  onImportStory: (story: JsonStoryData) => Promise<void>;
-  parseFile: (content: string) => JsonStoryData | null;
+  onImportStory: (story: ImportData) => Promise<void>;
+  parseFile: (content: string) => ImportData | null;
   trigger: ReactNode;
 };
 
@@ -58,7 +58,7 @@ export const ImportModal = ({
   trigger,
 }: ImportModalProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [storyFromImport, setStoryFromImport] = useState<JsonStoryData | null>(
+  const [storyFromImport, setStoryFromImport] = useState<ImportData | null>(
     null,
   );
 

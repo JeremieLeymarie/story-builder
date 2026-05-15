@@ -8,11 +8,9 @@ import { VariantProps } from "class-variance-authority";
 export const Toolbar = ({
   children,
   className,
-  id,
 }: {
   children: ReactNode;
   className?: string;
-  id?: string;
 }) => {
   return (
     <div
@@ -20,7 +18,6 @@ export const Toolbar = ({
         "ring-border z-40 rounded-xl bg-white/98 p-3 shadow-sm ring-1",
         className,
       )}
-      id={id}
     >
       {children}
     </div>

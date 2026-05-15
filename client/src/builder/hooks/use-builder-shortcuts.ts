@@ -4,12 +4,25 @@ import { useReactFlow, useStoreApi } from "@xyflow/react";
 import { BuilderNode } from "../types";
 import { getUserOS } from "@/lib/get-os";
 import { useCopyPaste } from "./use-copy-paste";
-import { useEffect, useEffectEvent } from "react";
+import { useEffect } from "react";
 import { useBuilderEditorStore } from "./use-builder-editor-store";
 import { useAddScene } from "./use-add-scene";
-import { toast } from "sonner";
-import { useTutorialStore } from "./use-tutorial";
-import { isAnyInputFocused } from "@/lib/shortcuts";
+
+export const isAnyInputFocused = () => {
+  const isInputFocused = document.activeElement?.tagName === "INPUT";
+  const isTextAreaFocused = document.activeElement?.tagName === "TEXTAREA";
+  const isContentEditableFocused =
+    document.activeElement?.getAttribute("contenteditable") === "true";
+  // ShadCN sets pointer-events: 'none' on the body when a dialog is open
+  const isAnyModalOpen = document.body.style.pointerEvents === "none";
+
+  return (
+    isInputFocused ||
+    isTextAreaFocused ||
+    isContentEditableFocused ||
+    isAnyModalOpen
+  );
+};
 
 export const useBuilderShortCuts = ({
   firstSceneKey,
@@ -23,7 +36,6 @@ export const useBuilderShortCuts = ({
   const { addSelectedNodes, resetSelectedElements } = useStoreApi().getState();
   const { onCopyOrCut, onPaste } = useCopyPaste();
   const closeEditor = useBuilderEditorStore((state) => state.close);
-  const isTutorialActive = useTutorialStore((state) => state.isActive);
 
   const shortcuts: Record<string, (e: KeyboardEvent) => void> = {
     ["n"]() {
@@ -44,14 +56,8 @@ export const useBuilderShortCuts = ({
     },
   };
 
-  const handleKeyDown = useEffectEvent((e: KeyboardEvent) => {
-    const isCtrlOrMeta = getUserOS() === "Mac" ? e.metaKey : e.ctrlKey;
-    if (isCtrlOrMeta && e.key.toLocaleLowerCase() === "s") {
-      e.preventDefault();
-      if (!e.repeat) toast.info("Changes are automatically saved!");
-      return;
-    }
-    if (e.isComposing || isAnyInputFocused() || isTutorialActive) return;
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.isComposing || isAnyInputFocused()) return;
     const key = e.key.toLocaleLowerCase();
     for (const binding of Object.keys(shortcuts)) {
       if (!binding.endsWith(key)) continue;
@@ -66,7 +72,7 @@ export const useBuilderShortCuts = ({
       if (binding.match("alt") && !e.altKey) continue;
       shortcuts[binding]!(e);
     }
-  });
+  };
 
   useEffect(() => {
     document.body.addEventListener("keydown", handleKeyDown);
@@ -79,5 +85,5 @@ export const useBuilderShortCuts = ({
       document.body.removeEventListener("cut", onCopyOrCut);
       document.body.removeEventListener("paste", onPaste);
     };
-  }, [onCopyOrCut, onPaste]);
+  });
 };

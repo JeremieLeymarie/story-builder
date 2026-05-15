@@ -9,7 +9,9 @@ import {
   DropdownMenuTrigger,
 } from "@/design-system/primitives";
 import { CircleHelpIcon, LogOutIcon, SettingsIcon } from "lucide-react";
+import { LoadMenuItem } from "./load-menu-item";
 import { useState } from "react";
+import { SaveMenuItem } from "./save-menu-item";
 import {
   Tooltip,
   TooltipContent,
@@ -17,10 +19,11 @@ import {
 } from "@/design-system/primitives/tooltip";
 import { Link } from "@tanstack/react-router";
 import { getUserService } from "@/domains/user/user-service";
-import { Badge } from "@/design-system/primitives/badge";
 
 export const ActionsDropdown = ({
   username,
+  saveLocalData,
+  loadRemoteData,
 }: {
   username: string;
   saveLocalData: () => void;
@@ -40,12 +43,12 @@ export const ActionsDropdown = ({
       <DropdownMenuContent className="w-56">
         <DropdownMenuGroup>
           <DropdownMenuLabel className="flex items-center gap-2">
-            Synchronization <Badge variant="secondary">Coming soon</Badge>
+            Synchronization
             <Tooltip>
               <TooltipTrigger asChild>
                 <CircleHelpIcon size="16px" className="hover:text-primary" />
               </TooltipTrigger>
-              <TooltipContent className="max-w-75 text-xs font-normal">
+              <TooltipContent className="max-w-[300px] text-xs font-normal">
                 Story Builder is designed to be local-first. This means that by
                 default data is only stored locally. To allow playing and
                 building on multiple devices or browsers, you can manually save
@@ -62,13 +65,14 @@ export const ActionsDropdown = ({
               </TooltipContent>
             </Tooltip>
           </DropdownMenuLabel>
-          {/* <DropdownMenuSeparator />
+          <DropdownMenuSeparator />
+
+          {/* TODO: implement shortcuts */}
           <LoadMenuItem
             load={loadRemoteData}
             onClose={() => setIsOpen(false)}
           />
           <SaveMenuItem save={saveLocalData} onClose={() => setIsOpen(false)} />
-          */}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>

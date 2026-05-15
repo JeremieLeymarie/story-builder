@@ -45,20 +45,18 @@ export const StoryGenreCombobox = ({
 
   return (
     <>
-      {values.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {values.map((genre) => (
-            <StoryGenreBadge key={`${genre}-badge`} variant={genre} />
-          ))}
-        </div>
-      )}
-      <Popover open={open} onOpenChange={setOpen}>
+      <div className="flex flex-wrap gap-2">
+        {values.map((genre) => (
+          <StoryGenreBadge key={`${genre}-badge`} variant={genre} />
+        ))}
+      </div>
+      <Popover open={open} onOpenChange={setOpen} modal={true}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="text-muted-foreground w-62.5 justify-between font-normal"
+            className="w-[250px] justify-between"
           >
             {values.length
               ? `${values.length} genres selected...`
@@ -71,7 +69,7 @@ export const StoryGenreCombobox = ({
           <Command>
             <CommandInput placeholder="Search genre..." />
             <CommandList>
-              <ScrollArea className="h-75">
+              <ScrollArea className="h-[300px]">
                 <CommandEmpty>No genre found.</CommandEmpty>
                 <CommandGroup>
                   {STORY_GENRES.map((genre) => (

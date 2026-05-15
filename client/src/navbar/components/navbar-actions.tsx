@@ -1,8 +1,8 @@
-import { Button, DropdownMenuItem } from "@/design-system/primitives";
+import { Button } from "@/design-system/primitives";
 import { User } from "@/lib/storage/domain";
 import { useState } from "react";
 import { ActionsDropdown } from "./actions-dropdown";
-import { CloudDownloadIcon, CloudUploadIcon, LogInIcon } from "lucide-react";
+import { LogInIcon } from "lucide-react";
 import { toast } from "sonner";
 import { AuthModalForm } from "@/components/auth-modal-form";
 import { useIsOnline } from "@/hooks/use-is-online";
@@ -12,78 +12,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/design-system/primitives/tooltip";
-import { ConfirmLoadAction } from "./confirm-load-action";
-import { ConfirmSaveAction } from "./confirm-save-action";
-
-// @ts-expect-error Sync is temporarily disabled
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const SaveMenuItem = ({
-  save,
-  onClose,
-}: {
-  save: () => void;
-  onClose: () => void;
-}) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  return (
-    <>
-      <DropdownMenuItem
-        disabled
-        onSelect={(e) => {
-          e.preventDefault();
-          setIsModalOpen(true);
-        }}
-        className="flex w-full items-center gap-2"
-      >
-        <CloudUploadIcon size="18px" />
-        <span>Save</span>
-      </DropdownMenuItem>
-
-      <ConfirmSaveAction
-        save={save}
-        isOpen={isModalOpen}
-        setIsOpen={setIsModalOpen}
-        onClose={onClose}
-      />
-    </>
-  );
-};
-
-// @ts-expect-error Sync is temporarily disabled
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const LoadMenuItem = ({
-  load,
-  onClose,
-}: {
-  load: () => void;
-  onClose: () => void;
-}) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  return (
-    <>
-      <DropdownMenuItem
-        disabled
-        onSelect={(e) => {
-          e.preventDefault();
-          setIsModalOpen(true);
-        }}
-        className="flex w-full items-center gap-2"
-      >
-        <CloudDownloadIcon size="18px" />
-        <span>Load</span>
-      </DropdownMenuItem>
-
-      <ConfirmLoadAction
-        onClose={onClose}
-        load={load}
-        setIsOpen={setIsModalOpen}
-        isOpen={isModalOpen}
-      />
-    </>
-  );
-};
 
 export const NavbarActions = ({
   user,

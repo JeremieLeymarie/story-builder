@@ -1,7 +1,7 @@
 import { Button, Card } from "@/design-system/primitives";
 import { WikiArticle } from "@/lib/storage/domain";
 import { Link } from "@tanstack/react-router";
-import { SquarePenIcon } from "lucide-react";
+import { PencilIcon } from "lucide-react";
 import { useWikiStore } from "./hooks/use-wiki-store";
 import { WikiDataCategory } from "@/domains/wiki/types";
 import { RichText } from "@/design-system/components/editor/components/rich-text-editor";

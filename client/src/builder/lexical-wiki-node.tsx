@@ -9,7 +9,7 @@ import { ReactNode } from "react";
 import { EditorWikiNodeComponent } from "./components/lexical-node-wiki-article-editor";
 import { DisplayWikiNodeComponent } from "./components/lexical-node-wiki-article-display";
 
-type SerializedWikiNode = Spread<
+export type SerializedWikiNode = Spread<
   {
     articleLinkKey: string;
     textContent: string;

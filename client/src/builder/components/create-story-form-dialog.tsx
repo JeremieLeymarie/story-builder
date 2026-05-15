@@ -1,28 +1,22 @@
 import {
-  Button,
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/design-system/primitives";
 import { ReactNode, useState } from "react";
+import { CreateStoryPayload } from "../hooks/use-builder-stories";
 import { CreateStoryForm } from "./create-story-form";
-import {
-  CreateStorySchemaOutput,
-  useCreateStoryForm,
-} from "../hooks/use-create-story-form";
-import { useIsMobile } from "@/hooks/use-is-mobile";
+import { useCreateStoryForm } from "../hooks/use-create-story-form";
+import { EditStorySchema } from "../hooks/use-edit-story-form";
 
 type CreateStoryFormProps = {
-  onSubmit: (props: CreateStorySchemaOutput) => void;
+  onSubmit: (props: CreateStoryPayload) => void;
   trigger?: ReactNode;
   title: string;
   description: string;
-  isLoading?: boolean;
 };
 
 // This version of the component is uncontrolled and needs a trigger to open it
@@ -44,36 +38,31 @@ const ControlledCreateStoryFormDialog = ({
   open,
   title,
   description,
-  isLoading,
 }: CreateStoryFormProps & {
   open: boolean;
   setOpen: (open: boolean) => void;
 }) => {
-  const { form, submit } = useCreateStoryForm({ onSubmit });
-  const isMobile = useIsMobile();
+  const form = useCreateStoryForm();
 
   const handleOpen = (open: boolean) => {
     setOpen(open);
     if (!open) form.reset();
   };
 
+  const submit = (data: EditStorySchema) => {
+    onSubmit({ ...data });
+    handleOpen(false);
+  };
+
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
       {!!trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-      <DialogContent className="w-120 sm:max-w-120">
-        <DialogHeader>
+      <DialogContent className="min-w-120">
+        <DialogHeader className="p-1">
           <DialogTitle>{title}</DialogTitle>
-          {!isMobile && <DialogDescription>{description}</DialogDescription>}
+          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <CreateStoryForm form={form} onSubmit={submit} />
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="secondary">Cancel</Button>
-          </DialogClose>
-          <DialogClose onClick={() => submit()} asChild>
-            <Button disabled={isLoading}>Create</Button>
-          </DialogClose>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

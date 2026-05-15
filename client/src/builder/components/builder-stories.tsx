@@ -20,8 +20,7 @@ type BuilderHomeProps = {
 
 export const BuilderStories = ({ stories }: BuilderHomeProps) => {
   const navigate = useNavigate();
-  const { createStory, isCreatingStory, handleImportFromJSON, parseFile } =
-    useBuilderStories();
+  const { createStory, handleImportFromJSON, parseFile } = useBuilderStories();
 
   return (
     <div className="flex flex-col items-center space-y-8 px-16 py-8 sm:items-start sm:px-32">
@@ -43,8 +42,7 @@ export const BuilderStories = ({ stories }: BuilderHomeProps) => {
                 </Button>
               }
               title="Your story"
-              description="Don't stress, you will be able to change everything later!"
-              isLoading={isCreatingStory}
+              description="Build your own adventure!"
             />
             <p className="text-muted-foreground text-sm">--- OR --- </p>
             <ImportModal

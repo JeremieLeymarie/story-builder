@@ -82,7 +82,6 @@ def test_get_synchronization_data() -> None:
                     user_key="me",
                     history=["scene-1", "scene-2"],
                     current_scene_key="scene-2",
-                    created_at=datetime(2025, 6, 1),
                     last_played_at=datetime(2025, 6, 2),
                     finished=True,
                     story_key="shplouf",
@@ -135,7 +134,6 @@ def test_get_synchronization_data() -> None:
                 user_key="me",
                 history=["scene-1", "scene-2"],
                 current_scene_key="scene-2",
-                created_at=datetime(2025, 6, 1),
                 last_played_at=datetime(2025, 6, 2),
                 finished=True,
                 story_key="shplouf",
@@ -148,7 +146,6 @@ def test_get_synchronization_data() -> None:
 FAKE_STORY_PROGRESS = SynchronizationStoryProgress(
     key="key",
     current_scene_key="current-scene-key",
-    created_at=datetime(1999, 11, 1),
     finished=True,
     history=["scene-1", "scene-2"],
     last_played_at=datetime(1999, 11, 26),

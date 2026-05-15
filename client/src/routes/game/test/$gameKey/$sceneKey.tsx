@@ -25,7 +25,6 @@ const Component = () => {
       isLastScene={!scene.actions.length}
       mode="test"
       theme={theme}
-      triggeredSideEffects={[]}
     />
   );
 };

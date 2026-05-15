@@ -158,8 +158,9 @@ describe("wiki repository", () => {
   });
 
   test("should not authorize same wiki multiple times", async () => {
-    await expect(
-      repo.bulkUpdate([{ key: "a" }, { key: "b" }, { key: "a" }]),
+    expect(
+      async () =>
+        await repo.bulkUpdate([{ key: "a" }, { key: "b" }, { key: "a" }]),
     ).rejects.toThrowError("Each wiki can only be present once in the input");
   });
 

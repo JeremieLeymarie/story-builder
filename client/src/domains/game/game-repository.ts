@@ -5,7 +5,6 @@ import { Scene } from "@/lib/storage/domain";
 export type GameRepositoryPort = {
   deleteWiki: (gameKey: string) => Promise<void>;
   getScenes: (gameKey: string) => Promise<Scene[]>;
-  getScene: (sceneKey: string) => Promise<Scene | null>;
 };
 
 export const _getDexieGameRepository = (
@@ -34,10 +33,6 @@ export const _getDexieGameRepository = (
       return await db.scenes
         .filter((scene) => scene.storyKey === gameKey)
         .toArray();
-    },
-
-    getScene: async (sceneKey: string) => {
-      return (await db.scenes.get(sceneKey)) ?? null;
     },
   };
 };

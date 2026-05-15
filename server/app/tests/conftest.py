@@ -7,18 +7,18 @@ from domains.auth.repositories.user_repository import UserRepository
 from domains.auth.type_defs import FullUser
 from main import app
 
-from utils.mongo.base_repository import BaseTestMongoRepository
+from utils.mongo.base_repository import TestMongoRepository
 
 
 class ApiTestInfra(NamedTuple):
     client: TestClient
-    repo: BaseTestMongoRepository
+    repo: TestMongoRepository
     auth_user: FullUser | None
 
 
 @pytest.fixture(scope="module", autouse=True)
 def reset_db() -> None:
-    test_repo = BaseTestMongoRepository()
+    test_repo = TestMongoRepository()
     test_repo._client.drop_database(test_repo.db)
 
 
@@ -27,7 +27,7 @@ def api_test_infra_no_token() -> ApiTestInfra:
     client = TestClient(app)
     client.headers["Authorization"] = "Bearer toktok"
 
-    return ApiTestInfra(client=client, repo=BaseTestMongoRepository(), auth_user=None)
+    return ApiTestInfra(client=client, repo=TestMongoRepository(), auth_user=None)
 
 
 @pytest.fixture(scope="module")
@@ -42,4 +42,4 @@ def api_test_infra_authenticated() -> ApiTestInfra:
     client = TestClient(app)
     client.headers["Authorization"] = f"Bearer {auth_svc._generate_token(user)}"
 
-    return ApiTestInfra(client=client, repo=BaseTestMongoRepository(), auth_user=user)
+    return ApiTestInfra(client=client, repo=TestMongoRepository(), auth_user=user)

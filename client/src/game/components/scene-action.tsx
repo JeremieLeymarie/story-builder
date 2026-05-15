@@ -1,7 +1,8 @@
 import { Button } from "@/design-system/primitives";
 import { Action, StoryProgress, StoryThemeConfig } from "@/lib/storage/domain";
 import { cn } from "@/lib/style";
-import { useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
+import { useActionVisibility } from "../hooks/use-action-visibility";
 import {
   Tooltip,
   TooltipContent,
@@ -19,7 +20,7 @@ const ActionTooltip = ({
   return (
     <Tooltip open={isVisible ? false : undefined}>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
-      <TooltipContent className="max-w-75 text-xs">
+      <TooltipContent className="max-w-[300px] text-xs">
         You did not unlock this choice...
         {isTestMode && (
           <p className="mt-0.5 italic">
@@ -35,38 +36,30 @@ const ActionButton = ({
   text,
   isVisible,
   actionTheme,
-  onClick,
 }: {
   text: string;
   isVisible: boolean;
   actionTheme: StoryThemeConfig["action"];
-  onClick: () => void;
-}) => {
-  const [className, size] = match(actionTheme.size)
-    .with("huge", () => ["py-3 px-4.5", "xl"] as const)
-    .with("large", () => ["py-2 px-3.5", "lg"] as const)
-    .with("medium", () => ["py-1.5", "default"] as const)
-    .with("small", () => ["py-1", "sm"] as const)
-    .exhaustive();
-
-  return (
-    <Button
-      className={cn(
-        "h-max w-fit cursor-pointer text-left text-pretty wrap-anywhere whitespace-normal select-none",
-        className,
-      )}
-      style={{
-        backgroundColor: actionTheme.backgroundColor,
-        color: actionTheme.textColor,
-      }}
-      disabled={!isVisible}
-      size={size}
-      onClick={onClick}
-    >
-      {isVisible ? text : "????"}
-    </Button>
-  );
-};
+}) => (
+  <Button
+    className={cn(
+      "cursor-pointer text-left text-wrap whitespace-normal select-none",
+    )}
+    style={{
+      backgroundColor: actionTheme.backgroundColor,
+      color: actionTheme.textColor,
+    }}
+    disabled={!isVisible}
+    size={match(actionTheme.size)
+      .with("huge", () => "xl" as const)
+      .with("large", () => "lg" as const)
+      .with("medium", () => "default" as const)
+      .with("small", () => "sm" as const)
+      .exhaustive()}
+  >
+    {isVisible ? text : "????"}
+  </Button>
+);
 
 export const SceneAction = ({
   action,
@@ -79,54 +72,50 @@ export const SceneAction = ({
   storyKey: string;
   actionTheme: StoryThemeConfig["action"];
 }) => {
+  const isVisible = useActionVisibility({ action, progress });
   const gameService = getGameService();
-  const isVisible = gameService.getActionVisibility({
-    action,
-    progress,
-  });
-  const navigate = useNavigate();
 
   // Only show actions that lead somewhere
-  if (action.targets.length === 0) return null;
+  if (action.targets.length === 0) {
+    return null;
+  }
   const nextScene = gameService.getNextKey(action.targets);
   const isTestMode = !progress;
 
   if (isTestMode) {
     return (
       <ActionTooltip isTestMode isVisible={isVisible} key={action.text}>
-        <ActionButton
-          key={action.key}
-          text={action.text}
-          isVisible={isVisible}
-          actionTheme={actionTheme}
-          onClick={() =>
-            navigate({
-              to: "/game/test/$gameKey/$sceneKey",
-              params: { gameKey: storyKey, sceneKey: nextScene },
-              replace: true,
-            })
-          }
-        />
+        {/* TODO: implement probability logic to handle multiple targets cf (https://github.com/JeremieLeymarie/story-builder/issues/367) */}
+        <Link
+          to="/game/test/$gameKey/$sceneKey"
+          params={{ gameKey: storyKey, sceneKey: nextScene }}
+        >
+          <ActionButton
+            text={action.text}
+            isVisible={isVisible}
+            actionTheme={actionTheme}
+          />
+        </Link>
       </ActionTooltip>
     );
   }
 
   return (
     <ActionTooltip isTestMode={false} isVisible={isVisible}>
-      <ActionButton
-        key={action.key}
-        text={action.text}
-        isVisible={isVisible}
-        actionTheme={actionTheme}
-        onClick={() =>
-          navigate({
-            to: "/game/$gameKey/$sceneKey",
-            params: { gameKey: storyKey, sceneKey: nextScene },
-            search: { storyProgressKey: progress.key },
-            replace: true,
-          })
-        }
-      />
+      {/* TODO: implement probability logic to handle multiple targets cf (https://github.com/JeremieLeymarie/story-builder/issues/367) */}
+      <Link
+        key={action.text}
+        to="/game/$gameKey/$sceneKey"
+        params={{ gameKey: storyKey, sceneKey: nextScene }}
+        search={{ storyProgressKey: progress.key }}
+        disabled={!isVisible}
+      >
+        <ActionButton
+          text={action.text}
+          isVisible={isVisible}
+          actionTheme={actionTheme}
+        />
+      </Link>
     </ActionTooltip>
   );
 };

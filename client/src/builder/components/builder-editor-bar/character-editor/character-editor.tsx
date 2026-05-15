@@ -15,7 +15,14 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/design-system/primitives/empty";
-import { BookUserIcon, EyeClosedIcon, EyeIcon, PlusIcon } from "lucide-react";
+import {
+  BookUserIcon,
+  EyeClosedIcon,
+  EyeIcon,
+  PencilIcon,
+  PencilOffIcon,
+  PlusIcon,
+} from "lucide-react";
 import { Button } from "@/design-system/primitives";
 import { useCreateCharacterConfig } from "@/builder/hooks/use-create-character-config";
 import { useState } from "react";
@@ -50,9 +57,7 @@ const EmptyState = () => {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <Button size="sm" onClick={() => createCharacterConfig()}>
-          Add a character
-        </Button>
+        <Button onClick={() => createCharacterConfig()}>Add a character</Button>
       </EmptyContent>
     </Empty>
   );
@@ -132,6 +137,7 @@ export const CharacterEditor = () => {
                   <TableHead>Name</TableHead>
                   <TableHead>Initial Value</TableHead>
                   <TableHead>Visibility</TableHead>
+                  <TableHead>Edition</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -165,6 +171,26 @@ export const CharacterEditor = () => {
                               ? "visible"
                               : "not visible"}{" "}
                             by the player in the story
+                          </TooltipContent>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            {attribute.isEditableByPlayer ? (
+                              <PencilIcon size={14} />
+                            ) : (
+                              <PencilOffIcon size={14} />
+                            )}
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            The&nbsp;
+                            <span className="font-semibold">
+                              {attribute.name}
+                            </span>
+                            &nbsp;attribute&nbsp;
+                            {attribute.isEditableByPlayer ? "can" : "cannot"}
+                            &nbsp;be edited by the player in the story
                           </TooltipContent>
                         </Tooltip>
                       </TableCell>

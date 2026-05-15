@@ -23,7 +23,7 @@ export const ResponsiveDrawer = ({
   title: string;
   description?: string;
   content: ReactNode;
-  trigger?: ReactNode;
+  trigger: ReactNode;
   open: boolean;
   setOpen: (open: boolean) => void;
 }) => {
@@ -35,7 +35,7 @@ export const ResponsiveDrawer = ({
       onOpenChange={setOpen}
       direction={isMobile ? "bottom" : "right"}
     >
-      {!!trigger && <DrawerTrigger asChild>{trigger}</DrawerTrigger>}
+      <DrawerTrigger asChild>{trigger}</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="text-left">
           <DrawerTitle>{title}</DrawerTitle>

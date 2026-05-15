@@ -3,12 +3,10 @@ import {
   Action,
   BuilderPosition,
   BuilderStory,
-  CharacterConfiguration,
   Scene,
-  SideEffect,
   Story,
 } from "@/lib/storage/domain";
-import { JsonStoryData } from "@/services/common/schema";
+import { ImportData } from "@/services/common/schema";
 import { WithoutKey } from "@/types";
 
 export type BuilderServicePort = {
@@ -50,14 +48,6 @@ export type BuilderServicePort = {
   updateScene: (
     props: Partial<Scene> & Pick<Scene, "key">,
   ) => Promise<Scene | null>;
-  /** Replace the scene side effects on a specific scene
-   * @param options.sceneKey the key of the scene
-   * @param options.sideEffects the new side effects to write
-   */
-  saveSideEffects: (options: {
-    sceneKey: string;
-    sideEffects: SideEffect[];
-  }) => Promise<Scene>;
   getScenesByKey: (keys: string[]) => Promise<Record<string, Scene>>;
   getAutoLayout: (props: {
     nodes: BuilderNode[];
@@ -83,7 +73,7 @@ export type BuilderServicePort = {
     sceneKeys: string[];
   }) => Promise<void>;
   deleteStory: (storyKey: string) => Promise<void>;
-  importStory: (storyFromImport: JsonStoryData) => Promise<string>;
+  importStory: (storyFromImport: ImportData) => Promise<string>;
   updateStory: (
     storyKey: string,
     payload: Partial<BuilderStory>,
@@ -98,9 +88,4 @@ export type BuilderServicePort = {
     storyKey: string;
   }) => Promise<Scene[]>;
   makeEmptyActionPayload: () => Action;
-  makeEmptySideEffectPayload: ({
-    characterConfig,
-  }: {
-    characterConfig: CharacterConfiguration;
-  }) => SideEffect;
 };

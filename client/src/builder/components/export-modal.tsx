@@ -64,7 +64,7 @@ const ExportModalContent = () => {
           Cancel
         </Button>
         <>
-          <DownloadLink url={data?.exportData?.url} title={data?.story.title}>
+          <DownloadLink url={data?.exportData.url} title={data?.story.title}>
             <Button
               disabled={!data?.exportData}
               onClick={() => {
@@ -80,7 +80,7 @@ const ExportModalContent = () => {
           <Button
             disabled={!data?.exportData}
             onClick={() => {
-              if (data?.exportData) {
+              if (data) {
                 navigator.clipboard.writeText(data.exportData.data);
                 toast.success("Copied to clipboard !");
                 setOpen(false);

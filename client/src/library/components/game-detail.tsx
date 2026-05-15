@@ -1,13 +1,14 @@
-import { useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
-import { StoryGenreBadge } from "@/design-system/components";
-import { GameDropdown } from "./game-dropdown";
-import { formatDurationHHMMSS, timeFrom } from "@/lib/date";
-import { Analytics } from "./analytics";
-import { Save } from "./types";
-import { SavesDropdown } from "./saves-dropdown";
+import { SavesDetail } from "./saves-detail";
 import { Story } from "@/lib/storage/domain";
-import { useGetAnalyticsService } from "../hooks/use-get-analytics-service";
+import { Save } from "./types";
+import { useNavigate } from "@tanstack/react-router";
+import { PlayIcon } from "lucide-react";
+import { StoryGenreBadge } from "@/design-system/components";
+import { Button } from "@/design-system/primitives/button";
+import { useState } from "react";
+import { GameDropdown } from "./game-dropdown";
+import { timeFrom } from "@/lib/date";
+import { Analytics } from "./analytics";
 
 type Props = {
   story: Story;
@@ -21,25 +22,18 @@ export const LibraryGameDetail = ({
   otherProgresses,
 }: Props) => {
   const navigate = useNavigate();
-  const [selectedSaveKey, setSelectedSaveKey] = useState(currentProgress.key);
+  const [selectedSave, setSelectedSave] = useState(currentProgress);
 
   const saves = [currentProgress, ...otherProgresses];
-  const selectedSave =
-    saves.find((save) => save.key === selectedSaveKey) ?? currentProgress;
-  const { analyticsService } = useGetAnalyticsService({
-    progressKey: selectedSave.key,
-    gameKey: story.key,
-  });
-  const totalPlayTimeMs = analyticsService?.getTotalPlayTimeMs(saves) ?? 0;
 
-  const playGame = (save: Save) => {
+  const playGame = () => {
     navigate({
       to: "/game/$gameKey/$sceneKey",
       params: {
-        gameKey: save.storyKey,
-        sceneKey: save.currentSceneKey,
+        gameKey: selectedSave.storyKey,
+        sceneKey: selectedSave.currentSceneKey,
       },
-      search: { storyProgressKey: save.key },
+      search: { storyProgressKey: selectedSave.key },
     });
   };
 
@@ -56,14 +50,9 @@ export const LibraryGameDetail = ({
           </div>
           <div className="flex-1 space-y-2">
             <GameDropdown gameKey={story.key} />
-            <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between md:gap-4">
-              <h1 className="text-foreground text-3xl font-bold md:text-4xl">
-                {story.title}
-              </h1>
-              <p className="text-muted-foreground text-sm font-medium whitespace-nowrap tabular-nums md:text-base">
-                Total play time: {formatDurationHHMMSS(totalPlayTimeMs)}
-              </p>
-            </div>
+            <h1 className="text-foreground text-3xl font-bold md:text-4xl">
+              {story.title}
+            </h1>
             {story.author && (
               <p className="text-muted-foreground italic">
                 Story by&nbsp;
@@ -82,32 +71,28 @@ export const LibraryGameDetail = ({
                 </div>
               )}
 
-              <SavesDropdown
-                saves={saves}
-                selectedSave={selectedSave}
-                storyKey={story.key}
-                getProgressRate={analyticsService?.getProgressRate}
-                onSelectSave={(save) => setSelectedSaveKey(save.key)}
-                onPlay={playGame}
-              />
-              {(selectedSave.name || selectedSave.lastScene) && (
-                <p className="text-sm break-all">
-                  {selectedSave.name && (
-                    <span className="font-medium">{selectedSave.name}</span>
-                  )}
-                  {selectedSave.name && selectedSave.lastScene && (
-                    <span className="text-muted-foreground"> · </span>
-                  )}
-                  {selectedSave.lastScene && (
-                    <span className="text-muted-foreground">
-                      {selectedSave.lastScene.title} ·{" "}
-                    </span>
-                  )}
-                  <span className="text-muted-foreground">
-                    {timeFrom(selectedSave.lastPlayedAt)}
-                  </span>
-                </p>
-              )}
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={playGame}
+                  size="lg"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90"
+                >
+                  <PlayIcon />
+                  Play
+                </Button>
+                <span className="text-muted-foreground">or</span>
+                <SavesDetail
+                  selectedSave={selectedSave}
+                  saves={saves}
+                  onSelectSave={setSelectedSave}
+                />
+              </div>
+              <p className="text-sm">
+                <span>{selectedSave.lastScene?.title}</span>&nbsp;
+                <span className="text-muted-foreground">
+                  - Last played {timeFrom(selectedSave.lastPlayedAt)}
+                </span>
+              </p>
             </div>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import { forwardRef, HTMLAttributes, useState } from "react";
 import { chunk } from "@/lib/array";
 import { randomHexColor, randomInArray } from "@/lib/random";
-import { RefreshCcwIcon, SquarePenIcon } from "lucide-react";
+import { PencilIcon, RefreshCcwIcon } from "lucide-react";
 import { HEX_COLOR_REGEX } from "@/lib/colors";
 import {
   Button,
@@ -33,7 +33,7 @@ const ColorPickerInput = forwardRef<HTMLButtonElement, InputProps>(
           style={{ backgroundColor: color }}
           disabled={disabled}
         >
-          <SquarePenIcon
+          <PencilIcon
             size={14}
             className="invisible text-black/75 group-hover:visible"
           />

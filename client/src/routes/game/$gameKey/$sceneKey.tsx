@@ -6,71 +6,39 @@ import { z } from "zod";
 import { zodSearchValidator } from "@tanstack/router-zod-adapter";
 import { getGameService } from "@/domains/game/game-service";
 import { useGetGameSceneData } from "@/game/hooks/use-get-game-scene-data";
-import { Scene } from "@/lib/storage/domain";
-import { useTrackStoryPlayTime } from "@/game/hooks/use-track-story-play-time";
-
-// TODO: test life cycle
-const useGetUpdatedStoryProgress = ({ scene }: { scene?: Scene | null }) => {
-  const { storyProgressKey } = Route.useSearch();
-  const gameService = getGameService();
-
-  const {
-    data: result,
-    isLoading,
-    isFetching,
-    isPlaceholderData,
-  } = useQuery({
-    queryFn: async () => {
-      try {
-        return await gameService.saveProgress(storyProgressKey, scene!);
-      } catch (err) {
-        console.error(err);
-        return null;
-      }
-    },
-    queryKey: ["story-progress", storyProgressKey, scene],
-    enabled: !!scene,
-    staleTime: Infinity,
-  });
-
-  return { result, isLoading: isLoading || (isFetching && isPlaceholderData) };
-};
 
 const Component = () => {
   const { sceneKey, gameKey } = Route.useParams();
   const { storyProgressKey } = Route.useSearch();
+  const gameService = getGameService();
   const { scene, theme, isLoading } = useGetGameSceneData({
     storyKey: gameKey,
     sceneKey,
   });
 
-  const { result: progressResult, isLoading: isProgressLoading } =
-    useGetUpdatedStoryProgress({
-      scene,
-    });
+  const { data: storyProgress } = useQuery({
+    queryFn: async () => {
+      const progress = await gameService.saveProgress(storyProgressKey, {
+        currentSceneKey: sceneKey,
+        sceneActions: scene!.actions,
+      });
 
-  useTrackStoryPlayTime({
-    enabled: !!scene && !!progressResult?.updatedProgress,
-    progressKey: storyProgressKey,
-    sceneKey,
+      return progress;
+    },
+    queryKey: ["story-progress", storyProgressKey, sceneKey],
+    enabled: !!scene,
   });
 
   if (
     isLoading ||
-    isProgressLoading ||
     scene === undefined ||
-    progressResult === undefined ||
+    storyProgress === undefined ||
     theme === undefined
   ) {
     return <BackdropLoader />;
   }
 
-  if (
-    scene === null ||
-    progressResult === null ||
-    progressResult.updatedProgress === null ||
-    theme === null
-  ) {
+  if (scene === null || storyProgress === null || theme === null) {
     console.error("Error while loading scene: ", scene);
     return <ErrorMessage />;
   }
@@ -79,10 +47,9 @@ const Component = () => {
     <GameScene
       scene={scene}
       isLastScene={!scene.actions.length}
-      progress={progressResult.updatedProgress}
+      progress={storyProgress}
       theme={theme}
       mode="game"
-      triggeredSideEffects={progressResult.effectsTriggered}
     />
   );
 };

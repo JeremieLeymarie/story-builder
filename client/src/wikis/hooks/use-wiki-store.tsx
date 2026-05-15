@@ -16,9 +16,6 @@ type WikiState = {
   refresh: () => Promise<void>;
   wikiData: WikiData;
   permissions: WikiPermissionContext;
-  isSearchOpen: boolean;
-  openSearch: () => void;
-  closeSearch: () => void;
 };
 
 type WikiProviderProps = Pick<
@@ -31,13 +28,10 @@ const createWikiStore = ({
   wikiData,
   permissions,
 }: WikiProviderProps) => {
-  return createStore<WikiState>()((set) => ({
+  return createStore<WikiState>()(() => ({
     refresh,
     wikiData,
     permissions,
-    isSearchOpen: false,
-    openSearch: () => set({ isSearchOpen: true }),
-    closeSearch: () => set({ isSearchOpen: false }),
   }));
 };
 

@@ -11,7 +11,6 @@ import { EntityNotExistError, ForbiddenError } from "@/domains/errors";
 import { getStubAuthContext } from "@/domains/user/stubs/stub-auth-context";
 import { getStubWikiPermissionContextFactory } from "../stubs/stub-wiki-permission-context";
 import { WikiCategoryNameTaken } from "../errors";
-import dayjs from "dayjs";
 
 const DATE = new Date();
 
@@ -302,88 +301,6 @@ describe("wiki service", () => {
         color: "#EFCB68",
       });
       expect(key).toStrictEqual("KEY");
-    });
-  });
-
-  describe("search", () => {
-    test("should return everything when given empty value", async () => {
-      const cat = factory.wikiCategory();
-      const [a, b] = [
-        factory.wikiArticle({
-          title: "Yellow",
-          updatedAt: dayjs(new Date()).subtract(10, "days").toDate(),
-          categoryKey: cat.key,
-        }),
-        factory.wikiArticle({
-          title: "Green",
-          updatedAt: new Date(),
-          categoryKey: cat.key,
-        }),
-      ];
-
-      repository.getArticles.mockResolvedValueOnce([a, b]);
-      repository.getCategories.mockResolvedValueOnce([cat]);
-
-      const results = await svc.search("wiki-key", "");
-
-      expect(repository.getArticles).toHaveBeenCalledWith("wiki-key");
-      expect(repository.getCategories).toHaveBeenCalledWith("wiki-key");
-      expect(results).toStrictEqual([
-        {
-          key: b.key,
-          title: b.title,
-          content: b.content,
-          category: { color: cat.color, name: cat.name },
-        },
-        {
-          key: a.key,
-          title: a.title,
-          content: a.content,
-          category: { color: cat.color, name: cat.name },
-        },
-      ]);
-    });
-
-    test("should return partial match on title", async () => {
-      const cat = factory.wikiCategory();
-      const [a, b, c] = [
-        factory.wikiArticle({
-          title: "sometHING GrEeN",
-          updatedAt: dayjs(new Date()).subtract(10, "days").toDate(),
-          categoryKey: undefined,
-        }),
-        factory.wikiArticle({
-          title: "Green",
-          updatedAt: new Date(),
-          categoryKey: cat.key,
-        }),
-        factory.wikiArticle({
-          title: "Blue",
-          updatedAt: dayjs(new Date()).subtract(10, "days").toDate(),
-          categoryKey: cat.key,
-        }),
-      ];
-
-      repository.getArticles.mockResolvedValueOnce([a, b, c]);
-      repository.getCategories.mockResolvedValueOnce([cat]);
-
-      const results = await svc.search("wiki-key", "greEn");
-
-      expect(repository.getArticles).toHaveBeenCalledWith("wiki-key");
-      expect(repository.getCategories).toHaveBeenCalledWith("wiki-key");
-      expect(results).toStrictEqual([
-        {
-          key: b.key,
-          title: b.title,
-          content: b.content,
-          category: { color: cat.color, name: cat.name },
-        },
-        {
-          key: a.key,
-          title: a.title,
-          content: a.content,
-        },
-      ]);
     });
   });
 });

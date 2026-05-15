@@ -14,7 +14,7 @@ import {
 } from "@/design-system/primitives/radio-group";
 import { CharacterAttribute } from "@/lib/storage/domain";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { EyeIcon } from "lucide-react";
+import { EyeIcon, PencilIcon } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import z from "zod";
 
@@ -27,6 +27,7 @@ const attributeSchema = z.object({
   type: z.literal("numeric"),
   name: z.string().min(1),
   description: z.string().min(1).optional(),
+  isEditableByPlayer: z.boolean(),
   visibility: z.union([z.literal("visible"), z.literal("invisible")]),
   initialValue: z.int(),
 });
@@ -36,6 +37,7 @@ const useAttributeForm = ({ closeEditor, attribute }: AttributeFormProps) => {
     type: "numeric",
     initialValue: 0,
     visibility: "visible",
+    isEditableByPlayer: false,
     name: "",
     description: "",
   };
@@ -156,6 +158,49 @@ export const AttributeForm = ({
                   />
                   <FieldLabel htmlFor="invisible" className="font-normal">
                     Not visible
+                  </FieldLabel>
+                </Field>
+              </RadioGroup>
+            </FieldSet>
+          )}
+        />
+        <Controller
+          control={form.control}
+          name="isEditableByPlayer"
+          render={({ field, fieldState }) => (
+            <FieldSet>
+              <FieldLegend variant="label" className="flex items-center gap-2">
+                <PencilIcon size={14} />
+                Edition
+              </FieldLegend>
+              <FieldDescription>
+                Is this attribute editable by the player?
+              </FieldDescription>
+
+              <RadioGroup
+                name={field.name}
+                value={field.value ? "yes" : "no"}
+                onValueChange={(v) => field.onChange(v === "yes")}
+                className="flex"
+              >
+                <Field orientation="horizontal">
+                  <RadioGroupItem
+                    value={"yes" as const}
+                    id="yes"
+                    aria-invalid={fieldState.invalid}
+                  />
+                  <FieldLabel htmlFor="yes" className="font-normal">
+                    Yes
+                  </FieldLabel>
+                </Field>
+                <Field orientation="horizontal">
+                  <RadioGroupItem
+                    value={"no" as const}
+                    id="no"
+                    aria-invalid={fieldState.invalid}
+                  />
+                  <FieldLabel htmlFor="no" className="font-normal">
+                    No
                   </FieldLabel>
                 </Field>
               </RadioGroup>

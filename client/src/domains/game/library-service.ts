@@ -1,66 +1,30 @@
-import {
-  CharacterConfiguration,
-  ProgressCharacter,
-  Scene,
-  Story,
-  StoryProgress,
-} from "@/lib/storage/domain";
+import { Scene, Story, StoryProgress } from "@/lib/storage/domain";
 import { getLocalRepository, LocalRepositoryPort } from "@/repositories";
 import {
-  getImportExportService,
-  ImportExportServicePort,
+  getImportService,
+  ImportServicePort,
   TEMPORARY_NULL_KEY,
-} from "@/services/common/import-export-service";
-import { JsonStoryData } from "@/services/common/schema";
+} from "@/services/common/import-service";
+import { ImportData } from "@/services/common/schema";
 import { GameRepositoryPort, getDexieGameRepository } from "./game-repository";
-import {
-  CharacterRepositoryPort,
-  getDexieCharacterRepository,
-} from "./character-repository";
 
 // TODO: uniformize responses
 export const _getLibraryService = ({
   localRepository,
-  importExportService,
+  importService,
   gameRepository,
-  characterRepository,
 }: {
   localRepository: LocalRepositoryPort;
-  importExportService: ImportExportServicePort;
+  importService: ImportServicePort;
   gameRepository: GameRepositoryPort;
-  characterRepository: CharacterRepositoryPort;
 }) => {
-  const _createInitialCharacter = (characterConfig: CharacterConfiguration) => {
-    return {
-      attributes: Object.fromEntries(
-        Object.values(characterConfig.attributes).map(
-          ({ key, type, name, description, visibility, initialValue }) => [
-            key,
-            {
-              key,
-              type,
-              name,
-              description,
-              visibility,
-              initialValue,
-              value: initialValue,
-            },
-          ],
-        ),
-      ),
-    } satisfies ProgressCharacter;
-  };
-
   const _createBlankStoryProgress = async ({
     storyKey,
-    name,
   }: {
     storyKey: string;
-    name?: string;
   }) => {
     const user = await localRepository.getUser();
     const story = await localRepository.getStory(storyKey);
-    const characterConfig = await characterRepository.getConfig(storyKey);
 
     if (!story) throw new Error(`Error: invalid story key: ${storyKey}`);
 
@@ -72,16 +36,10 @@ export const _getLibraryService = ({
 
     const progress = await localRepository.createStoryProgress({
       storyKey: story.key,
-      history: [],
+      history: [story.firstSceneKey],
       currentSceneKey: story.firstSceneKey,
       lastPlayedAt: new Date(),
-      createdAt: new Date(),
-      totalPlayTimeMs: 0,
       userKey: user?.key ?? undefined,
-      ...(name ? { name } : {}),
-      ...(characterConfig
-        ? { character: _createInitialCharacter(characterConfig) }
-        : {}),
     });
 
     return progress;
@@ -144,36 +102,35 @@ export const _getLibraryService = ({
   };
 
   return {
-    importStory: async (importData: JsonStoryData) => {
+    importStory: async (importData: ImportData) => {
       await localRepository.unitOfWork(
         async () => {
-          const story = await importExportService.createStory({
+          const story = await importService.createStory({
             story: importData,
             type: "imported",
           });
 
           let oldCharacterAttrToNew: Record<string, string> = {};
           if (importData.characterConfig)
-            oldCharacterAttrToNew =
-              await importExportService.createCharacterConfig({
-                newStoryKey: story.data.key,
-                characterConfig: importData.characterConfig,
-              });
+            oldCharacterAttrToNew = await importService.createCharacterConfig({
+              newStoryKey: story.data.key,
+              characterConfig: importData.characterConfig,
+            });
 
-          const oldScenesToNew = await importExportService.createScenes({
+          const oldScenesToNew = await importService.createScenes({
             story: importData,
             newStoryKey: story.data.key,
             oldCharacterAttrToNew,
           });
 
           if (importData.theme)
-            await importExportService.createTheme({
+            await importService.createTheme({
               newStoryKey: story.data.key,
               theme: importData.theme,
             });
 
           if (importData.wiki)
-            await importExportService.createWiki({
+            await importService.createWiki({
               oldScenesToNew,
               type: "imported",
               wikiData: importData.wiki,
@@ -236,10 +193,6 @@ export const _getLibraryService = ({
     },
 
     createBlankStoryProgress: _createBlankStoryProgress,
-
-    renameStoryProgress: async (progress: StoryProgress, name: string) => {
-      return localRepository.updateStoryProgress({ ...progress, name });
-    },
 
     deleteGame: async (storyKey: string) => {
       await localRepository.unitOfWork(
@@ -324,7 +277,6 @@ export const _getLibraryService = ({
 export const getLibraryService = () =>
   _getLibraryService({
     localRepository: getLocalRepository(),
-    importExportService: getImportExportService(),
+    importService: getImportService(),
     gameRepository: getDexieGameRepository(),
-    characterRepository: getDexieCharacterRepository(),
   });

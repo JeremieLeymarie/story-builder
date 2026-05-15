@@ -44,7 +44,7 @@ type ReadAs = "text" | "dataURL";
 type Accept = "image" | "json";
 
 const variants = cva(
-  "text-muted-foreground flex items-center justify-center rounded-xl border border-dashed p-4 text-sm transition-all min-w-65",
+  "text-muted-foreground flex items-center justify-center rounded border border-dashed p-2 text-sm transition-all",
   {
     variants: {
       size: {
@@ -142,12 +142,9 @@ export const FileDropInput = ({
             <span className="font-semibold">Uploaded:</span> {fileName}
           </p>
         ) : (
-          <div className="flex flex-col items-center justify-center">
-            <div className="flex items-center gap-2">
-              <FileIcon size="16px" />
-              <span>Drop your file here</span>
-            </div>
-            <p>or click to browse your files</p>
+          <div className="flex items-center gap-2">
+            <FileIcon size="16px" />
+            <p>Drop your file here or click to browse your files</p>
           </div>
         )}
       </div>

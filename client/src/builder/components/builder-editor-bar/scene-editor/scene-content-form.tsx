@@ -18,7 +18,6 @@ import { SimpleLoader } from "@/design-system/components/simple-loader";
 import { useGetScene } from "@/builder/hooks/use-get-scene";
 import { Scene } from "@/lib/storage/domain";
 import { useEditSceneContentForm } from "@/builder/hooks/use-edit-scene-content-form";
-import { useSceneEditorTutorial } from "./hooks/use-scene-editor-tutorial";
 
 const SceneContentForm = ({ scene }: { scene: Scene }) => {
   const { setFirstScene } = useBuilderActions();
@@ -28,8 +27,6 @@ const SceneContentForm = ({ scene }: { scene: Scene }) => {
     values: { title: scene.title, content: scene.content },
     onSave: (payload) => updateScene({ key: scene.key, ...payload }),
   });
-
-  useSceneEditorTutorial("sceneContentEdition");
 
   return (
     <Form {...form}>

@@ -16,7 +16,6 @@ import { EditorBar } from "./builder-editor-bar/editor-bar";
 import { BuilderToolbar } from "./builder-toolbar";
 import CustomEdge from "./edges/custom-edge";
 import { BuilderErrorsToolbar } from "./builder-errors-toolbar";
-import { DeleteSceneModal } from "./delete-scenes-modal";
 
 const nodeTypes = { scene: SceneNode } as const;
 const edgeTypes = { edge: CustomEdge } as const;
@@ -25,13 +24,11 @@ const BuilderFlow = () => {
   const { reactFlowRef, initialNodes, initialEdges } = useBuilderContext();
   const closeActiveEditor = useBuilderEditorStore((state) => state.close);
   const {
-    controlsEnabled,
     onConnect,
     onConnectEnd,
     onEdgesDelete,
     onNodeDragStop,
     onBeforeNodesDelete,
-    onInit,
   } = useBuilder();
 
   return (
@@ -46,7 +43,6 @@ const BuilderFlow = () => {
       onEdgesDelete={onEdgesDelete}
       onNodeDragStop={onNodeDragStop}
       onBeforeDelete={onBeforeNodesDelete}
-      onInit={onInit}
       nodeOrigin={[0, 0.5]}
       minZoom={0.1}
       selectionMode={SelectionMode.Partial}
@@ -58,11 +54,6 @@ const BuilderFlow = () => {
       multiSelectionKeyCode={getUserOS() === "Mac" ? "Meta" : "ControlLeft"}
       fitViewOptions={{ duration: FIT_VIEW_DURATION }}
       onPaneClick={closeActiveEditor}
-      zoomOnScroll={controlsEnabled}
-      panOnScroll={controlsEnabled}
-      zoomOnPinch={controlsEnabled}
-      nodesDraggable={controlsEnabled}
-      panOnDrag={controlsEnabled}
     >
       <MiniMap
         position="bottom-left"
@@ -76,7 +67,6 @@ const BuilderFlow = () => {
 
 export const Builder = () => (
   <div className="relative flex h-full w-full border">
-    <DeleteSceneModal />
     <div className="absolute top-5 left-5 flex max-w-67.5 flex-col gap-4">
       <BuilderToolbar />
       <ActionsBar />

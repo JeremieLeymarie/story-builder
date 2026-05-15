@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useErrorToast } from "./use-error-toast";
 import { useBuilderContext } from "./use-builder-context";
+import { toast } from "sonner";
 import { EditStorySchema } from "./use-edit-story-form";
 
 type MutationParams = {
@@ -19,6 +20,7 @@ export const useUpdateStory = () => {
     },
     onError: handleError,
     onSuccess: async (story) => {
+      toast.success("Story successfully updated!");
       setStory(story);
     },
   });

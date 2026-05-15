@@ -12,7 +12,7 @@ export const useAutoSubmitForm = <TFormSchema extends FieldValues>({
   onSubmit: (data: TFormSchema) => void;
   options?: { debounceAfter?: number };
 }) => {
-  const { debounceAfter = 300 } = options ?? {};
+  const { debounceAfter = 500 } = options ?? {};
 
   const debouncer = useDebouncer(
     () => {
@@ -24,14 +24,14 @@ export const useAutoSubmitForm = <TFormSchema extends FieldValues>({
 
   useEffect(() => {
     const callback = form.subscribe({
-      formState: { values: true },
+      formState: {
+        values: true,
+      },
       callback: () => {
-        if (Object.keys(form.formState.dirtyFields).length > 0)
-          return debouncer.maybeExecute();
+        if (Object.keys(form.formState.dirtyFields).length)
+          debouncer.maybeExecute();
       },
     });
     return () => callback();
   }, [debouncer, form]);
-
-  return debouncer.maybeExecute;
 };

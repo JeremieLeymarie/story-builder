@@ -13,9 +13,8 @@ import {
   StoryTheme,
   CharacterConfiguration,
 } from "../domain";
+import { DEMO_IMPORTED_STORY, DEMO_SCENES, DEMO_STORY } from "./seed";
 import { getLibraryService } from "@/domains/game/library-service";
-import { getImportExportService } from "@/services/common/import-export-service";
-import demoStoryJSON from "./the-enchanted-mountain.json";
 
 type Tables = {
   user: EntityTable<User, "key">;
@@ -41,7 +40,7 @@ const tables: Record<keyof Tables, string> = {
   storyThemes: "&key, &storyKey",
   characterConfigurations: "&key, &storyKey",
   storyProgresses:
-    "&key, storyKey, userKey, currentSceneKey, character, inventory, history, lastPlayedAt, createdAt, totalPlayTimeMs",
+    "&key, storyKey, userKey, currentSceneKey, character, inventory, history, lastPlayedAt",
   wikis: "&key, userKey",
   wikiArticles: "&key, wikiKey, categoryKey, title",
   wikiCategories: "&key, wikiKey, name",
@@ -122,60 +121,14 @@ export const createDb = (
       await db.scenes.bulkUpdate(bulkPayload);
     });
 
-  // Migration: add createdAt to story progresses
-  db.version(10)
-    .stores(tables)
-    .upgrade(async () => {
-      const bulkPayload: { key: string; changes: Partial<StoryProgress> }[] =
-        [];
-
-      await db.storyProgresses.each((progress) => {
-        if (!progress.createdAt) {
-          bulkPayload.push({
-            key: progress.key,
-            changes: { createdAt: progress.lastPlayedAt ?? new Date() },
-          });
-        }
-      });
-
-      if (bulkPayload.length) {
-        await db.storyProgresses.bulkUpdate(bulkPayload);
-      }
-    });
-
-  // Migration: add total play time to story progresses
-  db.version(11)
-    .stores(tables)
-    .upgrade(async () => {
-      const bulkPayload: { key: string; changes: Partial<StoryProgress> }[] =
-        [];
-
-      await db.storyProgresses.each((progress) => {
-        if (typeof progress.totalPlayTimeMs !== "number") {
-          bulkPayload.push({
-            key: progress.key,
-            changes: { totalPlayTimeMs: 0 },
-          });
-        }
-      });
-
-      if (bulkPayload.length) {
-        await db.storyProgresses.bulkUpdate(bulkPayload);
-      }
-    });
-
   if (seed)
     db.on("populate", async () => {
-      // Add demo story to library
-      try {
-        const parsed = getImportExportService().parseJSON(
-          JSON.stringify(demoStoryJSON),
-        );
-        if (parsed.isOk) await getLibraryService().importStory(parsed.data);
-        else console.error(parsed.error);
-      } catch (err) {
-        console.error(err);
-      }
+      // Add story to builder
+      await db.stories.add(DEMO_STORY);
+      await db.scenes.bulkAdd(DEMO_SCENES);
+
+      // Add story to library
+      await getLibraryService().importStory(DEMO_IMPORTED_STORY);
     });
 
   // Register nanoid middleware

@@ -3,10 +3,6 @@ import { StoryProgress } from "@/lib/storage/domain";
 
 export type ProgressRepositoryPort = {
   get: (progressKey: string) => Promise<StoryProgress | null>;
-  update: (
-    progressKey: string,
-    progress: Partial<StoryProgress>,
-  ) => Promise<void>;
 };
 
 export const _getDexieProgressRepository = (
@@ -15,9 +11,6 @@ export const _getDexieProgressRepository = (
   return {
     get: async (progressKey) => {
       return (await db.storyProgresses.get(progressKey)) ?? null;
-    },
-    update: async (progressKey, progress) => {
-      await db.storyProgresses.update(progressKey, progress);
     },
   };
 };

@@ -70,7 +70,6 @@ export const GameWithThemeEditor = ({
         isLastScene={!scene.actions.length}
         mode="theme-editor"
         theme={structuredClone(formValues)} // formValues's reference is stable, causing React Compiler to not detect theme changes
-        triggeredSideEffects={[]}
       />
       <div className="absolute top-8 right-5 flex gap-2">
         <Tooltip>

@@ -20,13 +20,6 @@ const NODES: ReadonlyArray<Klass<LexicalNode> | LexicalNodeReplacement> = [
 export const BASE_EDITOR_CONFIG: InitialConfigType = {
   namespace: "Editor",
   theme: {
-    heading: {
-      h1: "text-3xl font-bold",
-      h2: "text-2xl font-semibold",
-      h3: "text-xl font-semibold",
-      h4: "text-lg font-semibold",
-      h5: "text-base font-semibold",
-    },
     text: {
       underline: "underline",
       strikethrough: "line-through",

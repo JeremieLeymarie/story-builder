@@ -273,9 +273,9 @@ export const EditorWikiNodeComponent = ({ node }: { node: WikiNode }) => {
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <span className="inline-flex translate-y-0.5 items-start gap-1 rounded-xl bg-green-600/60 px-2 text-left">
-          <ScrollTextIcon size={18} className="mt-0.5 shrink-0 opacity-75" />
+      <PopoverTrigger>
+        <span className="inline-flex translate-y-0.5 items-center gap-1 rounded-xl bg-green-600/60 px-2">
+          <ScrollTextIcon size={18} className="opacity-75" />
           {node.textContent}
         </span>
       </PopoverTrigger>

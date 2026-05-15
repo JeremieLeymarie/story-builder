@@ -50,7 +50,6 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
           payload: { sceneKey: scene.key, isFirstScene },
         });
       }}
-      id={isFirstScene ? "first-scene" : `scene-${scene.key}`}
     >
       <CardHeader>
         <div className="flex items-center justify-between">

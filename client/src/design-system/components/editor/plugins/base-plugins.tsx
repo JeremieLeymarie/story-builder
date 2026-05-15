@@ -11,7 +11,6 @@ import { useEditorContext } from "../hooks/use-editor-context";
 const RichTextContainer = ({
   textDisplayMode,
   children,
-  className,
   ...props
 }: {
   textDisplayMode: TextDisplayMode;
@@ -20,20 +19,12 @@ const RichTextContainer = ({
   onClick: () => void;
 }) => {
   return match(textDisplayMode)
-    .with("full", () => (
-      <div {...props} className={className}>
-        {children}
-      </div>
-    ))
-    .with("scroll", () => (
-      <ScrollArea {...props} className={className}>
-        {children}
-      </ScrollArea>
-    ))
+    .with("full", () => <div {...props}>{children}</div>)
+    .with("scroll", () => <ScrollArea {...props}>{children}</ScrollArea>)
     .with("summary", () => (
       <div
         {...props}
-        className={cn("[&_img]:hidden", className)}
+        className="[&_img]:hidden"
         style={
           {
             display: "-webkit-box",

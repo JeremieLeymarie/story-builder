@@ -4,8 +4,6 @@ import * as React from "react";
 import { ScrollArea as ScrollAreaPrimitive } from "radix-ui";
 import { cn } from "@/lib/style";
 
-// Modified to fix scrollbar display (https://github.com/shadcn-ui/ui/issues/9196)
-
 function ScrollArea({
   className,
   children,
@@ -40,7 +38,7 @@ function ScrollBar({
       data-orientation={orientation}
       orientation={orientation}
       className={cn(
-        "flex touch-none p-px transition-colors select-none data-[orientation=horizontal]:h-2.5 data-[orientation=horizontal]:flex-col data-[orientation=horizontal]:border-t data-[orientation=horizontal]:border-t-transparent data-[orientation=vertical]:h-full data-[orientation=vertical]:w-2.5 data-[orientation=vertical]:border-l data-[orientation=vertical]:border-l-transparent",
+        "flex touch-none p-px transition-colors select-none data-horizontal:h-2.5 data-horizontal:flex-col data-horizontal:border-t data-horizontal:border-t-transparent data-vertical:h-full data-vertical:w-2.5 data-vertical:border-l data-vertical:border-l-transparent",
         className,
       )}
       {...props}

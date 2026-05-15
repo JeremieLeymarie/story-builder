@@ -22,7 +22,7 @@ export const useEditActionsForm = ({
     values: { actions },
   });
 
-  const { fields, append, remove, update, move } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     name: "actions",
     control: form.control,
   });
@@ -32,7 +32,7 @@ export const useEditActionsForm = ({
     onSubmit: (values) => onSave({ actions: values.actions }),
   });
 
-  return { form, fields, append, remove, update, move };
+  return { form, fields, append, remove, update };
 };
 
 export type EditActionsForm = UseFormReturn<EditActionsSchema>;

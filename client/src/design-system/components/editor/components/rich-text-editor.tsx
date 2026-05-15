@@ -40,7 +40,6 @@ export const RichText = ({
 }) => {
   return (
     <div
-      id="rich-text-editor"
       className={cn(
         editable && "bg-background min-h-25 rounded-lg border",
         "focus-within:border-ring focus-within:ring-ring/10 focus-within:ring-[3px]", // The focus style is the same as the input's & textarea's

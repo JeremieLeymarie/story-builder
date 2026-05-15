@@ -1,7 +1,7 @@
 import { Action, BuilderPosition, Scene, Story } from "@/lib/storage/domain";
 import { LocalRepositoryPort } from "@/repositories/local-repository-port";
 import { BuilderNode, BuilderEdge } from "@/builder/types";
-import { ImportExportServicePort } from "@/services/common/import-export-service";
+import { ImportServicePort } from "@/services/common/import-service";
 import { WithoutKey } from "@/types";
 import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 import { BuilderServicePort } from "./ports/builder-service-port";
@@ -9,27 +9,25 @@ import { BuilderStoryRepositoryPort } from "./ports/builder-story-repository-por
 import { LayoutServicePort } from "./ports/layout-service-port";
 import { EntityNotExistError } from "../errors";
 import { nanoid } from "nanoid";
+import { BuilderSceneRepositoryPort } from "./ports/builder-scene-repository-port";
 import {
   ActionTargetNotFound,
   CannotDeleteFirstSceneError,
   DuplicationMissingPositionError,
 } from "./errors";
-import { JsonStoryData } from "@/services/common/schema";
+import { ImportData } from "@/services/common/schema";
 import { produce } from "immer";
 import { N } from "@/lib/number";
-import { randomInArray } from "@/lib/random";
-import { capitalize } from "@/lib/string";
-import { BuilderSceneRepositoryPort } from "./builder-scene-repository";
 
 export const _getBuilderService = ({
   localRepository,
   layoutService,
-  importExportService,
+  importService,
   storyRepository,
   sceneRepository,
 }: {
   layoutService: LayoutServicePort;
-  importExportService: ImportExportServicePort;
+  importService: ImportServicePort;
   localRepository: LocalRepositoryPort; // Legacy: should be removed and replaced by domain-specific repositories
   storyRepository: BuilderStoryRepositoryPort;
   sceneRepository: BuilderSceneRepositoryPort;
@@ -283,16 +281,6 @@ export const _getBuilderService = ({
       return await sceneRepository.get(key);
     },
 
-    saveSideEffects: async ({ sceneKey, sideEffects }) => {
-      const scene = await sceneRepository.get(sceneKey);
-      if (!scene) throw new EntityNotExistError("scene", sceneKey);
-
-      const newScene = { ...scene, sideEffects };
-      await sceneRepository.update(scene.key, newScene);
-
-      return newScene;
-    },
-
     getAutoLayout: async ({
       nodes,
       edges,
@@ -403,36 +391,35 @@ export const _getBuilderService = ({
         },
       );
     },
-    importStory: async (importData: JsonStoryData) => {
+    importStory: async (importData: ImportData) => {
       const storyKey = await localRepository.unitOfWork(
         async () => {
-          const storyResult = await importExportService.createStory({
+          const storyResult = await importService.createStory({
             story: importData,
             type: "builder",
           });
 
           let oldCharacterAttrToNew: Record<string, string> = {};
           if (importData.characterConfig)
-            oldCharacterAttrToNew =
-              await importExportService.createCharacterConfig({
-                newStoryKey: storyResult.data.key,
-                characterConfig: importData.characterConfig,
-              });
+            oldCharacterAttrToNew = await importService.createCharacterConfig({
+              newStoryKey: storyResult.data.key,
+              characterConfig: importData.characterConfig,
+            });
 
-          const oldScenesToNew = await importExportService.createScenes({
+          const oldScenesToNew = await importService.createScenes({
             story: importData,
             newStoryKey: storyResult.data.key,
             oldCharacterAttrToNew,
           });
 
           if (importData.theme)
-            await importExportService.createTheme({
+            await importService.createTheme({
               newStoryKey: storyResult.data.key,
               theme: importData.theme,
             });
 
           if (importData.wiki)
-            await importExportService.createWiki({
+            await importService.createWiki({
               oldScenesToNew,
               type: "created",
               wikiData: importData.wiki,
@@ -515,26 +502,6 @@ export const _getBuilderService = ({
     },
     makeEmptyActionPayload: () => {
       return { key: nanoid(), type: "simple", targets: [], text: "" };
-    },
-    makeEmptySideEffectPayload: ({ characterConfig }) => {
-      if (Object.keys(characterConfig.attributes).length < 1)
-        throw new Error(
-          "Cannot create side effect payload when character configuration has no attributes.",
-        );
-      const attribute = randomInArray(
-        Object.values(characterConfig.attributes),
-      );
-      return {
-        key: nanoid(),
-        name: `Level-up ${capitalize(attribute.name)}`,
-        isVisible: true,
-        trigger: "scene-load",
-        effect: {
-          type: "character-attribute",
-          increment: 1,
-          attributeKey: attribute.key,
-        },
-      };
     },
   };
 };

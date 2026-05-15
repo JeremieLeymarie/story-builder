@@ -92,6 +92,7 @@ describe("character-service", () => {
           name: "dexterity", // same name
           description: "hihi",
           initialValue: 12,
+          isEditableByPlayer: true,
           visibility: "visible",
         }),
       ).rejects.toThrowError(CharacterAttributeNameAlreadyExistError);
@@ -138,6 +139,7 @@ describe("character-service", () => {
         name: "vroum", // same name
         description: "hihi",
         initialValue: 12,
+        isEditableByPlayer: true,
         visibility: "visible",
       } as const;
       const result = await svc.addAttribute("plouf", attr);

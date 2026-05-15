@@ -78,6 +78,7 @@ describe("story character repository", () => {
             name: "force",
             description: "desc",
             initialValue: 10,
+            isEditableByPlayer: false,
             visibility: "visible",
           },
         },
@@ -95,6 +96,7 @@ describe("story character repository", () => {
             name: "force",
             description: "desc",
             initialValue: 10,
+            isEditableByPlayer: true, // Only modified field
             visibility: "visible",
           },
           // New attribute
@@ -104,6 +106,7 @@ describe("story character repository", () => {
             name: "dex",
             description: "pschitt",
             initialValue: 5,
+            isEditableByPlayer: false,
             visibility: "invisible",
           },
         },
@@ -118,6 +121,7 @@ describe("story character repository", () => {
             name: "force",
             description: "desc",
             initialValue: 10,
+            isEditableByPlayer: true, // Only modified field
             visibility: "visible",
           },
           // New attribute
@@ -127,6 +131,7 @@ describe("story character repository", () => {
             name: "dex",
             description: "pschitt",
             initialValue: 5,
+            isEditableByPlayer: false,
             visibility: "invisible",
           },
         },

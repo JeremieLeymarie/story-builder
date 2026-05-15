@@ -65,7 +65,7 @@ export const DisplayWikiNodeComponent = ({
           <img src={article.image} className="rounded object-scale-down" />
           <EditorContextProvider
             entityType="wiki-article"
-            entityKey={article.key}
+            entityKey={article.wikiKey}
           >
             <RichText
               editable={false}

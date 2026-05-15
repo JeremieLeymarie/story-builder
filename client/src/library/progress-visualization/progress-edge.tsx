@@ -11,7 +11,6 @@ export const ProgressEdge = ({
   sourcePosition,
   targetPosition,
   markerEnd,
-  source,
   target,
   style,
 }: EdgeProps<Edge>) => {
@@ -24,10 +23,7 @@ export const ProgressEdge = ({
     targetPosition,
   });
   const { analyticsService } = useVisualizationContext();
-  const isVisited = analyticsService.isConnectionVisited({
-    sourceSceneKey: source,
-    targetSceneKey: target,
-  });
+  const isVisited = analyticsService.isSceneVisited(target);
 
   return (
     <BaseEdge

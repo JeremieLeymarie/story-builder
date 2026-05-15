@@ -2,7 +2,7 @@ import {
   getLocalRepositoryStub,
   MockLocalRepository,
 } from "@/repositories/stubs";
-import { beforeEach, describe, expect, it, test, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   BASIC_SCENE,
   BASIC_STORY,
@@ -12,9 +12,9 @@ import {
 import dayjs from "dayjs";
 import { _getLibraryService } from "../library-service";
 import {
-  MockImportExportService,
-  getImportExportServiceStub,
-} from "@/services/common/stubs/stub-import-export-service";
+  MockImportService,
+  getImportServiceStub,
+} from "@/services/common/stubs/stub-import-service";
 import {
   MOCK_IMPORTED_SCENE,
   MOCK_IMPORTED_STORY,
@@ -26,31 +26,24 @@ import {
   MockGameRepository,
 } from "../stubs/game-repository-stub";
 import { Scene } from "@/lib/storage/domain";
-import {
-  getStubCharacterRepository,
-  MockCharacterRepository,
-} from "../stubs/stub-character-repository";
 
 const factory = getTestFactory();
 
 describe("library-service", () => {
   let libraryService: ReturnType<typeof _getLibraryService>;
   let localRepository: MockLocalRepository;
-  let importExportService: MockImportExportService;
+  let importService: MockImportService;
   let gameRepository: MockGameRepository;
-  let characterRepository: MockCharacterRepository;
 
   beforeEach(() => {
     localRepository = getLocalRepositoryStub();
-    importExportService = getImportExportServiceStub();
+    importService = getImportServiceStub();
     gameRepository = getStubGameRepository();
-    characterRepository = getStubCharacterRepository();
 
     libraryService = _getLibraryService({
       localRepository,
-      importExportService,
+      importService,
       gameRepository,
-      characterRepository,
     });
 
     vi.useFakeTimers();
@@ -132,9 +125,7 @@ describe("library-service", () => {
       userKey: "pipou",
       history: ["most-recent-vroum"],
       currentSceneKey: "most-recent-vroum",
-      createdAt: new Date(),
       lastPlayedAt: dayjs(new Date()).add(10, "days").toDate(),
-      totalPlayTimeMs: 0,
     };
 
     const OTHER = {
@@ -143,9 +134,7 @@ describe("library-service", () => {
       userKey: "pipou",
       history: ["older-vroum"],
       currentSceneKey: "older-vroum",
-      createdAt: new Date(),
       lastPlayedAt: new Date(),
-      totalPlayTimeMs: 0,
     };
 
     const FINISHED = {
@@ -154,9 +143,7 @@ describe("library-service", () => {
       userKey: "pipou",
       history: ["finished-vroum"],
       currentSceneKey: "finished-vroum",
-      createdAt: new Date(),
       lastPlayedAt: new Date(),
-      totalPlayTimeMs: 0,
       finished: true,
     };
 
@@ -282,9 +269,8 @@ describe("library-service", () => {
   });
 
   describe("createBlankStoryProgress", () => {
-    test("simple story configuration", async () => {
+    it("should create a story progress in the local database", async () => {
       localRepository.getStoryProgress.mockResolvedValueOnce(null);
-      characterRepository.getConfig.mockResolvedValueOnce(null);
 
       const createdProgress = await libraryService.createBlankStoryProgress({
         storyKey: BASIC_STORY.key,
@@ -292,113 +278,14 @@ describe("library-service", () => {
 
       expect(localRepository.getUser).toHaveBeenCalled();
       expect(localRepository.createStoryProgress).toHaveBeenCalledWith({
-        history: [],
+        history: [BASIC_STORY.firstSceneKey],
         currentSceneKey: BASIC_STORY.firstSceneKey,
-        createdAt: new Date(),
         lastPlayedAt: new Date(),
-        totalPlayTimeMs: 0,
         userKey: BASIC_USER.key,
         storyKey: BASIC_STORY.key,
       });
 
       expect(createdProgress).toStrictEqual(BASIC_STORY_PROGRESS);
-    });
-
-    test("with character config", async () => {
-      const cc = factory.characterConfig({
-        attributes: {
-          "dex-key": {
-            key: "dex-key",
-            name: "dex",
-            description: "dexterity",
-            initialValue: 10,
-            type: "numeric",
-            visibility: "visible",
-          },
-          "cha-key": {
-            key: "cha-key",
-            name: "cha",
-            description: "charisma",
-            initialValue: -10,
-            type: "numeric",
-            visibility: "invisible",
-          },
-        },
-      });
-      localRepository.getStoryProgress.mockResolvedValueOnce(null);
-      characterRepository.getConfig.mockResolvedValueOnce(cc);
-
-      await libraryService.createBlankStoryProgress({
-        storyKey: BASIC_STORY.key,
-      });
-
-      expect(localRepository.getUser).toHaveBeenCalled();
-      expect(localRepository.createStoryProgress).toHaveBeenCalledWith({
-        history: [],
-        currentSceneKey: BASIC_STORY.firstSceneKey,
-        createdAt: new Date(),
-        lastPlayedAt: new Date(),
-        totalPlayTimeMs: 0,
-        userKey: BASIC_USER.key,
-        storyKey: BASIC_STORY.key,
-        character: {
-          attributes: {
-            "dex-key": {
-              key: "dex-key",
-              name: "dex",
-              description: "dexterity",
-              initialValue: 10,
-              value: 10, // value is created
-              type: "numeric",
-              visibility: "visible",
-            },
-            "cha-key": {
-              key: "cha-key",
-              name: "cha",
-              description: "charisma",
-              initialValue: -10,
-              value: -10, // value is created
-              type: "numeric",
-              visibility: "invisible",
-            },
-          },
-        },
-      });
-    });
-
-    test("with name", async () => {
-      localRepository.getStoryProgress.mockResolvedValueOnce(null);
-      characterRepository.getConfig.mockResolvedValueOnce(null);
-
-      await libraryService.createBlankStoryProgress({
-        storyKey: BASIC_STORY.key,
-        name: "bidoum",
-      });
-
-      expect(localRepository.createStoryProgress).toHaveBeenCalledWith({
-        history: [],
-        currentSceneKey: BASIC_STORY.firstSceneKey,
-        createdAt: new Date(),
-        lastPlayedAt: new Date(),
-        totalPlayTimeMs: 0,
-        userKey: BASIC_USER.key,
-        storyKey: BASIC_STORY.key,
-        name: "bidoum",
-      });
-    });
-  });
-
-  describe("renameStoryProgress", () => {
-    test("should update the progress with the new name", async () => {
-      await libraryService.renameStoryProgress(
-        BASIC_STORY_PROGRESS,
-        "sacré nom",
-      );
-
-      expect(localRepository.updateStoryProgress).toHaveBeenCalledWith({
-        ...BASIC_STORY_PROGRESS,
-        name: "sacré nom",
-      });
     });
   });
 
