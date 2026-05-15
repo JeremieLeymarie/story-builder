@@ -158,7 +158,7 @@ export const WikiBar = () => {
           </Button>
         </Link>
       </div>
-      <ScrollArea>
+      <ScrollArea scrollbarClassName="-mr-2.5">
         <div className="max-h-[calc(100dvh-275px)]">
           {sections.map(({ category, articles }) => (
             <Section
