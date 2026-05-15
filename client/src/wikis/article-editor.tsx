@@ -5,9 +5,6 @@ import {
   Button,
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
   Form,
   FormControl,
   FormField,
@@ -70,38 +67,33 @@ export const ArticleEditor = ({
   return (
     <div className="bg-background flex min-h-screen w-full items-start justify-center p-6">
       <div className="w-full max-w-4xl space-y-6">
-        <div className="flex items-center justify-start">
+        <div className="flex items-center justify-between">
           {mode === "update" ? (
             <Link
               to="/wikis/$wikiKey/$articleKey"
               params={{ wikiKey, articleKey }}
             >
-              <Button
-                variant="ghost"
-                className="text-muted-foreground hover:text-foreground gap-2"
-              >
-                <CornerDownLeft size={16} /> Back to article
+              <Button variant="ghost">
+                <CornerDownLeft /> Back to article
               </Button>
             </Link>
           ) : (
             <Link to="/wikis/$wikiKey" params={{ wikiKey }}>
-              <Button variant="ghost" className="w-max items-center">
-                <CornerDownLeft size={16} /> Back to home
+              <Button variant="ghost">
+                <CornerDownLeft /> Back to home
               </Button>
             </Link>
           )}
-        </div>
-        <Card className="shadow-lg">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">
-              {mode === "update" ? "Edit Article" : "Create New Article"}
-            </CardTitle>
-            <CardDescription>
+          <div className="flex flex-col items-end">
+            {mode === "update" ? "Edit article" : "Create a new article"}
+            <p className="text-muted-foreground text-sm">
               {mode === "update"
                 ? "Update your article information and content"
                 : "Fill in the details to create a new wiki article"}
-            </CardDescription>
-          </CardHeader>
+            </p>
+          </div>
+        </div>
+        <Card>
           <CardContent>
             <Form {...form}>
               <form
@@ -128,48 +120,48 @@ export const ArticleEditor = ({
                     </FormItem>
                   )}
                 />
-                <Separator />
-                <FormField
-                  control={form.control}
-                  name="categoryKey"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-2 text-base">
-                        <FolderTree size={18} />
-                        Category
-                      </FormLabel>
-                      <FormControl>
-                        <CategoryPicker
-                          categories={categories}
-                          onChange={field.onChange}
-                          value={field.value}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Separator />
-                <FormField
-                  control={form.control}
-                  name="image"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-2 text-base">
-                        <Image size={18} />
-                        Preview image
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          className="text-base"
-                          placeholder="http://your-image-url.com"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="flex gap-4">
+                  <FormField
+                    control={form.control}
+                    name="categoryKey"
+                    render={({ field }) => (
+                      <FormItem className="grow-0">
+                        <FormLabel className="flex items-center gap-2 text-base">
+                          <FolderTree size={18} />
+                          Category
+                        </FormLabel>
+                        <FormControl>
+                          <CategoryPicker
+                            categories={categories}
+                            onChange={field.onChange}
+                            value={field.value}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="image"
+                    render={({ field }) => (
+                      <FormItem className="grow">
+                        <FormLabel className="flex items-center gap-2 text-base">
+                          <Image size={18} />
+                          Preview image
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            className="text-base"
+                            placeholder="http://your-image-url.com"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <Separator />
                 <FormField
                   control={form.control}
@@ -187,6 +179,7 @@ export const ArticleEditor = ({
                             onSerializedChange={field.onChange}
                             initialState={defaultValues?.content}
                             textDisplayMode="scroll"
+                            className="min-h-50"
                           />
                         </EditorContextProvider>
                       </FormControl>
@@ -194,8 +187,8 @@ export const ArticleEditor = ({
                     </FormItem>
                   )}
                 />
-                <div className="flex justify-center pt-4">
-                  <Button size="lg" className="min-w-32" type="submit">
+                <div className="flex justify-center">
+                  <Button size="lg" type="submit">
                     {mode === "update" ? "Update Article" : "Create Article"}
                   </Button>
                 </div>

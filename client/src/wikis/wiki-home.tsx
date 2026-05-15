@@ -15,11 +15,14 @@ export const WikiHome = () => {
   );
 
   return (
-    <div className="flex h-full w-full items-center justify-center">
-      <div className="flex w-8/12 flex-col items-center justify-center space-y-2 lg:w-6/12">
-        <img src={wikiData.wiki.image} className="w-[70%] rounded-xl shadow" />
+    <div className="flex h-full w-full justify-center">
+      <div className="mt-12 flex w-8/12 flex-col items-center space-y-2 lg:w-6/12">
+        <img
+          src={wikiData.wiki.image}
+          className="mx-auto max-h-[50%] rounded-xl shadow"
+        />
         <Title variant="primary" className="bg-transparent">
-          <span className="text-muted-foreground">Welcome to</span>{" "}
+          <span>Welcome to</span>{" "}
           <span className="text-primary">{wikiData.wiki.name}</span>
         </Title>
         <p className="text-muted-foreground italic">
@@ -33,7 +36,8 @@ export const WikiHome = () => {
             params={{ wikiKey: wikiData.wiki.key }}
             search={{ categoryKey: undefined }}
           >
-            <Button className="h-14 px-8 text-lg">
+            <span className="text-muted-foreground mx-2 italic">or</span>
+            <Button size="lg">
               <PlusIcon className="mr-2 h-6 w-6" />
               Create {isWikiEmpty ? "a first" : "a new"} article
             </Button>

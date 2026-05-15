@@ -33,7 +33,7 @@ const RichTextContainer = ({
     .with("summary", () => (
       <div
         {...props}
-        className={cn("[&_img]:hidden", className)}
+        className={cn("*:*:text-sm *:*:font-normal [&_img]:hidden", className)}
         style={
           {
             display: "-webkit-box",

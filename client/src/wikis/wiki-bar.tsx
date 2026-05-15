@@ -40,8 +40,8 @@ const ArticleTitle = ({
         })
       }
       className={cn(
-        isSelected && "bg-accent/80 font-semibold shadow-sm",
-        "hover:bg-accent/50 group/article ml-6 flex cursor-pointer items-center justify-between rounded-md px-3 py-2 transition-all duration-200",
+        isSelected && "bg-accent/80 font-semibold",
+        "hover:bg-accent/50 group/article flex cursor-pointer items-center justify-between rounded-xl py-1 pr-3 pl-8 transition-all duration-200",
       )}
     >
       <p className="text-md w-full truncate">{title}</p>
@@ -66,7 +66,7 @@ const ArticleTitle = ({
         setOpen={setOpen}
         trigger={
           <Button
-            size="xs"
+            size="icon-xs"
             variant="ghost"
             className="invisible cursor-pointer group-hover/article:visible"
             onClick={(e) => {
@@ -91,7 +91,7 @@ const Section = ({ category, articles }: WikiSection) => {
   );
 
   return (
-    <div className="group mb-6">
+    <div className="group mb-2">
       <div className="mb-2 flex items-center justify-between">
         <CategoryBadge color={category?.color} name={category?.name} />
         {category && (
@@ -129,7 +129,7 @@ export const WikiBar = () => {
   const os = getUserOS();
 
   return (
-    <Toolbar className="sticky top-[calc(var(--spacing)*4+var(--navbar-height)+2px)] h-max w-75 space-y-1">
+    <Toolbar className="sticky top-[calc(var(--spacing)*4+var(--navbar-height)+2px)] h-max w-80 space-y-1">
       <div className="relative flex flex-col items-start gap-1">
         <Button
           variant="outline"
@@ -144,42 +144,22 @@ export const WikiBar = () => {
         </Button>
         <AddCategoryPopover
           trigger={
-            <Button
-              variant="secondary"
-              size="sm"
-              className="text-muted-foreground hover:text-foreground w-full justify-start gap-2 text-sm"
-            >
+            <Button variant="secondary" size="sm">
               New category <PlusIcon className="cursor-pointer" size={14} />
             </Button>
           }
         />
         <Separator />
 
-        <div className="border-t pt-4">
-          <Link
-            to="/wikis/$wikiKey"
-            params={{ wikiKey }}
-            className="mb-4 block"
-          >
-            <div className="hover:bg-accent flex items-center gap-2 rounded-md px-3 py-2 font-medium transition-colors">
-              <HomeIcon size={18} />
-              Home
-            </div>
-          </Link>
-        </div>
+        <Link to="/wikis/$wikiKey" params={{ wikiKey }} className="mb-2 block">
+          <Button variant="ghost" size="lg">
+            <HomeIcon size={18} />
+            Home
+          </Button>
+        </Link>
       </div>
-
       <ScrollArea>
-        <div className="max-h-[calc(100dvh-175px)]">
-          <Link
-            to="/wikis/$wikiKey"
-            params={{ wikiKey }}
-            className="my-2 block"
-          >
-            <div className="flex w-max items-center gap-1 rounded-lg py-0.5">
-              <HomeIcon size={18} /> Home
-            </div>
-          </Link>
+        <div className="max-h-[calc(100dvh-275px)]">
           {sections.map(({ category, articles }) => (
             <Section
               key={category?.key ?? "other"}
