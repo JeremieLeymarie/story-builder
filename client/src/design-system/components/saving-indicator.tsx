@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CheckIcon, LoaderIcon } from "lucide-react";
+import { CheckIcon, LoaderCircleIcon } from "lucide-react";
 
 type SaveState = "idle" | "saving" | "done";
 
@@ -41,7 +41,7 @@ export const SavingIndicator = ({ isSaving }: { isSaving: boolean }) => {
   if (state === "saving") {
     return (
       <div className="text-muted-foreground flex items-center gap-2 text-sm">
-        <LoaderIcon className="text-primary size-4 animate-spin" />
+        <LoaderCircleIcon className="text-primary size-4 animate-spin" />
         Saving...
       </div>
     );
