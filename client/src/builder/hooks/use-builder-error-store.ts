@@ -35,13 +35,19 @@ type BuilderErrorStore = {
     type: BuilderErrorWithoutMetadata["type"],
     id: BuilderErrorWithoutMetadata["id"],
   ) => boolean;
+  /**
+   * Clear all errors
+   */
+  clear: () => void;
 };
+
+const INITIAL_ERRORS = {
+  "invalid-action-target-percentages": [],
+} satisfies Record<BuilderError["type"], BuilderError[]>;
 
 export const useBuilderErrorStore = createWithEqualityFn<BuilderErrorStore>(
   (set, get) => ({
-    errors: {
-      "invalid-action-target-percentages": [],
-    },
+    errors: INITIAL_ERRORS,
     getErrorCount: () => Object.values(get().errors).flat().length,
 
     addOrReplaceError: (newError) => {
@@ -95,6 +101,10 @@ export const useBuilderErrorStore = createWithEqualityFn<BuilderErrorStore>(
 
     hasError: (type, id) => {
       return get().errors[type].some((err) => err.id === id);
+    },
+
+    clear: () => {
+      set({ errors: INITIAL_ERRORS });
     },
   }),
   shallow,
