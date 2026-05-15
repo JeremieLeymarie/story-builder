@@ -5,12 +5,16 @@ import { ScrollArea as ScrollAreaPrimitive } from "radix-ui";
 import { cn } from "@/lib/style";
 
 // Modified to fix scrollbar display (https://github.com/shadcn-ui/ui/issues/9196)
+// Modified to add scrollbarClassName to ScrollArea
 
 function ScrollArea({
   className,
   children,
+  scrollbarClassName,
   ...props
-}: React.ComponentProps<typeof ScrollAreaPrimitive.Root>) {
+}: React.ComponentProps<typeof ScrollAreaPrimitive.Root> & {
+  scrollbarClassName?: string;
+}) {
   return (
     <ScrollAreaPrimitive.Root
       data-slot="scroll-area"
@@ -23,7 +27,7 @@ function ScrollArea({
       >
         {children}
       </ScrollAreaPrimitive.Viewport>
-      <ScrollBar />
+      <ScrollBar className={scrollbarClassName} />
       <ScrollAreaPrimitive.Corner />
     </ScrollAreaPrimitive.Root>
   );
