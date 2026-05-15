@@ -193,7 +193,6 @@ export const _getBuilderService = ({
     getScenesByKey: async (sourceSceneKeys: string[]) => {
       return await sceneRepository.getScenesByKey(sourceSceneKeys);
     },
-
     removeSceneConnections,
 
     updateTargetProbability: async ({
