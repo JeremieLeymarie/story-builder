@@ -49,9 +49,11 @@ export const CharacterCard = ({
   character?: ProgressCharacter;
   triggeredSideEffects: SideEffect[];
 }) => {
-  const shouldDisplayCharacter = Object.values(
-    character?.attributes ?? {},
-  ).some((attr) => attr.visibility === "visible");
+  const visibleAttributes = Object.values(character!.attributes).filter(
+    (attr) => attr.visibility === "visible",
+  );
+
+  const shouldDisplayCharacter = visibleAttributes.length > 0;
   const [{ isCharacterCardOpen }, setSettings] = useLocalGameSettings();
   const wereCharacterSideEffectsTriggered =
     triggeredSideEffects.filter(
@@ -95,22 +97,20 @@ export const CharacterCard = ({
       {/* TODO: animate expand/contract */}
       {isCharacterCardOpen && (
         <CardContent className="flex flex-wrap gap-1">
-          {Object.values(character!.attributes).map(
-            ({ key, name, value }, i) => (
-              <React.Fragment key={key}>
-                <CharacterAttribute
-                  name={name}
-                  value={value}
-                  triggeredEffect={triggeredSideEffects.find(
-                    (effectConfig) => effectConfig.effect.attributeKey === key,
-                  )}
-                />
-                {i !== Object.keys(character!.attributes).length - 1 && (
-                  <span className="select-none">&nbsp;·</span>
+          {visibleAttributes.map(({ key, name, value }, i) => (
+            <React.Fragment key={key}>
+              <CharacterAttribute
+                name={name}
+                value={value}
+                triggeredEffect={triggeredSideEffects.find(
+                  (effectConfig) => effectConfig.effect.attributeKey === key,
                 )}
-              </React.Fragment>
-            ),
-          )}
+              />
+              {i !== visibleAttributes.length - 1 && (
+                <span className="select-none">&nbsp;·</span>
+              )}
+            </React.Fragment>
+          ))}
         </CardContent>
       )}
     </Card>
