@@ -23,10 +23,6 @@ import {
   MockLayoutService,
   getStubLayoutService,
 } from "../stubs/stub-layout-service";
-import {
-  MOCK_IMPORTED_STORY,
-  MOCK_IMPORTED_SCENE,
-} from "@/domains/__tests__/data/imported-story-mocks";
 import { getTestFactory } from "@/lib/testing/factory";
 import { EntityNotExistError } from "@/domains/errors";
 import {
@@ -39,6 +35,7 @@ import {
   MockBuilderSceneRepository,
 } from "../stubs/stub-builder-scene-repository";
 import { Action, Scene } from "@/lib/storage/domain";
+import { sceneToNodeAdapter } from "@/builder/adapters";
 
 const factory = getTestFactory();
 
@@ -70,7 +67,7 @@ describe("builder-service", () => {
     });
   });
 
-  describe("updateSceneBuilderPosition", () => {
+  describe("update scene builder position", () => {
     test("should update node position", async () => {
       await builderService.updateSceneBuilderPosition("tutu", {
         x: 42,
@@ -83,7 +80,7 @@ describe("builder-service", () => {
     });
   });
 
-  describe("addSceneConnection", () => {
+  describe("add scene connection", () => {
     test("should do nothing when given invalid action key", async () => {
       sceneRepository.get.mockResolvedValue(BASIC_SCENE);
 
@@ -230,7 +227,49 @@ describe("builder-service", () => {
     });
   });
 
-  describe("removeSceneConnections", () => {
+  describe("get scenes by key", () => {
+    test("should get scenes from repo", async () => {
+      const scenes = [factory.scene(), factory.scene()];
+      const scenesByKey = Object.fromEntries(scenes.map((s) => [s.key, s]));
+      sceneRepository.getScenesByKey.mockResolvedValueOnce(scenesByKey);
+
+      const result = await builderService.getScenesByKey(["tutu", "titi"]);
+
+      expect(result).toStrictEqual(scenesByKey);
+      expect(sceneRepository.getScenesByKey).toHaveBeenCalledOnce();
+      expect(sceneRepository.getScenesByKey).toHaveBeenCalledWith([
+        "tutu",
+        "titi",
+      ]);
+    });
+  });
+
+  describe("remove scene connections", () => {
+    test("should not allow invalid source scene keys", async () => {
+      sceneRepository.getScenesByKey.mockResolvedValueOnce({
+        "source-exists": factory.scene({ key: "source-exists", actions: [] }),
+      });
+
+      await expect(
+        builderService.removeSceneConnections([
+          {
+            actionKey: "action-key-a",
+            sourceSceneKey: "source-not-exists", // does
+            targetSceneKey: "target-a",
+          },
+          {
+            actionKey: "action-key-b",
+            sourceSceneKey: "source-exists",
+            targetSceneKey: "target-a",
+          },
+        ]),
+      ).rejects.toThrow(
+        new AggregateError([
+          new EntityNotExistError("scene", "source-not-exists"),
+        ]),
+      );
+    });
+
     test("should remove one connection", async () => {
       sceneRepository.getScenesByKey.mockResolvedValue({
         tutu: factory.scene({
@@ -394,7 +433,7 @@ describe("builder-service", () => {
     });
   });
 
-  describe("updateTargetProbability", () => {
+  describe("update target probability", () => {
     test("should fail if target does not exist ", async () => {
       sceneRepository.get.mockResolvedValue(
         factory.scene({
@@ -597,7 +636,7 @@ describe("builder-service", () => {
     });
   });
 
-  describe("createStoryWithFirstScene", () => {
+  describe("create story with first scene", () => {
     test("should create story and first scene", async () => {
       localRepository.getUser.mockResolvedValueOnce(null);
 
@@ -688,7 +727,7 @@ describe("builder-service", () => {
     });
   });
 
-  describe("addScene", () => {
+  describe("add scene", () => {
     test("should add scene to local database", async () => {
       await builderService.addScene(BASIC_SCENE);
 
@@ -696,7 +735,7 @@ describe("builder-service", () => {
     });
   });
 
-  describe("updateScene", () => {
+  describe("update scene", () => {
     test("should only update specified parts of the scene", async () => {
       await builderService.updateScene({
         content: makeSimpleLexicalContent("tututu"),
@@ -709,7 +748,7 @@ describe("builder-service", () => {
     });
   });
 
-  describe("saveSideEffects", () => {
+  describe("save side effects", () => {
     test("invalid scene", async () => {
       sceneRepository.get.mockResolvedValueOnce(null);
 
@@ -761,7 +800,60 @@ describe("builder-service", () => {
     });
   });
 
-  describe("changeFirstScene", () => {
+  describe("get auto layout", () => {
+    test("should return reorganized nodes", async () => {
+      const story = factory.story.builder();
+      const [sceneA, sceneB, sceneC] = [
+        factory.scene({ storyKey: story.key }),
+        factory.scene({ storyKey: story.key }),
+        factory.scene({ storyKey: story.key }),
+      ];
+      const initialNodes = [sceneA, sceneB].map((scene) =>
+        sceneToNodeAdapter({ scene, story }),
+      );
+      // Mock the layout service response so that the position of each scene is its index in the initial array
+      layoutService.computeAutoLayout.mockResolvedValueOnce(
+        initialNodes.map((node, i) => ({
+          ...node,
+          position: {
+            x: i,
+            y: i,
+          },
+        })),
+      );
+      localRepository.getScenesByStoryKey.mockResolvedValueOnce([
+        sceneA,
+        sceneB,
+        sceneC,
+      ]);
+
+      const result = await builderService.getAutoLayout({
+        nodes: initialNodes,
+        edges: [],
+        storyKey: story.key,
+      });
+
+      expect(result.before).toStrictEqual([sceneA, sceneB, sceneC]);
+      expect(result.after).toStrictEqual([
+        ...[sceneA, sceneB].map((scene, i) => ({
+          ...scene,
+          builderParams: {
+            position: {
+              x: i,
+              y: i,
+            },
+          },
+        })),
+        sceneC,
+      ]);
+      expect(layoutService.computeAutoLayout).toHaveBeenCalledWith({
+        nodes: initialNodes,
+        edges: [],
+      });
+    });
+  });
+
+  describe("change first scene", () => {
     test("should update the first scene of a story", async () => {
       const success = await builderService.changeFirstScene("CANARD", "KADOC");
 
@@ -785,7 +877,7 @@ describe("builder-service", () => {
     });
   });
 
-  describe("getBuilderStoryData", () => {
+  describe("get builder story data", () => {
     test("should return story data", async () => {
       const builderData = await builderService.getBuilderStoryData("bouteille");
 
@@ -800,7 +892,7 @@ describe("builder-service", () => {
     });
   });
 
-  describe("getUserBuilderStories", () => {
+  describe("get user builder stories", () => {
     test("should retrieve stories created by logged in user", async () => {
       const newestStory = factory.story.builder({
         key: "newest-story",
@@ -835,7 +927,7 @@ describe("builder-service", () => {
     });
   });
 
-  describe("getFullBuilderState", () => {
+  describe("get full builder state", () => {
     test("should get all stories and scenes", async () => {
       const result = await builderService.getAllBuilderData();
 
@@ -847,21 +939,43 @@ describe("builder-service", () => {
     });
   });
 
-  describe("loadBuilderState", () => {
+  describe("load builder state", () => {
     test("should update local database with input data", async () => {
-      await builderService.loadBuilderState([BASIC_STORY], [BASIC_SCENE]);
+      const currentStories = [factory.story.builder(), factory.story.builder()];
+      const currentScenes = [
+        factory.scene({ storyKey: currentStories[0]!.key }),
+        factory.scene({ storyKey: currentStories[0]!.key }),
+      ];
+      localRepository.getStoriesByAuthor = vi.fn((author) =>
+        author
+          ? Promise.resolve([currentStories[1]!])
+          : Promise.resolve([currentStories[0]!]),
+      );
+      localRepository.getScenesByStoryKey.mockResolvedValueOnce(currentScenes);
+
+      const newStories = [factory.story.builder()];
+      const newScenes = [
+        factory.scene({ storyKey: newStories[0]!.key }),
+        factory.scene({ storyKey: newStories[0]!.key }),
+      ];
+
+      await builderService.loadBuilderState(newStories, newScenes);
 
       expect(localRepository.unitOfWork).toHaveBeenCalled();
-      expect(localRepository.updateOrCreateStories).toHaveBeenCalledWith([
-        BASIC_STORY,
-      ]);
-      expect(localRepository.updateOrCreateScenes).toHaveBeenCalledWith([
-        BASIC_SCENE,
-      ]);
+      expect(localRepository.updateOrCreateStories).toHaveBeenCalledWith(
+        newStories,
+      );
+      expect(localRepository.updateOrCreateScenes).toHaveBeenCalledWith(
+        newScenes,
+      );
+      expect(localRepository.deleteScenes).toHaveBeenCalledWith(
+        currentScenes.map((s) => s.key),
+      );
+      expect(localRepository.deleteStories).toHaveBeenCalledOnce();
     });
   });
 
-  describe("deleteScenes", () => {
+  describe("delete scenes", () => {
     test("should not delete when story key is invalid", async () => {
       storyRepository.get = vi.fn(() => Promise.resolve(null));
 
@@ -983,7 +1097,7 @@ describe("builder-service", () => {
     });
   });
 
-  describe("deleteStory", () => {
+  describe("delete story", () => {
     test("should delete story", async () => {
       localRepository.getScenesByStoryKey.mockResolvedValueOnce([
         { ...BASIC_SCENE, key: "pshit" },
@@ -1002,7 +1116,7 @@ describe("builder-service", () => {
     });
   });
 
-  describe("computeAutoLayout", () => {
+  describe("compute auto layout", () => {
     test("should compute new positions", async () => {
       const NODES: BuilderNode[] = [
         {
@@ -1255,27 +1369,81 @@ describe("builder-service", () => {
     });
   });
 
-  describe("bulkUpdateScenes", () => {
+  describe("bulk update scenes", () => {
     test("should update or create scenes with", async () => {
       await builderService.bulkUpdateScenes({ scenes: [BASIC_SCENE] });
 
       expect(sceneRepository.bulkUpdate).toHaveBeenCalledOnce();
       expect(sceneRepository.bulkUpdate).toHaveBeenCalledWith([BASIC_SCENE]);
     });
+  });
 
-    describe("importFromJSON", () => {
-      test("should import story from JSON", async () => {
-        const result = await builderService.importStory({
-          story: MOCK_IMPORTED_STORY,
-          scenes: [MOCK_IMPORTED_SCENE],
-        });
+  describe("import story", () => {
+    // test("simple case"())
 
-        expect(result).toStrictEqual(BASIC_STORY.key);
+    test("should import story from JSON", async () => {
+      const story = factory.story.builder();
+      const scenes = [
+        factory.scene({ key: "old-key-a" }),
+        factory.scene({ key: "old-key-b" }),
+      ];
+      const characterConfig = factory.characterConfig();
+      const theme = factory.storyTheme();
+      const _wiki = factory.wiki();
+      const wiki = { ..._wiki, description: _wiki.description ?? "" };
+      const wikiArticles = [factory.wikiArticle({ wikiKey: wiki.key })];
+      const wikiCategories = [factory.wikiCategory({ wikiKey: wiki.key })];
+      const wikiArticleLinks = [
+        factory.wikiArticleLink({ articleKey: wikiArticles[0]!.key }),
+      ];
+
+      const newStory = factory.story.builder();
+      importExportService.createStory.mockResolvedValue({ data: newStory });
+      importExportService.createScenes.mockResolvedValueOnce({
+        "old-key-a": "new-key-a",
+        "old-key-b": "new-key-b",
       });
+
+      const result = await builderService.importStory({
+        story,
+        scenes,
+        characterConfig,
+        theme: theme.theme,
+        wiki: {
+          wiki,
+          articles: wikiArticles,
+          categories: wikiCategories,
+          articleLinks: wikiArticleLinks,
+        },
+      });
+
+      expect(importExportService.createCharacterConfig).toHaveBeenCalledWith({
+        newStoryKey: newStory.key,
+        characterConfig,
+      });
+      expect(importExportService.createTheme).toHaveBeenCalledWith({
+        newStoryKey: newStory.key,
+        theme: theme.theme,
+      });
+      expect(importExportService.createWiki).toHaveBeenCalledWith({
+        oldScenesToNew: {
+          "old-key-a": "new-key-a",
+          "old-key-b": "new-key-b",
+        },
+        type: "created",
+        wikiData: {
+          wiki,
+          articles: wikiArticles,
+          categories: wikiCategories,
+          articleLinks: wikiArticleLinks,
+        },
+        newStoryKey: newStory.key,
+      });
+      expect(result).toStrictEqual(newStory.key);
     });
   });
 
-  describe("updateStory", () => {
+  describe("update story", () => {
     test("should update scene using repository", async () => {
       const mockStory = factory.story.builder();
       storyRepository.update = vi.fn(() => Promise.resolve(mockStory));
@@ -1297,7 +1465,7 @@ describe("builder-service", () => {
     });
   });
 
-  describe("duplicateScenes", () => {
+  describe("duplicate scenes", () => {
     test("invalid story key", async () => {
       storyRepository.get = vi.fn(() => Promise.resolve(null));
 
@@ -1431,7 +1599,7 @@ describe("builder-service", () => {
     });
   });
 
-  describe("makeEmptyActionPayload", () => {
+  describe("make empty action payload", () => {
     test("returns simple empty action ", () => {
       expect(builderService.makeEmptyActionPayload()).toStrictEqual({
         key: expect.any(String),
@@ -1442,7 +1610,7 @@ describe("builder-service", () => {
     });
   });
 
-  describe("makeEmptySideEffectPayload", () => {
+  describe("make empty side effect payload", () => {
     test("throw hen character is not properly set up", () => {
       expect(() =>
         builderService.makeEmptySideEffectPayload({
