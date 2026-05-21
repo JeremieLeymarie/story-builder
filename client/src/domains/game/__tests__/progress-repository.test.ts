@@ -41,4 +41,24 @@ describe("progress-repository", () => {
       expect(result).toStrictEqual(progresses[0]);
     });
   });
+
+  describe("update progress", () => {
+    test("should update progress", async () => {
+      const [progressA, progressB] = [
+        factory.storyProgress({ history: [] }),
+        factory.storyProgress(),
+      ];
+      await testDB.storyProgresses.bulkAdd([progressA, progressB]);
+
+      await repo.update(progressA.key, { history: ["scene-key"] });
+
+      expect(await testDB.storyProgresses.get(progressA.key)).toStrictEqual({
+        ...progressA,
+        history: ["scene-key"],
+      });
+      expect(await testDB.storyProgresses.get(progressB.key)).toStrictEqual(
+        progressB,
+      );
+    });
+  });
 });
