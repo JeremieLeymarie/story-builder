@@ -142,8 +142,7 @@ describe("use-safe-local-storage", () => {
     expect(result.current[0]).toStrictEqual({ bloup: "blap" });
   });
 
-  // TODO: install @testing-library/jest-dom and un-skip this test
-  test.skip("Returns new value when key changes", () => {
+  test("Returns new value when key changes", () => {
     localStorage.setItem("blip", JSON.stringify({ bloup: "blap" }));
     localStorage.setItem("tutu", JSON.stringify({ bloup: "toto" }));
 
@@ -161,11 +160,11 @@ describe("use-safe-local-storage", () => {
 
     render(<Container />);
 
-    // expect(screen.getByTestId("value")).toHaveTextContent("blap");
+    expect(screen.getByTestId("value")).toHaveTextContent("blap");
     // Change LS key
     act(() => {
       screen.getByRole("button").click();
     });
-    // expect(screen.getByTestId("value")).toHaveTextContent("toto");
+    expect(screen.getByTestId("value")).toHaveTextContent("toto");
   });
 });
