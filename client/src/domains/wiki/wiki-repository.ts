@@ -179,6 +179,7 @@ export const _getDexieWikiRepository = (
         .where({ categoryKey })
         .modify({ categoryKey: undefined });
     },
+
     bulkAddCategories: async (payload) => {
       await db.wikiCategories.bulkAdd(payload);
     },
