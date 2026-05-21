@@ -31,6 +31,7 @@ export const _getDexieBuilderSceneRepository = (
       await touchStory(payload.storyKey);
       return { ...payload, key };
     },
+
     bulkAdd: async (payload) => {
       const keys = (await db.scenes.bulkAdd(structuredClone(payload), {
         allKeys: true,
@@ -49,19 +50,23 @@ export const _getDexieBuilderSceneRepository = (
 
       return _sceneArrayToMapping(scenes);
     },
+
     bulkUpdate: async (payload) => {
       await db.scenes.bulkUpdate(
         payload.map(({ key, ...scene }) => ({ key, changes: scene })),
       );
       const storyKeys = [...new Set(payload.map((scene) => scene.storyKey))];
+      console.log(storyKeys);
       await Promise.all(storyKeys.map((storyKey) => touchStory(storyKey)));
     },
+
     update: async (key, payload) => {
       const current = await db.scenes.get(key);
       if (!current) return;
       await db.scenes.update(key, payload);
       await touchStory(payload.storyKey ?? current.storyKey);
     },
+
     delete: async (sceneKeys, storyKey) => {
       await db.scenes.bulkDelete(sceneKeys);
       await touchStory(storyKey);

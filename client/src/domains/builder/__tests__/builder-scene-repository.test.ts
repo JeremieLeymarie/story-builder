@@ -8,6 +8,7 @@ import {
   BuilderSceneRepositoryPort,
 } from "../builder-scene-repository";
 import { Scene } from "@/lib/storage/domain";
+import { makeSimpleLexicalContent } from "@/lib/lexical-content";
 
 const factory = getTestFactory();
 
@@ -24,6 +25,23 @@ describe("builder scene repository", () => {
       updatedAt: new Date("2025-01-01"),
     });
     await testDB.stories.add(story);
+  });
+
+  describe("create", () => {
+    test("create scene", async () => {
+      expect(await testDB.scenes.count()).toStrictEqual(0);
+
+      const sceneToCreate = factory.scene({ storyKey: story.key });
+      await repo.create(sceneToCreate);
+
+      expect(await testDB.scenes.count()).toStrictEqual(1);
+      expect(await testDB.scenes.get(sceneToCreate.key)).toStrictEqual(
+        sceneToCreate,
+      );
+      expect(
+        (await testDB.stories.get(story.key))?.updatedAt.getTime(),
+      ).toBeGreaterThan(story.updatedAt.getTime());
+    });
   });
 
   describe("bulk add", () => {
@@ -74,6 +92,76 @@ describe("builder scene repository", () => {
     });
   });
 
+  describe("get", () => {
+    test("get scene", async () => {
+      const scenes = [
+        factory.scene({ storyKey: story.key }),
+        factory.scene({ storyKey: story.key }),
+      ];
+      await testDB.scenes.bulkAdd(scenes);
+
+      const scene = await repo.get(scenes[1]!.key);
+
+      expect(scene).toStrictEqual(scenes[1]);
+    });
+  });
+
+  describe("getScenesByKey", () => {
+    test("get scenes", async () => {
+      const [sceneA, sceneB, sceneC] = [
+        factory.scene({ storyKey: story.key }),
+        factory.scene({ storyKey: story.key }),
+        factory.scene({ storyKey: story.key }),
+      ];
+      await testDB.scenes.bulkAdd([sceneA, sceneB, sceneC]);
+
+      const scenesByKey = await repo.getScenesByKey([sceneA.key, sceneC.key]);
+
+      expect(scenesByKey).toStrictEqual({
+        [sceneA.key]: sceneA,
+        [sceneC.key]: sceneC,
+      });
+    });
+  });
+
+  describe("bulkUpdate", () => {
+    test("update scenes", async () => {
+      const otherStory = factory.story.builder({ key: "other-story-key" });
+      const [sceneA, sceneB, sceneC] = [
+        factory.scene({ storyKey: story.key }),
+        factory.scene({ storyKey: story.key }),
+        factory.scene({ storyKey: otherStory.key }),
+      ];
+      await testDB.stories.add(otherStory);
+      await testDB.scenes.bulkAdd([sceneA, sceneB, sceneC]);
+
+      console.log(await testDB.stories.get(otherStory.key));
+      await repo.bulkUpdate([
+        { ...sceneB, title: "Updated title", actions: [] },
+        { ...sceneC, content: makeSimpleLexicalContent("Updated content") },
+      ]);
+      console.log(await testDB.stories.get(otherStory.key));
+
+      expect(await testDB.scenes.count()).toStrictEqual(3);
+      expect(await testDB.scenes.get(sceneB.key)).toStrictEqual({
+        ...sceneB,
+        title: "Updated title",
+        actions: [],
+      });
+      expect(await testDB.scenes.get(sceneC.key)).toStrictEqual({
+        ...sceneC,
+        content: makeSimpleLexicalContent("Updated content"),
+      });
+      expect(await testDB.scenes.get(sceneA.key)).toStrictEqual(sceneA); // Unchanged
+      expect(
+        (await testDB.stories.get(story.key))?.updatedAt.getTime(),
+      ).toBeGreaterThan(story.updatedAt.getTime());
+      expect(
+        (await testDB.stories.get(otherStory.key))?.updatedAt.getTime(),
+      ).toBeGreaterThan(otherStory.updatedAt.getTime());
+    });
+  });
+
   describe("update", () => {
     test("update the correct scene", async () => {
       const scenes = [
@@ -87,6 +175,27 @@ describe("builder scene repository", () => {
       await repo.update(sceneA.key, payload);
       expect(await repo.get(sceneA.key)).toStrictEqual(payload);
       expect(await repo.get(sceneB.key)).toStrictEqual(sceneB); // Unchanged
+    });
+  });
+
+  describe("delete", () => {
+    test("delete scenes", async () => {
+      const [sceneA, sceneB, sceneC] = [
+        factory.scene({ storyKey: story.key }),
+        factory.scene({ storyKey: story.key }),
+        factory.scene({ storyKey: story.key }),
+      ];
+      await testDB.scenes.bulkAdd([sceneA, sceneB, sceneC]);
+
+      expect(await testDB.scenes.count()).toStrictEqual(3);
+
+      await repo.delete([sceneB.key, sceneA.key], story.key);
+
+      expect(await testDB.scenes.count()).toStrictEqual(1);
+      expect(await testDB.scenes.get(sceneC.key)).toBeDefined();
+      expect(
+        (await testDB.stories.get(story.key))?.updatedAt.getTime(),
+      ).toBeGreaterThan(story.updatedAt.getTime());
     });
   });
 });
