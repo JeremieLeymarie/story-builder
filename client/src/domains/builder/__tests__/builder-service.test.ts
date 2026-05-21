@@ -1430,4 +1430,58 @@ describe("builder-service", () => {
       });
     });
   });
+
+  describe("makeEmptyActionPayload", () => {
+    test("returns simple empty action ", () => {
+      expect(builderService.makeEmptyActionPayload()).toStrictEqual({
+        key: expect.any(String),
+        type: "simple",
+        text: "",
+        targets: [],
+      });
+    });
+  });
+
+  describe("makeEmptySideEffectPayload", () => {
+    test("throw hen character is not properly set up", () => {
+      expect(() =>
+        builderService.makeEmptySideEffectPayload({
+          characterConfig: {
+            key: "config-key",
+            storyKey: "story-key",
+            attributes: {}, // No attributes
+          },
+        }),
+      ).toThrow(
+        new Error(
+          "Cannot create side effect payload when character configuration has no attributes.",
+        ),
+      );
+    });
+
+    test("returns basic side effect", () => {
+      const attr1 = factory.characterConfigAttribute({ name: "dexterity" });
+      const attr2 = factory.characterConfigAttribute({ name: "charisma" });
+
+      const sideEffect = builderService.makeEmptySideEffectPayload({
+        characterConfig: {
+          key: "config-key",
+          storyKey: "story-key",
+          attributes: {
+            [attr1.key]: attr1,
+            [attr2.key]: attr2,
+          },
+        },
+      });
+      if (sideEffect.effect.attributeKey === attr1.key)
+        expect(sideEffect.name).toStrictEqual("Level-up Dexterity");
+      else expect(sideEffect.name).toStrictEqual("Level-up Charisma");
+
+      expect(sideEffect.isVisible).toBeTruthy();
+      expect(sideEffect.trigger).toStrictEqual("scene-load");
+      expect(sideEffect.effect.type).toStrictEqual("character-attribute");
+      expect(sideEffect.effect.increment).toStrictEqual(1);
+      expect(sideEffect.effect.attributeKey).toBeOneOf([attr1.key, attr2.key]);
+    });
+  });
 });
