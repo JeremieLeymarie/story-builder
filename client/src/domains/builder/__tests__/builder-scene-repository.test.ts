@@ -126,7 +126,10 @@ describe("builder scene repository", () => {
 
   describe("bulkUpdate", () => {
     test("update scenes", async () => {
-      const otherStory = factory.story.builder({ key: "other-story-key" });
+      const otherStory = factory.story.builder({
+        key: "other-story-key",
+        updatedAt: new Date("2020-01-01"),
+      });
       const [sceneA, sceneB, sceneC] = [
         factory.scene({ storyKey: story.key }),
         factory.scene({ storyKey: story.key }),
@@ -135,12 +138,10 @@ describe("builder scene repository", () => {
       await testDB.stories.add(otherStory);
       await testDB.scenes.bulkAdd([sceneA, sceneB, sceneC]);
 
-      console.log(await testDB.stories.get(otherStory.key));
       await repo.bulkUpdate([
         { ...sceneB, title: "Updated title", actions: [] },
         { ...sceneC, content: makeSimpleLexicalContent("Updated content") },
       ]);
-      console.log(await testDB.stories.get(otherStory.key));
 
       expect(await testDB.scenes.count()).toStrictEqual(3);
       expect(await testDB.scenes.get(sceneB.key)).toStrictEqual({
