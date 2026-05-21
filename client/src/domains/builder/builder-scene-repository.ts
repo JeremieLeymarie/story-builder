@@ -56,7 +56,6 @@ export const _getDexieBuilderSceneRepository = (
         payload.map(({ key, ...scene }) => ({ key, changes: scene })),
       );
       const storyKeys = [...new Set(payload.map((scene) => scene.storyKey))];
-      console.log(storyKeys);
       await Promise.all(storyKeys.map((storyKey) => touchStory(storyKey)));
     },
 
