@@ -24,3 +24,6 @@ dev-dist
 *.njsproj
 *.sln
 *.sw?
+
+# Test coverage
+coverage/

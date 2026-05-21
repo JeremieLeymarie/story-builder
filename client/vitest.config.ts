@@ -9,5 +9,8 @@ export default defineConfig({
     globals: true,
     restoreMocks: true,
     setupFiles: ["vitest.setup.ts"],
+    coverage: {
+      exclude: ["design-system/primitives/*.tsx", "*stub*.ts"],
+    },
   },
 });
