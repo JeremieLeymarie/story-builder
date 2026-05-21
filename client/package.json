@@ -17,7 +17,8 @@
     "format:write": "prettier --write --ignore-unknown .",
     "test": "vitest",
     "test:single": "vitest run",
-    "coverage": "vitest run --coverage",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
     "generate-client": "openapi-typescript http://localhost:8000/openapi.json -o src/lib/http-client/schema.d.ts",
     "generate-pwa-assets": "pwa-assets-generator --preset minimal-2023 public/story-builder-logo.svg",
     "knip": "knip"
@@ -84,6 +85,7 @@
     "@vite-pwa/assets-generator": "^1.0.2",
     "@vitejs/plugin-react": "^5.2.0",
     "@vitest/coverage-v8": "^4.1.5",
+    "@vitest/ui": "^4.1.7",
     "babel-plugin-react-compiler": "^19.1.0-rc.1-rc-af1b7da-20250421",
     "eslint": "^10.2.1",
     "eslint-config-prettier": "^10.1.8",
@@ -92,6 +94,7 @@
     "fake-indexeddb": "^6.2.5",
     "globals": "^17.5.0",
     "jsdom": "^29.0.2",
+    "knip": "^6.6.1",
     "openapi-typescript": "^7.13.0",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.7.3",
@@ -105,7 +108,6 @@
     "vite-plugin-pwa": "^1.2.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^4.1.5",
-    "knip": "^6.6.1",
     "workbox-core": "^7.4.0",
     "workbox-window": "^7.4.0"
   },
