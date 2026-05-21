@@ -59,4 +59,37 @@ describe("game-repository", () => {
       expect(await testDB.wikiArticleLinks.count()).toStrictEqual(1);
     });
   });
+
+  describe("get scenes", () => {
+    test("should get all scenes of given game", async () => {
+      const [storyA, storyB] = [
+        factory.story.builder(),
+        factory.story.builder(),
+      ];
+      const [sceneA, sceneB, sceneC] = [
+        factory.scene({ key: "a", storyKey: storyA.key }),
+        factory.scene({ key: "b", storyKey: storyA.key }),
+        factory.scene({ key: "c", storyKey: storyB.key }),
+      ];
+      await testDB.stories.bulkAdd([storyA, storyB]);
+      await testDB.scenes.bulkAdd([sceneA, sceneB, sceneC]);
+
+      const scenes = await repo.getScenes(storyA.key);
+      expect(scenes.sort((a, b) => a.key.localeCompare(b.key))).toStrictEqual([
+        sceneA,
+        sceneB,
+      ]);
+    });
+  });
+
+  describe("get scene", () => {
+    test("get scene", async () => {
+      const [sceneA, sceneB] = [factory.scene(), factory.scene()];
+      await testDB.scenes.bulkAdd([sceneA, sceneB]);
+
+      const scene = await repo.getScene(sceneA.key);
+
+      expect(scene).toStrictEqual(sceneA);
+    });
+  });
 });
