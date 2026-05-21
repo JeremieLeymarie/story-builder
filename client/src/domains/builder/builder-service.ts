@@ -68,7 +68,6 @@ export const _getBuilderService = ({
     return { stories, scenes };
   };
 
-  // TODO: test this independently
   const removeSceneConnections = async (
     connectionsToRemove: BuilderConnection[],
   ) => {
@@ -81,7 +80,7 @@ export const _getBuilderService = ({
     const missingScenes = sourceSceneKeys.filter(
       (key) => !Object.keys(sourceScenesByKey).includes(key),
     );
-    if (!sourceSceneKeys)
+    if (missingScenes.length > 0)
       throw new AggregateError(
         missingScenes.map((k) => new EntityNotExistError("scene", k)),
       );
@@ -195,6 +194,7 @@ export const _getBuilderService = ({
     getScenesByKey: async (sourceSceneKeys: string[]) => {
       return await sceneRepository.getScenesByKey(sourceSceneKeys);
     },
+
     removeSceneConnections,
 
     updateTargetProbability: async ({
@@ -366,7 +366,9 @@ export const _getBuilderService = ({
     },
 
     getBuilderStoryData,
+
     getUserBuilderStories,
+
     getAllBuilderData,
 
     loadBuilderState: async (stories: Story[], scenes: Scene[]) => {
@@ -459,6 +461,7 @@ export const _getBuilderService = ({
         },
       );
     },
+
     importStory: async (importData: JsonStoryData) => {
       const storyKey = await localRepository.unitOfWork(
         async () => {
