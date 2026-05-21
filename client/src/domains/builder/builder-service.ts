@@ -569,9 +569,11 @@ export const _getBuilderService = ({
       await sceneRepository.bulkAdd(payload);
       return payload;
     },
+
     makeEmptyActionPayload: () => {
       return { key: nanoid(), type: "simple", targets: [], text: "" };
     },
+
     makeEmptySideEffectPayload: ({ characterConfig }) => {
       if (Object.keys(characterConfig.attributes).length < 1)
         throw new Error(
