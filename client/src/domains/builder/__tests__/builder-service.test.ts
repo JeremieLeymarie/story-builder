@@ -885,20 +885,101 @@ describe("builder-service", () => {
           sceneKeys: ["ti", "ta", "tu"],
         }),
       ).rejects.toThrow(CannotDeleteFirstSceneError);
+
       expect(sceneRepository.delete).not.toHaveBeenCalled();
     });
 
-    test("should delete scenes", async () => {
-      await builderService.deleteScenes({
+    test("simple case", async () => {
+      const result = await builderService.deleteScenes({
         storyKey: "vroum",
         sceneKeys: ["ti", "ta", "tu"],
       });
 
+      expect(result.deletedSceneKeys).toStrictEqual(["ti", "ta", "tu"]);
+      expect(result.updatedScenes).toStrictEqual({});
+      expect(result.deletedConnections).toStrictEqual([]);
       expect(sceneRepository.delete).toHaveBeenCalledWith(
         ["ti", "ta", "tu"],
         "vroum",
       );
       expect(sceneRepository.delete).toHaveBeenCalledOnce();
+    });
+
+    test("update related scenes and delete related connections", async () => {
+      // Scene A points to scene B
+      const sceneA = factory.scene({
+        storyKey: "story-key",
+        key: "scene-a",
+        actions: [
+          {
+            key: "action-a",
+            text: "Action A",
+            type: "simple",
+            targets: [{ sceneKey: "scene-b", probability: 100 }],
+          },
+        ],
+      });
+      const sceneB = factory.scene({
+        storyKey: "story-key",
+        key: "scene-b",
+      });
+      const sceneC = factory.scene({
+        storyKey: "story-key",
+        key: "scene-c",
+      });
+      const scenes = [sceneA, sceneB, sceneC];
+      localRepository.getScenesByStoryKey.mockResolvedValueOnce(scenes);
+      sceneRepository.getScenesByKey = vi.fn((keys) =>
+        Promise.resolve(
+          Object.fromEntries(
+            scenes
+              .filter((sc) => keys.includes(sc.key))
+              .map((sc) => [sc.key, sc]),
+          ),
+        ),
+      );
+
+      const result = await builderService.deleteScenes({
+        storyKey: "story-key",
+        sceneKeys: ["scene-b", "scene-c"],
+      });
+
+      expect(result.deletedSceneKeys).toStrictEqual(["scene-b", "scene-c"]);
+      expect(result.updatedScenes).toStrictEqual({
+        "scene-a": {
+          ...sceneA,
+          actions: [
+            {
+              key: "action-a",
+              text: "Action A",
+              type: "simple",
+              targets: [], // Target was removed
+            },
+          ],
+        },
+      });
+      expect(result.deletedConnections).toStrictEqual([
+        {
+          actionKey: "action-a",
+          sourceSceneKey: "scene-a",
+          targetSceneKey: "scene-b",
+        },
+      ]);
+      expect(sceneRepository.update).toHaveBeenCalledOnce();
+      expect(sceneRepository.update).toHaveBeenCalledWith("scene-a", {
+        actions: [
+          {
+            key: "action-a",
+            text: "Action A",
+            type: "simple",
+            targets: [], // Target was removed
+          },
+        ],
+      });
+      expect(sceneRepository.delete).toHaveBeenCalledWith(
+        ["scene-b", "scene-c"],
+        "story-key",
+      );
     });
   });
 

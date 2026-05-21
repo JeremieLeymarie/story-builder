@@ -68,6 +68,7 @@ export const _getBuilderService = ({
     return { stories, scenes };
   };
 
+  // TODO: test this independently
   const removeSceneConnections = async (
     connectionsToRemove: BuilderConnection[],
   ) => {
@@ -404,6 +405,7 @@ export const _getBuilderService = ({
 
       if (sceneKeys.includes(story.firstSceneKey))
         throw new CannotDeleteFirstSceneError(story.firstSceneKey);
+
       // Update scenes with action targets leading to one of the deleted scenes
       const allScenes = await localRepository.getScenesByStoryKey(storyKey);
       const connectionsToDelete = allScenes.reduce<BuilderConnection[]>(
@@ -414,7 +416,7 @@ export const _getBuilderService = ({
           if (isImpacted) {
             scene.actions.forEach((a) => ({
               ...a,
-              targets: a.targets.filter((t) => {
+              targets: a.targets.forEach((t) => {
                 const shouldBeKept = !sceneKeys.includes(t.sceneKey);
                 if (!shouldBeKept)
                   acc.push({
@@ -422,7 +424,6 @@ export const _getBuilderService = ({
                     sourceSceneKey: scene.key,
                     targetSceneKey: t.sceneKey,
                   });
-                return shouldBeKept;
               }),
             }));
           }
