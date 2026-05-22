@@ -11,6 +11,7 @@ import { Button } from "@/design-system/primitives";
 import { DeleteStoryModal } from "../../delete-story-modal";
 import { SavingIndicator } from "@/design-system/components/saving-indicator";
 import { useDeleteStory } from "@/builder/hooks/use-delete-story";
+import { ScrollArea } from "@/design-system/primitives/scroll-area";
 
 export const StoryEditor = () => {
   const { story } = useBuilderContext();
@@ -32,8 +33,12 @@ export const StoryEditor = () => {
           }
         />
       </ToolbarHeader>
-      <EditStoryForm form={form} />
-      <SavingIndicator isSaving={isSaving} />
+      <ScrollArea>
+        <div className="flex max-h-[calc(100vh-150px)] flex-col gap-2">
+          <EditStoryForm form={form} />
+          <SavingIndicator isSaving={isSaving} />
+        </div>
+      </ScrollArea>
     </Toolbar>
   );
 };
