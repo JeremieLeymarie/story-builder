@@ -42,7 +42,18 @@ export const useBuilderEdges = () => {
           return updatedEdge ?? edge;
         })
         // Delete removed edges
-        .filter((edge) => !edgeIdsToRemove?.includes(edge.id));
+        .filter((edge) => {
+          const shouldBeRemoved = edgeIdsToRemove?.includes(edge.id);
+          /**
+           * This is a workaround around the fact that when a ReactFlow instance is in uncontrolled mode,
+           * i.e we pass defaultEdges or defaultNodes, it extends onConnect to automatically add an edge
+           * This is not the intended behavior in our case since we control the addition on edge (mostly to add metadata)
+           * We should either think about using a controlled flow or submit an issue in xyflow's repo
+           *  */
+          const isStoryBuilderEdge = edge.type === "edge";
+
+          return !shouldBeRemoved && isStoryBuilderEdge;
+        });
       return newEdges;
     });
   };
