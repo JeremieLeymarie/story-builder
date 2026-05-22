@@ -16,7 +16,7 @@ import { NODE_WIDTH } from "../components/nodes";
 
 // TODO: test this
 export const useBuilderEdges = () => {
-  const { updateNodeData, updateEdgeData, addEdges, screenToFlowPosition } =
+  const { updateNodeData, addEdges, screenToFlowPosition, setEdges } =
     useReactFlow<BuilderNode, BuilderEdge>();
   const { handleError } = useErrorToast();
   const { addScene } = useAddScene();
@@ -24,13 +24,27 @@ export const useBuilderEdges = () => {
   const queryClient = useQueryClient();
   const handleActionTargetsError = useHandleActionTargetsError();
 
-  const _updateNodeAndEdges = (updatedScene: Scene) => {
+  // TODO: this could be put in common with useDeleteScenes logic
+  const _updateNodeAndEdges = (
+    updatedScene: Scene,
+    edgesToRemove?: BuilderEdge[],
+  ) => {
     const node = sceneToNodeAdapter({ scene: updatedScene, story });
-    const edges = sceneToEdgesAdapter(updatedScene);
+    const updatedEdges = sceneToEdgesAdapter(updatedScene);
+    const edgeIdsToRemove = edgesToRemove?.map((e) => e.id) ?? [];
 
-    // This is a little naive, maybe batching these updates in setEdges + setNodes calls would be better for performance
     updateNodeData(node.id, node.data);
-    edges.forEach((edge) => updateEdgeData(edge.id, edge.data));
+    setEdges((edges) => {
+      const newEdges = edges
+        .map((edge) => {
+          // Update edges if needed
+          const updatedEdge = updatedEdges.find((e) => e.id === edge.id);
+          return updatedEdge ?? edge;
+        })
+        // Delete removed edges
+        .filter((edge) => !edgeIdsToRemove?.includes(edge.id));
+      return newEdges;
+    });
   };
 
   const onConnect = async (connection: Connection) => {
@@ -151,7 +165,7 @@ export const useBuilderEdges = () => {
 
       Object.values(updatedScenesByKey).forEach((scene) => {
         // Update React Flow
-        _updateNodeAndEdges(scene);
+        _updateNodeAndEdges(scene, edges);
         scene.actions.forEach((action) =>
           // Handle (add or remove) errors on action targets
           handleActionTargetsError(scene, action),
