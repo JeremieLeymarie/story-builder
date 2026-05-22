@@ -11,6 +11,7 @@ import {
   sceneToEdgesAdapter,
   sceneToNodeAdapter,
 } from "../adapters";
+import { useHandleActionTargetsError } from "./use-handle-action-targets-error";
 
 export const useDeleteScenes = () => {
   const closeBuilderEditor = useBuilderEditorStore((state) => state.close);
@@ -18,10 +19,12 @@ export const useDeleteScenes = () => {
   const { handleError } = useErrorToast();
   const { story, builderService } = useBuilderContext();
   const { setNodes, setEdges } = useReactFlow<BuilderNode, BuilderEdge>();
+  const handleActionTargetsError = useHandleActionTargetsError();
 
   const updateReactFlow = async (
     result: Awaited<ReturnType<BuilderServicePort["deleteScenes"]>>,
   ) => {
+    // 1. Update scenes
     setNodes((nodes) =>
       nodes
         .map((n) => {
@@ -33,6 +36,7 @@ export const useDeleteScenes = () => {
         .filter((n) => !result.deletedSceneKeys.includes(n.data.key)),
     );
 
+    // 2. Update connections
     const newEdges = Object.values(result.updatedScenes).flatMap((scene) => {
       return sceneToEdgesAdapter(scene);
     });
@@ -43,7 +47,6 @@ export const useDeleteScenes = () => {
         targetSceneKey: connection.targetSceneKey,
       }),
     );
-
     setEdges((edges) =>
       edges
         .map((e) => {
@@ -53,6 +56,14 @@ export const useDeleteScenes = () => {
         })
         .filter((e) => !deletedEdgeIds.includes(e.id)),
     );
+
+    // 3. Compute potential targets probability errors
+    Object.values(result.updatedScenes).forEach((scene) => {
+      scene.actions.forEach((action) =>
+        // Handle (add or remove) errors on action targets
+        handleActionTargetsError(scene, action),
+      );
+    });
   };
 
   const { mutateAsync } = useMutation({

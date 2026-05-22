@@ -24,7 +24,7 @@ export const useBuilderEdges = () => {
   const queryClient = useQueryClient();
   const handleActionTargetsError = useHandleActionTargetsError();
 
-  // TODO: this could be put in common with useDeleteScenes logic
+  // TODO: factorize with useDeleteScenes logic
   const _updateNodeAndEdges = (
     updatedScene: Scene,
     edgesToRemove?: BuilderEdge[],
