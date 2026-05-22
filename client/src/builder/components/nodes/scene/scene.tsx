@@ -52,7 +52,7 @@ export const SceneNode = ({ data, selected }: SceneNodeProps) => {
       <CardHeader>
         <div className="flex items-center justify-between">
           {data.title ? (
-            <CardTitle>{data.title}</CardTitle>
+            <CardTitle className="max-w-55 truncate">{data.title}</CardTitle>
           ) : (
             <CardTitle className="text-muted-foreground italic">
               Empty Scene
