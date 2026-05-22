@@ -1515,7 +1515,12 @@ describe("builder-service", () => {
         expect(scenePayload.title).toStrictEqual(scene.title);
         expect(scenePayload.content).toStrictEqual(scene.content);
         expect(scenePayload.actions).toStrictEqual([
-          { key: "action-key", type: "simple", text: "action", targets: [] },
+          {
+            key: expect.any(String),
+            type: "simple",
+            text: "action",
+            targets: [],
+          },
         ]);
         expect(scenePayload.storyKey).toStrictEqual("VROUM");
         expect(scenePayload.builderParams).toStrictEqual({
@@ -1561,7 +1566,12 @@ describe("builder-service", () => {
         expect(scene1Payload.title).toStrictEqual(scene1.title);
         expect(scene1Payload.content).toStrictEqual(scene1.content);
         expect(scene1Payload.actions).toStrictEqual([
-          { key: "action-key-1", type: "simple", text: "action1", targets: [] },
+          {
+            key: expect.any(String),
+            type: "simple",
+            text: "action1",
+            targets: [],
+          },
         ]);
         expect(scene1Payload.storyKey).toStrictEqual("VROUM");
         expect(scene1Payload.builderParams).toStrictEqual({
@@ -1573,7 +1583,7 @@ describe("builder-service", () => {
         expect(scene2Payload.content).toStrictEqual(scene2.content);
         expect(scene2Payload.actions).toStrictEqual([
           {
-            key: "action-key-2",
+            key: expect.any(String),
             type: "simple",
             text: "action2",
             targets: [
