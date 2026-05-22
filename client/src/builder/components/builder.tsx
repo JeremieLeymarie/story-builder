@@ -40,7 +40,7 @@ const BuilderFlow = () => {
       edgeTypes={edgeTypes}
       defaultNodes={initialNodes}
       defaultEdges={initialEdges}
-      defaultEdgeOptions={{ zIndex: 1 }}
+      defaultEdgeOptions={{ zIndex: 1, type: "edge" }}
       onConnect={onConnect}
       onConnectEnd={onConnectEnd}
       onEdgesDelete={onEdgesDelete}
