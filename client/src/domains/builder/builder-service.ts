@@ -510,7 +510,7 @@ export const _getBuilderService = ({
             "wiki",
             "wiki-article",
             "wiki-article-link",
-            "wiki-article-link",
+            "wiki-category",
           ],
           mode: "readwrite",
         },
