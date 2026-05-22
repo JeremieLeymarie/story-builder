@@ -14,6 +14,7 @@ import { useReactFlow } from "@xyflow/react";
 import { FIT_VIEW_DURATION } from "../constants";
 import { ScrollArea } from "@/design-system/primitives/scroll-area";
 import { InvalidActionTargetPercentagesError } from "../builder-errors";
+import React from "react";
 
 const ErrorCount = () => {
   const errorCount = useBuilderErrorStore((state) => state.getErrorCount());
@@ -97,12 +98,12 @@ export const BuilderErrorsToolbar = () => {
             <ScrollArea>
               <div className="max-h-100">
                 {sortedErrors.map((error) => (
-                  <>
+                  <React.Fragment key={error.id}>
                     <BuilderErrorDisplay
                       key={`${error.type}-${error.id}`}
                       error={error}
                     />
-                  </>
+                  </React.Fragment>
                 ))}
               </div>
             </ScrollArea>
