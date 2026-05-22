@@ -12,6 +12,7 @@ import { useErrorToast } from "./use-error-toast";
 import { useBuilderContext } from "./use-builder-context";
 import { actionSchema } from "@/lib/action-schema";
 import { isAnyInputFocused } from "@/lib/shortcuts";
+import { useHandleActionTargetsError } from "./use-handle-action-targets-error";
 
 const clipboardScenesSchema = z.array(
   z.object({
@@ -33,6 +34,7 @@ export const useCopyPaste = () => {
   const { addScene } = useAddScene();
   const { handleError } = useErrorToast();
   const { story, builderService } = useBuilderContext();
+  const handleActionTargetsError = useHandleActionTargetsError();
 
   const onCopyOrCut = (ev: ClipboardEvent) => {
     if (isAnyInputFocused()) return;
@@ -62,7 +64,15 @@ export const useCopyPaste = () => {
       if (Array.isArray(data)) {
         // Paste from scene payload
         const scenes = clipboardScenesSchema.parse(data);
-        duplicateScenes(scenes);
+        duplicateScenes(scenes).then((newScenes) => {
+          if (!newScenes) return;
+          newScenes.forEach((scene) => {
+            scene.actions.forEach((action) =>
+              // Handle (add or remove) errors on action targets
+              handleActionTargetsError(scene, action),
+            );
+          });
+        });
       } else {
         handleError("Invalid clipboard data");
       }
