@@ -32,7 +32,7 @@ export const EditStoryForm = ({ form }: { form: EditStoryFormType }) => {
 
   return (
     <Form {...form}>
-      <form className="space-y-4">
+      <form className="h-full space-y-4">
         <FormField
           control={form.control}
           name="title"
