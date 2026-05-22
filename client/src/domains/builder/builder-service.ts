@@ -529,7 +529,7 @@ export const _getBuilderService = ({
 
       const originalSceneKeys = originalScenes.map(({ key }) => key);
 
-      // Create new keys imperatively to compute bulk payload in a single loop
+      // Create new keys beforehand to compute bulk payload in a single loop
       const oldKeyToNewKey = originalSceneKeys.reduce(
         (acc, key) => ({ ...acc, [key]: nanoid() }),
         {} as Record<string, string>,
@@ -554,6 +554,7 @@ export const _getBuilderService = ({
           actions: scene.actions.map((action) => {
             return {
               ...action,
+              key: nanoid(),
               targets: action.targets.flatMap((target) =>
                 originalSceneKeys.includes(target.sceneKey) // Do not copy links that target a scene that is not within the batch of duplicated scenes
                   ? [
