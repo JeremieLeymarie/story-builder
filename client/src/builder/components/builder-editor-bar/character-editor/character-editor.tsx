@@ -142,7 +142,7 @@ export const CharacterEditor = () => {
                       onClick={() => onRowClick(attribute)}
                       className="cursor-pointer"
                     >
-                      <TableCell className="font-medium">
+                      <TableCell className="max-w-30 truncate font-medium">
                         {attribute.name}
                       </TableCell>
                       <TableCell>{attribute.initialValue}</TableCell>
