@@ -1,3 +1,9 @@
+<blockquote>
+<p>[!WARNING]
+This repository has moved and is now maintained at <a href="https://codeberg.org/bob_bidou/story-builder">codeberg.org/bob_bidou/story-builder</a></p>
+</blockquote>
+
+
 # Story Builder
 
 Story Builder is an open-source platform for creating and playing choose your own adventure games. It's entirely free forever, and doesn't include ads.
